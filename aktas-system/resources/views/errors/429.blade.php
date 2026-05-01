@@ -1,0 +1,47 @@
+@extends('layouts.modern')
+
+@section('title', __('errors.429'))
+
+@section('content')
+<div class="container-fluid d-flex align-items-center justify-content-center" style="min-height: 70vh;">
+    <div class="row w-100">
+        <div class="col-md-8 offset-md-2 col-lg-6 offset-lg-3 text-center">
+            <div class="card border-0 shadow-lg p-5">
+                <div class="mb-4">
+                    <i class="fas fa-ban fa-5x text-warning opacity-50"></i>
+                </div>
+                
+                <h1 class="display-1 fw-bold mb-0">
+                    <span class="text-warning">4</span>
+                    <span class="text-danger">2</span>
+                    <span class="text-warning">9</span>
+                </h1>
+                
+                <h2 class="mt-3 mb-2">{{ __('errors.too_many_requests') }}</h2>
+                
+                <p class="text-muted mb-4">
+                    {{ __('errors.you_have_sent_too_many_requests_in_a_short_time') }}
+                </p>
+                
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <a href="{{ url('/') }}" class="btn btn-primary btn-lg px-4">
+                        <i class="fas fa-home me-2"></i>
+                        {{ __('errors.go_home') }}
+                    </a>
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary btn-lg px-4">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        {{ __('errors.go_back') }}
+                    </a>
+                </div>
+                
+                <hr class="my-4">
+                
+                <p class="text-muted small">
+                    <i class="fas fa-info-circle me-2"></i>
+                    {{ __('errors.error_code') }}: 429 | {{ __('errors.please_wait_before_trying_again') }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

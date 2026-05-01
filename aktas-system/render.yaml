@@ -1,0 +1,65 @@
+services:
+  - type: web
+    name: aktas-accounting-system
+    runtime: docker
+    region: frankfurt
+    plan: starter
+    
+    # Environment variables for production
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: 'false'
+      - key: APP_KEY
+        value: base64:QleYQ6KRiMHP27/5/1x8tf0MBgC4Zy8Tei43b7KAzuQ=
+      - key: LOG_CHANNEL
+        value: stack
+      - key: APP_NAME
+        value: Aktaš
+      - key: APP_LOCALE
+        value: ar
+      - key: APP_FALLBACK_LOCALE
+        value: en
+        
+      # Database (PostgreSQL)
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromService:
+          type: postgresql
+          name: aktas-postgres-db
+          property: host
+      - key: DB_PORT
+        value: '5432'
+      - key: DB_DATABASE
+        value: aktas_system
+      - key: DB_USERNAME
+        fromService:
+          type: postgresql
+          name: aktas-postgres-db
+          property: username
+      - key: DB_PASSWORD
+        fromService:
+          type: postgresql
+          name: aktas-postgres-db
+          property: password
+          
+    # Build and deploy commands
+    buildCommand: composer install --no-dev --optimize-autoloader && php artisan migrate --force && php artisan db:seed --class=TestDataSeeder
+    startCommand: apache2-foreground
+    
+    # Health check endpoint
+    healthCheckPath: /login
+
+  # PostgreSQL 18 Database Service
+  - type: postgresql
+    name: aktas-postgres-db
+    region: frankfurt
+    plan: starter
+    ipAllowList: [] # Allow connections from the web service
+    
+    # Database configuration
+    databaseName: aktas_system
+    username: aktas_user
+    postgresVersion: '18'

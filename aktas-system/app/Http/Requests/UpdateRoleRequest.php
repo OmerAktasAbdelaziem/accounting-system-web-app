@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+/**
+ * UpdateRoleRequest - Validation for updating roles
+ */
+class UpdateRoleRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true; // Authorization handled in controller
+    }
+
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255|unique:roles,name,' . $this->role->id,
+            'description' => 'nullable|string|max:1000',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'exists:permissions,id',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Role name is required',
+            'name.unique' => 'A role with this name already exists',
+            'name.max' => 'Role name must not exceed 255 characters',
+            'description.max' => 'Description must not exceed 1000 characters',
+            'permissions.*.exists' => 'One or more selected permissions do not exist',
+        ];
+    }
+}
