@@ -57,7 +57,7 @@ services:
           property: password
 
     # Pre-deploy tasks
-    preDeployCommand: /usr/local/bin/php artisan migrate --force
+    preDeployCommand: /usr/local/bin/php artisan migrate --force --seed
     # Ensure the container starts by running the entrypoint (runs migrations then Apache)
     startCommand: sh /var/www/html/entrypoint.sh
 
