@@ -258,7 +258,7 @@ Route::get('/run-seed', function (Request $request) {
     }
 
     try {
-        Artisan::call('db:seed', ['--class' => 'UserSeeder']);
+        Artisan::call('db:seed', ['--class' => 'UserSeeder', '--force' => true]);
         $output = Artisan::output();
         return response()->json(['status' => 'ok', 'output' => $output]);
     } catch (\Exception $e) {
