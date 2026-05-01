@@ -1,0 +1,11 @@
+.git
+.github
+aktas-system/vendor
+aktas-system/node_modules
+aktas-system/storage/*.key
+aktas-system/storage/framework/cache/*
+aktas-system/storage/framework/sessions/*
+aktas-system/storage/framework/views/*
+aktas-system/storage/logs/*
+composer-setup.php
+composer.phar
