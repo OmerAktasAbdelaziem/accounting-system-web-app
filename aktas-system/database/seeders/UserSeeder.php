@@ -37,57 +37,57 @@ class UserSeeder extends Seeder
         // Get User role
         $userRole = Role::where('name', 'User')->first();
 
-        // Create Admin User
-        if (!User::where('email', 'admin@hamid.com')->exists()) {
-            User::create([
+        // Create or update Admin User
+        User::updateOrCreate(
+            ['email' => 'admin@hamid.com'],
+            [
                 'name' => 'Admin User',
-                'email' => 'admin@hamid.com',
                 'password' => Hash::make('admin123456'),
                 'role_id' => $adminRole?->id,
                 'phone' => '+966501234567',
                 'address' => 'Riyadh, Saudi Arabia',
                 'is_active' => true,
-            ]);
-        }
+            ]
+        );
 
-        // Create Manager User
-        if (!User::where('email', 'manager@hamid.com')->exists()) {
-            User::create([
+        // Create or update Manager User
+        User::updateOrCreate(
+            ['email' => 'manager@hamid.com'],
+            [
                 'name' => 'Ahmed Al-Sudairi',
-                'email' => 'manager@hamid.com',
                 'password' => Hash::make('manager123456'),
                 'role_id' => $managerRole?->id ?? $adminRole?->id,
                 'phone' => '+966502345678',
                 'address' => 'Jeddah, Saudi Arabia',
                 'is_active' => true,
-            ]);
-        }
+            ]
+        );
 
-        // Create Standard User
-        if (!User::where('email', 'user@hamid.com')->exists()) {
-            User::create([
+        // Create or update Standard User
+        User::updateOrCreate(
+            ['email' => 'user@hamid.com'],
+            [
                 'name' => 'Fatima Al-Rashid',
-                'email' => 'user@hamid.com',
                 'password' => Hash::make('user123456'),
                 'role_id' => $userRole?->id ?? $adminRole?->id,
                 'phone' => '+966503456789',
                 'address' => 'Dammam, Saudi Arabia',
                 'is_active' => true,
-            ]);
-        }
+            ]
+        );
 
-        // Create Test User (inactive)
-        if (!User::where('email', 'test@hamid.com')->exists()) {
-            User::create([
+        // Create or update Test User (inactive)
+        User::updateOrCreate(
+            ['email' => 'test@hamid.com'],
+            [
                 'name' => 'Test Account',
-                'email' => 'test@hamid.com',
                 'password' => Hash::make('test123456'),
                 'role_id' => $userRole?->id ?? $adminRole?->id,
                 'phone' => '+966504567890',
                 'address' => 'Makkah, Saudi Arabia',
                 'is_active' => false,
-            ]);
-        }
+            ]
+        );
 
         echo "\n✅ User seeding completed:\n";
         echo "  - Admin: admin@hamid.com / admin123456\n";
