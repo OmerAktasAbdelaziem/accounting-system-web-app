@@ -58,8 +58,8 @@ services:
 
     # Pre-deploy tasks
     preDeployCommand: /usr/local/bin/php artisan migrate --force
-    # Ensure the container starts with Apache foreground explicitly
-    startCommand: apache2-foreground
+    # Ensure the container starts by running the entrypoint (runs migrations then Apache)
+    startCommand: sh /var/www/html/entrypoint.sh
 
     # Health check endpoint
     healthCheckPath: /login
