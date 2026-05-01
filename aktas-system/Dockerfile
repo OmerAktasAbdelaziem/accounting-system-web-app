@@ -53,5 +53,6 @@ EXPOSE 80
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost/ || exit 1
 
-# Start Apache
-CMD ["apache2-foreground"]
+# Ensure entrypoint is executable and use it to run migrations then start Apache
+RUN chmod +x /var/www/html/entrypoint.sh
+ENTRYPOINT ["sh", "/var/www/html/entrypoint.sh"]
