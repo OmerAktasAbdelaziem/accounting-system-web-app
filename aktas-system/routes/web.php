@@ -249,20 +249,3 @@ Route::redirect('/inventory-dashboard.html', '/reports/inventory');
 Route::redirect('/accounting-management.html', '/reports/financial');
 Route::redirect('/profile-settings.html', '/profile');
 
-// Temporary protected endpoint to run UserSeeder on demand.
-// Usage: /run-seed?token=YOUR_TOKEN
-Route::get('/run-seed', function (Request $request) {
-    $token = env('SEED_TOKEN');
-    if (!$token || $request->query('token') !== $token) {
-        abort(403, 'Forbidden');
-    }
-
-    try {
-        Artisan::call('db:seed', ['--class' => 'UserSeeder', '--force' => true]);
-        $output = Artisan::output();
-        return response()->json(['status' => 'ok', 'output' => $output]);
-    } catch (\Exception $e) {
-        return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
-    }
-});
-

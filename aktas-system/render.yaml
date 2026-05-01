@@ -44,8 +44,6 @@ services:
       - key: DB_PASSWORD
         fromDatabase:
           name: aktas-postgres-db
-      - key: SEED_TOKEN
-        value: run-seed-2026
           property: password
 
     # Pre-deploy tasks

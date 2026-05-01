@@ -27,8 +27,6 @@ services:
         value: file
       - key: QUEUE_CONNECTION
         value: sync
-      - key: SEED_TOKEN
-        value: run-seed-2026
 
       # Database (PostgreSQL)
       - key: DB_CONNECTION
