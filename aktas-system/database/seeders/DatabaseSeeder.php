@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -20,13 +19,9 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
         ]);
 
-        // Create test admin user after roles exist
-        \App\Models\User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@aktas-system.com',
-            'password' => bcrypt('password'),
-            'role_id' => 1, // Admin role
-            'is_active' => true,
+        // Seed users using explicit credentials defined in UserSeeder
+        $this->call([
+            UserSeeder::class,
         ]);
 
         // Then run other seeders
