@@ -57,7 +57,9 @@ services:
           property: password
 
     # Pre-deploy tasks
-    preDeployCommand: php artisan migrate --force
+    preDeployCommand: /usr/local/bin/php artisan migrate --force
+    # Ensure the container starts with Apache foreground explicitly
+    startCommand: apache2-foreground
 
     # Health check endpoint
     healthCheckPath: /login
