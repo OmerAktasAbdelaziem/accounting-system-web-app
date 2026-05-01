@@ -22,6 +22,8 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\BranchController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 // Locale switcher
 Route::get('locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
@@ -246,4 +248,21 @@ Route::redirect('/sales-dashboard.html', '/reports/sales');
 Route::redirect('/inventory-dashboard.html', '/reports/inventory');
 Route::redirect('/accounting-management.html', '/reports/financial');
 Route::redirect('/profile-settings.html', '/profile');
+
+// Temporary protected endpoint to run UserSeeder on demand.
+// Usage: /run-seed?token=YOUR_TOKEN
+Route::get('/run-seed', function (Request $request) {
+    $token = env('SEED_TOKEN');
+    if (!$token || $request->query('token') !== $token) {
+        abort(403, 'Forbidden');
+    }
+
+    try {
+        Artisan::call('db:seed', ['--class' => 'UserSeeder']);
+        $output = Artisan::output();
+        return response()->json(['status' => 'ok', 'output' => $output]);
+    } catch (\Exception $e) {
+        return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+    }
+});
 
