@@ -12,12 +12,13 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev \
     libzip-dev \
+    default-libmysqlclient-dev \
     libpq-dev \
     zip \
     unzip \
     postgresql-client \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd pdo pdo_pgsql zip \
+    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql pdo_pgsql zip \
     && a2enmod rewrite \
     && apt-get clean
 
@@ -28,7 +29,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 COPY . .
 
 # Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+RUN rm -rf vendor && composer install --no-dev --optimize-autoloader --prefer-dist
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
