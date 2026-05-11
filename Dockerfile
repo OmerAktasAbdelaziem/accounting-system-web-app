@@ -26,7 +26,7 @@ RUN apt-get update && apt-get install -y \
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Copy Laravel application from the nested project folder
-COPY aktas-system/ .
+COPY . . 
 
 # Install PHP dependencies
 RUN rm -rf vendor && composer install --no-dev --no-interaction --no-progress --prefer-dist
