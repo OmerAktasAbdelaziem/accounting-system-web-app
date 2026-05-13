@@ -24,6 +24,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'merchant_id',
+        'user_type',
+        'subscription_id',
         'role_id',
         'is_active',
         'phone',
@@ -66,6 +69,46 @@ class User extends Authenticatable
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Get the merchant this user belongs to
+     */
+    public function merchant(): BelongsTo
+    {
+        return $this->belongsTo(Merchant::class);
+    }
+
+    /**
+     * Get the subscription for this user
+     */
+    public function subscription(): BelongsTo
+    {
+        return $this->belongsTo(Subscription::class);
+    }
+
+    /**
+     * Check if user is super admin
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->user_type === 'super_admin';
+    }
+
+    /**
+     * Check if user is merchant admin
+     */
+    public function isMerchantAdmin(): bool
+    {
+        return $this->user_type === 'merchant_admin';
+    }
+
+    /**
+     * Check if user is employee
+     */
+    public function isEmployee(): bool
+    {
+        return $this->user_type === 'employee';
     }
 
     /**

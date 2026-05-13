@@ -111,6 +111,16 @@
                     <strong>Password:</strong> admin123456
                 </p>
             </div>
+
+            <!-- Navigation Links -->
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                <a href="{{ route('landing') }}" style="color: #ff8c00; text-decoration: none; display: flex; align-items: center; gap: 5px; transition: all 0.3s;">
+                    <i class="bi bi-house"></i> Back to Home
+                </a>
+                <a href="{{ route('super-admin.login') }}" style="color: #ff8c00; text-decoration: none; display: flex; align-items: center; gap: 5px; transition: all 0.3s;">
+                    Admin Login <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
         </div>
     </div>
 </div>

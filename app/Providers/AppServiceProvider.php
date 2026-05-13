@@ -56,8 +56,10 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Permission::class, PermissionPolicy::class);
         Gate::policy(AuditLog::class, AuditLogPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
-        if (app()->environment('production') || env('FORCE_HTTPS', true)) {
-        \URL::forceScheme('https');
-     }
+        
+        // Only force HTTPS in production environment
+        if (app()->environment('production')) {
+            \URL::forceScheme('https');
+        }
     }
 }

@@ -17,21 +17,31 @@ class Invoice extends Model
         'date',
         'sub_total',
         'tax',
+        'vat_rate',
+        'vat_amount',
         'total',
         'status',
         'branch_id',
+        'merchant_id',
     ];
 
     protected $casts = [
         'date' => 'date',
         'sub_total' => 'decimal:2',
         'tax' => 'decimal:2',
+        'vat_rate' => 'decimal:5,2',
+        'vat_amount' => 'decimal:10,2',
         'total' => 'decimal:2',
     ];
 
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function merchant(): BelongsTo
+    {
+        return $this->belongsTo(Merchant::class);
     }
 
     public function items(): HasMany
@@ -56,17 +66,30 @@ class Invoice extends Model
     }
 
     /**
-     * Recalculate invoice totals from items
+     * Recalculate invoice totals from items including VAT
      */
     public function recalculateTotals(): void
     {
         $subTotal = $this->items->sum('line_total');
-        $tax = $subTotal * 0.15; // 15% default tax
-        $total = $subTotal + $tax;
+        
+        // Get merchant's VAT rate if set, otherwise use default
+        $vatRate = 0;
+        if ($this->merchant_id) {
+            $merchantVat = VatRate::where('merchant_id', $this->merchant_id)
+                ->where('is_active', true)
+                ->first();
+            $vatRate = $merchantVat ? $merchantVat->rate_percentage : 0;
+        }
+        
+        $tax = $subTotal * 0.15; // 15% default tax (legacy)
+        $vatAmount = $subTotal * ($vatRate / 100); // VAT on sub total
+        $total = $subTotal + $tax + $vatAmount;
 
         $this->update([
             'sub_total' => $subTotal,
             'tax' => $tax,
+            'vat_rate' => $vatRate,
+            'vat_amount' => $vatAmount,
             'total' => $total,
         ]);
     }

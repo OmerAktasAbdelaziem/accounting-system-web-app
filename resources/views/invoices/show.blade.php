@@ -66,10 +66,16 @@
                         <div class="col-6"><strong>{{ __('Sub Total:') }}</strong></div>
                         <div class="col-6 text-end">${{ number_format($invoice->sub_total, 2) }}</div>
                     </div>
-                    <div class="row mb-3">
+                    <div class="row mb-2">
                         <div class="col-6"><strong>{{ __('Tax:') }}</strong></div>
                         <div class="col-6 text-end">${{ number_format($invoice->tax, 2) }}</div>
                     </div>
+                    @if($invoice->vat_rate > 0)
+                    <div class="row mb-3">
+                        <div class="col-6"><strong>{{ __('VAT') }} ({{ $invoice->vat_rate }}%):</strong></div>
+                        <div class="col-6 text-end">${{ number_format($invoice->vat_amount, 2) }}</div>
+                    </div>
+                    @endif
                     <hr>
                     <div class="row">
                         <div class="col-6"><h5>{{ __('Total:') }}</h5></div>

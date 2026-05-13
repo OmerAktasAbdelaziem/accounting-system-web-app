@@ -292,31 +292,108 @@
                             {{ __('messages.dashboard') }}
                         </a>
                     </li>
+                    @if(hasFeature('products'))
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('products*') ? 'active' : '' }}" href="{{ route('products.index') }}">
                             {{ __('messages.products') }}
                         </a>
                     </li>
+                    @endif
+                    @if(hasFeature('categories'))
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('categories*') ? 'active' : '' }}" href="{{ route('categories.index') }}">
                             {{ __('messages.categories') }}
                         </a>
                     </li>
+                    @endif
+                    @if(hasFeature('employees'))
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('employees*') ? 'active' : '' }}" href="{{ route('employees.index') }}">
                             {{ __('messages.employees') }}
                         </a>
                     </li>
+                    @endif
+                    @if(hasAnyFeature(['customers', 'suppliers', 'invoicing', 'branches', 'storages', 'safes']))
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="managementDropdown" role="button" data-bs-toggle="dropdown">
+                            {{ __('messages.management') }}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="managementDropdown">
+                            @if(hasFeature('customers'))
+                            <li><a class="dropdown-item" href="{{ route('customers.index') }}">{{ __('messages.customers') }}</a></li>
+                            @endif
+                            @if(hasFeature('suppliers'))
+                            <li><a class="dropdown-item" href="{{ route('suppliers.index') }}">{{ __('messages.suppliers') }}</a></li>
+                            @endif
+                            @if(hasFeature('invoicing'))
+                            <li><a class="dropdown-item" href="{{ route('invoices.index') }}">{{ __('messages.invoices') }}</a></li>
+                            @endif
+                            @if(hasFeature('branches'))
+                            <li><a class="dropdown-item" href="{{ route('branches.index') }}">{{ __('messages.branches') }}</a></li>
+                            @endif
+                            @if(hasFeature('storages'))
+                            <li><a class="dropdown-item" href="{{ route('storages.index') }}">{{ __('messages.storages') }}</a></li>
+                            @endif
+                            @if(hasFeature('safes'))
+                            <li><a class="dropdown-item" href="{{ route('safes.index') }}">{{ __('messages.safes') }}</a></li>
+                            @endif
+                        </ul>
+                    </li>
+                    @endif
+                    @if(hasAnyFeature(['sales_report', 'inventory_report', 'financial_report']))
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="reportsDropdown" role="button" data-bs-toggle="dropdown">
                             {{ __('messages.reports') }}
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="reportsDropdown">
+                            @if(hasFeature('sales_report'))
                             <li><a class="dropdown-item" href="{{ route('reports.sales') }}">{{ __('messages.sales_report') }}</a></li>
+                            @endif
+                            @if(hasFeature('inventory_report'))
                             <li><a class="dropdown-item" href="{{ route('reports.inventory') }}">{{ __('messages.inventory_report') }}</a></li>
+                            @endif
+                            @if(hasFeature('financial_report'))
                             <li><a class="dropdown-item" href="{{ route('reports.financial') }}">{{ __('messages.financial_report') }}</a></li>
+                            @endif
                         </ul>
                     </li>
+                    @endif
+                    @if(hasAnyFeature(['payroll', 'commissions', 'audit_logs']))
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="operationsDropdown" role="button" data-bs-toggle="dropdown">
+                            {{ __('messages.operations') }}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="operationsDropdown">
+                            @if(hasFeature('payroll'))
+                            <li><a class="dropdown-item" href="{{ route('payroll.index') }}">{{ __('messages.payroll') }}</a></li>
+                            @endif
+                            @if(hasFeature('commissions'))
+                            <li><a class="dropdown-item" href="{{ route('commissions.index') }}">{{ __('messages.commissions') }}</a></li>
+                            @endif
+                            @if(hasFeature('audit_logs'))
+                            <li><a class="dropdown-item" href="{{ route('audit-logs.index') }}">{{ __('messages.audit_logs') }}</a></li>
+                            @endif
+                        </ul>
+                    </li>
+                    @endif
+                    @if(hasAnyFeature(['user_management', 'roles_management', 'permissions_management']))
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
+                            {{ __('messages.administration') }}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                            @if(hasFeature('user_management'))
+                            <li><a class="dropdown-item" href="{{ route('users.index') }}">{{ __('messages.users') }}</a></li>
+                            @endif
+                            @if(hasFeature('roles_management'))
+                            <li><a class="dropdown-item" href="{{ route('roles.index') }}">{{ __('messages.roles') }}</a></li>
+                            @endif
+                            @if(hasFeature('permissions_management'))
+                            <li><a class="dropdown-item" href="{{ route('permissions.index') }}">{{ __('messages.permissions') }}</a></li>
+                            @endif
+                        </ul>
+                    </li>
+                    @endif
                     <li class="nav-item">
                         <a class="nav-link" href="#" onclick="toggleLanguage(); return false;">
                             {{ app()->getLocale() === 'ar' ? 'English' : 'العربية' }}

@@ -41,6 +41,50 @@ class AuthController extends Controller
     }
 
     /**
+     * Show the super admin login form
+     */
+    public function showSuperAdminLoginForm()
+    {
+        return view('auth.super-admin-login');
+    }
+
+    /**
+     * Handle super admin login
+     */
+    public function superAdminLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string', 'min:6'],
+        ]);
+
+        // Attempt to authenticate
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            $user = Auth::user();
+
+            // Check if user is super admin
+            if ($user->user_type !== 'super_admin') {
+                Auth::logout();
+                $request->session()->invalidate();
+                return back()
+                    ->withInput($request->only('email'))
+                    ->withErrors([
+                        'email' => 'This account does not have super admin privileges.',
+                    ]);
+            }
+
+            $request->session()->regenerate();
+            return redirect()->route('super-admin.dashboard')->with('success', 'Welcome back, Super Admin!');
+        }
+
+        return back()
+            ->withInput($request->only('email'))
+            ->withErrors([
+                'email' => 'The provided credentials do not match our records.',
+            ]);
+    }
+
+    /**
      * Handle logout
      */
     public function logout(Request $request)

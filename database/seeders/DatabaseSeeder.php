@@ -19,6 +19,18 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
         ]);
 
+        // Seed multi-tenant system (currencies, packages, super admin)
+        $this->call([
+            CurrencySeeder::class,
+            PackageSeeder::class,
+            SuperAdminSeeder::class,
+        ]);
+
+        // Seed feature access permissions for all merchants and roles
+        $this->call([
+            FeatureAccessSeeder::class,
+        ]);
+
         // Seed users using explicit credentials defined in UserSeeder
         $this->call([
             UserSeeder::class,
@@ -36,6 +48,11 @@ class DatabaseSeeder extends Seeder
             SupplierSeeder::class,
             InvoiceSeeder::class,
             PayrollSeeder::class,
+        ]);
+
+        // Seed demo merchants for testing
+        $this->call([
+            DemoMerchantSeeder::class,
         ]);
     }
 }

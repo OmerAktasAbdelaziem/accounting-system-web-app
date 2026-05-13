@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'check-api-token' => \App\Http\Middleware\CheckApiToken::class,
             'rate-limit' => \App\Http\Middleware\RateLimitMiddleware::class,
             'security-headers' => \App\Http\Middleware\SecurityHeadersMiddleware::class,
+            'super_admin' => \App\Http\Middleware\SuperAdminMiddleware::class,
         ]);
 
         // Apply locale middleware to web requests after session starts

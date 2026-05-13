@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Products\ProductController;
@@ -22,16 +23,37 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\SuperAdmin\SuperAdminDashboardController;
+use App\Http\Controllers\SuperAdmin\MerchantController;
+use App\Http\Controllers\SuperAdmin\PackageController;
+use App\Http\Controllers\SuperAdmin\SubscriptionController;
+use App\Http\Controllers\SuperAdmin\FeatureAccessController;
+use App\Http\Controllers\SuperAdmin\VatRateController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 
 // Locale switcher
 Route::get('locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
 
+// Landing Page
+Route::get('/', function () {
+    if (Auth::check()) {
+        if (Auth::user()->user_type === 'super_admin') {
+            return redirect()->route('super-admin.dashboard');
+        }
+        return redirect()->route('dashboard');
+    }
+    return view('landing');
+})->name('landing');
+
 // Auth Routes
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('login', [AuthController::class, 'login']);
+    
+    // Super Admin Login Routes
+    Route::get('super-admin/login', [AuthController::class, 'showSuperAdminLoginForm'])->name('super-admin.login');
+    Route::post('super-admin/login', [AuthController::class, 'superAdminLogin']);
 });
 
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
@@ -39,7 +61,7 @@ Route::post('logout', [AuthController::class, 'logout'])->middleware('auth')->na
 // Protected Routes
 Route::middleware('auth')->group(function () {
     // Dashboard
-    Route::get('/', [DashboardController::class, 'index'])->name('home');
+    Route::get('/home', [DashboardController::class, 'index'])->name('home');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('system-dashboard-fix', [DashboardController::class, 'index'])->name('system.dashboard');
 
@@ -236,6 +258,39 @@ Route::middleware('auth')->group(function () {
         Route::get('{permission}/edit', [PermissionController::class, 'edit'])->name('edit');
         Route::put('{permission}', [PermissionController::class, 'update'])->name('update');
         Route::delete('{permission}', [PermissionController::class, 'destroy'])->name('destroy');
+    });
+
+    // Super Admin Routes
+    Route::middleware('super_admin')->prefix('super-admin')->name('super-admin.')->group(function () {
+        // Dashboard
+        Route::get('/', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
+
+        // Merchants Management
+        Route::resource('merchants', MerchantController::class);
+        Route::post('merchants/{merchant}/currencies', [MerchantController::class, 'addCurrency'])->name('merchants.addCurrency');
+        Route::delete('merchants/{merchant}/currencies/{currency}', [MerchantController::class, 'removeCurrency'])->name('merchants.removeCurrency');
+        Route::put('merchants/{merchant}/vat', [MerchantController::class, 'updateVat'])->name('merchants.updateVat');
+        Route::get('merchants/{merchant}/details', [MerchantController::class, 'details'])->name('merchants.details');
+
+        // Packages Management
+        Route::resource('packages', PackageController::class);
+        Route::get('packages/{package}/features', [PackageController::class, 'features'])->name('packages.features');
+
+        // Subscriptions Management
+        Route::resource('subscriptions', SubscriptionController::class);
+        Route::get('subscriptions/{subscription}/renew', [SubscriptionController::class, 'renewForm'])->name('subscriptions.renew');
+        Route::post('subscriptions/{subscription}/renew', [SubscriptionController::class, 'renewStore'])->name('subscriptions.renew.store');
+        Route::get('subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
+
+        // VAT Rate Management
+        Route::resource('vat-rates', VatRateController::class, ['except' => ['create', 'edit', 'show']]);
+
+        // Feature Access Management
+        Route::prefix('feature-access')->name('feature-access.')->group(function () {
+            Route::get('/', [FeatureAccessController::class, 'index'])->name('index');
+            Route::post('/update', [FeatureAccessController::class, 'update'])->name('update');
+            Route::post('/reset', [FeatureAccessController::class, 'reset'])->name('reset');
+        });
     });
 });
 
