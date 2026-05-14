@@ -317,6 +317,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('404-error', [\App\Http\Controllers\SuperAdmin\TelegramTestController::class, 'test404Error'])->name('404-error');
                 Route::get('detailed-error', [\App\Http\Controllers\SuperAdmin\TelegramTestController::class, 'testDetailedError'])->name('detailed-error');
                 Route::get('real-error', [\App\Http\Controllers\SuperAdmin\TelegramTestController::class, 'triggerRealError'])->name('real-error');
+                Route::get('raw-send', [\App\Http\Controllers\SuperAdmin\TelegramTestController::class, 'testRawSend'])->name('raw-send');
             });
         }
     });

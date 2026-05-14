@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use Illuminate\Routing\Controller;
 use App\Services\TelegramService;
+use Illuminate\Support\Facades\Http;
 
 class TelegramTestController extends Controller
 {
@@ -100,6 +101,30 @@ class TelegramTestController extends Controller
         return response()->json(['message' => 'Test detailed error notification sent!']);
     }
 
+    /**
+     * Test direct raw send to Telegram API and return API response
+     */
+    public function testRawSend()
+    {
+        $token = config('telegram.token');
+        $chat = config('telegram.chat_id');
+        $api = config('telegram.api_url', 'https://api.telegram.org');
+
+        if (!$token || !$chat) {
+            return response()->json(['ok' => false, 'error' => 'Missing token or chat id in config'], 400);
+        }
+
+        try {
+            $resp = Http::timeout(10)->post("{$api}/bot{$token}/sendMessage", [
+                'chat_id' => $chat,
+                'text' => 'Raw test message from local app at ' . now(),
+            ]);
+
+            return response($resp->body(), $resp->status())->header('Content-Type', 'application/json');
+        } catch (\Exception $e) {
+            return response()->json(['ok' => false, 'error' => $e->getMessage()], 500);
+        }
+    }
     /**
      * Simulate a deep error stack
      */
