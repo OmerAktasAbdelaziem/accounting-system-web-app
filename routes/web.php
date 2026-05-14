@@ -29,6 +29,7 @@ use App\Http\Controllers\SuperAdmin\PackageController;
 use App\Http\Controllers\SuperAdmin\SubscriptionController;
 use App\Http\Controllers\SuperAdmin\FeatureAccessController;
 use App\Http\Controllers\SuperAdmin\VatRateController;
+use App\Http\Controllers\SuperAdmin\SystemUserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 
@@ -228,6 +229,9 @@ Route::middleware('auth')->group(function () {
         Route::get('export', [AuditLogController::class, 'export'])->name('export');
     });
 
+    // Exit Inspection (accessible from merchant dashboard when inspecting)
+    Route::post('super-admin/exit-inspection', [SystemUserController::class, 'exitInspection'])->name('super-admin.exit-inspection');
+
     // Admin - User Management
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');
@@ -265,8 +269,20 @@ Route::middleware('auth')->group(function () {
         // Dashboard
         Route::get('/', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
 
+        // System Users Management (above Merchants)
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', [SystemUserController::class, 'index'])->name('index');
+            Route::get('create', [SystemUserController::class, 'create'])->name('create');
+            Route::post('/', [SystemUserController::class, 'store'])->name('store');
+            Route::get('{user}/edit', [SystemUserController::class, 'edit'])->name('edit');
+            Route::put('{user}', [SystemUserController::class, 'update'])->name('update');
+            Route::delete('{user}', [SystemUserController::class, 'destroy'])->name('destroy');
+            Route::post('{user}/toggle-status', [SystemUserController::class, 'toggleStatus'])->name('toggleStatus');
+        });
+
         // Merchants Management
         Route::resource('merchants', MerchantController::class);
+        Route::post('merchants/{merchant}/inspect', [SystemUserController::class, 'inspectMerchant'])->name('merchants.inspect');
         Route::post('merchants/{merchant}/currencies', [MerchantController::class, 'addCurrency'])->name('merchants.addCurrency');
         Route::delete('merchants/{merchant}/currencies/{currency}', [MerchantController::class, 'removeCurrency'])->name('merchants.removeCurrency');
         Route::put('merchants/{merchant}/vat', [MerchantController::class, 'updateVat'])->name('merchants.updateVat');
@@ -291,6 +307,18 @@ Route::middleware('auth')->group(function () {
             Route::post('/update', [FeatureAccessController::class, 'update'])->name('update');
             Route::post('/reset', [FeatureAccessController::class, 'reset'])->name('reset');
         });
+
+        // Telegram Error Testing Routes (for development only)
+        if (app()->environment('local')) {
+            Route::prefix('telegram-test')->name('telegram-test.')->group(function () {
+                Route::get('error', [\App\Http\Controllers\SuperAdmin\TelegramTestController::class, 'testError'])->name('error');
+                Route::get('exception', [\App\Http\Controllers\SuperAdmin\TelegramTestController::class, 'testException'])->name('exception');
+                Route::get('500-error', [\App\Http\Controllers\SuperAdmin\TelegramTestController::class, 'test500Error'])->name('500-error');
+                Route::get('404-error', [\App\Http\Controllers\SuperAdmin\TelegramTestController::class, 'test404Error'])->name('404-error');
+                Route::get('detailed-error', [\App\Http\Controllers\SuperAdmin\TelegramTestController::class, 'testDetailedError'])->name('detailed-error');
+                Route::get('real-error', [\App\Http\Controllers\SuperAdmin\TelegramTestController::class, 'triggerRealError'])->name('real-error');
+            });
+        }
     });
 });
 

@@ -28,16 +28,29 @@ class AuthController extends Controller
             'password' => ['required', 'string', 'min:6'],
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
-            return redirect()->route('dashboard')->with('success', 'Login successful!');
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors([
+                    'email' => 'The provided credentials do not match our records.',
+                ]);
         }
 
-        return back()
-            ->withInput($request->only('email'))
-            ->withErrors([
-                'email' => 'The provided credentials do not match our records.',
-            ]);
+        if ($user->isSuperAdmin()) {
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors([
+                    'email' => 'Super admin accounts must sign in from the super-admin login page.',
+                ]);
+        }
+
+        Auth::login($user, $request->boolean('remember'));
+        $request->session()->regenerate();
+
+        return redirect()->route('dashboard')->with('success', 'Login successful!');
+
     }
 
     /**
@@ -58,30 +71,28 @@ class AuthController extends Controller
             'password' => ['required', 'string', 'min:6'],
         ]);
 
-        // Attempt to authenticate
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $user = Auth::user();
+        $user = User::where('email', $credentials['email'])->first();
 
-            // Check if user is super admin
-            if ($user->user_type !== 'super_admin') {
-                Auth::logout();
-                $request->session()->invalidate();
-                return back()
-                    ->withInput($request->only('email'))
-                    ->withErrors([
-                        'email' => 'This account does not have super admin privileges.',
-                    ]);
-            }
-
-            $request->session()->regenerate();
-            return redirect()->route('super-admin.dashboard')->with('success', 'Welcome back, Super Admin!');
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors([
+                    'email' => 'The provided credentials do not match our records.',
+                ]);
         }
 
-        return back()
-            ->withInput($request->only('email'))
-            ->withErrors([
-                'email' => 'The provided credentials do not match our records.',
-            ]);
+        if (!$user->isSuperAdmin()) {
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors([
+                    'email' => 'This account does not have super admin privileges.',
+                ]);
+        }
+
+        Auth::login($user, $request->boolean('remember'));
+        $request->session()->regenerate();
+
+        return redirect()->route('super-admin.dashboard')->with('success', 'Welcome back, Super Admin!');
     }
 
     /**

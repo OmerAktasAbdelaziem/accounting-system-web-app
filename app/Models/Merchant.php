@@ -14,6 +14,8 @@ class Merchant extends Model
     use HasFactory;
 
     protected $fillable = [
+        'name',
+        'admin_email',
         'super_admin_id',
         'business_name',
         'slug',

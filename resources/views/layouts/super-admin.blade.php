@@ -518,6 +518,14 @@
             </a>
             
             <div class="navbar-end">
+                @if(session('inspecting_merchant'))
+                    <form action="{{ route('super-admin.exit-inspection') }}" method="POST" style="display: inline;">
+                        @csrf
+                        <button type="submit" class="btn btn-warning btn-sm me-3" title="Exit merchant inspection and return to super admin">
+                            <i class="bi bi-arrow-left"></i> Exit Inspection
+                        </button>
+                    </form>
+                @endif
                 <div class="user-menu">
                     <div class="user-avatar">
                         {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
@@ -559,6 +567,13 @@
             <div class="sidebar-section">
                 <div class="sidebar-title">Management</div>
                 <ul class="sidebar-menu">
+                    <li>
+                        <a href="{{ route('super-admin.users.index') }}" 
+                           class="@if(request()->routeIs('super-admin.users*')) active @endif">
+                            <i class="bi bi-people"></i>
+                            <span>System Users</span>
+                        </a>
+                    </li>
                     <li>
                         <a href="{{ route('super-admin.merchants.index') }}" 
                            class="@if(request()->routeIs('super-admin.merchants*')) active @endif">

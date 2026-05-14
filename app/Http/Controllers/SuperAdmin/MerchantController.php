@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Currency;
 use App\Models\Merchant;
 use App\Models\Subscription;
+use App\Models\User;
 use App\Services\MerchantService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class MerchantController extends Controller
 {
@@ -70,12 +73,30 @@ class MerchantController extends Controller
             'max_employees' => 'nullable|integer|min:1',
             'description' => 'nullable|string',
             'vat_rate' => 'nullable|numeric|min:0|max:100',
+            'admin_users' => 'nullable|array',
+            'admin_users.*.name' => 'required_with:admin_users|string|max:255',
+            'admin_users.*.email' => 'required_with:admin_users|email|unique:users,email',
+            'admin_users.*.password' => ['required_with:admin_users', 'string', Password::min(8)->mixedCase()->numbers()],
         ]);
 
         $merchant = $this->merchantService->createMerchant($validated);
 
+        // Create admin users for the merchant
+        if (!empty($validated['admin_users'])) {
+            foreach ($validated['admin_users'] as $adminData) {
+                User::create([
+                    'name' => $adminData['name'],
+                    'email' => $adminData['email'],
+                    'password' => Hash::make($adminData['password']),
+                    'user_type' => 'merchant_admin',
+                    'merchant_id' => $merchant->id,
+                    'is_active' => true,
+                ]);
+            }
+        }
+
         return redirect()->route('super-admin.merchants.show', $merchant)
-            ->with('success', 'Merchant created successfully');
+            ->with('success', 'Merchant and admin users created successfully');
     }
 
     /**

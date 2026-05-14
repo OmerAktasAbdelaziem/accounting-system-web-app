@@ -18,7 +18,10 @@ class MerchantService
      */
     public function createMerchant(array $data): Merchant
     {
+        $superAdmin = auth()->user();
         $merchant = Merchant::create([
+            'name' => $data['business_name'],
+            'admin_email' => $superAdmin->email,
             'super_admin_id' => $data['super_admin_id'] ?? auth()->id(),
             'business_name' => $data['business_name'],
             'slug' => Str::slug($data['business_name']) . '-' . Str::random(6),

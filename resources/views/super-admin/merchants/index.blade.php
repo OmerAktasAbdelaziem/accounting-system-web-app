@@ -101,16 +101,22 @@
                     </td>
                     <td>
                         <div class="btn-group" role="group">
-                            <a href="{{ route('super-admin.merchants.show', $merchant->id) }}" class="btn btn-sm btn-outline-orange">
+                            <a href="{{ route('super-admin.merchants.show', $merchant->id) }}" class="btn btn-sm btn-outline-orange" title="View">
                                 <i class="bi bi-eye"></i>
                             </a>
-                            <a href="{{ route('super-admin.merchants.edit', $merchant->id) }}" class="btn btn-sm btn-outline-orange">
+                            <form action="{{ route('super-admin.merchants.inspect', $merchant) }}" method="POST" style="display:inline;" title="Inspect (Login as Merchant)">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-outline-info" title="Inspect merchant" onclick="return confirm('Login as this merchant?')">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </form>
+                            <a href="{{ route('super-admin.merchants.edit', $merchant->id) }}" class="btn btn-sm btn-outline-orange" title="Edit">
                                 <i class="bi bi-pencil"></i>
                             </a>
                             <form action="{{ route('super-admin.merchants.destroy', $merchant->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-orange" onclick="return confirm('Are you sure?')">
+                                <button type="submit" class="btn btn-sm btn-outline-orange" onclick="return confirm('Are you sure?')" title="Delete">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>

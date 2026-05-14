@@ -107,6 +107,42 @@
                             <input type="number" name="vat_rate" class="form-control" value="{{ old('vat_rate', '') }}" 
                                    min="0" max="100" step="0.01" placeholder="e.g., 15">
                         </div>
+
+                        <hr>
+                        <h6 class="mb-3">Merchant Admin Users</h6>
+                        <small class="text-muted d-block mb-3">Create admin users that will have access to this merchant</small>
+                        
+                        <div id="adminUsersContainer">
+                            <div class="admin-user-slot mb-4 p-3 border rounded">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Full Name *</label>
+                                        <input type="text" name="admin_users[0][name]" class="form-control" placeholder="e.g., John Doe" required>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Email *</label>
+                                        <input type="email" name="admin_users[0][email]" class="form-control" placeholder="e.g., admin@merchant.com" required>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Password *</label>
+                                        <div class="input-group">
+                                            <input type="password" name="admin_users[0][password]" class="form-control" placeholder="Min 8 characters" required>
+                                            <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility(this)">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </div>
+                                        <small class="text-muted">Min 8 characters, mix of uppercase, lowercase, numbers</small>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeAdminUser(this)" style="display:none;">
+                                    <i class="bi bi-trash"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="btn btn-outline-success mb-3" onclick="addAdminUserSlot()">
+                            <i class="bi bi-plus-circle"></i> Add Another Admin User
+                        </button>
                         @endif
                     </div>
 
@@ -121,4 +157,84 @@
         </div>
     </div>
 </div>
+
+<style>
+    .admin-user-slot {
+        background-color: #f8f9fa;
+        transition: background-color 0.2s;
+    }
+    .admin-user-slot:hover {
+        background-color: #e9ecef;
+    }
+</style>
+
+<script>
+    let adminUserCount = 1;
+
+    function addAdminUserSlot() {
+        const container = document.getElementById('adminUsersContainer');
+        const newSlot = document.createElement('div');
+        newSlot.className = 'admin-user-slot mb-4 p-3 border rounded';
+        newSlot.innerHTML = `
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Full Name *</label>
+                    <input type="text" name="admin_users[${adminUserCount}][name]" class="form-control" placeholder="e.g., John Doe" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Email *</label>
+                    <input type="email" name="admin_users[${adminUserCount}][email]" class="form-control" placeholder="e.g., admin@merchant.com" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Password *</label>
+                    <div class="input-group">
+                        <input type="password" name="admin_users[${adminUserCount}][password]" class="form-control" placeholder="Min 8 characters" required>
+                        <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility(this)">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <small class="text-muted">Min 8 characters, mix of uppercase, lowercase, numbers</small>
+                </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeAdminUser(this)">
+                <i class="bi bi-trash"></i> Remove
+            </button>
+        `;
+        container.appendChild(newSlot);
+        adminUserCount++;
+        updateRemoveButtons();
+    }
+
+    function removeAdminUser(button) {
+        button.closest('.admin-user-slot').remove();
+        updateRemoveButtons();
+    }
+
+    function updateRemoveButtons() {
+        const slots = document.querySelectorAll('.admin-user-slot');
+        slots.forEach((slot, index) => {
+            const removeBtn = slot.querySelector('button[onclick*="removeAdminUser"]');
+            if (removeBtn) {
+                removeBtn.style.display = slots.length > 1 ? 'block' : 'none';
+            }
+        });
+    }
+
+    function togglePasswordVisibility(button) {
+        const input = button.parentElement.querySelector('input');
+        const icon = button.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    }
+
+    // Initialize remove buttons on page load
+    document.addEventListener('DOMContentLoaded', updateRemoveButtons);
+</script>
 @endsection

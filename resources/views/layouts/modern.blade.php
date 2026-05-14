@@ -436,110 +436,117 @@
     @yield('css')
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-modern">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ route('system.dashboard') }}">
-                <i class="bi bi-graph-up-arrow"></i> Aktaš
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('system.dashboard') }}">
-                            <i class="bi bi-speedometer2"></i> {{ __('messages.dashboard') }}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('products*') ? 'active' : '' }}" href="{{ route('products.index') }}">
-                            <i class="bi bi-box-seam"></i> {{ __('messages.products') }}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('categories*') ? 'active' : '' }}" href="{{ route('categories.index') }}">
-                            <i class="bi bi-tags"></i> {{ __('messages.categories') }}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('employees*') ? 'active' : '' }}" href="{{ route('employees.index') }}">
-                            <i class="bi bi-people"></i> {{ __('messages.employees') }}
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-building"></i> {{ __('messages.customers') }}
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ route('customers.index') }}"><i class="bi bi-people-fill"></i> {{ __('messages.customers') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ route('suppliers.index') }}"><i class="bi bi-truck"></i> {{ __('messages.suppliers') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ route('invoices.index') }}"><i class="bi bi-receipt"></i> {{ __('messages.invoices') }}</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ route('payroll.index') }}"><i class="bi bi-cash-coin"></i> {{ __('messages.payroll') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ route('branches.index') }}"><i class="bi bi-shop"></i> {{ __('messages.branches') }}</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-file-earmark-text"></i> {{ __('messages.reports') }}
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ route('reports.sales') }}">{{ __('messages.sales_report') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ route('reports.inventory') }}">{{ __('messages.inventory_report') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ route('reports.financial') }}">{{ __('messages.financial_report') }}</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-gear"></i> {{ __('messages.systems') }}
-                        </a>
-                        <ul class="dropdown-menu">
-                            @if (auth()->check() && auth()->user()?->role?->name === 'Admin')
-                                <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="bi bi-people"></i> {{ __('messages.admin_user') }}</a></li>
-                            @endif
-                            <li><a class="dropdown-item" href="{{ route('commissions.index') }}"><i class="bi bi-percent"></i> {{ __('messages.commissions') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ route('storages.index') }}"><i class="bi bi-archive"></i> {{ __('messages.storages') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ route('safes.index') }}"><i class="bi bi-safe"></i> {{ __('messages.safes') }}</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="toggleLanguage(); return false;">
-                            <i class="bi bi-globe"></i> {{ app()->getLocale() === 'ar' ? 'EN' : 'AR' }}
-                        </a>
-                    </li>
-                    @auth
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle"></i> {{ auth()->user()->name }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="bi bi-person"></i> {{ __('messages.profile') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ route('settings.index') }}"><i class="bi bi-gear"></i> {{ __('messages.settings') }}</a></li>
-                            @if (auth()->user()?->role?->name === 'Admin')
-                                <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="bi bi-people"></i> {{ __('users.users_management') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ route('roles.index') }}"><i class="bi bi-shield-alt"></i> {{ __('roles.roles_management') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ route('permissions.index') }}"><i class="bi bi-key"></i> {{ __('permissions.permissions_management') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ route('audit-logs.index') }}"><i class="bi bi-file-earmark-text"></i> {{ __('audit_logs.audit_logs') }}</a></li>
-                            @endif
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bi bi-box-arrow-right"></i> {{ __('messages.logout') }}</a></li>
-                        </ul>
-                    </li>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                    @else
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('login') }}">
-                            <i class="bi bi-box-arrow-in-right"></i> {{ __('messages.login') }}
-                        </a>
-                    </li>
-                    @endauth
-                </ul>
+    @auth
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-modern">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ route('system.dashboard') }}">
+                    <i class="bi bi-graph-up-arrow"></i> Aktaš
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('system.dashboard') }}">
+                                <i class="bi bi-speedometer2"></i> {{ __('messages.dashboard') }}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('products*') ? 'active' : '' }}" href="{{ route('products.index') }}">
+                                <i class="bi bi-box-seam"></i> {{ __('messages.products') }}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('categories*') ? 'active' : '' }}" href="{{ route('categories.index') }}">
+                                <i class="bi bi-tags"></i> {{ __('messages.categories') }}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('employees*') ? 'active' : '' }}" href="{{ route('employees.index') }}">
+                                <i class="bi bi-people"></i> {{ __('messages.employees') }}
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-building"></i> {{ __('messages.customers') }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ route('customers.index') }}"><i class="bi bi-people-fill"></i> {{ __('messages.customers') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ route('suppliers.index') }}"><i class="bi bi-truck"></i> {{ __('messages.suppliers') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ route('invoices.index') }}"><i class="bi bi-receipt"></i> {{ __('messages.invoices') }}</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ route('payroll.index') }}"><i class="bi bi-cash-coin"></i> {{ __('messages.payroll') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ route('branches.index') }}"><i class="bi bi-shop"></i> {{ __('messages.branches') }}</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-file-earmark-text"></i> {{ __('messages.reports') }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ route('reports.sales') }}">{{ __('messages.sales_report') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ route('reports.inventory') }}">{{ __('messages.inventory_report') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ route('reports.financial') }}">{{ __('messages.financial_report') }}</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-gear"></i> {{ __('messages.systems') }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                @if (auth()->check() && auth()->user()?->role?->name === 'Admin')
+                                    <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="bi bi-people"></i> {{ __('messages.admin_user') }}</a></li>
+                                @endif
+                                <li><a class="dropdown-item" href="{{ route('commissions.index') }}"><i class="bi bi-percent"></i> {{ __('messages.commissions') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ route('storages.index') }}"><i class="bi bi-archive"></i> {{ __('messages.storages') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ route('safes.index') }}"><i class="bi bi-safe"></i> {{ __('messages.safes') }}</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="toggleLanguage(); return false;">
+                                <i class="bi bi-globe"></i> {{ app()->getLocale() === 'ar' ? 'EN' : 'AR' }}
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i> {{ auth()->user()->name }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                @if(session('inspecting_merchant'))
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li class="dropdown-header">🔍 Inspecting Merchant</li>
+                                    <li>
+                                        <form action="{{ route('super-admin.exit-inspection') }}" method="POST" class="dropdown-item" style="padding: 0; border: 0;">
+                                            @csrf
+                                            <button type="submit" style="display: block; width: 100%; text-align: left; background: none; border: none; padding: 0.5rem 1rem; cursor: pointer; color: #c0392b;">
+                                                <i class="bi bi-arrow-left"></i> Exit Inspection & Return to Admin
+                                            </button>
+                                        </form>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                @endif
+                                <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="bi bi-person"></i> {{ __('messages.profile') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ route('settings.index') }}"><i class="bi bi-gear"></i> {{ __('messages.settings') }}</a></li>
+                                @if (auth()->user()?->role?->name === 'Admin')
+                                    <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="bi bi-people"></i> {{ __('users.users_management') }}</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('roles.index') }}"><i class="bi bi-shield-alt"></i> {{ __('roles.roles_management') }}</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('permissions.index') }}"><i class="bi bi-key"></i> {{ __('permissions.permissions_management') }}</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('audit-logs.index') }}"><i class="bi bi-file-earmark-text"></i> {{ __('audit_logs.audit_logs') }}</a></li>
+                                @endif
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bi bi-box-arrow-right"></i> {{ __('messages.logout') }}</a></li>
+                            </ul>
+                        </li>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    @endauth
 
     <!-- Loading -->
     <div class="loading" id="loading">
