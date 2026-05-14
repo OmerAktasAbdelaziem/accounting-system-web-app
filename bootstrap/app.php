@@ -1,8 +1,12 @@
 <?php
 
+use App\Services\TelegramService;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Throwable;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -30,5 +34,34 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(\App\Http\Middleware\AuditLoggingMiddleware::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->reportable(function (Throwable $e) {
+            try {
+                $telegramService = app(TelegramService::class);
+
+                $context = [
+                    'url' => request()->fullUrl(),
+                    'method' => request()->method(),
+                    'ip' => request()->ip(),
+                    'user' => auth()->check() ? auth()->user()->email : 'Guest',
+                ];
+
+                $statusCode = 500;
+                if ($e instanceof HttpExceptionInterface || $e instanceof HttpException) {
+                    $statusCode = $e->getStatusCode();
+                }
+
+                if ($statusCode >= 500) {
+                    $telegramService->notifyHttpError($statusCode, $e, $context);
+                } elseif ($statusCode >= 400) {
+                    $telegramService->notifyHttpError($statusCode, $e, $context);
+                } else {
+                    $telegramService->notifyException($e, $context);
+                }
+            } catch (\Throwable $telegramError) {
+                \Log::error('Failed to send Telegram exception notification', [
+                    'error' => $telegramError->getMessage(),
+                    'exception' => get_class($telegramError),
+                ]);
+            }
+        });
     })->create();
