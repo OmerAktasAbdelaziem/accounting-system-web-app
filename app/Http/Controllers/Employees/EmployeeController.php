@@ -44,6 +44,9 @@ class EmployeeController extends Controller
             'is_active' => 'boolean',
         ]);
 
+        $validated['name_ar'] = $validated['name'];
+        $validated['position_ar'] = $validated['position'];
+        $validated['address_ar'] = $validated['address'] ?? null;
         $validated['employee_code'] = $this->generateEmployeeCode();
 
         Employee::create($validated);
@@ -78,6 +81,10 @@ class EmployeeController extends Controller
             'hire_date' => 'required|date',
             'is_active' => 'boolean',
         ]);
+
+        $validated['name_ar'] = $validated['name'];
+        $validated['position_ar'] = $validated['position'];
+        $validated['address_ar'] = $validated['address'] ?? null;
 
         $employee->update($validated);
         return redirect()->route('employees.index')->with('success', 'Employee updated successfully!');
