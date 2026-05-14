@@ -7,9 +7,19 @@ use App\Models\Employee;
 use App\Models\EmployeeSale;
 use App\Models\EmployeeCommission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class EmployeeController extends Controller
 {
+    private function generateEmployeeCode(): string
+    {
+        do {
+            $employeeCode = 'EMP-' . now()->format('Ymd') . '-' . strtoupper(Str::random(4));
+        } while (Employee::where('employee_code', $employeeCode)->exists());
+
+        return $employeeCode;
+    }
+
     public function index()
     {
         $employees = Employee::paginate(20);
@@ -33,6 +43,8 @@ class EmployeeController extends Controller
             'hire_date' => 'required|date',
             'is_active' => 'boolean',
         ]);
+
+        $validated['employee_code'] = $this->generateEmployeeCode();
 
         Employee::create($validated);
         return redirect()->route('employees.index')->with('success', 'Employee created successfully!');
