@@ -7,15 +7,15 @@
         .component-sidebar .sidebar-logout { margin-top:auto; padding-top:10px; }
         .component-sidebar .sidebar-logout-link { display:flex; align-items:center; gap:8px; padding:10px; color:#c33; text-decoration:none; background:transparent; border-radius:6px; }
         .component-sidebar .sidebar-menu li { list-style:none; }
-        .component-sidebar .sidebar-menu a.roles-management { position: relative; overflow: hidden; padding-right: 38px; }
+        .component-sidebar .sidebar-menu a.roles-management { position: relative; overflow: hidden; padding-left: 38px; }
         .component-sidebar .sidebar-menu a .roles-bg-icon {
             position: absolute;
-            right: 10px;
+            left: 10px;
             top: 50%;
             transform: translateY(-50%);
             font-size: 28px;
             line-height: 1;
-            color: rgba(255, 140, 0, 0.18);
+            color: rgba(0, 0, 0, 0.15);
             pointer-events: none;
         }
     </style>

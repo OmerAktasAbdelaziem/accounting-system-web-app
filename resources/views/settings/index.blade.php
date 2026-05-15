@@ -245,6 +245,7 @@
                                         <option value="BHD" {{ old('currency', $currentSettings['currency']) === 'BHD' ? 'selected' : '' }}>BHD - {{ __('settings.bahrain') }}</option>
                                         <option value="OMR" {{ old('currency', $currentSettings['currency']) === 'OMR' ? 'selected' : '' }}>OMR - {{ __('settings.oman') }}</option>
                                         <option value="JOD" {{ old('currency', $currentSettings['currency']) === 'JOD' ? 'selected' : '' }}>JOD - {{ __('settings.jordan') }}</option>
+                                        <option value="TRY" {{ old('currency', $currentSettings['currency']) === 'TRY' ? 'selected' : '' }}>TRY - {{ __('settings.turkey') }}</option>
                                     </select>
                                     @error('currency')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>

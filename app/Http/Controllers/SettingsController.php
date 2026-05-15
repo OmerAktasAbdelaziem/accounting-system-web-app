@@ -42,7 +42,7 @@ class SettingsController extends Controller
 
         $validated = $request->validate([
             'app_name' => 'required|string|max:255',
-            'currency' => 'required|string|in:USD,AED,EGP,SAR,KWD,QAR,BHD,OMR,JOD',
+            'currency' => 'required|string|in:USD,AED,EGP,SAR,KWD,QAR,BHD,OMR,JOD,TRY',
             'language' => 'required|string|in:en,ar',
             'timezone' => 'required|string|timezone',
             'financial_year_start' => 'required|regex:/^\d{2}-\d{2}$/',
