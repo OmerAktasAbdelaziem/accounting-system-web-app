@@ -65,7 +65,13 @@
             if ($trans !== $rawLabel) return (string) $trans;
             $lower = strtolower($rawLabel);
             $try = __($lower);
-            if ($try !== $lower) return (string) $try;
+            if ($try !== $lower) {
+                if (is_array($try)) {
+                    $fromArray = $flattenFirstString($try);
+                    if ($fromArray !== null) return $fromArray;
+                }
+                return (string) $try;
+            }
             return $rawLabel;
         };
     @endphp
