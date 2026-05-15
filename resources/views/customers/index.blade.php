@@ -27,7 +27,7 @@
                         <td>{{ is_string($customer->name) ? $customer->name : (is_array($customer->name) ? ($customer->name[app()->getLocale()] ?? implode(' - ', $customer->name)) : json_encode($customer->name)) }}</td>
                         <td>{{ is_string($customer->email) ? $customer->email : (is_array($customer->email) ? ($customer->email[app()->getLocale()] ?? implode(' - ', $customer->email)) : json_encode($customer->email)) }}</td>
                         <td>{{ is_string($customer->phone) ? $customer->phone : (is_array($customer->phone) ? ($customer->phone[app()->getLocale()] ?? implode(' - ', $customer->phone)) : json_encode($customer->phone)) }}</td>
-                        <td>{{ number_format($customer->opening_balance ?? 0,2) }}</td>
+                        <td>{{ $currencySymbol }}{{ number_format($customer->opening_balance ?? 0,2) }}</td>
                         <td class="action-buttons text-nowrap">
                             <a href="{{ route('customers.show', $customer) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
                             <a href="{{ route('customers.edit', $customer) }}" class="btn btn-sm btn-outline-primary">{{ __('Edit') }}</a>

@@ -27,7 +27,7 @@
                         <td>{{ $invoice->invoice_number }}</td>
                         <td>{{ $invoice->customer ? (is_string($invoice->customer->name) ? $invoice->customer->name : (is_array($invoice->customer->name) ? ($invoice->customer->name[app()->getLocale()] ?? implode(' - ', $invoice->customer->name)) : json_encode($invoice->customer->name))) : '' }}</td>
                         <td>{{ $invoice->date }}</td>
-                        <td>{{ number_format($invoice->total,2) }}</td>
+                        <td>{{ $currencySymbol }}{{ number_format($invoice->total,2) }}</td>
                         <td class="action-buttons">
                             <a href="{{ route('invoices.show', $invoice) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
                             <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-sm btn-outline-primary">{{ __('Edit') }}</a>

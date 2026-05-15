@@ -27,7 +27,7 @@
                         <td>{{ is_string($supplier->name) ? $supplier->name : (is_array($supplier->name) ? ($supplier->name[app()->getLocale()] ?? implode(' - ', $supplier->name)) : json_encode($supplier->name)) }}</td>
                         <td>{{ is_string($supplier->email) ? $supplier->email : (is_array($supplier->email) ? ($supplier->email[app()->getLocale()] ?? implode(' - ', $supplier->email)) : json_encode($supplier->email)) }}</td>
                         <td>{{ is_string($supplier->phone) ? $supplier->phone : (is_array($supplier->phone) ? ($supplier->phone[app()->getLocale()] ?? implode(' - ', $supplier->phone)) : json_encode($supplier->phone)) }}</td>
-                        <td>{{ number_format($supplier->opening_balance ?? 0,2) }}</td>
+                        <td>{{ $currencySymbol }}{{ number_format($supplier->opening_balance ?? 0,2) }}</td>
                         <td class="action-buttons">
                             <a href="{{ route('suppliers.show', $supplier) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
                             <a href="{{ route('suppliers.edit', $supplier) }}" class="btn btn-sm btn-outline-primary">{{ __('Edit') }}</a>

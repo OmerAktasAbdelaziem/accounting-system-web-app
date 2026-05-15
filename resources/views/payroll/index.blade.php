@@ -26,7 +26,7 @@
                         <td>{{ $payroll->id }}</td>
                         <td>{{ $payroll->employee ? (is_string($payroll->employee->name) ? $payroll->employee->name : (is_array($payroll->employee->name) ? ($payroll->employee->name[app()->getLocale()] ?? implode(' - ', $payroll->employee->name)) : json_encode($payroll->employee->name))) : '' }}</td>
                         <td>{{ $payroll->month }}/{{ $payroll->year }}</td>
-                        <td>{{ number_format($payroll->net_salary,2) }}</td>
+                        <td>{{ $currencySymbol }}{{ number_format($payroll->net_salary,2) }}</td>
                         <td><span class="badge bg-{{ $payroll->status === 'processed' ? 'success' : 'warning' }}">{{ $payroll->status }}</span></td>
                         <td class="action-buttons">
                             <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
