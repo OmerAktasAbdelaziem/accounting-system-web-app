@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\AuditLog;
 use App\Models\Category;
+use App\Models\Currency;
 use App\Models\Commission;
 use App\Models\Permission;
 use App\Models\Role;
@@ -12,6 +13,7 @@ use App\Models\SafeTransaction;
 use App\Models\Storage;
 use App\Models\StorageItem;
 use App\Models\StorageTransfer;
+use App\Models\Setting;
 use App\Models\Warehouse;
 use App\Models\User;
 use App\Policies\AuditLogPolicy;
@@ -44,6 +46,38 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (!function_exists('currentCurrency')) {
+            function currentCurrency(): ?Currency
+            {
+                static $currency = null;
+
+                if ($currency === null) {
+                    $currencyCode = (string) Setting::get('currency', 'AED');
+                    $currency = Currency::byCode($currencyCode);
+                }
+
+                return $currency;
+            }
+        }
+
+        if (!function_exists('currencySymbol')) {
+            function currencySymbol(string $default = '$'): string
+            {
+                return currentCurrency()?->symbol ?? $default;
+            }
+        }
+
+        if (!function_exists('formatCurrency')) {
+            function formatCurrency(float|int $amount, ?int $decimalPlaces = null): string
+            {
+                $currency = currentCurrency();
+                $symbol = $currency?->symbol ?? '$';
+                $places = $decimalPlaces ?? $currency?->decimal_places ?? 2;
+
+                return $symbol . number_format((float) $amount, $places, '.', ',');
+            }
+        }
+
         Gate::policy(Commission::class, CommissionPolicy::class);
         Gate::policy(Category::class, CategoryPolicy::class);
         Gate::policy(Safe::class, SafePolicy::class);
