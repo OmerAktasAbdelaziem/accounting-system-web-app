@@ -3,6 +3,10 @@
 @section('title', __('messages.dashboard'))
 
 @section('content')
+@php
+    $dashboardCurrency = \App\Models\Currency::byCode((string) \App\Models\Setting::get('currency', 'AED'));
+    $dashboardCurrencySymbol = $dashboardCurrency?->symbol ?? '$';
+@endphp
 <div class="mb-4">
     <h1 style="font-weight: 900; color: #1a1a1a;">
         <i class="bi bi-speedometer2" style="color: #ff8c00;"></i> {{ __('messages.dashboard') }}
@@ -22,7 +26,7 @@
     <div class="col-md-6 col-lg-3">
         <div class="stat-card green">
             <h6>{{ __('messages.total_sales') }}</h6>
-            <div class="value" style="color: var(--primary-green);">{{ currencySymbol() }}{{ number_format($totalSales ?? 0, 0) }}</div>
+            <div class="value" style="color: var(--primary-green);">{{ $dashboardCurrencySymbol }}{{ number_format($totalSales ?? 0, 0) }}</div>
             <div class="icon"><i class="bi bi-graph-up"></i></div>
         </div>
     </div>
