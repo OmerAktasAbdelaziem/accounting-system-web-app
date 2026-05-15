@@ -78,11 +78,11 @@
                     $routeName = is_string($item['route'] ?? null) ? $item['route'] : '#';
                     $icon = is_string($item['icon'] ?? null) ? $item['icon'] : 'bi-circle';
                     $active = $routeName && request()->routeIs(str_replace('.index','*',$routeName));
-                    $extraClass = trim(($item['label'] ?? '') === 'Roles Management' ? 'roles-management' : '');
+                    $extraClass = trim($label === 'Roles Management' ? 'roles-management' : '');
                 @endphp
                 <li>
                     <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ trim(($active ? 'active' : '') . ' ' . $extraClass) }}">
-                        @if(($item['label'] ?? '') === 'Roles Management')
+                        @if($label === 'Roles Management')
                             <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
                         @endif
                         <i class="bi {{ $icon }}"></i>
@@ -104,11 +104,11 @@
                         $routeName = is_string($item['route'] ?? null) ? $item['route'] : '#';
                         $icon = is_string($item['icon'] ?? null) ? $item['icon'] : 'bi-circle';
                         $active = $routeName && request()->routeIs(str_replace('.index','*',$routeName));
-                        $extraClass = trim(($item['label'] ?? '') === 'Roles Management' ? 'roles-management' : '');
+                        $extraClass = trim($label === 'Roles Management' ? 'roles-management' : '');
                     @endphp
                     <li>
                         <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ trim(($active ? 'active' : '') . ' ' . $extraClass) }}">
-                            @if(($item['label'] ?? '') === 'Roles Management')
+                            @if($label === 'Roles Management')
                                 <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
                             @endif
                             <i class="bi {{ $icon }}"></i>
@@ -131,11 +131,11 @@
                         $routeName = is_string($item['route'] ?? null) ? $item['route'] : '#';
                         $icon = is_string($item['icon'] ?? null) ? $item['icon'] : 'bi-circle';
                         $active = $routeName && request()->routeIs(str_replace('.index','*',$routeName));
-                        $extraClass = trim(($item['label'] ?? '') === 'Roles Management' ? 'roles-management' : '');
+                        $extraClass = trim($label === 'Roles Management' ? 'roles-management' : '');
                     @endphp
                     <li>
                         <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ trim(($active ? 'active' : '') . ' ' . $extraClass) }}">
-                            @if(($item['label'] ?? '') === 'Roles Management')
+                            @if($label === 'Roles Management')
                                 <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
                             @endif
                             <i class="bi {{ $icon }}"></i>
@@ -158,11 +158,11 @@
                         $routeName = is_string($item['route'] ?? null) ? $item['route'] : '#';
                         $icon = is_string($item['icon'] ?? null) ? $item['icon'] : 'bi-circle';
                         $active = $routeName && request()->routeIs(str_replace('.index','*',$routeName));
-                        $extraClass = trim(($item['label'] ?? '') === 'Roles Management' ? 'roles-management' : '');
+                        $extraClass = trim($label === 'Roles Management' ? 'roles-management' : '');
                     @endphp
                     <li>
                         <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ trim(($active ? 'active' : '') . ' ' . $extraClass) }}">
-                            @if(($item['label'] ?? '') === 'Roles Management')
+                            @if($label === 'Roles Management')
                                 <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
                             @endif
                             <i class="bi {{ $icon }}"></i>
@@ -185,11 +185,11 @@
                         $routeName = is_string($item['route'] ?? null) ? $item['route'] : '#';
                         $icon = is_string($item['icon'] ?? null) ? $item['icon'] : 'bi-circle';
                         $active = $routeName && request()->routeIs(str_replace('.index','*',$routeName));
-                        $extraClass = trim(($item['label'] ?? '') === 'Roles Management' ? 'roles-management' : '');
+                        $extraClass = trim($label === 'Roles Management' ? 'roles-management' : '');
                     @endphp
                     <li>
                         <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ trim(($active ? 'active' : '') . ' ' . $extraClass) }}">
-                            @if(($item['label'] ?? '') === 'Roles Management')
+                            @if($label === 'Roles Management')
                                 <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
                             @endif
                             <i class="bi {{ $icon }}"></i>
