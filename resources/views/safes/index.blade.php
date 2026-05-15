@@ -33,7 +33,7 @@
     <div class="col-md-4">
         <div class="stat-card">
             <h6>{{ __('messages.total_balance') }}</h6>
-            <div class="value">${{ number_format($stats['total_balance'] ?? 0, 2) }}</div>
+            <div class="value">{{ currencySymbol() }}{{ number_format($stats['total_balance'] ?? 0, 2) }}</div>
             <div class="icon"><i class="bi bi-cash-coin"></i></div>
         </div>
     </div>
@@ -62,8 +62,8 @@
                     <tr>
                         <td><strong>{{ $safe->name }}</strong></td>
                         <td>{{ $safe->location }}</td>
-                        <td><h5 style="color: var(--primary-green); font-weight: 900;">${{ number_format($safe->balance, 2) }}</h5></td>
-                        <td>{{ $safe->max_balance ? '$' . number_format($safe->max_balance, 2) : __('messages.unlimited') }}</td>
+                        <td><h5 style="color: var(--primary-green); font-weight: 900;">{{ currencySymbol() }}{{ number_format($safe->balance, 2) }}</h5></td>
+                        <td>{{ $safe->max_balance ? currencySymbol() . number_format($safe->max_balance, 2) : __('messages.unlimited') }}</td>
                         <td>
                             @if($safe->max_balance)
                                 <div class="progress" style="height: 20px;">

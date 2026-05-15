@@ -27,7 +27,7 @@
             </div>
             <div class="stat-content">
                 <h6>{{ __('messages.current_balance') }}</h6>
-                <h3>${{ number_format($safe->balance, 2) }}</h3>
+                <h3>{{ currencySymbol() }}{{ number_format($safe->balance, 2) }}</h3>
             </div>
         </div>
     </div>
@@ -38,7 +38,7 @@
             </div>
             <div class="stat-content">
                 <h6>{{ __('messages.max_balance') }}</h6>
-                <h3>${{ number_format($safe->max_balance, 2) }}</h3>
+                <h3>{{ currencySymbol() }}{{ number_format($safe->max_balance, 2) }}</h3>
             </div>
         </div>
     </div>
@@ -49,7 +49,7 @@
             </div>
             <div class="stat-content">
                 <h6>{{ __('messages.today_deposits') }}</h6>
-                <h3>${{ number_format($todayDeposits, 2) }}</h3>
+                <h3>{{ currencySymbol() }}{{ number_format($todayDeposits, 2) }}</h3>
             </div>
         </div>
     </div>
@@ -60,7 +60,7 @@
             </div>
             <div class="stat-content">
                 <h6>{{ __('messages.today_withdrawals') }}</h6>
-                <h3>${{ number_format($todayWithdrawals, 2) }}</h3>
+                <h3>{{ currencySymbol() }}{{ number_format($todayWithdrawals, 2) }}</h3>
             </div>
         </div>
     </div>
@@ -88,11 +88,11 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.current_balance') }}</label>
-                        <p class="text-success fw-bold">${{ number_format($safe->balance, 2) }}</p>
+                        <p class="text-success fw-bold">{{ currencySymbol() }}{{ number_format($safe->balance, 2) }}</p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.max_balance') }}</label>
-                        <p class="text-muted">${{ number_format($safe->max_balance, 2) }}</p>
+                        <p class="text-muted">{{ currencySymbol() }}{{ number_format($safe->max_balance, 2) }}</p>
                     </div>
                 </div>
 
@@ -167,9 +167,9 @@
                                         <i class="bi bi-{{ $transaction->type === 'deposit' ? 'arrow-up' : 'arrow-down' }}"></i> {{ $transaction->type === 'deposit' ? __('messages.deposit') : __('messages.withdrawal') }}
                                     </span>
                                 </td>
-                                <td class="fw-bold">${{ number_format($transaction->amount, 2) }}</td>
+                                <td class="fw-bold">{{ currencySymbol() }}{{ number_format($transaction->amount, 2) }}</td>
                                 <td>{{ Str::limit($transaction->description, 40, '...') }}</td>
-                                <td>${{ number_format($transaction->balance_after, 2) }}</td>
+                                <td>{{ currencySymbol() }}{{ number_format($transaction->balance_after, 2) }}</td>
                             </tr>
                         @empty
                             <tr>
@@ -211,15 +211,15 @@
                 <table class="table table-sm">
                     <tr class="table-success">
                         <td><strong>{{ __('messages.deposits') }}</strong></td>
-                        <td class="text-end text-success fw-bold">${{ number_format($todayDeposits, 2) }}</td>
+                        <td class="text-end text-success fw-bold">{{ currencySymbol() }}{{ number_format($todayDeposits, 2) }}</td>
                     </tr>
                     <tr class="table-danger">
                         <td><strong>{{ __('messages.withdrawals') }}</strong></td>
-                        <td class="text-end text-danger fw-bold">-${{ number_format($todayWithdrawals, 2) }}</td>
+                        <td class="text-end text-danger fw-bold">-{{ currencySymbol() }}{{ number_format($todayWithdrawals, 2) }}</td>
                     </tr>
                     <tr class="table-info">
                         <td><strong>{{ __('messages.net_change') }}</strong></td>
-                        <td class="text-end fw-bold">${{ number_format($todayDeposits - $todayWithdrawals, 2) }}</td>
+                        <td class="text-end fw-bold">{{ currencySymbol() }}{{ number_format($todayDeposits - $todayWithdrawals, 2) }}</td>
                     </tr>
                     <tr>
                         <td><strong>{{ __('messages.transactions_today') }}</strong></td>
@@ -297,7 +297,7 @@
                 @csrf
                 <div class="modal-body">
                     <div class="alert alert-info">
-                        <small><strong>{{ __('messages.current_balance') }}:</strong> ${{ number_format($safe->balance, 2) }}</small>
+                        <small><strong>{{ __('messages.current_balance') }}:</strong> {{ currencySymbol() }}{{ number_format($safe->balance, 2) }}</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">{{ __('messages.amount') }} *</label>

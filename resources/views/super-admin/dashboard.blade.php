@@ -51,7 +51,7 @@
         <div class="stat-card">
             <div class="stat-content">
                 <h6>Total Revenue</h6>
-                <div class="stat-value">${{ number_format($totalRevenue, 2) }}</div>
+                <div class="stat-value">{{ currencySymbol() }}{{ number_format($totalRevenue, 2) }}</div>
             </div>
             <i class="bi bi-cash-coin stat-icon"></i>
         </div>
@@ -186,7 +186,7 @@
                         @forelse($merchantsByPackage as $pkg)
                             <tr>
                                 <td><strong>{{ $pkg->name }}</strong></td>
-                                <td>${{ number_format($pkg->price, 2) }}</td>
+                                <td>{{ currencySymbol() }}{{ number_format($pkg->price, 2) }}</td>
                                 <td>{{ $pkg->duration_days }} days</td>
                                 <td>
                                     <span class="badge-orange">{{ $pkg->subscriptions_count }}</span>

@@ -34,14 +34,14 @@
     <div class="col-md-3">
         <div class="stat-card green">
             <h6>{{ __('messages.stock_value') }}</h6>
-            <div class="value">${{ number_format($stats['total_stock_value'] ?? 0, 0) }}</div>
+            <div class="value">{{ currencySymbol() }}{{ number_format($stats['total_stock_value'] ?? 0, 0) }}</div>
             <div class="icon"><i class="bi bi-currency-dollar"></i></div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="stat-card green">
             <h6>{{ __('messages.avg_price') }}</h6>
-            <div class="value">${{ number_format($stats['avg_price'] ?? 0, 2) }}</div>
+            <div class="value">{{ currencySymbol() }}{{ number_format($stats['avg_price'] ?? 0, 2) }}</div>
             <div class="icon"><i class="bi bi-tag"></i></div>
         </div>
     </div>
@@ -91,7 +91,7 @@
                             <code>{{ $product->sku }}</code>
                         </td>
                         <td>
-                            ${{ number_format($product->selling_price, 2) }}
+                            {{ currencySymbol() }}{{ number_format($product->selling_price, 2) }}
                         </td>
                         <td>
                             <span class="badge {{ $product->current_stock <= $product->min_stock ? 'bg-danger' : 'bg-success' }}">
@@ -99,7 +99,7 @@
                             </span>
                         </td>
                         <td>
-                            <strong>${{ number_format($product->selling_price * $product->current_stock, 2) }}</strong>
+                            <strong>{{ currencySymbol() }}{{ number_format($product->selling_price * $product->current_stock, 2) }}</strong>
                         </td>
                         <td>
                             @if($product->is_active)

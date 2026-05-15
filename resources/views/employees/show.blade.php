@@ -38,7 +38,7 @@
             </div>
             <div class="stat-content">
                 <h6>{{ __('messages.total_commissions') }}</h6>
-                <h3>${{ number_format($totalCommissions, 2) }}</h3>
+                <h3>{{ currencySymbol() }}{{ number_format($totalCommissions, 2) }}</h3>
             </div>
         </div>
     </div>
@@ -49,7 +49,7 @@
             </div>
             <div class="stat-content">
                 <h6>{{ __('messages.total_sales') }}</h6>
-                <h3>${{ number_format($totalSales, 2) }}</h3>
+                <h3>{{ currencySymbol() }}{{ number_format($totalSales, 2) }}</h3>
             </div>
         </div>
     </div>
@@ -103,7 +103,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.salary') }}</label>
-                        <p class="text-success fw-bold">${{ number_format($employee->salary, 2) }}</p>
+                        <p class="text-success fw-bold">{{ currencySymbol() }}{{ number_format($employee->salary, 2) }}</p>
                     </div>
                 </div>
 
@@ -157,7 +157,7 @@
                         @forelse($recentSales as $sale)
                             <tr>
                                 <td>{{ $sale->sale_date->format('M d, Y') }}</td>
-                                <td>${{ number_format($sale->total_amount, 2) }}</td>
+                                <td>{{ currencySymbol() }}{{ number_format($sale->total_amount, 2) }}</td>
                                 <td><span class="badge bg-info">{{ __('messages.completed') }}</span></td>
                             </tr>
                         @empty
@@ -189,7 +189,7 @@
                         @forelse($recentCommissions as $commission)
                             <tr>
                                 <td>{{ $commission->created_at->format('M d, Y') }}</td>
-                                <td><strong>${{ number_format($commission->commission_earned, 2) }}</strong></td>
+                                <td><strong>{{ currencySymbol() }}{{ number_format($commission->commission_earned, 2) }}</strong></td>
                                 <td>
                                     <span class="badge bg-{{ $commission->status === 'approved' ? 'success' : ($commission->status === 'pending' ? 'warning' : 'danger') }}">
                                         {{ __('messages.' . $commission->status) }}
@@ -222,12 +222,12 @@
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label fw-bold">{{ __('messages.base_salary') }}</label>
-                    <h4 class="text-success">${{ number_format($employee->salary, 2) }}</h4>
+                    <h4 class="text-success">{{ currencySymbol() }}{{ number_format($employee->salary, 2) }}</h4>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label fw-bold">{{ __('messages.total_commissions') }}</label>
-                    <h4 class="text-primary">${{ number_format($totalCommissions, 2) }}</h4>
+                    <h4 class="text-primary">{{ currencySymbol() }}{{ number_format($totalCommissions, 2) }}</h4>
                 </div>
 
                 <hr>
@@ -238,7 +238,7 @@
                 </div>
 
                 <div class="alert alert-info" role="alert">
-                    <small><strong>{{ __('messages.estimated_commission') }}:</strong> {{ number_format($totalSales * ($employee->commission_rate ?? 0) / 100, 2) }}</small>
+                    <small><strong>{{ __('messages.estimated_commission') }}:</strong> {{ currencySymbol() }}{{ number_format($totalSales * ($employee->commission_rate ?? 0) / 100, 2) }}</small>
                 </div>
             </div>
         </div>
@@ -252,7 +252,7 @@
                 <table class="table table-sm">
                     <tr>
                         <td><strong>{{ __('messages.total_sales') }}</strong></td>
-                        <td class="text-end">${{ number_format($totalSales, 2) }}</td>
+                        <td class="text-end">{{ currencySymbol() }}{{ number_format($totalSales, 2) }}</td>
                     </tr>
                     <tr>
                         <td><strong>{{ __('messages.pending_commissions') }}</strong></td>

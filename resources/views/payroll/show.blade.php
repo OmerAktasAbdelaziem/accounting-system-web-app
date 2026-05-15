@@ -34,12 +34,12 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    <p><strong>{{ __('Basic Salary') }}:</strong> {{ number_format($payroll->basic_salary,2) }}</p>
-                    <p><strong>{{ __('Allowances') }}:</strong> {{ number_format($payroll->allowances,2) }}</p>
-                    <p><strong>{{ __('Deductions') }}:</strong> {{ number_format($payroll->deductions,2) }}</p>
+                    <p><strong>{{ __('Basic Salary') }}:</strong> {{ currencySymbol() }}{{ number_format($payroll->basic_salary,2) }}</p>
+                    <p><strong>{{ __('Allowances') }}:</strong> {{ currencySymbol() }}{{ number_format($payroll->allowances,2) }}</p>
+                    <p><strong>{{ __('Deductions') }}:</strong> {{ currencySymbol() }}{{ number_format($payroll->deductions,2) }}</p>
                 </div>
                 <div class="col-md-6">
-                    <p><strong>{{ __('Net Salary') }}:</strong> <strong>{{ number_format($payroll->net_salary,2) }}</strong></p>
+                    <p><strong>{{ __('Net Salary') }}:</strong> <strong>{{ currencySymbol() }}{{ number_format($payroll->net_salary,2) }}</strong></p>
                 </div>
             </div>
 

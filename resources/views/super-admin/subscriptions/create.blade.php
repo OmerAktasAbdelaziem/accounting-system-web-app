@@ -42,7 +42,7 @@
                                 <option value="">-- Choose a Package --</option>
                                 @foreach(\App\Models\Package::where('is_active', true)->get() as $package)
                                 <option value="{{ $package->id }}" data-price="{{ $package->price }}" data-duration="{{ $package->duration_days }}" {{ old('package_id') == $package->id ? 'selected' : '' }}>
-                                    {{ $package->name }} - ${{ number_format($package->price, 2) }}/{{ $package->duration_days }} days
+                                    {{ $package->name }} - {{ currencySymbol() }}{{ number_format($package->price, 2) }}/{{ $package->duration_days }} days
                                 </option>
                                 @endforeach
                             </select>

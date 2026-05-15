@@ -95,7 +95,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="text-muted small">Amount Paid</label>
-                            <p class="mb-0">${{ number_format($activeSubscription->amount_paid, 2) }}</p>
+                            <p class="mb-0">{{ currencySymbol() }}{{ number_format($activeSubscription->amount_paid, 2) }}</p>
                         </div>
                         <a href="{{ route('super-admin.subscriptions.renew', $activeSubscription) }}" class="btn btn-sm btn-primary" onclick="return confirm('Renew this subscription?')">
                             <i class="bi bi-arrow-repeat"></i> Renew

@@ -49,7 +49,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <strong>Package Price:</strong><br>
-                            ${{ number_format($subscription->package->price, 2) }}
+                            {{ currencySymbol() }}{{ number_format($subscription->package->price, 2) }}
                         </div>
                         <div class="col-md-6">
                             <strong>Package Duration:</strong><br>
@@ -110,11 +110,11 @@
                             <div class="row mt-2">
                                 <div class="col-md-6">
                                     <small class="text-muted">Base Price:</small><br>
-                                    ${{ number_format($subscription->package->price, 2) }}
+                                    {{ currencySymbol() }}{{ number_format($subscription->package->price, 2) }}
                                 </div>
                                 <div class="col-md-6">
                                     <small class="text-muted">Renewal Cost:</small><br>
-                                    <span id="renewalCost">${{ number_format($subscription->package->price, 2) }}</span>
+                                    <span id="renewalCost">{{ currencySymbol() }}{{ number_format($subscription->package->price, 2) }}</span>
                                 </div>
                             </div>
                         </div>

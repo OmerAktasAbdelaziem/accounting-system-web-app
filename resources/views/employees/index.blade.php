@@ -33,7 +33,7 @@
                         <td><strong>{{ $employee->name }}</strong></td>
                         <td>{{ $employee->email }}</td>
                         <td>{{ $employee->position }}</td>
-                        <td>${{ number_format($employee->salary, 2) }}</td>
+                        <td>{{ currencySymbol() }}{{ number_format($employee->salary, 2) }}</td>
                         <td>
                             @if($employee->is_active)
                                 <span class="badge bg-success">{{ __('messages.active') }}</span>

@@ -27,7 +27,7 @@
             </div>
             <div class="stat-content">
                 <h6>{{ __('messages.commission_amount') }}</h6>
-                <h3>${{ number_format($commission->amount, 2) }}</h3>
+                <h3>{{ currencySymbol() }}{{ number_format($commission->amount, 2) }}</h3>
             </div>
         </div>
     </div>
@@ -83,7 +83,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.commission_amount') }}</label>
-                        <p class="text-success fw-bold">${{ number_format($commission->amount, 2) }}</p>
+                        <p class="text-success fw-bold">{{ currencySymbol() }}{{ number_format($commission->amount, 2) }}</p>
                     </div>
                 </div>
 
@@ -94,7 +94,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.sales_amount') }}</label>
-                        <p class="text-muted">${{ number_format($commission->sales_amount ?? 0, 2) }}</p>
+                        <p class="text-muted">{{ currencySymbol() }}{{ number_format($commission->sales_amount ?? 0, 2) }}</p>
                     </div>
                 </div>
 
@@ -182,7 +182,7 @@
                     </tr>
                     <tr>
                         <td><strong>{{ __('messages.amount') }}</strong></td>
-                        <td class="text-end text-success fw-bold">${{ number_format($commission->amount, 2) }}</td>
+                        <td class="text-end text-success fw-bold">{{ currencySymbol() }}{{ number_format($commission->amount, 2) }}</td>
                     </tr>
                     <tr>
                         <td><strong>{{ __('messages.period') }}</strong></td>

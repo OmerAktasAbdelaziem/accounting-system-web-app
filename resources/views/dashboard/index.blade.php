@@ -22,7 +22,7 @@
     <div class="col-md-6 col-lg-3">
         <div class="stat-card green">
             <h6>{{ __('messages.total_sales') }}</h6>
-            <div class="value" style="color: var(--primary-green);">${{ number_format($totalSales ?? 0, 0) }}</div>
+            <div class="value" style="color: var(--primary-green);">{{ currencySymbol() }}{{ number_format($totalSales ?? 0, 0) }}</div>
             <div class="icon"><i class="bi bi-graph-up"></i></div>
         </div>
     </div>

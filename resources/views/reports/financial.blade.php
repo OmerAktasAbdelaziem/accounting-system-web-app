@@ -59,8 +59,8 @@
                         <tr>
                             <td>{{ $entry->date->format('M d, Y') }}</td>
                             <td><strong>{{ $item->account->name ?? 'N/A' }}</strong></td>
-                            <td class="text-success">{{ $item->debit > 0 ? '$' . number_format($item->debit, 2) : '-' }}</td>
-                            <td class="text-danger">{{ $item->credit > 0 ? '$' . number_format($item->credit, 2) : '-' }}</td>
+                            <td class="text-success">{{ $item->debit > 0 ? currencySymbol() . number_format($item->debit, 2) : '-' }}</td>
+                            <td class="text-danger">{{ $item->credit > 0 ? currencySymbol() . number_format($item->credit, 2) : '-' }}</td>
                             <td>{{ $item->description ?? $entry->description }}</td>
                         </tr>
                     @empty
