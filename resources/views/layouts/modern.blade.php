@@ -62,6 +62,30 @@
             letter-spacing: 1px;
         }
 
+        .nav-user-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255,255,255,0.6);
+            flex: 0 0 auto;
+        }
+
+        .nav-user-avatar-fallback {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-green));
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 13px;
+            border: 2px solid rgba(255,255,255,0.6);
+            flex: 0 0 auto;
+        }
+
         .navbar-modern .nav-link {
             color: #ffffff !important;
             font-weight: 600;
@@ -209,6 +233,12 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(255, 140, 0, 0.3);
             color: white;
+        }
+
+        .btn-sm {
+            padding: .28rem .55rem;
+            font-size: .78rem;
+            border-radius: 6px;
         }
 
         .btn-success-modern {
@@ -403,6 +433,69 @@
             }
         }
 
+            /* Sidebar layout for modern pages */
+            .modern-container {
+                display: flex;
+                gap: 20px;
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 30px;
+            }
+
+                .modern-sidebar {
+                width: 260px;
+                background: #ffffff;
+                border-right: 1px solid #eee;
+                border-radius: 8px;
+                padding: 12px;
+                flex-shrink: 0;
+                min-height: calc(100vh - 120px);
+                overflow-y: auto;
+                position: sticky;
+                top: 100px;
+            }
+
+            .modern-sidebar .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+            .modern-sidebar .sidebar-menu li { margin: 6px 0; }
+            .modern-sidebar .sidebar-menu a { display:flex; gap:12px; align-items:center; padding:10px; color:var(--primary-black); text-decoration:none; border-radius:6px; }
+            .modern-sidebar .sidebar-menu a:hover { background: var(--orange-light); color: var(--primary-orange); transform: translateX(4px); }
+            .modern-sidebar .sidebar-menu a.active { background: linear-gradient(135deg, var(--primary-orange), var(--primary-green)); color:#fff; }
+
+            .modern-content { flex:1; padding: 0; }
+
+            .modern-sidebar .sidebar-logout { margin-top: auto; padding: 10px; }
+            .modern-sidebar .sidebar-logout-link {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 12px;
+                width: 100%;
+                text-decoration: none;
+                color: #c33;
+                background: rgba(200,0,0,0.06);
+                border-radius: 8px;
+                border: 1px solid #f8dede;
+                font-weight: 600;
+            }
+            .modern-sidebar .sidebar-logout-link:hover { background: rgba(200,0,0,0.1); transform: translateX(-4px); }
+
+            @media (max-width: 992px) {
+                .modern-sidebar { display: none; }
+                .modern-container { padding: 15px; }
+            }
+
+            /* Make sidebar fixed on larger screens so it stays visible while scrolling */
+            @media (min-width: 992px) {
+                .modern-container { position: relative; }
+                .modern-sidebar {
+                    position: fixed;
+                    top: 100px;
+                    left: 20px;
+                    z-index: 1050;
+                }
+                .modern-content { margin-left: 320px; }
+            }
+
         /* Dark Mode Support */
         @media (prefers-color-scheme: dark) {
             body {
@@ -437,115 +530,57 @@
 </head>
 <body>
     @auth
-        <!-- Navbar -->
+        <!-- Slim Top Navbar (brand + toggle) -->
         <nav class="navbar navbar-expand-lg navbar-dark navbar-modern">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{{ route('system.dashboard') }}">
-                    <i class="bi bi-graph-up-arrow"></i> Aktaš
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('system.dashboard') }}">
-                                <i class="bi bi-speedometer2"></i> {{ __('messages.dashboard') }}
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('products*') ? 'active' : '' }}" href="{{ route('products.index') }}">
-                                <i class="bi bi-box-seam"></i> {{ __('messages.products') }}
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('categories*') ? 'active' : '' }}" href="{{ route('categories.index') }}">
-                                <i class="bi bi-tags"></i> {{ __('messages.categories') }}
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('employees*') ? 'active' : '' }}" href="{{ route('employees.index') }}">
-                                <i class="bi bi-people"></i> {{ __('messages.employees') }}
-                            </a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-building"></i> {{ __('messages.customers') }}
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ route('customers.index') }}"><i class="bi bi-people-fill"></i> {{ __('messages.customers') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ route('suppliers.index') }}"><i class="bi bi-truck"></i> {{ __('messages.suppliers') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ route('invoices.index') }}"><i class="bi bi-receipt"></i> {{ __('messages.invoices') }}</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ route('payroll.index') }}"><i class="bi bi-cash-coin"></i> {{ __('messages.payroll') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ route('branches.index') }}"><i class="bi bi-shop"></i> {{ __('messages.branches') }}</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-file-earmark-text"></i> {{ __('messages.reports') }}
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ route('reports.sales') }}">{{ __('messages.sales_report') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ route('reports.inventory') }}">{{ __('messages.inventory_report') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ route('reports.financial') }}">{{ __('messages.financial_report') }}</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-gear"></i> {{ __('messages.systems') }}
-                            </a>
-                            <ul class="dropdown-menu">
-                                @if (auth()->check() && auth()->user()?->role?->name === 'Admin')
-                                    <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="bi bi-people"></i> {{ __('messages.admin_user') }}</a></li>
+                <div class="d-flex align-items-center w-100">
+                    <a class="navbar-brand" href="{{ route('system.dashboard') }}">
+                        <i class="bi bi-graph-up-arrow"></i> {{ \App\Models\Setting::getApplicationName() }}
+                    </a>
+                    <div class="ms-auto d-flex align-items-center gap-3">
+                        <button class="btn btn-outline-light d-lg-none" id="sidebarToggle"><i class="bi bi-list"></i></button>
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                @php
+                                    $avatarPath = auth()->user()->profile_photo_path;
+                                    $navbarAvatar = null;
+                                    if ($avatarPath) {
+                                        if (\Illuminate\Support\Facades\File::exists(public_path($avatarPath))) {
+                                            $navbarAvatar = asset($avatarPath);
+                                        } elseif (\Illuminate\Support\Facades\File::exists(public_path('storage/' . ltrim($avatarPath, '/')))) {
+                                            $navbarAvatar = asset('storage/' . ltrim($avatarPath, '/'));
+                                        } else {
+                                            $navbarAvatar = asset($avatarPath);
+                                        }
+                                    }
+                                    $navbarInitial = strtoupper(substr(auth()->user()->name ?? 'U', 0, 1));
+                                @endphp
+                                @if($navbarAvatar)
+                                    <img src="{{ $navbarAvatar }}" alt="{{ auth()->user()->name }}" class="nav-user-avatar me-2">
+                                @else
+                                    <span class="nav-user-avatar-fallback me-2">{{ $navbarInitial }}</span>
                                 @endif
-                                <li><a class="dropdown-item" href="{{ route('commissions.index') }}"><i class="bi bi-percent"></i> {{ __('messages.commissions') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ route('storages.index') }}"><i class="bi bi-archive"></i> {{ __('messages.storages') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ route('safes.index') }}"><i class="bi bi-safe"></i> {{ __('messages.safes') }}</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" onclick="toggleLanguage(); return false;">
-                                <i class="bi bi-globe"></i> {{ app()->getLocale() === 'ar' ? 'EN' : 'AR' }}
-                            </a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-person-circle"></i> {{ auth()->user()->name }}
+                                {{ auth()->user()->name }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                @if(session('inspecting_merchant'))
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li class="dropdown-header">🔍 Inspecting Merchant</li>
-                                    <li>
-                                        <form action="{{ route('super-admin.exit-inspection') }}" method="POST" class="dropdown-item" style="padding: 0; border: 0;">
-                                            @csrf
-                                            <button type="submit" style="display: block; width: 100%; text-align: left; background: none; border: none; padding: 0.5rem 1rem; cursor: pointer; color: #c0392b;">
-                                                <i class="bi bi-arrow-left"></i> Exit Inspection & Return to Admin
-                                            </button>
-                                        </form>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                @endif
                                 <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="bi bi-person"></i> {{ __('messages.profile') }}</a></li>
                                 <li><a class="dropdown-item" href="{{ route('settings.index') }}"><i class="bi bi-gear"></i> {{ __('messages.settings') }}</a></li>
-                                @if (auth()->user()?->role?->name === 'Admin')
-                                    <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="bi bi-people"></i> {{ __('users.users_management') }}</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('roles.index') }}"><i class="bi bi-shield-alt"></i> {{ __('roles.roles_management') }}</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('permissions.index') }}"><i class="bi bi-key"></i> {{ __('permissions.permissions_management') }}</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('audit-logs.index') }}"><i class="bi bi-file-earmark-text"></i> {{ __('audit_logs.audit_logs') }}</a></li>
-                                @endif
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bi bi-box-arrow-right"></i> {{ __('messages.logout') }}</a></li>
                             </ul>
-                        </li>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
+
+        <!-- Sidebar + Content container -->
+        <div class="modern-container">
+            <aside class="modern-sidebar" id="modernSidebar">
+                <x-sidebar />
+            </aside>
+
+            <main class="modern-content">
     @endauth
 
     <!-- Loading -->
@@ -578,10 +613,10 @@
         @yield('content')
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; {{ date('Y') }} Aktaš System | Modern Accounting Management</p>
-    </footer>
+    @auth
+            </main>
+        </div>
+    @endauth
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -616,6 +651,25 @@
                     bsAlert.close();
                 }, 5000);
             });
+        });
+        // Sidebar toggle for small screens
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('modernSidebar');
+            if (toggle && sidebar) {
+                toggle.addEventListener('click', function() {
+                    if (sidebar.style.display === 'block') {
+                        sidebar.style.display = 'none';
+                    } else {
+                        sidebar.style.display = 'block';
+                        sidebar.style.position = 'fixed';
+                        sidebar.style.zIndex = '1050';
+                        sidebar.style.left = '10px';
+                        sidebar.style.top = '80px';
+                        sidebar.style.boxShadow = '0 8px 30px rgba(0,0,0,0.2)';
+                    }
+                });
+            }
         });
     </script>
 

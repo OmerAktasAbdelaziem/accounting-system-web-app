@@ -23,7 +23,6 @@
                     <th>{{ __('messages.email') }}</th>
                     <th>{{ __('messages.position') }}</th>
                     <th>{{ __('messages.salary') }}</th>
-                    <th>{{ __('messages.hire_date') }}</th>
                     <th>{{ __('messages.status') }}</th>
                     <th>{{ __('messages.actions') }}</th>
                 </tr>
@@ -35,7 +34,6 @@
                         <td>{{ $employee->email }}</td>
                         <td>{{ $employee->position }}</td>
                         <td>${{ number_format($employee->salary, 2) }}</td>
-                        <td>{{ $employee->hire_date->format('M d, Y') }}</td>
                         <td>
                             @if($employee->is_active)
                                 <span class="badge bg-success">{{ __('messages.active') }}</span>
@@ -57,7 +55,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center text-muted">{{ __('messages.no_data') }}</td>
+                        <td colspan="6" class="text-center text-muted">{{ __('messages.no_data') }}</td>
                     </tr>
                 @endforelse
             </tbody>

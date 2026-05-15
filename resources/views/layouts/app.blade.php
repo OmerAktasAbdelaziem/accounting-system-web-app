@@ -148,6 +148,12 @@
             transform: translateY(-2px);
         }
 
+        .btn-sm {
+            padding: .28rem .55rem;
+            font-size: .78rem;
+            border-radius: 6px;
+        }
+
         .stat-card {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
@@ -271,6 +277,12 @@
                 font-size: 18px;
             }
         }
+
+        /* Fix small-layout sidebar to viewport on larger screens */
+        @media (min-width: 992px) {
+            .sidebar { position: fixed; top: 100px; left: 20px; width: 260px; z-index: 1050; overflow-y:auto; max-height:calc(100vh - 140px); }
+            .content-area { margin-left: 300px; }
+        }
     </style>
 
     @yield('css')
@@ -280,7 +292,7 @@
     <nav class="navbar navbar-expand-lg navbar-light navbar-custom">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ route('system.dashboard') }}">
-                <i class="bi bi-graph-up"></i> Aktaš System
+                <i class="bi bi-graph-up"></i> {{ \App\Models\Setting::getApplicationName() }}
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -446,25 +458,16 @@
         @endif
 
         <div class="row">
-            @if ($sidebar ?? false)
-                <div class="col-lg-3">
-                    @yield('sidebar')
+            <div class="col-lg-3">
+                <div class="sidebar">
+                    <x-sidebar />
                 </div>
-                <div class="col-lg-9">
-                    @yield('content')
-                </div>
-            @else
-                <div class="col-12">
-                    @yield('content')
-                </div>
-            @endif
+            </div>
+            <div class="col-lg-9 content-area">
+                @yield('content')
+            </div>
         </div>
     </div>
-
-    <!-- Footer -->
-    <footer>
-        <p>&copy; {{ date('Y') }} Aktaš System. All rights reserved.</p>
-    </footer>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -14,10 +14,11 @@ class SettingsController extends Controller
     {
         // Get all settings
         $settings = Setting::all();
+        $user = auth()->user();
         
         // Get current values
         $currentSettings = [
-            'app_name' => Setting::get('app_name', 'Aktas System'),
+            'app_name' => $user?->merchant?->business_name ?? Setting::get('app_name', 'Aktas System'),
             'currency' => Setting::get('currency', 'AED'),
             'language' => Setting::get('language', 'en'),
             'timezone' => Setting::get('timezone', 'Asia/Dubai'),
@@ -37,6 +38,8 @@ class SettingsController extends Controller
      */
     public function update(Request $request)
     {
+        $user = auth()->user();
+
         $validated = $request->validate([
             'app_name' => 'required|string|max:255',
             'currency' => 'required|string|in:USD,AED,EGP,SAR,KWD,QAR,BHD,OMR,JOD',
@@ -59,6 +62,14 @@ class SettingsController extends Controller
             } else {
                 Setting::set($key, $value, 'string');
             }
+        }
+
+        if ($user?->merchant && ! $user->isSuperAdmin()) {
+            $user->merchant->update([
+                'business_name' => $validated['app_name'],
+            ]);
+        } else {
+            Setting::set('app_name', $validated['app_name'], 'string');
         }
 
         return back()->with('success', __('messages.settings_updated_successfully'));

@@ -32,6 +32,7 @@ class User extends Authenticatable
         'phone',
         'address',
         'notes',
+        'profile_photo_path',
         'last_login',
         'api_token',
         'api_token_expires_at',

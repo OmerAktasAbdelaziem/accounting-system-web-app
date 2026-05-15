@@ -4,24 +4,54 @@
 
 @section('content')
 <div class="container-fluid mt-4">
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h2 class="mb-0">
-                <i class="fas fa-history me-2"></i>
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+        <div>
+            <h2 class="mb-1 fw-bold">
+                <i class="fas fa-history me-2 text-primary"></i>
                 {{ __('audit_logs.audit_logs') }}
             </h2>
+            <div class="text-muted">Track user activity, model changes, and system events in one place.</div>
         </div>
-        <div class="col-md-4 text-end">
-            <a href="{{ route('audit-logs.export', request()->query()) }}" class="btn btn-outline-primary" title="{{ __('audit_logs.export') }}">
-                <i class="fas fa-download me-2"></i>
-                {{ __('audit_logs.export') }}
-            </a>
+        <a href="{{ route('audit-logs.export', request()->query()) }}" class="btn btn-primary-modern btn-sm" title="{{ __('audit_logs.export') }}">
+            <i class="fas fa-download me-2"></i>
+            {{ __('audit_logs.export') }}
+        </a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <h6>Total Logs</h6>
+                <div class="value">{{ $logs->total() }}</div>
+                <i class="fas fa-list icon"></i>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card green">
+                <h6>Created</h6>
+                <div class="value">{{ $logs->where('action', 'created')->count() }}</div>
+                <i class="fas fa-plus icon"></i>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <h6>Updated</h6>
+                <div class="value">{{ $logs->where('action', 'updated')->count() }}</div>
+                <i class="fas fa-pen icon"></i>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card green">
+                <h6>Deleted</h6>
+                <div class="value">{{ $logs->where('action', 'deleted')->count() }}</div>
+                <i class="fas fa-trash icon"></i>
+            </div>
         </div>
     </div>
 
     <!-- Filter Card -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-light">
+    <div class="card mb-4">
+        <div class="card-header">
             <h5 class="mb-0">
                 <i class="fas fa-filter me-2"></i>
                 {{ __('audit_logs.filter_by_date') }}
@@ -95,10 +125,10 @@
     </div>
 
     <!-- Logs Table -->
-    <div class="card border-0 shadow-sm">
+    <div class="card">
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead class="bg-light">
+            <table class="table table-hover mb-0 align-middle">
+                <thead>
                     <tr>
                         <th>{{ __('audit_logs.date') }}</th>
                         <th>{{ __('audit_logs.time') }}</th>
@@ -120,7 +150,7 @@
                                 <small class="text-muted">{{ $log->created_at->format('H:i:s') }}</small>
                             </td>
                             <td>
-                                <span class="badge bg-info">
+                                <span class="badge bg-info text-dark">
                                     {{ $log->user?->name ?? 'System' }}
                                 </span>
                             </td>
@@ -154,7 +184,7 @@
                                 <small class="text-muted">{{ $log->ip_address }}</small>
                             </td>
                             <td>
-                                <div class="action-buttons">
+                                <div class="action-buttons d-inline-flex">
                                     <a href="{{ route('audit-logs.show', $log) }}" class="btn btn-sm btn-primary" title="{{ __('actions.view') }}">
                                         <i class="fas fa-eye" aria-hidden="true"></i>
                                         <span class="visually-hidden">{{ __('actions.view') }}</span>

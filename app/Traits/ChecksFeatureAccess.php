@@ -15,6 +15,10 @@ trait ChecksFeatureAccess
         $user = Auth::user();
         
         if (!$user || !$user->merchant_id) {
+            // In local development it's convenient to show features even without a merchant
+            if (app()->isLocal()) {
+                return true;
+            }
             return false;
         }
 

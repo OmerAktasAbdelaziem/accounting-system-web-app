@@ -115,11 +115,31 @@
             cursor: pointer;
         }
 
+        .user-avatar-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.65);
+        }
+
         /* ============ MAIN CONTAINER ============ */
         .super-admin-container {
             display: flex;
             flex: 1;
             min-height: calc(100vh - 80px);
+        }
+
+        /* Fix the sidebar so it stays in view while scrolling */
+        @media (min-width: 992px) {
+            .super-admin-sidebar {
+                position: fixed;
+                top: 80px;
+                left: 0;
+                z-index: 1050;
+            }
+            .super-admin-content { margin-left: 280px; }
         }
 
         /* ============ SIDEBAR ============ */
@@ -336,8 +356,9 @@
         }
 
         .btn-sm {
-            padding: 6px 16px;
-            font-size: 12px;
+            padding: .28rem .55rem;
+            font-size: .78rem;
+            border-radius: 6px;
         }
 
         /* ============ TABLES ============ */
@@ -514,7 +535,7 @@
         <div class="d-flex align-items-center w-100">
             <a href="{{ route('super-admin.dashboard') }}" class="navbar-brand">
                 <i class="bi bi-gem"></i>
-                <span>Aktaš Admin</span>
+                <span>{{ \App\Models\Setting::getApplicationName() }}</span>
             </a>
             
             <div class="navbar-end">
@@ -527,9 +548,25 @@
                     </form>
                 @endif
                 <div class="user-menu">
-                    <div class="user-avatar">
-                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                    </div>
+                    @php
+                        $avatarPath = auth()->user()->profile_photo_path;
+                        $superAdminAvatar = null;
+                        if ($avatarPath) {
+                            if (\Illuminate\Support\Facades\File::exists(public_path($avatarPath))) {
+                                $superAdminAvatar = asset($avatarPath);
+                            } elseif (\Illuminate\Support\Facades\File::exists(public_path('storage/' . ltrim($avatarPath, '/')))) {
+                                $superAdminAvatar = asset('storage/' . ltrim($avatarPath, '/'));
+                            } else {
+                                $superAdminAvatar = asset($avatarPath);
+                            }
+                        }
+                        $superAdminInitial = strtoupper(substr(auth()->user()->name ?? 'U', 0, 1));
+                    @endphp
+                    @if($superAdminAvatar)
+                        <img src="{{ $superAdminAvatar }}" alt="{{ auth()->user()->name }}" class="user-avatar-image">
+                    @else
+                        <div class="user-avatar">{{ $superAdminInitial }}</div>
+                    @endif
                     <div>
                         <small class="d-block" style="color: rgba(255,255,255,0.7);">{{ auth()->user()->name }}</small>
                         <small style="color: var(--primary-orange); font-weight: 600;">Super Admin</small>
@@ -549,86 +586,7 @@
     <div class="super-admin-container">
         <!-- SIDEBAR -->
         <aside class="super-admin-sidebar">
-            <!-- Dashboard -->
-            <div class="sidebar-section">
-                <div class="sidebar-title">Main</div>
-                <ul class="sidebar-menu">
-                    <li>
-                        <a href="{{ route('super-admin.dashboard') }}" 
-                           class="@if(request()->routeIs('super-admin.dashboard')) active @endif">
-                            <i class="bi bi-speedometer2"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Management -->
-            <div class="sidebar-section">
-                <div class="sidebar-title">Management</div>
-                <ul class="sidebar-menu">
-                    <li>
-                        <a href="{{ route('super-admin.users.index') }}" 
-                           class="@if(request()->routeIs('super-admin.users*')) active @endif">
-                            <i class="bi bi-people"></i>
-                            <span>System Users</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('super-admin.merchants.index') }}" 
-                           class="@if(request()->routeIs('super-admin.merchants*')) active @endif">
-                            <i class="bi bi-building"></i>
-                            <span>Clients (Merchants)</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('super-admin.packages.index') }}" 
-                           class="@if(request()->routeIs('super-admin.packages*')) active @endif">
-                            <i class="bi bi-box-seam"></i>
-                            <span>Packages</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('super-admin.subscriptions.index') }}" 
-                           class="@if(request()->routeIs('super-admin.subscriptions*')) active @endif">
-                            <i class="bi bi-bookmark-check"></i>
-                            <span>Subscriptions</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Configuration -->
-            <div class="sidebar-section">
-                <div class="sidebar-title">Configuration</div>
-                <ul class="sidebar-menu">
-                    <li>
-                        <a href="{{ route('super-admin.feature-access.index') }}" 
-                           class="@if(request()->routeIs('super-admin.feature-access*')) active @endif">
-                            <i class="bi bi-toggles2"></i>
-                            <span>Feature Access</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('super-admin.vat-rates.index') }}" 
-                           class="@if(request()->routeIs('super-admin.vat-rates*')) active @endif">
-                            <i class="bi bi-percent"></i>
-                            <span>Tax Rates</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Logout -->
-            <div class="sidebar-logout">
-                <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form-bottom').submit();">
-                    <i class="bi bi-box-arrow-left"></i>
-                    <span>Logout</span>
-                </a>
-                <form id="logout-form-bottom" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
-            </div>
+            <x-sidebar />
         </aside>
 
         <!-- MAIN CONTENT -->

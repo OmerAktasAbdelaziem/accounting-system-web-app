@@ -10,9 +10,7 @@ use App\Http\Controllers\Employees\EmployeeController;
 use App\Http\Controllers\Reports\ReportController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\SettingsController;
-use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\RoleController;
-use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\Commissions\CommissionController;
@@ -232,18 +230,6 @@ Route::middleware('auth')->group(function () {
     // Exit Inspection (accessible from merchant dashboard when inspecting)
     Route::post('super-admin/exit-inspection', [SystemUserController::class, 'exitInspection'])->name('super-admin.exit-inspection');
 
-    // Admin - User Management
-    Route::prefix('users')->name('users.')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('index');
-        Route::get('create', [UserController::class, 'create'])->name('create');
-        Route::post('/', [UserController::class, 'store'])->name('store');
-        Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
-        Route::put('{user}', [UserController::class, 'update'])->name('update');
-        Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
-        Route::post('{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggleStatus');
-        Route::post('{user}/reset-password', [UserController::class, 'resetPassword'])->name('resetPassword');
-    });
-
     // Admin - Role Management
     Route::prefix('roles')->name('roles.')->group(function () {
         Route::get('/', [RoleController::class, 'index'])->name('index');
@@ -252,16 +238,6 @@ Route::middleware('auth')->group(function () {
         Route::get('{role}/edit', [RoleController::class, 'edit'])->name('edit');
         Route::put('{role}', [RoleController::class, 'update'])->name('update');
         Route::delete('{role}', [RoleController::class, 'destroy'])->name('destroy');
-    });
-
-    // Admin - Permission Management
-    Route::prefix('permissions')->name('permissions.')->group(function () {
-        Route::get('/', [PermissionController::class, 'index'])->name('index');
-        Route::get('create', [PermissionController::class, 'create'])->name('create');
-        Route::post('/', [PermissionController::class, 'store'])->name('store');
-        Route::get('{permission}/edit', [PermissionController::class, 'edit'])->name('edit');
-        Route::put('{permission}', [PermissionController::class, 'update'])->name('update');
-        Route::delete('{permission}', [PermissionController::class, 'destroy'])->name('destroy');
     });
 
     // Super Admin Routes

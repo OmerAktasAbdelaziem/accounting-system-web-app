@@ -79,4 +79,18 @@ class Setting extends Model
         }
         return $settings;
     }
+
+    /**
+     * Get the display name shown in the top navbar.
+     */
+    public static function getApplicationName(): string
+    {
+        $user = auth()->user();
+
+        if ($user?->merchant?->business_name) {
+            return (string) $user->merchant->business_name;
+        }
+
+        return (string) self::get('app_name', config('app.name', 'Aktas'));
+    }
 }

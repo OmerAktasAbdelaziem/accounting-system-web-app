@@ -6,13 +6,13 @@
 <div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-8 offset-md-2">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">
                         <i class="fas fa-history me-2"></i>
                         {{ __('audit_logs.details') }}
                     </h4>
-                    <a href="{{ route('audit-logs.index') }}" class="btn btn-sm btn-light">
+                    <a href="{{ route('audit-logs.index') }}" class="btn btn-sm btn-outline-light">
                         <i class="fas fa-arrow-left me-2"></i>
                         {{ __('actions.back') }}
                     </a>
@@ -25,7 +25,7 @@
                             <div class="mb-3">
                                 <label class="form-label text-muted small">{{ __('audit_logs.user') }}</label>
                                 <div class="fs-6 fw-semibold">
-                                    <span class="badge bg-info">
+                                    <span class="badge bg-info text-dark">
                                         {{ $auditLog->user?->name ?? 'System' }} 
                                         <small class="text-muted">({{ $auditLog->user?->email }})</small>
                                     </span>
