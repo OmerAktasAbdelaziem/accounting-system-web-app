@@ -21,17 +21,46 @@
     </style>
 
     @php
-        $resolveLabel = function ($rawLabel) {
-            if (!is_string($rawLabel)) return (string) ($rawLabel ?? '');
+        $flattenFirstString = function ($value) {
+            if (is_string($value)) {
+                $trimmed = trim($value);
+                return $trimmed !== '' ? $trimmed : null;
+            }
+
+            if (is_array($value)) {
+                $stack = array_values($value);
+                while (!empty($stack)) {
+                    $item = array_shift($stack);
+                    if (is_string($item)) {
+                        $trimmed = trim($item);
+                        if ($trimmed !== '') {
+                            return $trimmed;
+                        }
+                    } elseif (is_array($item)) {
+                        foreach ($item as $nested) {
+                            $stack[] = $nested;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        };
+
+        $resolveLabel = function ($rawLabel) use ($flattenFirstString) {
+            if (is_array($rawLabel)) {
+                $fromArray = $flattenFirstString($rawLabel);
+                return $fromArray ?? 'N/A';
+            }
+
+            if (!is_string($rawLabel)) {
+                return $rawLabel === null ? '' : (string) $rawLabel;
+            }
+
             $trans = __($rawLabel);
             if (is_array($trans)) {
-                $found = null; $stack = $trans;
-                while (! empty($stack) && $found === null) {
-                    $val = array_shift($stack);
-                    if (is_string($val) && trim($val) !== '') { $found = $val; break; }
-                    if (is_array($val)) { foreach ($val as $v) { $stack[] = $v; } }
-                }
-                if ($found !== null) return $found;
+                $fromArray = $flattenFirstString($trans);
+                if ($fromArray !== null) return $fromArray;
             }
             if ($trans !== $rawLabel) return (string) $trans;
             $lower = strtolower($rawLabel);
@@ -46,8 +75,8 @@
                 @php
                     $label = $resolveLabel($item['label'] ?? '');
                     if (is_array($label)) { $label = json_encode($label); }
-                    $routeName = $item['route'] ?? '#';
-                    $icon = $item['icon'] ?? '';
+                    $routeName = is_string($item['route'] ?? null) ? $item['route'] : '#';
+                    $icon = is_string($item['icon'] ?? null) ? $item['icon'] : 'bi-circle';
                     $active = $routeName && request()->routeIs(str_replace('.index','*',$routeName));
                     $extraClass = trim(($item['label'] ?? '') === 'Roles Management' ? 'roles-management' : '');
                 @endphp
@@ -72,8 +101,8 @@
                     @php
                         $label = $resolveLabel($item['label'] ?? '');
                         if (is_array($label)) { $label = json_encode($label); }
-                        $routeName = $item['route'] ?? '#';
-                        $icon = $item['icon'] ?? '';
+                        $routeName = is_string($item['route'] ?? null) ? $item['route'] : '#';
+                        $icon = is_string($item['icon'] ?? null) ? $item['icon'] : 'bi-circle';
                         $active = $routeName && request()->routeIs(str_replace('.index','*',$routeName));
                         $extraClass = trim(($item['label'] ?? '') === 'Roles Management' ? 'roles-management' : '');
                     @endphp
@@ -99,8 +128,8 @@
                     @php
                         $label = $resolveLabel($item['label'] ?? '');
                         if (is_array($label)) { $label = json_encode($label); }
-                        $routeName = $item['route'] ?? '#';
-                        $icon = $item['icon'] ?? '';
+                        $routeName = is_string($item['route'] ?? null) ? $item['route'] : '#';
+                        $icon = is_string($item['icon'] ?? null) ? $item['icon'] : 'bi-circle';
                         $active = $routeName && request()->routeIs(str_replace('.index','*',$routeName));
                         $extraClass = trim(($item['label'] ?? '') === 'Roles Management' ? 'roles-management' : '');
                     @endphp
@@ -126,8 +155,8 @@
                     @php
                         $label = $resolveLabel($item['label'] ?? '');
                         if (is_array($label)) { $label = json_encode($label); }
-                        $routeName = $item['route'] ?? '#';
-                        $icon = $item['icon'] ?? '';
+                        $routeName = is_string($item['route'] ?? null) ? $item['route'] : '#';
+                        $icon = is_string($item['icon'] ?? null) ? $item['icon'] : 'bi-circle';
                         $active = $routeName && request()->routeIs(str_replace('.index','*',$routeName));
                         $extraClass = trim(($item['label'] ?? '') === 'Roles Management' ? 'roles-management' : '');
                     @endphp
@@ -153,8 +182,8 @@
                     @php
                         $label = $resolveLabel($item['label'] ?? '');
                         if (is_array($label)) { $label = json_encode($label); }
-                        $routeName = $item['route'] ?? '#';
-                        $icon = $item['icon'] ?? '';
+                        $routeName = is_string($item['route'] ?? null) ? $item['route'] : '#';
+                        $icon = is_string($item['icon'] ?? null) ? $item['icon'] : 'bi-circle';
                         $active = $routeName && request()->routeIs(str_replace('.index','*',$routeName));
                         $extraClass = trim(($item['label'] ?? '') === 'Roles Management' ? 'roles-management' : '');
                     @endphp
