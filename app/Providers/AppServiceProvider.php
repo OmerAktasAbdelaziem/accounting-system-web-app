@@ -29,6 +29,7 @@ use App\Policies\StorageTransferPolicy;
 use App\Policies\WarehousePolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -46,6 +47,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $currencyCode = (string) Setting::get('currency', 'AED');
+        View::share('currencySymbol', Currency::byCode($currencyCode)?->symbol ?? '$');
+
         if (!function_exists('currentCurrency')) {
             function currentCurrency(): ?Currency
             {

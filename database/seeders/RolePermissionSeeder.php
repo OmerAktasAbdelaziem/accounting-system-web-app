@@ -14,31 +14,41 @@ class RolePermissionSeeder extends Seeder
     public function run(): void
     {
         // Create Roles
-        $adminRole = Role::create([
+        $adminRole = Role::updateOrCreate([
+            'name' => 'Admin',
+        ], [
             'name' => 'Admin',
             'name_ar' => 'مسؤول النظام',
             'description' => 'Full system access',
         ]);
 
-        $branchManagerRole = Role::create([
+        $branchManagerRole = Role::updateOrCreate([
+            'name' => 'Branch Manager',
+        ], [
             'name' => 'Branch Manager',
             'name_ar' => 'مدير الفرع',
             'description' => 'Manage branch operations',
         ]);
 
-        $accountantRole = Role::create([
+        $accountantRole = Role::updateOrCreate([
+            'name' => 'Accountant',
+        ], [
             'name' => 'Accountant',
             'name_ar' => 'محاسب',
             'description' => 'Handle accounting operations',
         ]);
 
-        $cashierRole = Role::create([
+        $cashierRole = Role::updateOrCreate([
+            'name' => 'Cashier',
+        ], [
             'name' => 'Cashier',
             'name_ar' => 'أمين الصندوق',
             'description' => 'Handle cash transactions',
         ]);
 
-        $viewOnlyRole = Role::create([
+        $viewOnlyRole = Role::updateOrCreate([
+            'name' => 'View-Only',
+        ], [
             'name' => 'View-Only',
             'name_ar' => 'عرض فقط',
             'description' => 'Can only view data',
@@ -111,7 +121,10 @@ class RolePermissionSeeder extends Seeder
         ];
 
         foreach ($permissions as $perm) {
-            Permission::create($perm);
+            Permission::firstOrCreate(
+                ['name' => $perm['name']],
+                $perm
+            );
         }
 
         // Get all permissions
@@ -120,14 +133,14 @@ class RolePermissionSeeder extends Seeder
 
         // Assign permissions to roles
         // Admin - All permissions
-        $adminRole->permissions()->attach($allPermissionIds);
+        $adminRole->permissions()->syncWithoutDetaching($allPermissionIds);
 
         // Branch Manager - Most permissions except user management and settings
         $branchManagerPermissions = $allPermissions
             ->whereNotIn('name', ['create_user', 'edit_user', 'delete_user', 'manage_settings'])
             ->pluck('id')
             ->toArray();
-        $branchManagerRole->permissions()->attach($branchManagerPermissions);
+        $branchManagerRole->permissions()->syncWithoutDetaching($branchManagerPermissions);
 
         // Accountant - Inventory and Reporting
         $accountantPermissions = $allPermissions
@@ -146,7 +159,7 @@ class RolePermissionSeeder extends Seeder
             ])
             ->pluck('id')
             ->toArray();
-        $accountantRole->permissions()->attach($accountantPermissions);
+        $accountantRole->permissions()->syncWithoutDetaching($accountantPermissions);
 
         // Cashier - Limited inventory and product viewing
         $cashierPermissions = $allPermissions
@@ -161,7 +174,7 @@ class RolePermissionSeeder extends Seeder
             ])
             ->pluck('id')
             ->toArray();
-        $cashierRole->permissions()->attach($cashierPermissions);
+        $cashierRole->permissions()->syncWithoutDetaching($cashierPermissions);
 
         // View-Only - Can only view
         $viewOnlyPermissions = $allPermissions
@@ -178,6 +191,6 @@ class RolePermissionSeeder extends Seeder
             ])
             ->pluck('id')
             ->toArray();
-        $viewOnlyRole->permissions()->attach($viewOnlyPermissions);
+        $viewOnlyRole->permissions()->syncWithoutDetaching($viewOnlyPermissions);
     }
 }
