@@ -44,8 +44,8 @@
                     <tr>
                         <td>{{ $item->product?->name ?? 'Item ' . $item->id }}</td>
                         <td class="text-end">{{ $item->quantity }}</td>
-                        <td class="text-end">{{ currencySymbol() }}{{ number_format($item->unit_price, 2) }}</td>
-                        <td class="text-end">{{ currencySymbol() }}{{ number_format($item->line_total, 2) }}</td>
+                        <td class="text-end">{{ $currencySymbol }}{{ number_format($item->unit_price, 2) }}</td>
+                        <td class="text-end">{{ $currencySymbol }}{{ number_format($item->line_total, 2) }}</td>
                     </tr>
                     @empty
                     <tr>
@@ -64,22 +64,22 @@
                 <div class="card-body">
                     <div class="row mb-2">
                         <div class="col-6"><strong>{{ __('Sub Total:') }}</strong></div>
-                        <div class="col-6 text-end">{{ currencySymbol() }}{{ number_format($invoice->sub_total, 2) }}</div>
+                        <div class="col-6 text-end">{{ $currencySymbol }}{{ number_format($invoice->sub_total, 2) }}</div>
                     </div>
                     <div class="row mb-2">
                         <div class="col-6"><strong>{{ __('Tax:') }}</strong></div>
-                        <div class="col-6 text-end">{{ currencySymbol() }}{{ number_format($invoice->tax, 2) }}</div>
+                        <div class="col-6 text-end">{{ $currencySymbol }}{{ number_format($invoice->tax, 2) }}</div>
                     </div>
                     @if($invoice->vat_rate > 0)
                     <div class="row mb-3">
                         <div class="col-6"><strong>{{ __('VAT') }} ({{ $invoice->vat_rate }}%):</strong></div>
-                        <div class="col-6 text-end">{{ currencySymbol() }}{{ number_format($invoice->vat_amount, 2) }}</div>
+                        <div class="col-6 text-end">{{ $currencySymbol }}{{ number_format($invoice->vat_amount, 2) }}</div>
                     </div>
                     @endif
                     <hr>
                     <div class="row">
                         <div class="col-6"><h5>{{ __('Total:') }}</h5></div>
-                        <div class="col-6 text-end"><h5>{{ currencySymbol() }}{{ number_format($invoice->total, 2) }}</h5></div>
+                        <div class="col-6 text-end"><h5>{{ $currencySymbol }}{{ number_format($invoice->total, 2) }}</h5></div>
                     </div>
                 </div>
             </div>

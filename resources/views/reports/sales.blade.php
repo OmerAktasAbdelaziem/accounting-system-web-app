@@ -74,8 +74,8 @@
                         <td>{{ $sale->date->format('M d, Y') }}</td>
                         <td><code>{{ $sale->reference_number ?? '-' }}</code></td>
                         <td>{{ $sale->description }}</td>
-                        <td>{{ currencySymbol() }}{{ number_format($sale->total_debit, 2) }}</td>
-                        <td><strong>{{ currencySymbol() }}{{ number_format($sale->total_credit, 2) }}</strong></td>
+                        <td>{{ $currencySymbol }}{{ number_format($sale->total_debit, 2) }}</td>
+                        <td><strong>{{ $currencySymbol }}{{ number_format($sale->total_credit, 2) }}</strong></td>
                         <td>
                             <span class="badge {{ $sale->status === 'posted' ? 'bg-success' : 'bg-warning' }}">
                                 {{ ucfirst($sale->status) }}

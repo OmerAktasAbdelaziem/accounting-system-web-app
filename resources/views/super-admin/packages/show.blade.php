@@ -22,7 +22,7 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <strong>Price:</strong><br>
-                            <span class="text-primary fs-5">{{ currencySymbol() }}{{ number_format($package->price, 2) }}</span>
+                            <span class="text-primary fs-5">{{ $currencySymbol }}{{ number_format($package->price, 2) }}</span>
                         </div>
                         <div class="col-md-6">
                             <strong>Duration:</strong><br>
@@ -165,7 +165,7 @@
                         <small class="text-muted">Features Included</small>
                     </div>
                     <div>
-                        <h3 class="text-warning">{{ currencySymbol() }}{{ number_format($package->price, 2) }}</h3>
+                        <h3 class="text-warning">{{ $currencySymbol }}{{ number_format($package->price, 2) }}</h3>
                         <small class="text-muted">Monthly Price</small>
                     </div>
                 </div>

@@ -19,7 +19,7 @@
     <div class="col-md-6">
         <div class="stat-card green">
             <h6>{{ __('messages.current_balance') }}</h6>
-            <div class="value" style="color: var(--primary-green);">{{ currencySymbol() }}{{ number_format($safe->balance, 2) }}</div>
+            <div class="value" style="color: var(--primary-green);">{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</div>
             <div class="icon"><i class="bi bi-cash-coin"></i></div>
         </div>
     </div>
@@ -71,7 +71,7 @@
                         </td>
                         <td>
                             <strong style="color: {{ $transaction->type === 'deposit' ? 'var(--primary-green)' : '#c0392b' }};">
-                                {{ $transaction->type === 'deposit' ? '+' : '-' }}{{ currencySymbol() }}{{ number_format($transaction->amount, 2) }}
+                                {{ $transaction->type === 'deposit' ? '+' : '-' }}{{ $currencySymbol }}{{ number_format($transaction->amount, 2) }}
                             </strong>
                         </td>
                         <td>{{ $transaction->description ?? '-' }}</td>
@@ -148,7 +148,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-info">
-                        <strong>{{ __('messages.available_balance') }}:</strong> {{ currencySymbol() }}{{ number_format($safe->balance, 2) }}
+                        <strong>{{ __('messages.available_balance') }}:</strong> {{ $currencySymbol }}{{ number_format($safe->balance, 2) }}
                     </div>
                     <div class="form-group mb-3">
                         <label for="withdraw_amount" class="form-label">{{ __('messages.amount') }} *</label>

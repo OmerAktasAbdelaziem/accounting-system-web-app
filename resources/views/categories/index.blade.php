@@ -87,10 +87,10 @@
                             <span class="badge bg-primary">{{ $category->total_products }} {{ __('messages.products') }}</span>
                         </td>
                         <td>
-                            <strong>{{ currencySymbol() }}{{ number_format($category->total_stock_value ?? 0, 2) }}</strong>
+                            <strong>{{ $currencySymbol }}{{ number_format($category->total_stock_value ?? 0, 2) }}</strong>
                         </td>
                         <td>
-                            {{ currencySymbol() }}{{ number_format($category->avg_price ?? 0, 2) }}
+                            {{ $currencySymbol }}{{ number_format($category->avg_price ?? 0, 2) }}
                         </td>
                         <td>
                             <a href="{{ route('categories.show', $category->id) }}" class="btn btn-sm btn-info">

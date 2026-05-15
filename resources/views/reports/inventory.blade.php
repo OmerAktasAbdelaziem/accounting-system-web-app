@@ -51,7 +51,7 @@
                         <td><code>{{ $product->sku }}</code></td>
                         <td>{{ $product->category->name ?? 'N/A' }}</td>
                         <td>{{ $product->current_stock }}</td>
-                        <td>{{ currencySymbol() }}{{ number_format($product->current_stock * $product->selling_price, 2) }}</td>
+                        <td>{{ $currencySymbol }}{{ number_format($product->current_stock * $product->selling_price, 2) }}</td>
                         <td>
                             @if($product->current_stock <= $product->min_stock)
                                 <span class="badge bg-danger">{{ __('messages.low_stock') }}</span>

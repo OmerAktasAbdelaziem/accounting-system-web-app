@@ -56,7 +56,7 @@
                 <div class="col-md-6">
                     <div class="form-group mb-3">
                         <label class="form-label">{{ __('messages.current_balance') }}</label>
-                        <h4 style="color: var(--primary-green); font-weight: 900;">{{ currencySymbol() }}{{ number_format($safe->balance, 2) }}</h4>
+                        <h4 style="color: var(--primary-green); font-weight: 900;">{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</h4>
                     </div>
                 </div>
                 @endif

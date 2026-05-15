@@ -65,7 +65,7 @@
                                 {{ $product->current_stock }}
                             </span>
                         </td>
-                        <td>{{ currencySymbol() }}{{ number_format($product->selling_price, 2) }}</td>
+                        <td>{{ $currencySymbol }}{{ number_format($product->selling_price, 2) }}</td>
                         <td>
                             @if($product->is_active)
                                 <span class="badge bg-success">{{ __('messages.active') }}</span>

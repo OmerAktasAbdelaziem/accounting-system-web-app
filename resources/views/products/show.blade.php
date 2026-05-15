@@ -27,7 +27,7 @@
             </div>
             <div class="stat-content">
                 <h6>{{ __('messages.selling_price') }}</h6>
-                <h3>{{ currencySymbol() }}{{ number_format($product->selling_price, 2) }}</h3>
+                <h3>{{ $currencySymbol }}{{ number_format($product->selling_price, 2) }}</h3>
             </div>
         </div>
     </div>
@@ -101,11 +101,11 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.purchase_price') }}</label>
-                        <p class="text-muted">{{ currencySymbol() }}{{ number_format($product->purchase_price, 2) }}</p>
+                        <p class="text-muted">{{ $currencySymbol }}{{ number_format($product->purchase_price, 2) }}</p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.selling_price') }}</label>
-                        <p class="text-success fw-bold">{{ currencySymbol() }}{{ number_format($product->selling_price, 2) }}</p>
+                        <p class="text-success fw-bold">{{ $currencySymbol }}{{ number_format($product->selling_price, 2) }}</p>
                     </div>
                 </div>
 
@@ -144,23 +144,23 @@
                     </tr>
                     <tr>
                         <td><strong>{{ __('messages.selling_price') }}</strong></td>
-                        <td>{{ currencySymbol() }}{{ number_format($product->selling_price, 2) }}</td>
+                        <td>{{ $currencySymbol }}{{ number_format($product->selling_price, 2) }}</td>
                     </tr>
                     <tr class="table-info">
                         <td><strong>{{ __('messages.total_stock_value') }}</strong></td>
-                        <td><strong>{{ currencySymbol() }}{{ number_format($product->current_stock * $product->selling_price, 2) }}</strong></td>
+                        <td><strong>{{ $currencySymbol }}{{ number_format($product->current_stock * $product->selling_price, 2) }}</strong></td>
                     </tr>
                     <tr>
                         <td><strong>{{ __('messages.purchase_price') }}</strong></td>
-                        <td>{{ currencySymbol() }}{{ number_format($product->purchase_price, 2) }}</td>
+                        <td>{{ $currencySymbol }}{{ number_format($product->purchase_price, 2) }}</td>
                     </tr>
                     <tr class="table-warning">
                         <td><strong>{{ __('messages.cost_value') }}</strong></td>
-                        <td><strong>{{ currencySymbol() }}{{ number_format($product->current_stock * $product->purchase_price, 2) }}</strong></td>
+                        <td><strong>{{ $currencySymbol }}{{ number_format($product->current_stock * $product->purchase_price, 2) }}</strong></td>
                     </tr>
                     <tr class="table-success">
                         <td><strong>{{ __('messages.total_profit_potential') }}</strong></td>
-                        <td><strong style="color: #27ae60;">{{ currencySymbol() }}{{ number_format($product->current_stock * ($product->selling_price - $product->purchase_price), 2) }}</strong></td>
+                        <td><strong style="color: #27ae60;">{{ $currencySymbol }}{{ number_format($product->current_stock * ($product->selling_price - $product->purchase_price), 2) }}</strong></td>
                     </tr>
                 </table>
             </div>

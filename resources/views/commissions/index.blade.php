@@ -19,21 +19,21 @@
     <div class="col-md-4">
         <div class="stat-card">
             <h6>{{ __('messages.total_commissions') }}</h6>
-            <div class="value">{{ currencySymbol() }}{{ number_format($stats['total'] ?? 0, 2) }}</div>
+            <div class="value">{{ $currencySymbol }}{{ number_format($stats['total'] ?? 0, 2) }}</div>
             <div class="icon"><i class="bi bi-cash-coin"></i></div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="stat-card green">
             <h6>{{ __('messages.pending') }}</h6>
-            <div class="value">{{ currencySymbol() }}{{ number_format($stats['pending'] ?? 0, 2) }}</div>
+            <div class="value">{{ $currencySymbol }}{{ number_format($stats['pending'] ?? 0, 2) }}</div>
             <div class="icon"><i class="bi bi-hourglass"></i></div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="stat-card">
             <h6>{{ __('messages.approved') }}</h6>
-            <div class="value">{{ currencySymbol() }}{{ number_format($stats['approved'] ?? 0, 2) }}</div>
+            <div class="value">{{ $currencySymbol }}{{ number_format($stats['approved'] ?? 0, 2) }}</div>
             <div class="icon"><i class="bi bi-check-circle"></i></div>
         </div>
     </div>
@@ -62,8 +62,8 @@
                     <tr>
                         <td><strong>{{ $commission->employee->name ?? __('messages.not_available') }}</strong></td>
                         <td><span class="badge badge-orange">{{ $commission->commission_rate }}%</span></td>
-                        <td>{{ currencySymbol() }}{{ number_format($commission->sale_amount, 2) }}</td>
-                        <td><strong>{{ currencySymbol() }}{{ number_format($commission->commission_amount, 2) }}</strong></td>
+                        <td>{{ $currencySymbol }}{{ number_format($commission->sale_amount, 2) }}</td>
+                        <td><strong>{{ $currencySymbol }}{{ number_format($commission->commission_amount, 2) }}</strong></td>
                         <td>{{ $commission->commission_date->format('M d, Y') }}</td>
                         <td>
                             <span class="badge {{ $commission->status === 'pending' ? 'bg-warning' : ($commission->status === 'approved' ? 'bg-success' : 'bg-info') }}">

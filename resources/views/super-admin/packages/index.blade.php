@@ -42,7 +42,7 @@
             @forelse($packages as $package)
             <tr>
                 <td><strong>{{ $package->name }}</strong></td>
-                <td>{{ currencySymbol() }}{{ number_format($package->price, 2) }}</td>
+                <td>{{ $currencySymbol }}{{ number_format($package->price, 2) }}</td>
                 <td>{{ $package->duration_days }} days</td>
                 <td>
                     <span class="badge-orange">{{ $package->features()->count() }} features</span>
