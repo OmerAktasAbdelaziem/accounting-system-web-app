@@ -97,7 +97,10 @@
                 </li>
             @endforeach
         </ul>
-    @endif
+                    <a class="sidebar-logout-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();"><i class="bi bi-box-arrow-left"></i> <span>{{ __('messages.logout') }}</span></a>
+                    <form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
+                        @csrf
+                    </form>
 
     @if(!empty($menu['customers']))
         <div class="sidebar-section">
