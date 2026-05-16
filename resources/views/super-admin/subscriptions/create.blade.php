@@ -42,7 +42,7 @@
                                 <option value="">-- Choose a Package --</option>
                                 @foreach(\App\Models\Package::where('is_active', true)->get() as $package)
                                 <option value="{{ $package->id }}" data-price="{{ $package->price }}" data-duration="{{ $package->duration_days }}" {{ old('package_id') == $package->id ? 'selected' : '' }}>
-                                    {{ $package->name }} - {{ currencySymbol() }}{{ number_format($package->price, 2) }}/{{ $package->duration_days }} days
+                                    {{ $package->name }} - {{ $currencySymbol }}{{ number_format($package->price, 2) }}/{{ $package->duration_days }} days
                                 </option>
                                 @endforeach
                             </select>
@@ -125,6 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const packageSelect = document.getElementById('packageSelect');
     const startDateInput = document.querySelector('input[name="start_date"]');
     const durationInput = document.querySelector('input[name="duration_months"]');
+    const currencySymbol = @json($currencySymbol);
 
     function updatePreview() {
         const option = packageSelect.selectedOptions[0];
@@ -134,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const durationMultiplier = parseInt(durationInput.value) || 1;
             const totalDuration = baseDuration * durationMultiplier;
 
-            document.getElementById('previewPrice').textContent = '$' + price.toFixed(2);
+            document.getElementById('previewPrice').textContent = currencySymbol + price.toFixed(2);
             document.getElementById('previewDuration').textContent = totalDuration + ' days';
 
             const startDate = new Date(startDateInput.value);

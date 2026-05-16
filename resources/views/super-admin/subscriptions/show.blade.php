@@ -67,7 +67,7 @@
                         </div>
                         <div class="col-md-4">
                             <strong>Price:</strong><br>
-                            {{ currencySymbol() }}{{ number_format($subscription->package->price, 2) }}
+                            {{ $currencySymbol }}{{ number_format($subscription->package->price, 2) }}
                         </div>
                         <div class="col-md-4">
                             <strong>Duration:</strong><br>
