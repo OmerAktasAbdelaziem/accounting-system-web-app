@@ -15,8 +15,32 @@ class Sidebar extends Component
         $user = auth()->user();
         $role = $user?->role?->name ?? null;
 
-        $this->isSuperAdmin = $role && str_contains(strtolower($role), 'super');
+        $this->isSuperAdmin = $user?->isSuperAdmin() ?? false;
         $this->isAdmin = $role === 'Admin' || $role === 'admin' || $this->isSuperAdmin;
+
+        if ($this->isSuperAdmin) {
+            $this->menu = [
+                'main' => [
+                    ['route' => 'super-admin.dashboard', 'icon' => 'bi-speedometer2', 'label' => 'Dashboard'],
+                ],
+                'customers' => [],
+                'reports' => [],
+                'systems' => [],
+                'admin' => [
+                    ['route' => 'super-admin.users.index', 'icon' => 'bi-people', 'label' => 'System Users'],
+                    ['route' => 'super-admin.merchants.index', 'icon' => 'bi-building', 'label' => 'Merchants'],
+                    ['route' => 'super-admin.packages.index', 'icon' => 'bi-box-seam', 'label' => 'Packages'],
+                    ['route' => 'super-admin.subscriptions.index', 'icon' => 'bi-bookmark-check', 'label' => 'Subscriptions'],
+                    ['route' => 'super-admin.feature-access.index', 'icon' => 'bi-toggles2', 'label' => 'Feature Access'],
+                    ['route' => 'super-admin.vat-rates.index', 'icon' => 'bi-percent', 'label' => 'VAT Rates'],
+                    ['route' => 'profile', 'icon' => 'bi-person', 'label' => 'Profile'],
+                    ['route' => 'settings.index', 'icon' => 'bi-gear', 'label' => 'Settings'],
+                    ['route' => 'audit-logs.index', 'icon' => 'bi-journal-text', 'label' => 'Audit Logs'],
+                ],
+            ];
+
+            return;
+        }
 
         // Build a clear, predictable menu structure covering requested sections
         $main = [
