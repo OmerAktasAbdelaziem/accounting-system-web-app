@@ -37,6 +37,8 @@ class PayrollController extends Controller
             'notes' => 'nullable|string',
         ]);
 
+        $data['allowances'] = $data['allowances'] ?? 0;
+        $data['deductions'] = $data['deductions'] ?? 0;
         $data['net_salary'] = $data['basic_salary'] + ($data['allowances'] ?? 0) - ($data['deductions'] ?? 0);
 
         Payroll::create($data);
@@ -64,6 +66,8 @@ class PayrollController extends Controller
             'notes' => 'nullable|string',
         ]);
 
+        $data['allowances'] = $data['allowances'] ?? 0;
+        $data['deductions'] = $data['deductions'] ?? 0;
         $data['net_salary'] = $data['basic_salary'] + ($data['allowances'] ?? 0) - ($data['deductions'] ?? 0);
 
         $payroll->update($data);
