@@ -97,10 +97,7 @@
                 </li>
             @endforeach
         </ul>
-                    <a class="sidebar-logout-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();"><i class="bi bi-box-arrow-left"></i> <span>{{ __('messages.logout') }}</span></a>
-                    <form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
-                        @csrf
-                    </form>
+    @endif
 
     @if(!empty($menu['customers']))
         <div class="sidebar-section">
@@ -211,7 +208,10 @@
     @endif
 
     <div class="sidebar-logout">
-        <a class="sidebar-logout-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bi bi-box-arrow-left"></i> <span>{{ __('messages.logout') }}</span></a>
+        <a class="sidebar-logout-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();"><i class="bi bi-box-arrow-left"></i> <span>{{ __('messages.logout') }}</span></a>
+        <form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
+            @csrf
+        </form>
     </div>
 </div>
 
