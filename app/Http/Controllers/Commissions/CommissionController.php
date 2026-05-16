@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCommissionRequest;
 use App\Http\Requests\UpdateCommissionRequest;
 use App\Models\Commission;
+use App\Models\EmployeeCommission;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 
@@ -13,13 +14,26 @@ class CommissionController extends Controller
 {
     public function index()
     {
-        $commissions = Commission::with('employee')->paginate(20);
-        $stats = [
-            'total' => Commission::sum('commission_amount'),
-            'pending' => Commission::where('status', 'pending')->sum('commission_amount'),
-            'approved' => Commission::where('status', 'approved')->sum('commission_amount'),
-        ];
-        return view('commissions.index', compact('commissions', 'stats'));
+        $employees = Employee::where('is_active', true)->get();
+        
+        // Get commission data from Commission model for transaction history
+        $commissions = Commission::with('employee')
+            ->latest('commission_date')
+            ->paginate(15);
+        
+        // Get aggregated commission stats
+        $totalCommission = Commission::sum('commission_amount');
+        
+        // Get monthly commission aggregation from EmployeeCommission
+        // Using SQLite compatible query with strftime
+        $monthlyCommissions = EmployeeCommission::selectRaw("strftime('%Y', created_at) as year, strftime('%m', created_at) as month, SUM(commission_earned) as total")
+            ->groupByRaw("strftime('%Y', created_at), strftime('%m', created_at)")
+            ->orderByRaw("strftime('%Y', created_at) DESC, strftime('%m', created_at) DESC")
+            ->get();
+        
+        $stats = compact('totalCommission');
+        
+        return view('commissions.index', compact('commissions', 'stats', 'employees', 'monthlyCommissions'));
     }
 
     public function create()
@@ -64,15 +78,21 @@ class CommissionController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function approve(Commission $commission)
+    public function exportPdf($id = null)
     {
-        $commission->update(['status' => 'approved']);
-        return redirect()->back()->with('success', 'Commission approved!');
+        if ($id) {
+            $commission = Commission::findOrFail($id);
+            return $this->generatePdf($commission);
+        } else {
+            $commissions = Commission::latest()->get();
+            return $this->generatePdf($commissions);
+        }
     }
 
-    public function reject(Commission $commission)
+    private function generatePdf($data)
     {
-        $commission->update(['status' => 'rejected']);
-        return redirect()->back()->with('success', 'Commission rejected!');
+        // Placeholder for PDF generation
+        // Use DomPDF or similar package
+        return response()->download('path/to/pdf');
     }
 }

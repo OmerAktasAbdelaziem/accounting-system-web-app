@@ -17,7 +17,6 @@ class Commission extends Model
         'commission_date',
         'reference_type',
         'reference_id',
-        'status',
         'notes',
     ];
 

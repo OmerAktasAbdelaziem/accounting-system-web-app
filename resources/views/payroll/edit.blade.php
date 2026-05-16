@@ -21,15 +21,21 @@
         </div>
         <div class="mb-3">
             <label class="form-label">{{ __('Basic Salary') }}</label>
-            <input type="number" step="0.01" name="basic_salary" class="form-control" value="{{ old('basic_salary', $payroll->basic_salary) }}" required>
+            <input type="number" step="1" name="basic_salary" class="form-control @error('basic_salary') is-invalid @enderror" value="{{ old('basic_salary', $payroll->basic_salary) }}" required>
+            @error('basic_salary')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="mb-3">
+            <label class="form-label">{{ __('Commission (Auto-Calculated)') }}</label>
+            <div class="alert alert-info">
+                <strong>{{ $currencySymbol }}{{ number_format($payroll->calculated_commission ?? $payroll->commission, 2) }}</strong>
+                <br><small>This is automatically pulled from employee commission records.</small>
+            </div>
         </div>
         <div class="mb-3">
             <label class="form-label">{{ __('Allowances') }}</label>
-            <input type="number" step="0.01" name="allowances" class="form-control" value="{{ old('allowances', $payroll->allowances) }}">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">{{ __('Deductions') }}</label>
-            <input type="number" step="0.01" name="deductions" class="form-control" value="{{ old('deductions', $payroll->deductions) }}">
+            <input type="number" step="1" name="allowances" class="form-control @error('allowances') is-invalid @enderror" value="{{ old('allowances', $payroll->allowances ?? 0) }}">
+            @error('allowances')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            <small class="form-text text-muted">Additional benefits/bonuses (optional)</small>
         </div>
         <div class="mb-3">
             <label class="form-label">{{ __('Notes') }}</label>
@@ -37,6 +43,7 @@
         </div>
 
         <button class="btn btn-primary">{{ __('Save') }}</button>
+        <a href="{{ route('payroll.index') }}" class="btn btn-outline-secondary">{{ __('Cancel') }}</a>
     </form>
 </div>
 @endsection

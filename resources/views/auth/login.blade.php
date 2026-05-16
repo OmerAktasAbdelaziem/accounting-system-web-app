@@ -99,19 +99,6 @@
                 </button>
             </form>
 
-            <!-- Demo Credentials Info -->
-            <div style="background: #f5f5f5; border-left: 4px solid #27ae60; padding: 15px; border-radius: 8px; margin-top: 25px; font-size: 13px;">
-                <p style="margin: 0 0 8px 0; color: #1a1a1a; font-weight: 600;">
-                    <i class="bi bi-info-circle"></i> {{ __('messages.demo_credentials') }}
-                </p>
-                <p style="margin: 0 0 3px 0; color: #666;">
-                    <strong>Email:</strong> admin@hamid.com
-                </p>
-                <p style="margin: 0; color: #666;">
-                    <strong>Password:</strong> admin123456
-                </p>
-            </div>
-
             <!-- Navigation Links -->
             <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
                 <a href="{{ route('landing') }}" style="color: #ff8c00; text-decoration: none; display: flex; align-items: center; gap: 5px; transition: all 0.3s;">

@@ -1,6 +1,6 @@
 @extends('layouts.modern')
 
-@section('title', __('messages.commissions_management'))
+@section('title', __('messages.commission_management'))
 
 @section('content')
 <div class="mb-4">
@@ -14,88 +14,136 @@
     </div>
 </div>
 
-<!-- Statistics -->
+<!-- Statistics Cards -->
 <div class="row mb-4">
-    <div class="col-md-4">
-        <div class="stat-card">
-            <h6>{{ __('messages.total_commissions') }}</h6>
-            <div class="value">{{ $currencySymbol }}{{ number_format($stats['total'] ?? 0, 2) }}</div>
-            <div class="icon"><i class="bi bi-cash-coin"></i></div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="stat-card green">
-            <h6>{{ __('messages.pending') }}</h6>
-            <div class="value">{{ $currencySymbol }}{{ number_format($stats['pending'] ?? 0, 2) }}</div>
-            <div class="icon"><i class="bi bi-hourglass"></i></div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="stat-card">
-            <h6>{{ __('messages.approved') }}</h6>
-            <div class="value">{{ $currencySymbol }}{{ number_format($stats['approved'] ?? 0, 2) }}</div>
-            <div class="icon"><i class="bi bi-check-circle"></i></div>
+    <div class="col-md-3 mb-3">
+        <div class="card" style="border-left: 4px solid #ff8c00;">
+            <div class="card-body">
+                <small class="text-muted d-block mb-2">Total Commission</small>
+                <h3 class="mb-0" style="color: #ff8c00;">{{ $currencySymbol }}{{ number_format($stats['totalCommission'], 2) }}</h3>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Commissions Table -->
-<div class="card">
-    <div class="card-header">
-        <i class="bi bi-list"></i> {{ __('messages.commissions') }}
+<!-- Transaction History Section -->
+<div class="card mb-4">
+    <div class="card-header" style="background: linear-gradient(135deg, #1a1a1a, #333); color: white;">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-receipt"></i> Commission Transaction History
+            </h5>
+            <button class="btn btn-sm btn-outline-light" onclick="printTransactions()">
+                <i class="bi bi-printer"></i> Print
+            </button>
+        </div>
     </div>
     <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
+        <table class="table table-hover table-striped">
+            <thead class="table-light">
                 <tr>
-                    <th>{{ __('messages.employee') }}</th>
-                    <th>{{ __('messages.commission_rate') }}</th>
-                    <th>{{ __('messages.sale_amount') }}</th>
-                    <th>{{ __('messages.commission_amount') }}</th>
-                    <th>{{ __('messages.date') }}</th>
-                    <th>{{ __('messages.status') }}</th>
-                    <th>{{ __('messages.actions') }}</th>
+                    <th>Date</th>
+                    <th>Employee</th>
+                    <th>Sale Amount</th>
+                    <th>Rate</th>
+                    <th>Commission</th>
+                    <th>Reference</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($commissions ?? [] as $commission)
                     <tr>
-                        <td><strong>{{ $commission->employee->name ?? __('messages.not_available') }}</strong></td>
-                        <td><span class="badge badge-orange">{{ $commission->commission_rate }}%</span></td>
-                        <td>{{ $currencySymbol }}{{ number_format($commission->sale_amount, 2) }}</td>
-                        <td><strong>{{ $currencySymbol }}{{ number_format($commission->commission_amount, 2) }}</strong></td>
-                        <td>{{ $commission->commission_date->format('M d, Y') }}</td>
                         <td>
-                            <span class="badge {{ $commission->status === 'pending' ? 'bg-warning' : ($commission->status === 'approved' ? 'bg-success' : 'bg-info') }}">
-                                {{ __('messages.' . $commission->status) }}
-                            </span>
+                            <small>{{ $commission->commission_date?->format('d/m/Y') ?? 'N/A' }}</small>
                         </td>
                         <td>
-                            <a href="{{ route('commissions.show', $commission->id) }}" class="btn btn-sm btn-info me-1" title="{{ __('messages.view_details') }}">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            <a href="{{ route('commissions.edit', $commission->id) }}" class="btn btn-sm btn-warning">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <button onclick="deleteCommission({{ $commission->id }})" class="btn btn-sm btn-danger">
-                                <i class="bi bi-trash"></i>
-                            </button>
+                            <strong>{{ $commission->employee?->name ?? 'N/A' }}</strong>
+                            <br>
+                            <small class="text-muted">{{ $commission->employee?->employee_code ?? '' }}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark">{{ $currencySymbol }}{{ number_format($commission->sale_amount, 2) }}</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">{{ number_format($commission->commission_rate, 0) }}%</span>
+                        </td>
+                        <td>
+                            <strong style="color: #27ae60;">{{ $currencySymbol }}{{ number_format($commission->commission_amount, 2) }}</strong>
+                        </td>
+                        <td>
+                            <small style="font-family: monospace;">{{ $commission->reference_type ?? '-' }}</small>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ route('commissions.show', $commission) }}" class="btn btn-outline-info" title="View">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{{ route('commissions.edit', $commission) }}" class="btn btn-outline-warning" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button type="button" class="btn btn-outline-danger" onclick="deleteCommission({{ $commission->id }})" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center text-muted">{{ __('messages.no_commissions_found') }}</td>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            No commission transactions found. <a href="{{ route('commissions.create') }}">Create one</a>
+                        </td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
+    @if($commissions instanceof \Illuminate\Pagination\Paginator)
+        <div class="card-footer">
+            {{ $commissions->links() }}
+        </div>
+    @endif
 </div>
 
-<!-- Pagination -->
-@if($commissions ?? false)
-    <div class="mt-3">
-        {{ $commissions->links() }}
+<!-- Monthly Commission Aggregation -->
+@if($monthlyCommissions->isNotEmpty())
+    <div class="card">
+        <div class="card-header" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white;">
+            <h5 class="mb-0">
+                <i class="bi bi-graph-up"></i> Monthly Commission Summary
+            </h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Month/Year</th>
+                        <th>Total Commission</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($monthlyCommissions as $monthly)
+                        @php
+                            $date = \Carbon\Carbon::createFromDate((int)$monthly->year, (int)$monthly->month, 1);
+                        @endphp
+                        <tr>
+                            <td>
+                                <strong>{{ $date->format('F Y') }}</strong>
+                            </td>
+                            <td>
+                                <h6 class="mb-0" style="color: #27ae60;">
+                                    {{ $currencySymbol }}{{ number_format($monthly->total, 2) }}
+                                </h6>
+                            </td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 @endif
 @endsection
@@ -103,9 +151,8 @@
 @section('js')
 <script>
     function deleteCommission(id) {
-        if (confirm('{{ __('messages.delete_commission_confirm') }}')) {
-            const url = '{{ url("commissions") }}/' + id;
-            fetch(url, {
+        if (confirm('Are you sure you want to delete this commission record?')) {
+            fetch(`/commissions/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
@@ -113,10 +160,16 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) location.reload();
+                if (data.success) {
+                    location.reload();
+                }
             })
             .catch(error => console.error('Error:', error));
         }
+    }
+
+    function printTransactions() {
+        window.print();
     }
 </script>
 @endsection

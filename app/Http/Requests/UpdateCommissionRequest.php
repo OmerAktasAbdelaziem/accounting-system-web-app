@@ -22,7 +22,6 @@ class UpdateCommissionRequest extends FormRequest
             'sale_amount' => 'required|numeric|min:0|max:999999.99',
             'commission_date' => 'required|date|before_or_equal:today',
             'reference_type' => 'nullable|string|max:50',
-            'status' => 'required|in:pending,approved,paid',
             'notes' => 'nullable|string|max:1000',
         ];
     }
@@ -42,8 +41,6 @@ class UpdateCommissionRequest extends FormRequest
             'commission_date.required' => 'Commission date is required',
             'commission_date.date' => 'Commission date must be a valid date',
             'commission_date.before_or_equal' => 'Commission date cannot be in the future',
-            'status.required' => 'Status is required',
-            'status.in' => 'Status must be one of: pending, approved, paid',
         ];
     }
 }

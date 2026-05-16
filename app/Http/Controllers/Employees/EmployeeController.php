@@ -36,18 +36,10 @@ class EmployeeController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees',
-            'phone' => 'required|string',
             'position' => 'required|string',
-            'salary' => 'nullable|numeric|min:0',
-            'base_salary' => 'nullable|numeric|min:0',
-            'hire_date' => 'required|date',
+            'base_salary' => 'required|numeric|min:0',
             'is_active' => 'boolean',
         ]);
-
-        $baseSalary = $validated['salary'] ?? $validated['base_salary'] ?? 0;
-        unset($validated['salary'], $validated['base_salary']);
-        $validated['base_salary'] = $baseSalary;
 
         $validated['name_ar'] = $validated['name'];
         $validated['position_ar'] = $validated['position'];
@@ -79,18 +71,10 @@ class EmployeeController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees,email,' . $employee->id,
-            'phone' => 'required|string',
             'position' => 'required|string',
-            'salary' => 'nullable|numeric|min:0',
-            'base_salary' => 'nullable|numeric|min:0',
-            'hire_date' => 'required|date',
+            'base_salary' => 'required|numeric|min:0',
             'is_active' => 'boolean',
         ]);
-
-        $baseSalary = $validated['salary'] ?? $validated['base_salary'] ?? 0;
-        unset($validated['salary'], $validated['base_salary']);
-        $validated['base_salary'] = $baseSalary;
 
         $validated['name_ar'] = $validated['name'];
         $validated['position_ar'] = $validated['position'];

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Payroll;
 use App\Models\Employee;
+use App\Models\EmployeeCommission;
 use App\Models\ChartOfAccount;
 use App\Models\JournalEntry;
 use App\Support\SimplePdf;
@@ -33,13 +34,19 @@ class PayrollController extends Controller
             'month' => 'required|integer|min:1|max:12',
             'basic_salary' => 'required|numeric|min:0',
             'allowances' => 'nullable|numeric|min:0',
-            'deductions' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
         ]);
 
+        // Auto-fetch commission from employee's commission records for the given month/year
+        $employeeCommission = EmployeeCommission::where('employee_id', $data['employee_id'])
+            ->where('month', $data['month'])
+            ->where('year', $data['year'])
+            ->first();
+
+        $commission = $employeeCommission?->commission_earned ?? 0;
+        $data['commission'] = $commission;
         $data['allowances'] = $data['allowances'] ?? 0;
-        $data['deductions'] = $data['deductions'] ?? 0;
-        $data['net_salary'] = $data['basic_salary'] + ($data['allowances'] ?? 0) - ($data['deductions'] ?? 0);
+        $data['net_salary'] = $data['basic_salary'] + $commission + ($data['allowances'] ?? 0);
 
         Payroll::create($data);
 
@@ -54,6 +61,15 @@ class PayrollController extends Controller
     public function edit(Payroll $payroll)
     {
         $employees = Employee::pluck('name', 'id');
+        
+        // Get employee's commission for this payroll month/year
+        $employeeCommission = EmployeeCommission::where('employee_id', $payroll->employee_id)
+            ->where('month', $payroll->month)
+            ->where('year', $payroll->year)
+            ->first();
+        
+        $payroll->calculated_commission = $employeeCommission?->commission_earned ?? 0;
+        
         return view('payroll.edit', compact('payroll', 'employees'));
     }
 
@@ -62,13 +78,19 @@ class PayrollController extends Controller
         $data = $request->validate([
             'basic_salary' => 'required|numeric|min:0',
             'allowances' => 'nullable|numeric|min:0',
-            'deductions' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
         ]);
 
+        // Auto-fetch commission from employee's commission records
+        $employeeCommission = EmployeeCommission::where('employee_id', $payroll->employee_id)
+            ->where('month', $payroll->month)
+            ->where('year', $payroll->year)
+            ->first();
+
+        $commission = $employeeCommission?->commission_earned ?? 0;
+        $data['commission'] = $commission;
         $data['allowances'] = $data['allowances'] ?? 0;
-        $data['deductions'] = $data['deductions'] ?? 0;
-        $data['net_salary'] = $data['basic_salary'] + ($data['allowances'] ?? 0) - ($data['deductions'] ?? 0);
+        $data['net_salary'] = $data['basic_salary'] + $commission + ($data['allowances'] ?? 0);
 
         $payroll->update($data);
 
@@ -126,8 +148,7 @@ class PayrollController extends Controller
             'Employee: ' . ($payroll->employee?->name ?? '-'),
             'Month/Year: ' . $payroll->month . '/' . $payroll->year,
             'Basic Salary: ' . number_format((float) $payroll->basic_salary, 2),
-            'Allowances: ' . number_format((float) $payroll->allowances, 2),
-            'Deductions: ' . number_format((float) $payroll->deductions, 2),
+            'Commission: ' . number_format((float) $payroll->commission, 2),
             'Net Salary: ' . number_format((float) $payroll->net_salary, 2),
             'Status: ' . $payroll->status,
         ];

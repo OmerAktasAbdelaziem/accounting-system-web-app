@@ -72,18 +72,6 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group mb-3">
-                        <label for="status" class="form-label">{{ __('messages.status') }} *</label>
-                        <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
-                            <option value="pending" {{ old('status', $commission->status ?? '') === 'pending' ? 'selected' : '' }}>{{ __('messages.pending') }}</option>
-                            <option value="approved" {{ old('status', $commission->status ?? '') === 'approved' ? 'selected' : '' }}>{{ __('messages.approved') }}</option>
-                            <option value="paid" {{ old('status', $commission->status ?? '') === 'paid' ? 'selected' : '' }}>{{ __('messages.paid') }}</option>
-                        </select>
-                        @error('status')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
                         <label for="reference_type" class="form-label">{{ __('messages.reference_type') }}</label>
                         <input type="text" class="form-control @error('reference_type') is-invalid @enderror" 
                             id="reference_type" name="reference_type"

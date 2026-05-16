@@ -20,7 +20,6 @@
             <thead>
                 <tr>
                     <th>{{ __('messages.name') }}</th>
-                    <th>{{ __('messages.email') }}</th>
                     <th>{{ __('messages.position') }}</th>
                     <th>{{ __('messages.salary') }}</th>
                     <th>{{ __('messages.status') }}</th>
@@ -31,9 +30,8 @@
                 @forelse($employees ?? [] as $employee)
                     <tr>
                         <td><strong>{{ $employee->name }}</strong></td>
-                        <td>{{ $employee->email }}</td>
                         <td>{{ $employee->position }}</td>
-                        <td>{{ $currencySymbol }}{{ number_format($employee->salary, 2) }}</td>
+                        <td>{{ $currencySymbol }}{{ number_format($employee->base_salary, 2) }}</td>
                         <td>
                             @if($employee->is_active)
                                 <span class="badge bg-success">{{ __('messages.active') }}</span>
@@ -55,7 +53,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center text-muted">{{ __('messages.no_data') }}</td>
+                        <td colspan="5" class="text-center text-muted">{{ __('messages.no_data') }}</td>
                     </tr>
                 @endforelse
             </tbody>

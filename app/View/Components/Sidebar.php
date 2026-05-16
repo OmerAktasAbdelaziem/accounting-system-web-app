@@ -23,7 +23,6 @@ class Sidebar extends Component
                 'main' => [
                     ['route' => 'super-admin.dashboard', 'icon' => 'bi-speedometer2', 'label' => 'Dashboard'],
                 ],
-                'customers' => [],
                 'reports' => [],
                 'systems' => [],
                 'admin' => [
@@ -50,8 +49,7 @@ class Sidebar extends Component
             ['route' => 'employees.index', 'icon' => 'bi-people', 'label' => 'Employees', 'feature' => 'employees'],
         ];
 
-        $customers = [
-            ['route' => 'customers.index', 'icon' => 'bi-people-fill', 'label' => 'Customers', 'feature' => 'customers'],
+        $suppliers = [
             ['route' => 'suppliers.index', 'icon' => 'bi-truck', 'label' => 'Suppliers', 'feature' => 'suppliers'],
             ['route' => 'invoices.index', 'icon' => 'bi-receipt', 'label' => 'Invoices', 'feature' => 'invoicing'],
             ['route' => 'payroll.index', 'icon' => 'bi-wallet2', 'label' => 'Payroll', 'feature' => 'payroll'],
@@ -96,7 +94,7 @@ class Sidebar extends Component
 
         $this->menu = [
             'main' => $filter($main),
-            'customers' => $filter($customers),
+            'customers' => $filter($suppliers),
             'reports' => $filter($reports),
             'systems' => $filter($systems),
             'admin' => $admin,

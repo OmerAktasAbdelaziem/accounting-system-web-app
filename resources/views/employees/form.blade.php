@@ -40,38 +40,6 @@
 
                 <div class="col-md-6">
                     <div class="form-group mb-3">
-                        <label for="email" class="form-label">{{ __('messages.email') }} *</label>
-                        <input 
-                            type="email" 
-                            class="form-control @error('email') is-invalid @enderror" 
-                            id="email" 
-                            name="email" 
-                            value="{{ old('email', $employee->email ?? '') }}"
-                            required
-                        >
-                        @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="phone" class="form-label">{{ __('messages.phone') }} *</label>
-                        <input 
-                            type="text" 
-                            class="form-control @error('phone') is-invalid @enderror" 
-                            id="phone" 
-                            name="phone" 
-                            value="{{ old('phone', $employee->phone ?? '') }}"
-                            required
-                        >
-                        @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
                         <label for="position" class="form-label">{{ __('messages.position') }} *</label>
                         <input 
                             type="text" 
@@ -89,32 +57,17 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group mb-3">
-                        <label for="salary" class="form-label">{{ __('messages.salary') }} *</label>
+                        <label for="base_salary" class="form-label">{{ __('messages.salary') }} *</label>
                         <input 
                             type="number" 
-                            class="form-control @error('salary') is-invalid @enderror" 
-                            id="salary" 
-                            name="salary" 
+                            class="form-control @error('base_salary') is-invalid @enderror" 
+                            id="base_salary" 
+                            name="base_salary" 
                             step="0.01"
-                            value="{{ old('salary', $employee->salary ?? '') }}"
+                            value="{{ old('base_salary', $employee->base_salary ?? '') }}"
                             required
                         >
-                        @error('salary')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="hire_date" class="form-label">{{ __('messages.hire_date') }} *</label>
-                        <input 
-                            type="date" 
-                            class="form-control @error('hire_date') is-invalid @enderror" 
-                            id="hire_date" 
-                            name="hire_date" 
-                            value="{{ old('hire_date', isset($employee) && $employee ? $employee->hire_date?->format('Y-m-d') : '') }}"
-                            required
-                        >
-                        @error('hire_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        @error('base_salary')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                 </div>
             </div>

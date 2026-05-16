@@ -101,7 +101,7 @@
 
     @if(!empty($menu['customers']))
         <div class="sidebar-section">
-            <div class="sidebar-title">Customer Section</div>
+            <div class="sidebar-title">Operations</div>
             <ul class="sidebar-menu customers-menu">
                 @foreach($menu['customers'] as $item)
                     @php

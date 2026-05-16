@@ -15,8 +15,8 @@ class Payroll extends Model
         'year',
         'month',
         'basic_salary',
+        'commission',
         'allowances',
-        'deductions',
         'net_salary',
         'status',
         'notes',
@@ -26,8 +26,8 @@ class Payroll extends Model
 
     protected $casts = [
         'basic_salary' => 'decimal:2',
+        'commission' => 'decimal:2',
         'allowances' => 'decimal:2',
-        'deductions' => 'decimal:2',
         'net_salary' => 'decimal:2',
         'processed_at' => 'datetime',
     ];
@@ -43,10 +43,10 @@ class Payroll extends Model
     }
 
     /**
-     * Calculate net salary based on basic, allowances, and deductions
+     * Calculate net salary based on basic salary, commission, and allowances
      */
     public function calculateNetSalary(): float
     {
-        return (float) ($this->basic_salary + $this->allowances - $this->deductions);
+        return (float) ($this->basic_salary + ($this->commission ?? 0) + ($this->allowances ?? 0));
     }
 }

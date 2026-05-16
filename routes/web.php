@@ -16,7 +16,6 @@ use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\Commissions\CommissionController;
 use App\Http\Controllers\Storages\StorageController;
 use App\Http\Controllers\Safes\SafeController;
-use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PayrollController;
@@ -99,17 +98,6 @@ Route::middleware('auth')->group(function () {
         Route::put('{employee}', [EmployeeController::class, 'update'])->name('update');
         Route::delete('{employee}', [EmployeeController::class, 'destroy'])->name('destroy');
         Route::get('export', [EmployeeController::class, 'export'])->name('export');
-    });
-
-    // Customers
-    Route::prefix('customers')->name('customers.')->group(function () {
-        Route::get('/', [CustomerController::class, 'index'])->name('index');
-        Route::get('create', [CustomerController::class, 'create'])->name('create');
-        Route::post('/', [CustomerController::class, 'store'])->name('store');
-        Route::get('{customer}', [CustomerController::class, 'show'])->name('show');
-        Route::get('{customer}/edit', [CustomerController::class, 'edit'])->name('edit');
-        Route::put('{customer}', [CustomerController::class, 'update'])->name('update');
-        Route::delete('{customer}', [CustomerController::class, 'destroy'])->name('destroy');
     });
 
     // Suppliers

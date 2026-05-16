@@ -20,18 +20,7 @@
 
 <!-- Employee Statistics -->
 <div class="row mb-4">
-    <div class="col-md-3">
-        <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #ff8c00, #ffb347);">
-                <i class="bi bi-calendar"></i>
-            </div>
-            <div class="stat-content">
-                <h6>{{ __('messages.hire_date') }}</h6>
-                <h3>{{ $employee->hire_date->format('M d, Y') }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="stat-card">
             <div class="stat-icon" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">
                 <i class="bi bi-percent"></i>
@@ -42,7 +31,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="stat-card">
             <div class="stat-icon" style="background: linear-gradient(135deg, #3498db, #5dade2);">
                 <i class="bi bi-graph-up"></i>
@@ -53,7 +42,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="stat-card">
             <div class="stat-icon" style="background: linear-gradient(135deg, #e74c3c, #ec7063);">
                 <i class="bi bi-person-check"></i>
@@ -80,17 +69,6 @@
                         <p class="text-muted">{{ $employee->name }}</p>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">{{ __('messages.email') }}</label>
-                        <p class="text-muted"><a href="mailto:{{ $employee->email }}">{{ $employee->email }}</a></p>
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">{{ __('messages.phone') }}</label>
-                        <p class="text-muted">{{ $employee->phone ?? 'N/A' }}</p>
-                    </div>
-                    <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.position') }}</label>
                         <p class="text-muted">{{ $employee->position }}</p>
                     </div>
@@ -98,19 +76,8 @@
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">{{ __('messages.hire_date') }}</label>
-                        <p class="text-muted">{{ $employee->hire_date->format('M d, Y') }}</p>
-                    </div>
-                    <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.salary') }}</label>
-                        <p class="text-success fw-bold">{{ $currencySymbol }}{{ number_format($employee->salary, 2) }}</p>
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">{{ __('messages.address') }}</label>
-                        <p class="text-muted">{{ $employee->address ?? 'N/A' }}</p>
+                        <p class="text-success fw-bold">{{ $currencySymbol }}{{ number_format($employee->base_salary, 2) }}</p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.status') }}</label>

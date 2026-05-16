@@ -14,7 +14,7 @@
                     <tr>
                         <th>#</th>
                         <th>{{ __('Employee') }}</th>
-                        <th>{{ __('Month/Year') }}</th>
+                        <th>{{ __('Commission') }}</th>
                         <th>{{ __('Net Salary') }}</th>
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('messages.actions') }}</th>
@@ -25,7 +25,7 @@
                     <tr>
                         <td>{{ $payroll->id }}</td>
                         <td>{{ $payroll->employee ? (is_string($payroll->employee->name) ? $payroll->employee->name : (is_array($payroll->employee->name) ? ($payroll->employee->name[app()->getLocale()] ?? implode(' - ', $payroll->employee->name)) : json_encode($payroll->employee->name))) : '' }}</td>
-                        <td>{{ $payroll->month }}/{{ $payroll->year }}</td>
+                        <td>{{ $currencySymbol }}{{ number_format($payroll->commission,2) }}</td>
                         <td>{{ $currencySymbol }}{{ number_format($payroll->net_salary,2) }}</td>
                         <td><span class="badge bg-{{ $payroll->status === 'processed' ? 'success' : 'warning' }}">{{ $payroll->status }}</span></td>
                         <td class="action-buttons">
