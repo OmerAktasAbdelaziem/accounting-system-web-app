@@ -282,6 +282,7 @@
                             <th>Spent</th>
                             <th>Net</th>
                             <th>Products Sold</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -298,6 +299,22 @@
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" 
+                                            class="btn btn-sm btn-outline-primary edit-sale-btn"
+                                            data-id="{{ $sale->id }}"
+                                            data-sale_date="{{ $sale->sale_date?->format('Y-m-d') }}"
+                                            data-branch_id="{{ $sale->branch_id }}"
+                                            data-total_amount="{{ (float) $sale->total_amount }}"
+                                            data-spent_amount="{{ (float) ($sale->spent_amount ?? 0) }}"
+                                            data-notes="{{ e($sale->notes) }}"
+                                            data-update_url="{{ route('sales.update', $sale->id) }}"
+                                        >
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -321,6 +338,55 @@
         @endif
     </div>
 </div>
+
+        <!-- Edit Sale Modal -->
+        <div class="modal fade" id="editSaleModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <form id="editSaleForm" method="POST" action="">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Sale</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Branch</label>
+                                    <select name="branch_id" class="form-select" required>
+                                        <option value="">Select branch</option>
+                                        @foreach($branches as $branch)
+                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Sale Date</label>
+                                    <input type="date" name="sale_date" class="form-control" required>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label">Total Amount</label>
+                                    <input type="number" name="total_amount" class="form-control" step="0.01" min="0.01" required>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label">Amount Spent by Store <span class="text-muted">(Optional)</span></label>
+                                    <input type="number" name="spent_amount" class="form-control" step="0.01" min="0" placeholder="Amount the store spent">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Products / Notes</label>
+                                    <textarea name="product_sold_text" rows="4" class="form-control" placeholder="One product per line or notes..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
 <script>
 (function () {
@@ -359,6 +425,39 @@
     }
 
     document.querySelectorAll('.products-list').forEach(bindProductList);
+
+    // Edit sale modal handling
+    const editButtons = document.querySelectorAll('.edit-sale-btn');
+    const editModalEl = document.getElementById('editSaleModal');
+    let editModal;
+    if (editModalEl) {
+        editModal = new bootstrap.Modal(editModalEl);
+    }
+
+    editButtons.forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const id = btn.getAttribute('data-id');
+            const saleDate = btn.getAttribute('data-sale_date');
+            const branchId = btn.getAttribute('data-branch_id');
+            const totalAmount = btn.getAttribute('data-total_amount');
+            const spentAmount = btn.getAttribute('data-spent_amount');
+            const notes = btn.getAttribute('data-notes');
+            const updateUrl = btn.getAttribute('data-update_url');
+
+            const form = document.getElementById('editSaleForm');
+            form.action = updateUrl;
+            form.querySelector('input[name="sale_date"]').value = saleDate || '';
+            form.querySelector('select[name="branch_id"]').value = branchId || '';
+            form.querySelector('input[name="total_amount"]').value = totalAmount || '';
+            form.querySelector('input[name="spent_amount"]').value = spentAmount || '';
+            form.querySelector('textarea[name="product_sold_text"]').value = notes || '';
+
+            if (editModal) {
+                editModal.show();
+            }
+        });
+    });
 })();
 </script>
 @endsection

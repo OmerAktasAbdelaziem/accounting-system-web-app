@@ -65,4 +65,42 @@ class SalesController extends Controller
 
         return redirect()->route('sales.index')->with('success', 'Sale recorded successfully.');
     }
+
+    public function edit(EmployeeSale $sale)
+    {
+        $branches = Branch::orderBy('name')->get();
+        return view('sales.edit', compact('sale', 'branches'));
+    }
+
+    public function update(Request $request, EmployeeSale $sale)
+    {
+        $validated = $request->validate([
+            'sale_date' => 'required|date|before_or_equal:today',
+            'branch_id' => 'required|exists:branches,id',
+            'total_amount' => 'required|numeric|min:0.01',
+            'spent_amount' => 'nullable|numeric|min:0',
+            'product_sold_text' => 'nullable|string|max:2000',
+            'product_sold' => 'nullable|array',
+            'product_sold.*' => 'nullable|string|max:255',
+        ]);
+
+        $notes = null;
+        if ($request->filled('product_sold_text')) {
+            $notes = $request->input('product_sold_text');
+        } elseif ($request->has('product_sold') && is_array($request->input('product_sold'))) {
+            $notes = implode('\n', array_filter($request->input('product_sold')));
+        }
+
+        $sale->update([
+            'quantity' => 1,
+            'unit_price' => $validated['total_amount'],
+            'total_amount' => (float) $validated['total_amount'],
+            'spent_amount' => (float) ($validated['spent_amount'] ?? 0),
+            'sale_date' => $validated['sale_date'],
+            'branch_id' => $validated['branch_id'],
+            'notes' => $notes,
+        ]);
+
+        return redirect()->route('sales.index')->with('success', 'Sale updated successfully.');
+    }
 }
