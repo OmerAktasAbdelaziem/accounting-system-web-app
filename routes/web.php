@@ -63,6 +63,7 @@ Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/home', [DashboardController::class, 'index'])->name('home');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard/analytics', [DashboardController::class, 'analytics'])->name('dashboard.analytics');
     Route::get('system-dashboard-fix', [DashboardController::class, 'index'])->name('system.dashboard');
 
     // Products

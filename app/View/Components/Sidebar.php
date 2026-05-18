@@ -21,7 +21,7 @@ class Sidebar extends Component
         if ($this->isSuperAdmin) {
             $this->menu = [
                 'main' => [
-                    ['route' => 'super-admin.dashboard', 'icon' => 'bi-speedometer2', 'label' => 'Dashboard'],
+                    ['route' => 'dashboard', 'icon' => 'bi-speedometer2', 'label' => 'Merchant Dashboard'],
                 ],
                 'reports' => [],
                 'systems' => [],
@@ -47,6 +47,7 @@ class Sidebar extends Component
             ['route' => 'products.index', 'icon' => 'bi-box-seam', 'label' => 'Products', 'feature' => 'products'],
             ['route' => 'categories.index', 'icon' => 'bi-tags', 'label' => 'Categories', 'feature' => 'categories'],
             ['route' => 'employees.index', 'icon' => 'bi-people', 'label' => 'Employees', 'feature' => 'employees'],
+            ['route' => 'sales.index', 'icon' => 'bi-cash-coin', 'label' => 'Sales'],
         ];
 
         $suppliers = [
