@@ -14,6 +14,17 @@ return new class extends Migration
                 DB::statement('ALTER TABLE products DROP INDEX products_name_name_ar_sku_fulltext');
             } catch (\Throwable) {
             }
+
+            // Drop the unique index on `sku` if present. Use DROP INDEX (SQLite) or ALTER TABLE (MySQL)
+            try {
+                // SQLite supports: DROP INDEX IF EXISTS index_name
+                DB::statement('DROP INDEX IF EXISTS products_sku_unique');
+            } catch (\Throwable) {
+                try {
+                    DB::statement('ALTER TABLE products DROP INDEX products_sku_unique');
+                } catch (\Throwable) {
+                }
+            }
         }
 
         Schema::table('products', function (Blueprint $table) {
