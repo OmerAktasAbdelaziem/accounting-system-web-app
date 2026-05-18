@@ -301,53 +301,57 @@ class SupplierController extends Controller
         $generatedAt = now()->format('Y-m-d H:i');
 
         $lines = [
-            '========================================',
-            'AKTAS SYSTEM',
-            'SUPPLIER RECEIPT / STATEMENT',
-            'Receipt No: ' . $receiptNumber,
-            'Generated: ' . $generatedAt,
-            'Supplier: ' . $supplier->name,
-            'Branch: ' . $branchName,
-            '========================================',
-            'SUMMARY',
-            'Opening Balance : ' . number_format((float) $ledger['openingBalance'], 2),
-            'Total Purchased  : ' . number_format($ledger['totalPurchased'], 2),
-            'Total Paid       : ' . number_format($ledger['totalPaid'], 2),
-            'Outstanding      : ' . number_format($ledger['outstanding'], 2),
-            '========================================',
-            'TRANSACTIONS',
+            $this->centerText('AKTAS SYSTEM'),
+            $this->centerText('SUPPLIER RECEIPT / STATEMENT'),
+            $this->centerText('[ LOGO PLACEHOLDER ]'),
+            $this->dividerLine('=') ,
+            $this->keyValueLine('Receipt No', $receiptNumber),
+            $this->keyValueLine('Generated', $generatedAt),
+            $this->keyValueLine('Supplier', $supplier->name),
+            $this->keyValueLine('Branch', $branchName),
+            $this->dividerLine('-'),
+            $this->centerText('SUMMARY'),
+            $this->dividerLine('-'),
+            $this->summaryLine('Opening Balance', number_format((float) $ledger['openingBalance'], 2)),
+            $this->summaryLine('Total Purchased', number_format($ledger['totalPurchased'], 2)),
+            $this->summaryLine('Total Paid', number_format($ledger['totalPaid'], 2)),
+            $this->summaryLine('Outstanding', number_format($ledger['outstanding'], 2)),
+            $this->dividerLine('='),
+            $this->centerText('TRANSACTIONS'),
+            $this->dividerLine('-'),
         ];
 
         foreach ($ledger['timeline'] as $entry) {
             if ($entry['kind'] === 'purchase') {
-                $lines[] = 'PURCHASE  ' . Carbon::parse($entry['date'])->format('Y-m-d') . '   ' . number_format((float) $entry['amount'], 2);
+                $lines[] = $this->transactionHeader('PURCHASE', Carbon::parse($entry['date'])->format('Y-m-d'), number_format((float) $entry['amount'], 2));
                 if (! empty($entry['model']->note)) {
-                    $lines[] = '  Note: ' . $entry['model']->note;
+                    $lines[] = $this->keyValueLine('Note', $entry['model']->note, 66, 6);
                 }
 
-                $lines[] = '  Items:';
+                $lines[] = $this->itemHeaderLine();
                 foreach ($entry['model']->items as $item) {
-                    $lines[] = '    - ' . $item->product_name;
-                    $lines[] = '      Qty: ' . number_format((float) $item->weight, 3) . ' kg';
-                    $lines[] = '      Rate: ' . number_format((float) $item->unit_price, 2);
-                    $lines[] = '      Line Total: ' . number_format((float) $item->line_total, 2);
+                    $lines[] = $this->itemRow(
+                        $item->product_name,
+                        number_format((float) $item->weight, 3) . ' kg',
+                        number_format((float) $item->unit_price, 2),
+                        number_format((float) $item->line_total, 2)
+                    );
                 }
-                $lines[] = '';
+                $lines[] = $this->dividerLine('-');
             } else {
                 $payment = $entry['model'];
-                $lines[] = 'PAYMENT   ' . Carbon::parse($entry['date'])->format('Y-m-d') . '   ' . number_format((float) $entry['amount'], 2);
+                $lines[] = $this->transactionHeader('PAYMENT', Carbon::parse($entry['date'])->format('Y-m-d'), number_format((float) $entry['amount'], 2));
                 if (! empty($payment->note)) {
-                    $lines[] = '  Note: ' . $payment->note;
+                    $lines[] = $this->keyValueLine('Note', $payment->note, 66, 6);
                 }
-                $lines[] = '';
+                $lines[] = $this->dividerLine('-');
             }
         }
 
-        $lines[] = '========================================';
-        $lines[] = 'Thank you for your business.';
-        $lines[] = 'This document was generated automatically by AKTAS SYSTEM.';
+        $lines[] = $this->centerText('Thank you for your business.');
+        $lines[] = $this->centerText('This document was generated automatically by AKTAS SYSTEM.');
 
-        $pdf = SimplePdf::textDocument('Supplier Receipt - ' . $supplier->name, $lines);
+        $pdf = SimplePdf::textDocument($this->centerText('Supplier Receipt - ' . $supplier->name), $lines);
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -405,5 +409,52 @@ class SupplierController extends Controller
             ->values();
 
         return compact('purchases', 'payments', 'timeline', 'totalPurchased', 'totalPaid', 'outstanding', 'openingBalance');
+    }
+
+    private function dividerLine(string $character = '-', int $width = 72): string
+    {
+        return str_repeat($character, $width);
+    }
+
+    private function centerText(string $text, int $width = 72): string
+    {
+        $text = trim($text);
+
+        if (strlen($text) >= $width) {
+            return $text;
+        }
+
+        return str_pad($text, $width, ' ', STR_PAD_BOTH);
+    }
+
+    private function keyValueLine(string $label, string $value, int $width = 72, int $indent = 0): string
+    {
+        $prefix = str_repeat(' ', $indent);
+        $label = $prefix . rtrim($label) . ':';
+        $value = trim($value);
+
+        $padding = max(1, $width - strlen($label) - strlen($value));
+
+        return $label . str_repeat(' ', $padding) . $value;
+    }
+
+    private function summaryLine(string $label, string $value, int $width = 72): string
+    {
+        return '| ' . str_pad($label, 24) . str_pad($value, $width - 29, ' ', STR_PAD_LEFT) . ' |';
+    }
+
+    private function transactionHeader(string $type, string $date, string $amount): string
+    {
+        return strtoupper(str_pad($type, 10)) . ' ' . str_pad($date, 12) . str_pad($amount, 14, ' ', STR_PAD_LEFT);
+    }
+
+    private function itemHeaderLine(int $width = 72): string
+    {
+        return '  ' . str_pad('Item', 30) . str_pad('Qty', 12, ' ', STR_PAD_LEFT) . str_pad('Rate', 14, ' ', STR_PAD_LEFT) . str_pad('Line Total', 16, ' ', STR_PAD_LEFT);
+    }
+
+    private function itemRow(string $itemName, string $quantity, string $rate, string $lineTotal): string
+    {
+        return '  ' . str_pad($itemName, 30) . str_pad($quantity, 12, ' ', STR_PAD_LEFT) . str_pad($rate, 14, ' ', STR_PAD_LEFT) . str_pad($lineTotal, 16, ' ', STR_PAD_LEFT);
     }
 }
