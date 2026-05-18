@@ -297,29 +297,57 @@ class SupplierController extends Controller
             $branchName = optional($supplier->branches()->whereKey($branchId)->first())->name ?? 'Selected branch';
         }
 
+        $receiptNumber = 'SUP-' . $supplier->id . '-' . now()->format('YmdHis');
+        $generatedAt = now()->format('Y-m-d H:i');
+
         $lines = [
+            '========================================',
+            'AKTAS SYSTEM',
+            'SUPPLIER RECEIPT / STATEMENT',
+            'Receipt No: ' . $receiptNumber,
+            'Generated: ' . $generatedAt,
             'Supplier: ' . $supplier->name,
-            'Branch filter: ' . $branchName,
-            'Opening balance: ' . number_format((float) $ledger['openingBalance'], 2),
-            'Total purchased: ' . number_format($ledger['totalPurchased'], 2),
-            'Total paid: ' . number_format($ledger['totalPaid'], 2),
-            'Outstanding: ' . number_format($ledger['outstanding'], 2),
-            '--- Ledger ---',
+            'Branch: ' . $branchName,
+            '========================================',
+            'SUMMARY',
+            'Opening Balance : ' . number_format((float) $ledger['openingBalance'], 2),
+            'Total Purchased  : ' . number_format($ledger['totalPurchased'], 2),
+            'Total Paid       : ' . number_format($ledger['totalPaid'], 2),
+            'Outstanding      : ' . number_format($ledger['outstanding'], 2),
+            '========================================',
+            'TRANSACTIONS',
         ];
 
         foreach ($ledger['timeline'] as $entry) {
             if ($entry['kind'] === 'purchase') {
-                $lines[] = 'Purchase ' . Carbon::parse($entry['date'])->format('Y-m-d') . ' | ' . number_format($entry['amount'], 2) . ' | ' . ($entry['model']->note ?? '');
-                foreach ($entry['model']->items as $item) {
-                    $lines[] = '  - ' . $item->product_name . ' | ' . number_format((float) $item->weight, 3) . 'kg | ' . number_format((float) $item->unit_price, 2) . ' | ' . number_format((float) $item->line_total, 2);
+                $lines[] = 'PURCHASE  ' . Carbon::parse($entry['date'])->format('Y-m-d') . '   ' . number_format((float) $entry['amount'], 2);
+                if (! empty($entry['model']->note)) {
+                    $lines[] = '  Note: ' . $entry['model']->note;
                 }
+
+                $lines[] = '  Items:';
+                foreach ($entry['model']->items as $item) {
+                    $lines[] = '    - ' . $item->product_name;
+                    $lines[] = '      Qty: ' . number_format((float) $item->weight, 3) . ' kg';
+                    $lines[] = '      Rate: ' . number_format((float) $item->unit_price, 2);
+                    $lines[] = '      Line Total: ' . number_format((float) $item->line_total, 2);
+                }
+                $lines[] = '';
             } else {
                 $payment = $entry['model'];
-                $lines[] = 'Payment ' . Carbon::parse($entry['date'])->format('Y-m-d') . ' | ' . number_format($entry['amount'], 2) . ' | ' . ($payment->note ?? '');
+                $lines[] = 'PAYMENT   ' . Carbon::parse($entry['date'])->format('Y-m-d') . '   ' . number_format((float) $entry['amount'], 2);
+                if (! empty($payment->note)) {
+                    $lines[] = '  Note: ' . $payment->note;
+                }
+                $lines[] = '';
             }
         }
 
-        $pdf = SimplePdf::textDocument('Supplier Statement - ' . $supplier->name, $lines);
+        $lines[] = '========================================';
+        $lines[] = 'Thank you for your business.';
+        $lines[] = 'This document was generated automatically by AKTAS SYSTEM.';
+
+        $pdf = SimplePdf::textDocument('Supplier Receipt - ' . $supplier->name, $lines);
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

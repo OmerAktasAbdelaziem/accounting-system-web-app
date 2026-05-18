@@ -7,7 +7,13 @@ class SimplePdf
     public static function textDocument(string $title, array $lines): string
     {
         $escapedTitle = self::escape($title);
-        $wrappedLines = array_map([self::class, 'escape'], $lines);
+        $wrappedLines = [];
+
+        foreach ($lines as $line) {
+            foreach (self::wrapLine((string) $line, 72) as $wrappedLine) {
+                $wrappedLines[] = self::escape($wrappedLine);
+            }
+        }
 
         $contentLines = [];
         $contentLines[] = 'BT';
@@ -64,5 +70,21 @@ class SimplePdf
     {
         $text = str_replace(['\\', '(', ')'], ['\\\\', '\\(', '\\)'], $text);
         return preg_replace('/[^\x20-\x7E\x0A\x0D]/', '?', $text) ?? $text;
+    }
+
+    /**
+     * Wrap a line into fixed-width chunks for simple PDF rendering.
+     */
+    private static function wrapLine(string $text, int $width): array
+    {
+        $text = trim($text);
+
+        if ($text === '') {
+            return [''];
+        }
+
+        $wrapped = wordwrap($text, $width, "\n", true);
+
+        return explode("\n", $wrapped);
     }
 }
