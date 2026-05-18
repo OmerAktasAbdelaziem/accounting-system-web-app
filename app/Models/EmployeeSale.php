@@ -21,6 +21,7 @@ class EmployeeSale extends Model
         'sale_reference',
         'notes',
         'notes_ar',
+        'branch_id',
     ];
 
     protected $casts = [

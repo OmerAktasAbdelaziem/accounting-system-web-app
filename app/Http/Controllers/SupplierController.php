@@ -103,9 +103,13 @@ class SupplierController extends Controller
         $validated = $request->validate([
             'branch_id' => 'nullable|exists:branches,id',
             'purchase_date' => 'required|date',
-            'total_amount' => 'required|numeric|min:0.01',
-            'product_sold' => 'nullable|array',
-            'product_sold.*' => 'nullable|string|max:255',
+            'note' => 'nullable|string',
+            'product_name' => 'required|array|min:1',
+            'product_name.*' => 'required|string|max:255',
+            'weight' => 'required|array|min:1',
+            'weight.*' => 'required|numeric|min:0.001',
+            'unit_price' => 'required|array|min:1',
+            'unit_price.*' => 'required|numeric|min:0.01',
         ]);
 
         // Validate branch belongs to supplier when provided
@@ -118,21 +122,26 @@ class SupplierController extends Controller
                 'supplier_id' => $supplier->id,
                 'branch_id' => $validated['branch_id'] ?? null,
                 'purchase_date' => $validated['purchase_date'],
-                'note' => null,
-                'total_amount' => (float) $validated['total_amount'],
+                'note' => $validated['note'] ?? null,
+                'total_amount' => 0,
             ]);
 
-            // Store product notes as simple items
-            foreach ($validated['product_sold'] as $productNote) {
-                if ($productNote) {
-                    $purchase->items()->create([
-                        'product_name' => $productNote,
-                        'weight' => 0,
-                        'unit_price' => 0,
-                        'line_total' => 0,
-                    ]);
-                }
+            $total = 0;
+            foreach ($validated['product_name'] as $index => $productName) {
+                $weight = (float) ($validated['weight'][$index] ?? 0);
+                $unitPrice = (float) ($validated['unit_price'][$index] ?? 0);
+                $lineTotal = $weight * $unitPrice;
+                $total += $lineTotal;
+
+                $purchase->items()->create([
+                    'product_name' => $productName,
+                    'weight' => $weight,
+                    'unit_price' => $unitPrice,
+                    'line_total' => $lineTotal,
+                ]);
             }
+
+            $purchase->update(['total_amount' => $total]);
         });
 
         
@@ -195,31 +204,38 @@ class SupplierController extends Controller
         $validated = $request->validate([
             'branch_id' => 'nullable|exists:branches,id',
             'purchase_date' => 'required|date',
-            'total_amount' => 'required|numeric|min:0.01',
-            'product_sold' => 'nullable|array',
-            'product_sold.*' => 'nullable|string|max:255',
+            'note' => 'nullable|string',
+            'product_name' => 'required|array|min:1',
+            'product_name.*' => 'required|string|max:255',
+            'weight' => 'required|array|min:1',
+            'weight.*' => 'required|numeric|min:0.001',
+            'unit_price' => 'required|array|min:1',
+            'unit_price.*' => 'required|numeric|min:0.01',
         ]);
 
         DB::transaction(function () use ($purchase, $validated) {
             $purchase->items()->delete();
 
-            // Store product notes as simple items
-            foreach ($validated['product_sold'] as $productNote) {
-                if ($productNote) {
-                    $purchase->items()->create([
-                        'product_name' => $productNote,
-                        'weight' => 0,
-                        'unit_price' => 0,
-                        'line_total' => 0,
-                    ]);
-                }
+            $total = 0;
+            foreach ($validated['product_name'] as $index => $productName) {
+                $weight = (float) ($validated['weight'][$index] ?? 0);
+                $unitPrice = (float) ($validated['unit_price'][$index] ?? 0);
+                $lineTotal = $weight * $unitPrice;
+                $total += $lineTotal;
+
+                $purchase->items()->create([
+                    'product_name' => $productName,
+                    'weight' => $weight,
+                    'unit_price' => $unitPrice,
+                    'line_total' => $lineTotal,
+                ]);
             }
 
             $purchase->update([
                 'branch_id' => $validated['branch_id'] ?? null,
                 'purchase_date' => $validated['purchase_date'],
-                'note' => null,
-                'total_amount' => (float) $validated['total_amount'],
+                'note' => $validated['note'] ?? null,
+                'total_amount' => $total,
             ]);
         });
 
@@ -289,11 +305,9 @@ class SupplierController extends Controller
 
         foreach ($ledger['timeline'] as $entry) {
             if ($entry['kind'] === 'purchase') {
-                $lines[] = 'Purchase ' . Carbon::parse($entry['date'])->format('Y-m-d') . ' | ' . number_format($entry['amount'], 2);
+                $lines[] = 'Purchase ' . Carbon::parse($entry['date'])->format('Y-m-d') . ' | ' . number_format($entry['amount'], 2) . ' | ' . ($entry['model']->note ?? '');
                 foreach ($entry['model']->items as $item) {
-                    if ($item->product_name) {
-                        $lines[] = '  - ' . $item->product_name;
-                    }
+                    $lines[] = '  - ' . $item->product_name . ' | ' . number_format((float) $item->weight, 3) . 'kg | ' . number_format((float) $item->unit_price, 2) . ' | ' . number_format((float) $item->line_total, 2);
                 }
             } else {
                 $payment = $entry['model'];
