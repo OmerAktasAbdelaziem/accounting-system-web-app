@@ -9,6 +9,11 @@
         <div>
             <h3 class="mb-1">{{ $supplier->name }}</h3>
             <div class="text-muted">Supplier purchase and payment ledger</div>
+            <div class="mt-2">
+                <span class="badge bg-secondary">
+                    {{ $selectedBranchId ? ($selectedBranch?->name ?? 'Selected branch') : 'All branches' }}
+                </span>
+            </div>
         </div>
         <div class="d-flex flex-wrap gap-2">
             <a href="{{ route('suppliers.statement-pdf', array_merge(['supplier' => $supplier], request()->only('branch_id'))) }}" class="btn btn-outline-danger">Export PDF</a>

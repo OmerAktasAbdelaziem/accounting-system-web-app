@@ -314,7 +314,7 @@ class SupplierController extends Controller
             : $supplier->payments()->sum('amount'));
 
         $openingBalance = $branchId
-            ? ((int) $supplier->branch_id === (int) $branchId ? (float) $supplier->opening_balance : 0.0)
+            ? 0.0
             : (float) $supplier->opening_balance;
 
         $outstanding = ($openingBalance + $totalPurchased) - $totalPaid;
