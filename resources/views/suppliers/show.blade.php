@@ -8,11 +8,13 @@
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
         <div>
             <h3 class="mb-1">{{ $supplier->name }}</h3>
-            <div class="text-muted">Supplier purchase and payment ledger</div>
-            <div class="mt-2">
-                <span class="badge bg-secondary">
-                    {{ $selectedBranchId ? ($selectedBranch?->name ?? 'Selected branch') : 'All branches' }}
-                </span>
+            <div class="d-flex gap-2 align-items-center">
+                <div class="text-muted">Supplier purchase and payment ledger</div>
+                @if($selectedBranch)
+                    <span class="badge bg-info text-dark">Showing branch: {{ $selectedBranch->name }}</span>
+                @else
+                    <span class="badge bg-secondary">Showing branch: All</span>
+                @endif
             </div>
         </div>
         <div class="d-flex flex-wrap gap-2">

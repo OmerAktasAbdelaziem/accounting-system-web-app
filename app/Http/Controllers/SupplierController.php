@@ -107,6 +107,11 @@ class SupplierController extends Controller
             'unit_price.*' => 'required|numeric|min:0.01',
         ]);
 
+        // Validate branch belongs to supplier when provided
+        if (($validated['branch_id'] ?? null) && ! $supplier->branches()->whereKey($validated['branch_id'])->exists()) {
+            return back()->withErrors(['branch_id' => 'Selected branch is not linked to this supplier.'])->withInput();
+        }
+
         DB::transaction(function () use ($validated, $supplier) {
             $purchase = SupplierPurchase::create([
                 'supplier_id' => $supplier->id,
@@ -134,6 +139,8 @@ class SupplierController extends Controller
             $purchase->update(['total_amount' => $total]);
         });
 
+        
+
         return redirect()->route('suppliers.show', array_merge(['supplier' => $supplier], request()->only('branch_id')))->with('success', 'Purchase saved successfully.');
     }
 
@@ -146,8 +153,22 @@ class SupplierController extends Controller
             'note' => 'nullable|string',
         ]);
 
-        $currentOutstanding = ((float) $supplier->opening_balance + (float) $supplier->purchases()->sum('total_amount'))
-            - (float) $supplier->payments()->sum('amount');
+        $branchId = $validated['branch_id'] ?? null;
+
+        // If a branch is selected, compute outstanding for that branch only.
+        $totalPurchased = $branchId
+            ? (float) $supplier->purchases()->where('branch_id', $branchId)->sum('total_amount')
+            : (float) $supplier->purchases()->sum('total_amount');
+
+        $totalPaid = $branchId
+            ? (float) $supplier->payments()->where('branch_id', $branchId)->sum('amount')
+            : (float) $supplier->payments()->sum('amount');
+
+        $opening = $branchId
+            ? (((int) $supplier->branch_id === (int) $branchId || $supplier->branches()->whereKey($branchId)->exists()) ? (float) $supplier->opening_balance : 0.0)
+            : (float) $supplier->opening_balance;
+
+        $currentOutstanding = ($opening + $totalPurchased) - $totalPaid;
 
         if ((float) $validated['amount'] > max($currentOutstanding, 0)) {
             return back()->withErrors([
@@ -155,9 +176,14 @@ class SupplierController extends Controller
             ])->withInput();
         }
 
+        // Ensure branch belongs to supplier when provided
+        if ($branchId && ! $supplier->branches()->whereKey($branchId)->exists()) {
+            return back()->withErrors(['branch_id' => 'Selected branch is not linked to this supplier.'])->withInput();
+        }
+
         SupplierPayment::create([
             'supplier_id' => $supplier->id,
-            'branch_id' => $validated['branch_id'] ?? null,
+            'branch_id' => $branchId,
             'payment_date' => $validated['payment_date'],
             'amount' => $validated['amount'],
             'note' => $validated['note'] ?? null,
@@ -314,7 +340,7 @@ class SupplierController extends Controller
             : $supplier->payments()->sum('amount'));
 
         $openingBalance = $branchId
-            ? 0.0
+            ? (((int) $supplier->branch_id === (int) $branchId || $supplier->branches()->whereKey($branchId)->exists()) ? (float) $supplier->opening_balance : 0.0)
             : (float) $supplier->opening_balance;
 
         $outstanding = ($openingBalance + $totalPurchased) - $totalPaid;
