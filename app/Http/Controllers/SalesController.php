@@ -27,8 +27,10 @@ class SalesController extends Controller
 
         $stats = [
             'count' => EmployeeSale::count(),
-            'total' => (float) EmployeeSale::sum('total_amount'),
+            'gross_total' => (float) EmployeeSale::sum('total_amount'),
+            'spent_total' => (float) EmployeeSale::sum('spent_amount'),
         ];
+        $stats['net_total'] = $stats['gross_total'] - $stats['spent_total'];
 
         $branches = Branch::orderBy('name')->get();
 
@@ -41,6 +43,7 @@ class SalesController extends Controller
             'sale_date' => 'required|date|before_or_equal:today',
             'branch_id' => 'required|exists:branches,id',
             'total_amount' => 'required|numeric|min:0.01',
+            'spent_amount' => 'nullable|numeric|min:0',
             'product_sold' => 'nullable|array',
             'product_sold.*' => 'nullable|string|max:255',
         ]);
@@ -52,6 +55,7 @@ class SalesController extends Controller
             'quantity' => 1,
             'unit_price' => $validated['total_amount'],
             'total_amount' => (float) $validated['total_amount'],
+            'spent_amount' => (float) ($validated['spent_amount'] ?? 0),
             'sale_date' => $validated['sale_date'],
             'branch_id' => $validated['branch_id'],
             'sale_reference' => null,

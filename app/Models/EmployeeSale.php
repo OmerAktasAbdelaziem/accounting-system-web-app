@@ -17,6 +17,7 @@ class EmployeeSale extends Model
         'quantity',
         'unit_price',
         'total_amount',
+        'spent_amount',
         'sale_date',
         'sale_reference',
         'notes',
@@ -28,6 +29,7 @@ class EmployeeSale extends Model
         'sale_date' => 'date',
         'unit_price' => 'decimal:2',
         'total_amount' => 'decimal:2',
+        'spent_amount' => 'decimal:2',
     ];
 
     /**
@@ -52,6 +54,14 @@ class EmployeeSale extends Model
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
+    }
+
+    /**
+     * Net income after store spend.
+     */
+    public function getNetIncomeAttribute(): float
+    {
+        return (float) ($this->total_amount - ($this->spent_amount ?? 0));
     }
 
     /**

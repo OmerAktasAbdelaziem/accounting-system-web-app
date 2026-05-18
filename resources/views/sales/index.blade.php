@@ -122,8 +122,8 @@
                     </div>
                     <div class="col-6">
                         <div class="bg-white bg-opacity-10 backdrop-blur rounded-4 p-3 text-center h-100">
-                            <div class="small text-white-50">Total Value</div>
-                            <div class="fs-4 fw-bold">{{ $currencySymbol ?? '$' }}{{ number_format($stats['total'], 2) }}</div>
+                            <div class="small text-white-50">Net Income</div>
+                            <div class="fs-4 fw-bold">{{ $currencySymbol ?? '$' }}{{ number_format($stats['net_total'], 2) }}</div>
                         </div>
                     </div>
                 </div>
@@ -164,6 +164,10 @@
                         <div class="col-md-12">
                             <label class="form-label fw-semibold">Total Amount Sold</label>
                             <input type="number" name="total_amount" class="form-control form-control-lg" min="0.01" step="0.01" value="{{ old('total_amount') }}" required>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Amount Spent by Store <span class="text-muted">(Optional)</span></label>
+                            <input type="number" name="spent_amount" class="form-control form-control-lg" min="0" step="0.01" value="{{ old('spent_amount', 0) }}" placeholder="Amount the store spent">
                         </div>
 
                         <div class="col-12">
@@ -275,6 +279,8 @@
                             <th>Date</th>
                             <th>Branch</th>
                             <th>Total Amount</th>
+                            <th>Spent</th>
+                            <th>Net</th>
                             <th>Products Sold</th>
                         </tr>
                     </thead>
@@ -284,6 +290,8 @@
                                 <td>{{ $sale->sale_date?->format('Y-m-d') }}</td>
                                 <td>{{ $sale->branch?->name ?? '-' }}</td>
                                 <td><strong>{{ $currencySymbol ?? '$' }}{{ number_format((float) $sale->total_amount, 2) }}</strong></td>
+                                <td>{{ $currencySymbol ?? '$' }}{{ number_format((float) ($sale->spent_amount ?? 0), 2) }}</td>
+                                <td><strong>{{ $currencySymbol ?? '$' }}{{ number_format((float) $sale->net_income, 2) }}</strong></td>
                                 <td>
                                     @if($sale->notes)
                                         <small class="text-muted">{{ \Illuminate\Support\Str::limit($sale->notes, 100) }}</small>
@@ -294,7 +302,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center text-muted py-5">
+                                <td colspan="6" class="text-center text-muted py-5">
                                     <div class="py-3">
                                         <i class="bi bi-receipt fs-1 d-block mb-2"></i>
                                         No sales recorded yet.
