@@ -50,8 +50,12 @@ class SupplierController extends Controller
     public function show(Request $request, Supplier $supplier)
     {
         $branchId = $request->integer('branch_id') ?: null;
+        if ($branchId && ! $supplier->branches()->whereKey($branchId)->exists()) {
+            abort(404);
+        }
+
         $ledger = $this->buildSupplierLedger($supplier, $branchId, 30);
-        $branches = Branch::orderBy('name')->get();
+        $branches = $supplier->branches()->orderBy('name')->get();
 
         return view('suppliers.show', array_merge($ledger, [
             'supplier' => $supplier,
@@ -247,11 +251,15 @@ class SupplierController extends Controller
     public function statementPdf(Request $request, Supplier $supplier)
     {
         $branchId = $request->integer('branch_id') ?: null;
+        if ($branchId && ! $supplier->branches()->whereKey($branchId)->exists()) {
+            abort(404);
+        }
+
         $ledger = $this->buildSupplierLedger($supplier, $branchId, 1000);
 
         $branchName = 'All branches';
         if ($branchId) {
-            $branchName = optional(Branch::find($branchId))->name ?? 'Selected branch';
+            $branchName = optional($supplier->branches()->whereKey($branchId)->first())->name ?? 'Selected branch';
         }
 
         $lines = [
