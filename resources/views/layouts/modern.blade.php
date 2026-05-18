@@ -538,7 +538,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark navbar-modern">
             <div class="container-fluid">
                 <div class="d-flex align-items-center w-100">
-                    <a class="navbar-brand" href="{{ route('system.dashboard') }}">
+                    <a class="navbar-brand" href="{{ route('dashboard') }}">
                         <i class="bi bi-graph-up-arrow"></i> {{ \App\Models\Setting::getApplicationName() }}
                     </a>
                     <div class="ms-auto d-flex align-items-center gap-3">

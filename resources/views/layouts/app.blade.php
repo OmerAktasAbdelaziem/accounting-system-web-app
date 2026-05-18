@@ -295,7 +295,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light navbar-custom">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{{ route('system.dashboard') }}">
+            <a class="navbar-brand" href="{{ route('dashboard') }}">
                 <i class="bi bi-graph-up"></i> {{ \App\Models\Setting::getApplicationName() }}
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -304,7 +304,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('system.dashboard') }}">
+                        <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                             {{ __('messages.dashboard') }}
                         </a>
                     </li>
