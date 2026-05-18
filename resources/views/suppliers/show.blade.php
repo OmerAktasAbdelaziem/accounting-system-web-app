@@ -43,7 +43,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                     <small class="text-muted d-block">Opening Balance</small>
-                    <h4 class="mb-0">{{ $currencySymbol }}{{ number_format((float) $supplier->opening_balance, 2) }}</h4>
+                    <h4 class="mb-0">{{ $currencySymbol }}{{ number_format((float) $openingBalance, 2) }}</h4>
                 </div>
             </div>
         </div>

@@ -265,7 +265,7 @@ class SupplierController extends Controller
         $lines = [
             'Supplier: ' . $supplier->name,
             'Branch filter: ' . $branchName,
-            'Opening balance: ' . number_format((float) $supplier->opening_balance, 2),
+            'Opening balance: ' . number_format((float) $ledger['openingBalance'], 2),
             'Total purchased: ' . number_format($ledger['totalPurchased'], 2),
             'Total paid: ' . number_format($ledger['totalPaid'], 2),
             'Outstanding: ' . number_format($ledger['outstanding'], 2),
@@ -313,7 +313,11 @@ class SupplierController extends Controller
             ? $supplier->payments()->where('branch_id', $branchId)->sum('amount')
             : $supplier->payments()->sum('amount'));
 
-        $outstanding = ((float) $supplier->opening_balance + $totalPurchased) - $totalPaid;
+        $openingBalance = $branchId
+            ? ((int) $supplier->branch_id === (int) $branchId ? (float) $supplier->opening_balance : 0.0)
+            : (float) $supplier->opening_balance;
+
+        $outstanding = ($openingBalance + $totalPurchased) - $totalPaid;
 
         $timeline = $purchases
             ->map(function ($purchase) {
@@ -337,6 +341,6 @@ class SupplierController extends Controller
             })
             ->values();
 
-        return compact('purchases', 'payments', 'timeline', 'totalPurchased', 'totalPaid', 'outstanding');
+        return compact('purchases', 'payments', 'timeline', 'totalPurchased', 'totalPaid', 'outstanding', 'openingBalance');
     }
 }
