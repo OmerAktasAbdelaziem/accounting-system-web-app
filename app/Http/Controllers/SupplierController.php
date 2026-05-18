@@ -6,6 +6,7 @@ use App\Models\Branch;
 use App\Models\Supplier;
 use App\Models\SupplierPayment;
 use App\Models\SupplierPurchase;
+use App\Models\Setting;
 use App\Support\SimplePdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -299,11 +300,11 @@ class SupplierController extends Controller
 
         $receiptNumber = 'SUP-' . $supplier->id . '-' . now()->format('YmdHis');
         $generatedAt = now()->format('Y-m-d H:i');
+        $businessName = Setting::getApplicationName();
 
         $lines = [
-            $this->centerText('AKTAS SYSTEM'),
+            $this->centerText($businessName),
             $this->centerText('SUPPLIER RECEIPT / STATEMENT'),
-            $this->centerText('[ LOGO PLACEHOLDER ]'),
             $this->dividerLine('=') ,
             $this->keyValueLine('Receipt No', $receiptNumber),
             $this->keyValueLine('Generated', $generatedAt),
@@ -347,9 +348,6 @@ class SupplierController extends Controller
                 $lines[] = $this->dividerLine('-');
             }
         }
-
-        $lines[] = $this->centerText('Thank you for your business.');
-        $lines[] = $this->centerText('This document was generated automatically by AKTAS SYSTEM.');
 
         $pdf = SimplePdf::textDocument($this->centerText('Supplier Receipt - ' . $supplier->name), $lines);
 
