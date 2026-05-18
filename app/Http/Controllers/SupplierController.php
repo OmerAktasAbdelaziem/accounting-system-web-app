@@ -41,6 +41,11 @@ class SupplierController extends Controller
             'branch_ids.*' => 'exists:branches,id',
         ]);
 
+        // Ensure opening_balance isn't null to avoid DB constraint errors (MySQL column is NOT NULL)
+        if (! array_key_exists('opening_balance', $data) || $data['opening_balance'] === null) {
+            $data['opening_balance'] = 0.0;
+        }
+
         $supplier = Supplier::create($data);
         $supplier->syncBranches($data['branch_ids'] ?? []);
 
