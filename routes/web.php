@@ -64,7 +64,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/home', [DashboardController::class, 'index'])->name('home');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('dashboard/analytics', [DashboardController::class, 'analytics'])->name('dashboard.analytics');
-    Route::get('system-dashboard-fix', [DashboardController::class, 'index'])->name('system.dashboard');
+    // Keep old path for backward compatibility but redirect to the canonical `dashboard`
+    Route::get('system-dashboard-fix', function () { return redirect()->route('dashboard'); });
 
     // Products
     Route::prefix('products')->name('products.')->group(function () {
