@@ -109,26 +109,20 @@
                 </div>
                 <h2 class="fw-bold mb-2">Sales</h2>
                 <p class="mb-0 text-white-75" style="max-width: 720px;">
-                    Record every sale with the employee, product details, quantity, price, and reference in one focused screen.
+                    Record daily sales total with optional product notes.
                 </p>
             </div>
             <div class="col-lg-5">
                 <div class="row g-3">
-                    <div class="col-4">
+                    <div class="col-6">
                         <div class="bg-white bg-opacity-10 backdrop-blur rounded-4 p-3 text-center h-100">
                             <div class="small text-white-50">Entries</div>
                             <div class="fs-4 fw-bold">{{ $stats['count'] }}</div>
                         </div>
                     </div>
-                    <div class="col-4">
+                    <div class="col-6">
                         <div class="bg-white bg-opacity-10 backdrop-blur rounded-4 p-3 text-center h-100">
-                            <div class="small text-white-50">Qty</div>
-                            <div class="fs-4 fw-bold">{{ number_format($stats['quantity'], 0) }}</div>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="bg-white bg-opacity-10 backdrop-blur rounded-4 p-3 text-center h-100">
-                            <div class="small text-white-50">Value</div>
+                            <div class="small text-white-50">Total Value</div>
                             <div class="fs-4 fw-bold">{{ $currencySymbol ?? '$' }}{{ number_format($stats['total'], 2) }}</div>
                         </div>
                     </div>
