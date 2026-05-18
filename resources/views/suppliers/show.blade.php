@@ -91,41 +91,37 @@
                         @csrf
                         <input type="hidden" name="branch_id" value="{{ $selectedBranchId }}">
                         <div class="row g-3 mb-3">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label class="form-label">Purchase Date</label>
                                 <input type="date" name="purchase_date" class="form-control" value="{{ old('purchase_date', now()->toDateString()) }}" required>
                             </div>
-                            <div class="col-md-8">
-                                <label class="form-label">Note</label>
-                                <input type="text" name="note" class="form-control" value="{{ old('note') }}" placeholder="Optional note">
+                            <div class="col-md-6">
+                                <label class="form-label">Total Amount Sold</label>
+                                <input type="number" name="total_amount" class="form-control" step="0.01" min="0.01" value="{{ old('total_amount') }}" required>
                             </div>
                         </div>
 
-                        <div class="table-responsive">
-                            <table class="table table-sm align-middle purchase-items-table">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 36%;">Product Name</th>
-                                        <th style="width: 16%;">Weight (kg)</th>
-                                        <th style="width: 18%;">Unit Price</th>
-                                        <th style="width: 18%;">Line Total</th>
-                                        <th style="width: 12%;"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><input type="text" name="product_name[]" class="form-control" required></td>
-                                        <td><input type="number" name="weight[]" class="form-control weight-input" step="0.001" min="0.001" required></td>
-                                        <td><input type="number" name="unit_price[]" class="form-control price-input" step="0.01" min="0.01" required></td>
-                                        <td><input type="text" class="form-control line-total" readonly value="0.00"></td>
-                                        <td><button type="button" class="btn btn-outline-danger btn-sm remove-row">Remove</button></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="mb-3">
+                            <label class="form-label">Products Sold <span class="text-muted">(Optional)</span></label>
+                            <div class="products-list">
+                                @if(old('product_sold'))
+                                    @foreach(old('product_sold') as $product)
+                                        <div class="input-group mb-2">
+                                            <input type="text" name="product_sold[]" class="form-control" value="{{ $product }}" placeholder="e.g., Product name, quantity, details...">
+                                            <button type="button" class="btn btn-outline-danger remove-product">Remove</button>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="input-group mb-2">
+                                        <input type="text" name="product_sold[]" class="form-control" placeholder="e.g., Product name, quantity, details...">
+                                        <button type="button" class="btn btn-outline-danger remove-product">Remove</button>
+                                    </div>
+                                @endif
+                            </div>
+                            <button type="button" class="btn btn-outline-secondary btn-sm add-product-field mt-2">+ Add Product Field</button>
                         </div>
 
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <button type="button" class="btn btn-outline-primary add-row">+ Add Product Row</button>
+                        <div class="d-flex justify-content-end mt-4">
                             <button type="submit" class="btn btn-primary">Save Purchase</button>
                         </div>
                     </form>
@@ -187,29 +183,17 @@
                                 </form>
                             </div>
                         </div>
-                        <div class="mb-2"><strong>Total:</strong> {{ $currencySymbol }}{{ number_format((float) $purchase->total_amount, 2) }}</div>
-                        <div class="table-responsive">
-                            <table class="table table-sm mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Weight</th>
-                                        <th>Unit Price</th>
-                                        <th>Line Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                        <div class="mb-2"><strong>Total Sold:</strong> {{ $currencySymbol }}{{ number_format((float) $purchase->total_amount, 2) }}</div>
+                        @if($purchase->items->count())
+                            <div class="mb-2">
+                                <strong>Products:</strong>
+                                <ul class="mb-0 ps-3 small">
                                     @foreach($purchase->items as $item)
-                                        <tr>
-                                            <td>{{ $item->product_name }}</td>
-                                            <td>{{ number_format((float) $item->weight, 3) }} kg</td>
-                                            <td>{{ $currencySymbol }}{{ number_format((float) $item->unit_price, 2) }}</td>
-                                            <td>{{ $currencySymbol }}{{ number_format((float) $item->line_total, 2) }}</td>
-                                        </tr>
+                                        <li>{{ $item->product_name }}</li>
                                     @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                                </ul>
+                            </div>
+                        @endif
                         @if($purchase->note)
                             <div class="small text-muted mt-2">Note: {{ $purchase->note }}</div>
                         @endif
@@ -228,40 +212,34 @@
                                     <div class="modal-body">
                                         <input type="hidden" name="branch_id" value="{{ $selectedBranchId }}">
                                         <div class="row g-3 mb-3">
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <label class="form-label">Purchase Date</label>
                                                 <input type="date" name="purchase_date" class="form-control" value="{{ $purchase->purchase_date->format('Y-m-d') }}" required>
                                             </div>
-                                            <div class="col-md-8">
-                                                <label class="form-label">Note</label>
-                                                <input type="text" name="note" class="form-control" value="{{ $purchase->note }}">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Total Amount</label>
+                                                <input type="number" name="total_amount" class="form-control" step="0.01" min="0.01" value="{{ $purchase->total_amount }}" required>
                                             </div>
                                         </div>
-                                        <div class="table-responsive">
-                                            <table class="table table-sm align-middle purchase-items-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Product Name</th>
-                                                        <th>Weight (kg)</th>
-                                                        <th>Unit Price</th>
-                                                        <th>Line Total</th>
-                                                        <th></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
+                                        <div class="mb-3">
+                                            <label class="form-label">Products Sold <span class="text-muted">(Optional)</span></label>
+                                            <div class="products-list">
+                                                @if($purchase->items->count())
                                                     @foreach($purchase->items as $item)
-                                                        <tr>
-                                                            <td><input type="text" name="product_name[]" class="form-control" value="{{ $item->product_name }}" required></td>
-                                                            <td><input type="number" name="weight[]" class="form-control weight-input" step="0.001" min="0.001" value="{{ $item->weight }}" required></td>
-                                                            <td><input type="number" name="unit_price[]" class="form-control price-input" step="0.01" min="0.01" value="{{ $item->unit_price }}" required></td>
-                                                            <td><input type="text" class="form-control line-total" readonly value="{{ number_format((float) $item->line_total, 2) }}"></td>
-                                                            <td><button type="button" class="btn btn-outline-danger btn-sm remove-row">Remove</button></td>
-                                                        </tr>
+                                                        <div class="input-group mb-2">
+                                                            <input type="text" name="product_sold[]" class="form-control" value="{{ $item->product_name }}">
+                                                            <button type="button" class="btn btn-outline-danger remove-product">Remove</button>
+                                                        </div>
                                                     @endforeach
-                                                </tbody>
-                                            </table>
+                                                @else
+                                                    <div class="input-group mb-2">
+                                                        <input type="text" name="product_sold[]" class="form-control" placeholder="e.g., Product name, quantity, details...">
+                                                        <button type="button" class="btn btn-outline-danger remove-product">Remove</button>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <button type="button" class="btn btn-outline-secondary btn-sm add-product-field mt-2">+ Add Product Field</button>
                                         </div>
-                                        <button type="button" class="btn btn-outline-primary add-row">+ Add Product Row</button>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -339,52 +317,41 @@
 
 <script>
 (function () {
-    function bindTable(table) {
-        const tbody = table.querySelector('tbody');
-        const addRowBtn = table.closest('form')?.querySelector('.add-row');
+    // Handle product field management for simplified purchase form
+    function bindProductList(container) {
+        const addBtn = container.closest('form')?.querySelector('.add-product-field');
+        const productsList = container;
 
-        function recalcRow(row) {
-            const weight = parseFloat(row.querySelector('.weight-input')?.value || '0');
-            const price = parseFloat(row.querySelector('.price-input')?.value || '0');
-            row.querySelector('.line-total').value = (weight * price).toFixed(2);
-        }
-
-        function bindRow(row) {
-            row.querySelectorAll('.weight-input, .price-input').forEach((input) => {
-                input.addEventListener('input', () => recalcRow(row));
-            });
-
-            const removeBtn = row.querySelector('.remove-row');
-            if (removeBtn) {
-                removeBtn.addEventListener('click', () => {
-                    if (tbody.querySelectorAll('tr').length > 1) {
-                        row.remove();
+        function bindRemoveButtons() {
+            container.querySelectorAll('.remove-product').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // Only remove if there's more than one field
+                    if (container.querySelectorAll('.input-group').length > 1) {
+                        btn.closest('.input-group').remove();
                     }
                 });
-            }
-
-            recalcRow(row);
+            });
         }
 
-        tbody.querySelectorAll('tr').forEach(bindRow);
+        bindRemoveButtons();
 
-        if (addRowBtn) {
-            addRowBtn.addEventListener('click', () => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><input type="text" name="product_name[]" class="form-control" required></td>
-                    <td><input type="number" name="weight[]" class="form-control weight-input" step="0.001" min="0.001" required></td>
-                    <td><input type="number" name="unit_price[]" class="form-control price-input" step="0.01" min="0.01" required></td>
-                    <td><input type="text" class="form-control line-total" readonly value="0.00"></td>
-                    <td><button type="button" class="btn btn-outline-danger btn-sm remove-row">Remove</button></td>
+        if (addBtn) {
+            addBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const newField = document.createElement('div');
+                newField.className = 'input-group mb-2';
+                newField.innerHTML = `
+                    <input type="text" name="product_sold[]" class="form-control" placeholder="e.g., Product name, quantity, details...">
+                    <button type="button" class="btn btn-outline-danger remove-product">Remove</button>
                 `;
-                tbody.appendChild(row);
-                bindRow(row);
+                productsList.appendChild(newField);
+                bindRemoveButtons();
             });
         }
     }
 
-    document.querySelectorAll('.purchase-items-table').forEach(bindTable);
+    document.querySelectorAll('.products-list').forEach(bindProductList);
 })();
 </script>
 @endsection
