@@ -65,7 +65,7 @@
                     <th>{{ __('messages.description') }}</th>
                     <th>{{ __('messages.debit') }}</th>
                     <th>{{ __('messages.credit') }}</th>
-                    <th>{{ __('messages.status') }}</th>
+                    <th>{{ __('messages.actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -77,14 +77,23 @@
                         <td>{{ $currencySymbol }}{{ number_format($sale->total_debit, 2) }}</td>
                         <td><strong>{{ $currencySymbol }}{{ number_format($sale->total_credit, 2) }}</strong></td>
                         <td>
-                            <span class="badge {{ $sale->status === 'posted' ? 'bg-success' : 'bg-warning' }}">
-                                {{ ucfirst($sale->status) }}
-                            </span>
+                            <div class="d-flex gap-2">
+                                <a href="{{ route('reports.sales.show', $sale) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> {{ __('messages.view') }}
+                                </a>
+                                <form action="{{ route('reports.sales.destroy', $sale) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this sales report entry?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i> {{ __('messages.delete') }}
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="text-center text-muted">{{ __('messages.no_data') }}</td>
+                        <td colspan="6" class="text-center text-muted">{{ __('messages.no_data') }}</td>
                     </tr>
                 @endforelse
             </tbody>

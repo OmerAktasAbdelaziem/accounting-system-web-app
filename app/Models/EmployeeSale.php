@@ -47,6 +47,14 @@ class EmployeeSale extends Model
     }
 
     /**
+     * Get the branch
+     */
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    /**
      * Scope to get sales for a date range
      */
     public function scopeDateRange($query, $startDate, $endDate)

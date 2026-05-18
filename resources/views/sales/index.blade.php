@@ -141,7 +141,7 @@
                 <div class="card-header px-4 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
                     <div>
                         <h5 class="mb-1">Record a Sale</h5>
-                        <div class="field-hint">Select the employee and product, then confirm price and quantity.</div>
+                        <div class="field-hint">Select branch, date, and total amount sold.</div>
                     </div>
                     <span class="badge text-bg-light border">Live total calculator</span>
                 </div>
@@ -149,10 +149,19 @@
                     <form method="POST" action="{{ route('sales.store') }}" class="row g-3">
                         @csrf
                         <div class="col-md-6">
+                            <label class="form-label fw-semibold">Branch</label>
+                            <select name="branch_id" class="form-select form-select-lg" required>
+                                <option value="">Select branch</option>
+                                @foreach($branches as $branch)
+                                    <option value="{{ $branch->id }}" @selected(old('branch_id') == $branch->id)>{{ $branch->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6">
                             <label class="form-label fw-semibold">Sale Date</label>
                             <input type="date" name="sale_date" class="form-control form-control-lg" value="{{ old('sale_date', now()->toDateString()) }}" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <label class="form-label fw-semibold">Total Amount Sold</label>
                             <input type="number" name="total_amount" class="form-control form-control-lg" min="0.01" step="0.01" value="{{ old('total_amount') }}" required>
                         </div>
@@ -237,14 +246,23 @@
             </div>
             <form method="GET" class="row g-2 mt-3 align-items-end">
                 <div class="col-lg-4 col-md-6">
+                    <label class="form-label mb-0 small">Branch</label>
+                    <select name="branch_id" class="form-select">
+                        <option value="">All branches</option>
+                        @foreach($branches as $branch)
+                            <option value="{{ $branch->id }}" @selected((string) request('branch_id') === (string) $branch->id)>{{ $branch->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-lg-3 col-md-6">
                     <label class="form-label mb-0 small">From</label>
                     <input type="date" name="from_date" class="form-control" value="{{ request('from_date') }}">
                 </div>
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-3 col-md-6">
                     <label class="form-label mb-0 small">To</label>
                     <input type="date" name="to_date" class="form-control" value="{{ request('to_date') }}">
                 </div>
-                <div class="col-lg-4 col-md-12 d-grid">
+                <div class="col-lg-2 col-md-12 d-grid">
                     <button class="btn btn-outline-primary">Filter</button>
                 </div>
             </form>
@@ -255,6 +273,7 @@
                     <thead class="table-light">
                         <tr>
                             <th>Date</th>
+                            <th>Branch</th>
                             <th>Total Amount</th>
                             <th>Products Sold</th>
                         </tr>
@@ -263,6 +282,7 @@
                         @forelse($sales as $sale)
                             <tr>
                                 <td>{{ $sale->sale_date?->format('Y-m-d') }}</td>
+                                <td>{{ $sale->branch?->name ?? '-' }}</td>
                                 <td><strong>{{ $currencySymbol ?? '$' }}{{ number_format((float) $sale->total_amount, 2) }}</strong></td>
                                 <td>
                                     @if($sale->notes)
@@ -274,7 +294,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="text-center text-muted py-5">
+                                <td colspan="4" class="text-center text-muted py-5">
                                     <div class="py-3">
                                         <i class="bi bi-receipt fs-1 d-block mb-2"></i>
                                         No sales recorded yet.

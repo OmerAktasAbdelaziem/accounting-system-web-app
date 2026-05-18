@@ -25,6 +25,24 @@ class ReportController extends Controller
         return view('reports.sales', compact('salesData', 'branchId', 'fromDate', 'toDate'));
     }
 
+    public function showSale(JournalEntry $sale)
+    {
+        abort_unless($sale->reference_type === 'invoice', 404);
+
+        $sale->load(['items.account', 'createdBy']);
+
+        return view('reports.sales-show', compact('sale'));
+    }
+
+    public function destroySale(JournalEntry $sale)
+    {
+        abort_unless($sale->reference_type === 'invoice', 404);
+
+        $sale->delete();
+
+        return redirect()->back()->with('success', 'Sales report entry deleted successfully.');
+    }
+
     public function inventory(Request $request)
     {
         $branchId = $request->query('branch_id');

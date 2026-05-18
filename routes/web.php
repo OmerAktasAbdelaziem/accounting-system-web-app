@@ -166,6 +166,8 @@ Route::middleware('auth')->group(function () {
     // Reports
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('sales', [ReportController::class, 'sales'])->name('sales');
+        Route::get('sales/{sale}', [ReportController::class, 'showSale'])->name('sales.show');
+        Route::delete('sales/{sale}', [ReportController::class, 'destroySale'])->name('sales.destroy');
         Route::get('inventory', [ReportController::class, 'inventory'])->name('inventory');
         Route::get('financial', [ReportController::class, 'financial'])->name('financial');
         Route::post('generate-pdf', [ReportController::class, 'generatePdf'])->name('generate-pdf');

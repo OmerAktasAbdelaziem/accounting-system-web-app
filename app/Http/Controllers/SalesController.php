@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Employee;
+use App\Models\Branch;
 use App\Models\EmployeeSale;
-use App\Models\Product;
 use Illuminate\Http\Request;
 
 class SalesController extends Controller
 {
     public function index(Request $request)
     {
-        $sales = EmployeeSale::when($request->filled('from_date'), function ($query) use ($request) {
+        $sales = EmployeeSale::with('branch')
+            ->when($request->filled('branch_id'), function ($query) use ($request) {
+                $query->where('branch_id', $request->integer('branch_id'));
+            })
+            ->when($request->filled('from_date'), function ($query) use ($request) {
                 $query->whereDate('sale_date', '>=', $request->input('from_date'));
             })
             ->when($request->filled('to_date'), function ($query) use ($request) {
@@ -27,13 +30,16 @@ class SalesController extends Controller
             'total' => (float) EmployeeSale::sum('total_amount'),
         ];
 
-        return view('sales.index', compact('sales', 'stats'));
+        $branches = Branch::orderBy('name')->get();
+
+        return view('sales.index', compact('sales', 'stats', 'branches'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'sale_date' => 'required|date|before_or_equal:today',
+            'branch_id' => 'required|exists:branches,id',
             'total_amount' => 'required|numeric|min:0.01',
             'product_sold' => 'nullable|array',
             'product_sold.*' => 'nullable|string|max:255',
@@ -47,6 +53,7 @@ class SalesController extends Controller
             'unit_price' => $validated['total_amount'],
             'total_amount' => (float) $validated['total_amount'],
             'sale_date' => $validated['sale_date'],
+            'branch_id' => $validated['branch_id'],
             'sale_reference' => null,
             'notes' => !empty($validated['product_sold']) ? implode('\n', array_filter($validated['product_sold'])) : null,
             'notes_ar' => null,
