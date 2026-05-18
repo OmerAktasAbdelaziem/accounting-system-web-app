@@ -31,8 +31,9 @@ class DashboardController extends Controller
         $totalSales = (float) JournalEntry::where('reference_type', 'invoice')->sum('total_credit');
         $salesCount = JournalEntry::where('reference_type', 'invoice')->count();
 
-        $pendingCommissions = Commission::where('status', 'pending')->count();
-        $commissionAmount = (float) Commission::where('status', 'pending')->sum('commission_amount');
+        // The `status` column was removed from `commissions` table; fall back to total counts/sums
+        $pendingCommissions = Commission::count();
+        $commissionAmount = (float) Commission::sum('commission_amount');
 
         $totalStorageCapacity = (float) Storage::sum('capacity');
         $totalStorageUsage = (float) StorageItem::sum('quantity');
@@ -146,7 +147,8 @@ class DashboardController extends Controller
                 'low_stock_count' => Product::where('current_stock', '<=', 0)->count(),
                 'total_sales' => (float) JournalEntry::where('reference_type', 'invoice')->sum('total_credit'),
                 'sales_count' => JournalEntry::where('reference_type', 'invoice')->count(),
-                'pending_commissions' => Commission::where('status', 'pending')->count(),
+                // `status` was removed; show total commissions instead
+                'pending_commissions' => Commission::count(),
                 'storage_usage' => (float) (Storage::sum('capacity') > 0 ? round((StorageItem::sum('quantity') / Storage::sum('capacity')) * 100, 2) : 0),
                 'safe_balance' => (float) Safe::sum('balance'),
                 'safe_income_total' => (float) SafeIncome::sum('amount'),
