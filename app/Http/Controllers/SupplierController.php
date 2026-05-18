@@ -86,6 +86,10 @@ class SupplierController extends Controller
             'branch_ids.*' => 'exists:branches,id',
         ]);
 
+        if (! array_key_exists('opening_balance', $data) || $data['opening_balance'] === null) {
+            $data['opening_balance'] = $supplier->opening_balance ?? 0.0;
+        }
+
         $supplier->update($data);
         $supplier->syncBranches($data['branch_ids'] ?? []);
 
