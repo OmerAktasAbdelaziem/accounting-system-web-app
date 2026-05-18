@@ -17,7 +17,7 @@ class Payroll extends Model
         'basic_salary',
         'commission',
         'allowances',
-        'advances_deducted',
+        'deductions',
         'net_salary',
         'notes',
     ];
@@ -26,7 +26,7 @@ class Payroll extends Model
         'basic_salary' => 'decimal:2',
         'commission' => 'decimal:2',
         'allowances' => 'decimal:2',
-        'advances_deducted' => 'decimal:2',
+        'deductions' => 'decimal:2',
         'net_salary' => 'decimal:2',
     ];
 
@@ -40,6 +40,6 @@ class Payroll extends Model
      */
     public function calculateNetSalary(): float
     {
-        return (float) ($this->basic_salary + ($this->commission ?? 0) + ($this->allowances ?? 0) - ($this->advances_deducted ?? 0));
+        return (float) ($this->basic_salary + ($this->commission ?? 0) + ($this->allowances ?? 0) - ($this->deductions ?? 0));
     }
 }

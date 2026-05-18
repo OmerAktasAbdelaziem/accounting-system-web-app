@@ -82,8 +82,8 @@
                     <div class="row mb-4 pb-3 border-bottom">
                         <div class="col-md-6">
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="fw-bold text-muted">{{ __('messages.advances') }}</span>
-                                <span class="fs-5 fw-bold text-danger">-{{ $currencySymbol }}{{ number_format($payroll->advances_deducted ?? 0, 2) }}</span>
+                                    <span class="fw-bold text-muted">{{ __('messages.deductions') }}</span>
+                                    <span class="fs-5 fw-bold text-danger">-{{ $currencySymbol }}{{ number_format($payroll->deductions ?? 0, 2) }}</span>
                             </div>
                         </div>
                         <div class="col-md-6 text-end">

@@ -56,7 +56,7 @@ class PayrollController extends Controller
         
             $data['commission'] = $commission;
             $data['allowances'] = $data['allowances'] ?? 0;
-            $data['advances_deducted'] = $advances;
+            $data['deductions'] = $advances;
             $data['net_salary'] = $data['basic_salary'] + $commission + ($data['allowances'] ?? 0) - $advances;
 
         Payroll::create($data);
@@ -109,7 +109,7 @@ class PayrollController extends Controller
             $advances = EmployeeAdvance::where('employee_id', $payroll->employee_id)
                 ->sum('amount') ?? 0;
         
-            $data['advances_deducted'] = $advances;
+            $data['deductions'] = $advances;
             $data['net_salary'] = $data['basic_salary'] + $commission + ($data['allowances'] ?? 0) - $advances;
 
         $payroll->update($data);
@@ -131,7 +131,7 @@ class PayrollController extends Controller
             'Basic Salary: ' . number_format((float) $payroll->basic_salary, 2),
             'Commission: ' . number_format((float) $payroll->commission, 2),
             'Allowances: ' . number_format((float) $payroll->allowances, 2),
-            'Advances Deducted: ' . number_format((float) $payroll->advances_deducted, 2),
+            'Deductions: ' . number_format((float) $payroll->deductions, 2),
             'Net Salary: ' . number_format((float) $payroll->net_salary, 2),
         ];
 
