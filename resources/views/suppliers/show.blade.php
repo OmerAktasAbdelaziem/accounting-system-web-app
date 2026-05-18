@@ -18,7 +18,7 @@
             </div>
         </div>
         <div class="d-flex flex-wrap gap-2">
-            <a href="{{ route('suppliers.statement-pdf', array_merge(['supplier' => $supplier], request()->only('branch_id'))) }}" class="btn btn-outline-danger">Export PDF</a>
+            <a href="{{ route('suppliers.statement-pdf', array_merge(['supplier' => $supplier], request()->only(['branch_id', 'lang']))) }}" class="btn btn-outline-danger">Export PDF</a>
             <a href="{{ route('suppliers.index') }}" class="btn btn-outline-secondary">Back</a>
         </div>
     </div>
