@@ -25,7 +25,13 @@ class SubscriptionController extends Controller
         $subscriptions = Subscription::query()
             ->with(['merchant', 'package'])
             ->when($request->status, function ($q) use ($request) {
-                $q->where('status', $request->status);
+                if ($request->status === 'active') {
+                    $q->where('is_active', true)->where('expires_at', '>', now());
+                } elseif ($request->status === 'inactive') {
+                    $q->where('is_active', false);
+                } elseif ($request->status === 'expired') {
+                    $q->where('is_active', true)->where('expires_at', '<=', now());
+                }
             })
             ->when($request->merchant_id, function ($q) use ($request) {
                 $q->where('merchant_id', $request->merchant_id);

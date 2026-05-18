@@ -47,7 +47,7 @@ class Subscription extends Model
      */
     public function isActive(): bool
     {
-        return $this->status === 'active' && now()->isBefore($this->expires_at);
+        return (bool) $this->is_active && now()->isBefore($this->expires_at);
     }
 
     /**
@@ -71,7 +71,7 @@ class Subscription extends Model
      */
     public function activate(): void
     {
-        $this->update(['status' => 'active']);
+        $this->update(['is_active' => true]);
     }
 
     /**
@@ -79,7 +79,7 @@ class Subscription extends Model
      */
     public function expire(): void
     {
-        $this->update(['status' => 'expired']);
+        $this->update(['is_active' => false]);
     }
 
     /**
@@ -87,7 +87,7 @@ class Subscription extends Model
      */
     public function cancel(): void
     {
-        $this->update(['status' => 'cancelled']);
+        $this->update(['is_active' => false]);
     }
 
     /**
@@ -95,7 +95,7 @@ class Subscription extends Model
      */
     public static function active()
     {
-        return static::where('status', 'active')
+        return static::where('is_active', true)
             ->where('expires_at', '>', now());
     }
 }

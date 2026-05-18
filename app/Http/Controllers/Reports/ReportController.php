@@ -17,7 +17,6 @@ class ReportController extends Controller
         $fromDate = $request->query('from_date');
         $toDate = $request->query('to_date');
         $salesData = JournalEntry::where('reference_type', 'invoice')
-            ->where('status', 'posted')
             ->when($fromDate, fn ($query) => $query->whereDate('date', '>=', $fromDate))
             ->when($toDate, fn ($query) => $query->whereDate('date', '<=', $toDate))
             ->when($branchId, fn ($query) => $query->where('branch_id', $branchId))
@@ -92,7 +91,6 @@ class ReportController extends Controller
         $toDate = $request->input('to_date');
 
         $entries = JournalEntry::where('reference_type', 'invoice')
-            ->where('status', 'posted')
             ->when($fromDate, fn ($query) => $query->whereDate('date', '>=', $fromDate))
             ->when($toDate, fn ($query) => $query->whereDate('date', '<=', $toDate))
             ->when($branchId, fn ($query) => $query->where('branch_id', $branchId))

@@ -59,17 +59,22 @@
             </thead>
             <tbody>
                 @forelse($safes ?? [] as $safe)
+                    @php
+                        $usagePercent = ($safe->max_balance && (float) $safe->max_balance > 0)
+                            ? min(100, max(0, (($safe->balance ?? 0) / $safe->max_balance) * 100))
+                            : 0;
+                    @endphp
                     <tr>
                         <td><strong>{{ $safe->name }}</strong></td>
                         <td>{{ $safe->location }}</td>
                         <td><h5 style="color: var(--primary-green); font-weight: 900;">{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</h5></td>
                         <td>{{ $safe->max_balance ? $currencySymbol . number_format($safe->max_balance, 2) : __('messages.unlimited') }}</td>
                         <td>
-                            @if($safe->max_balance)
+                            @if(($safe->max_balance ?? 0) > 0)
                                 <div class="progress" style="height: 20px;">
                                     <div class="progress-bar bg-success" role="progressbar" 
-                                        style="width: {{ ($safe->balance / $safe->max_balance) * 100 }}%">
-                                        {{ round(($safe->balance / $safe->max_balance) * 100) }}%
+                                        style="width: {{ $usagePercent }}%">
+                                        {{ round($usagePercent) }}%
                                     </div>
                                 </div>
                             @else

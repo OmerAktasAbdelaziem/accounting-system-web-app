@@ -87,7 +87,7 @@ class MerchantService
     public function createSubscription(Merchant $merchant, Package $package, ?string $paymentMethod = null, ?float $amountPaid = null): Subscription
     {
         // End any existing active subscription
-        $merchant->subscription()->where('status', 'active')->update(['status' => 'expired']);
+        $merchant->subscription()->where('is_active', true)->update(['is_active' => false]);
 
         $startsAt = now();
         $expiresAt = now()->addDays($package->duration_days);
@@ -95,10 +95,9 @@ class MerchantService
         $subscription = Subscription::create([
             'merchant_id' => $merchant->id,
             'package_id' => $package->id,
-            'starts_at' => $startsAt,
+            'start_date' => $startsAt,
             'expires_at' => $expiresAt,
-            'status' => 'active',
-            'amount_paid' => $amountPaid ?? $package->price,
+            'is_active' => true,
             'payment_method' => $paymentMethod,
         ]);
 
@@ -117,7 +116,7 @@ class MerchantService
 
         $subscription->update([
             'expires_at' => $expiresAt,
-            'status' => 'active',
+            'is_active' => true,
         ]);
 
         $subscription->merchant->update(['subscription_expires_at' => $expiresAt]);
@@ -202,7 +201,7 @@ class MerchantService
     public function isSubscriptionValid(Merchant $merchant): bool
     {
         $activeSubscription = $merchant->subscription()
-            ->where('status', 'active')
+            ->where('is_active', true)
             ->where('expires_at', '>', now())
             ->first();
 

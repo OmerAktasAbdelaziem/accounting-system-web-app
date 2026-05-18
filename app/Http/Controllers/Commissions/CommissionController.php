@@ -9,6 +9,7 @@ use App\Models\Branch;
 use App\Models\Commission;
 use App\Models\EmployeeCommission;
 use App\Models\Employee;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CommissionController extends Controller
@@ -25,12 +26,20 @@ class CommissionController extends Controller
         // Get aggregated commission stats
         $totalCommission = Commission::sum('commission_amount');
         
-        // Get monthly commission aggregation from EmployeeCommission
-        // Using SQLite compatible query with strftime
-        $monthlyCommissions = EmployeeCommission::selectRaw("strftime('%Y', created_at) as year, strftime('%m', created_at) as month, SUM(commission_earned) as total")
-            ->groupByRaw("strftime('%Y', created_at), strftime('%m', created_at)")
-            ->orderByRaw("strftime('%Y', created_at) DESC, strftime('%m', created_at) DESC")
-            ->get();
+        $monthlyCommissions = EmployeeCommission::query()
+            ->get()
+            ->groupBy(fn (EmployeeCommission $commission) => Carbon::parse($commission->created_at)->format('Y-m'))
+            ->map(function ($items, string $key) {
+                $date = Carbon::createFromFormat('Y-m', $key);
+
+                return (object) [
+                    'year' => $date->format('Y'),
+                    'month' => $date->format('m'),
+                    'total' => (float) $items->sum('commission_earned'),
+                ];
+            })
+            ->sortByDesc(fn ($item) => $item->year . '-' . $item->month)
+            ->values();
         
         $stats = compact('totalCommission');
         

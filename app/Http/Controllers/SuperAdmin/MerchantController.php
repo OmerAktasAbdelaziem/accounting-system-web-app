@@ -109,7 +109,8 @@ class MerchantController extends Controller
         $merchant->load(['defaultCurrency', 'currencies', 'subscription.package', 'users']);
 
         $activeSubscription = $merchant->subscription()
-            ->where('status', 'active')
+            ->where('is_active', true)
+            ->where('expires_at', '>', now())
             ->latest()
             ->first();
 
