@@ -40,12 +40,12 @@ class PayrollController extends Controller
         ]);
 
         // Auto-fetch commission from employee's commission records for the given month/year
-        $monthStr = str_pad($data['month'], 2, '0', STR_PAD_LEFT);
-        $yearStr = $data['year'];
+        $month = (int) $data['month'];
+        $year = (int) $data['year'];
         
         $commission = Commission::where('employee_id', $data['employee_id'])
-            ->whereRaw("strftime('%m', commission_date) = ?", [$monthStr])
-            ->whereRaw("strftime('%Y', commission_date) = ?", [$yearStr])
+            ->whereMonth('commission_date', $month)
+            ->whereYear('commission_date', $year)
             ->sum('commission_amount') ?? 0;
         $data['commission'] = $commission;
         $data['allowances'] = $data['allowances'] ?? 0;
@@ -74,12 +74,12 @@ class PayrollController extends Controller
         $employees = Employee::pluck('name', 'id');
         
         // Get employee's commission for this payroll month/year
-        $monthStr = str_pad($payroll->month, 2, '0', STR_PAD_LEFT);
-        $yearStr = $payroll->year;
+        $month = (int) $payroll->month;
+        $year = (int) $payroll->year;
         
         $payroll->calculated_commission = Commission::where('employee_id', $payroll->employee_id)
-            ->whereRaw("strftime('%m', commission_date) = ?", [$monthStr])
-            ->whereRaw("strftime('%Y', commission_date) = ?", [$yearStr])
+            ->whereMonth('commission_date', $month)
+            ->whereYear('commission_date', $year)
             ->sum('commission_amount') ?? 0;
         
         return view('payroll.edit', compact('payroll', 'employees'));
@@ -94,12 +94,12 @@ class PayrollController extends Controller
         ]);
 
         // Auto-fetch commission from employee's commission records
-        $monthStr = str_pad($payroll->month, 2, '0', STR_PAD_LEFT);
-        $yearStr = $payroll->year;
+        $month = (int) $payroll->month;
+        $year = (int) $payroll->year;
         
         $commission = Commission::where('employee_id', $payroll->employee_id)
-            ->whereRaw("strftime('%m', commission_date) = ?", [$monthStr])
-            ->whereRaw("strftime('%Y', commission_date) = ?", [$yearStr])
+            ->whereMonth('commission_date', $month)
+            ->whereYear('commission_date', $year)
             ->sum('commission_amount') ?? 0;
         
         $data['commission'] = $commission;
