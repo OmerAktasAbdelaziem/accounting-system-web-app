@@ -426,18 +426,22 @@
 
     document.querySelectorAll('.products-list').forEach(bindProductList);
 
-    // Edit sale modal handling
-    const editButtons = document.querySelectorAll('.edit-sale-btn');
-    const editModalEl = document.getElementById('editSaleModal');
-    let editModal;
-    if (editModalEl) {
-        editModal = new bootstrap.Modal(editModalEl);
-    }
+    // Edit sale modal handling (delegated + safe modal init)
+    document.addEventListener('DOMContentLoaded', function () {
+        const editModalEl = document.getElementById('editSaleModal');
+        let editModal = null;
+        if (editModalEl) {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                try { editModal = new bootstrap.Modal(editModalEl); } catch (err) { editModal = null; }
+            }
+        }
 
-    editButtons.forEach((btn) => {
-        btn.addEventListener('click', (e) => {
+        const table = document.querySelector('.table');
+        (table || document).addEventListener('click', function (e) {
+            const btn = e.target.closest && e.target.closest('.edit-sale-btn');
+            if (!btn) return;
             e.preventDefault();
-            const id = btn.getAttribute('data-id');
+
             const saleDate = btn.getAttribute('data-sale_date');
             const branchId = btn.getAttribute('data-branch_id');
             const totalAmount = btn.getAttribute('data-total_amount');
@@ -446,15 +450,33 @@
             const updateUrl = btn.getAttribute('data-update_url');
 
             const form = document.getElementById('editSaleForm');
-            form.action = updateUrl;
-            form.querySelector('input[name="sale_date"]').value = saleDate || '';
-            form.querySelector('select[name="branch_id"]').value = branchId || '';
-            form.querySelector('input[name="total_amount"]').value = totalAmount || '';
-            form.querySelector('input[name="spent_amount"]').value = spentAmount || '';
-            form.querySelector('textarea[name="product_sold_text"]').value = notes || '';
+            if (!form) return;
+            form.action = updateUrl || form.action;
+            const saleDateInput = form.querySelector('input[name="sale_date"]');
+            const branchSelect = form.querySelector('select[name="branch_id"]');
+            const totalInput = form.querySelector('input[name="total_amount"]');
+            const spentInput = form.querySelector('input[name="spent_amount"]');
+            const notesArea = form.querySelector('textarea[name="product_sold_text"]');
+
+            if (saleDateInput) saleDateInput.value = saleDate || '';
+            if (branchSelect) branchSelect.value = branchId || '';
+            if (totalInput) totalInput.value = totalAmount || '';
+            if (spentInput) spentInput.value = spentAmount || '';
+            if (notesArea) notesArea.value = notes || '';
 
             if (editModal) {
-                editModal.show();
+                try { editModal.show(); return; } catch (e) { /* fallback below */ }
+            }
+            // jQuery + Bootstrap v4 fallback
+            if (window.jQuery && typeof jQuery(editModalEl).modal === 'function') {
+                jQuery(editModalEl).modal('show');
+                return;
+            }
+            // Simple fallback: toggle modal classes
+            if (editModalEl) {
+                editModalEl.classList.add('show');
+                editModalEl.style.display = 'block';
+                editModalEl.removeAttribute('aria-hidden');
             }
         });
     });
