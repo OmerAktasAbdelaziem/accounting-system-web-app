@@ -67,7 +67,6 @@
             <thead>
                 <tr>
                     <th>{{ __('messages.product_name') }}</th>
-                    <th>{{ __('messages.sku') }}</th>
                     <th>
                         <i class="bi bi-tag"></i> {{ __('messages.price') }}
                     </th>
@@ -88,13 +87,10 @@
                             <strong>{{ $product->name }}</strong>
                         </td>
                         <td>
-                            <code>{{ $product->sku }}</code>
-                        </td>
-                        <td>
                             {{ $currencySymbol }}{{ number_format($product->selling_price, 2) }}
                         </td>
                         <td>
-                            <span class="badge {{ $product->current_stock <= $product->min_stock ? 'bg-danger' : 'bg-success' }}">
+                            <span class="badge {{ $product->current_stock <= 0 ? 'bg-danger' : 'bg-success' }}">
                                 {{ $product->current_stock }}
                             </span>
                         </td>
@@ -119,7 +115,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center text-muted py-4">
+                        <td colspan="6" class="text-center text-muted py-4">
                             {{ __('messages.no_products_in_category') }}
                         </td>
                     </tr>

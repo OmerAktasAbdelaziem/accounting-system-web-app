@@ -1,118 +1,132 @@
 @extends('layouts.super-admin')
 
 @section('content')
-<div class="container-fluid">
-    <div class="page-header mb-4">
-        <h1 class="page-title">Create New Subscription</h1>
-    </div>
+<style>
+    .create-shell { min-height: 100vh; padding: 32px 0 48px; background: linear-gradient(180deg, #f7f7f8 0%, #eef1f5 100%); }
+    .create-hero { background: linear-gradient(135deg, #16181d 0%, #23262d 100%); color: #fff; border-radius: 28px; padding: 28px 30px; box-shadow: 0 18px 50px rgba(12, 15, 20, 0.18); }
+    .create-card { border: 0; border-radius: 28px; box-shadow: 0 18px 50px rgba(12, 15, 20, 0.1); overflow: hidden; }
+    .create-field { min-height: 52px; border-radius: 14px; border-color: #d9dde5; }
+    .create-field:focus { border-color: #ff8c00; box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.1); }
+    .create-aside { border: 0; border-radius: 28px; background: linear-gradient(160deg, #ff8c00 0%, #ffb347 100%); color: #fff; box-shadow: 0 18px 50px rgba(255, 140, 0, 0.2); }
+</style>
 
-    @if ($errors->any())
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>Validation Errors:</strong>
-        <ul class="mb-0 mt-2">
-            @foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach
-        </ul>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    @endif
-
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header bg-light"><h5 class="mb-0">Subscription Details</h5></div>
-                <form action="{{ route('super-admin.subscriptions.store') }}" method="POST">
-                    @csrf
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label class="form-label">Select Merchant *</label>
-                            <select name="merchant_id" class="form-select @error('merchant_id') is-invalid @enderror" id="merchantSelect" required>
-                                <option value="">-- Choose a Merchant --</option>
-                                @foreach(\App\Models\Merchant::where('is_active', true)->get() as $merchant)
-                                <option value="{{ $merchant->id }}" {{ old('merchant_id') == $merchant->id ? 'selected' : '' }}>
-                                    {{ $merchant->name }}
-                                </option>
-                                @endforeach
-                            </select>
-                            @error('merchant_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Select Package *</label>
-                            <select name="package_id" class="form-select @error('package_id') is-invalid @enderror" id="packageSelect" required>
-                                <option value="">-- Choose a Package --</option>
-                                @foreach(\App\Models\Package::where('is_active', true)->get() as $package)
-                                <option value="{{ $package->id }}" data-price="{{ $package->price }}" data-duration="{{ $package->duration_days }}" {{ old('package_id') == $package->id ? 'selected' : '' }}>
-                                    {{ $package->name }} - {{ $currencySymbol }}{{ number_format($package->price, 2) }}/{{ $package->duration_days }} days
-                                </option>
-                                @endforeach
-                            </select>
-                            @error('package_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Start Date *</label>
-                                <input type="datetime-local" name="start_date" class="form-control @error('start_date') is-invalid @enderror" value="{{ old('start_date', now()->format('Y-m-d\TH:i')) }}" required>
-                                @error('start_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Duration (days) *</label>
-                                <input type="number" name="duration_months" class="form-control @error('duration_months') is-invalid @enderror" value="{{ old('duration_months', 1) }}" min="1" required>
-                                <small class="text-muted">Package duration will be multiplied by this value</small>
-                                @error('duration_months') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
-                        </div>
-
-                        <div class="card bg-light mb-3">
-                            <div class="card-body">
-                                <strong>Preview:</strong>
-                                <div class="row mt-2">
-                                    <div class="col-md-6">
-                                        <small class="text-muted">Package Price:</small><br>
-                                        <span id="previewPrice">$0.00</span>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <small class="text-muted">Total Duration:</small><br>
-                                        <span id="previewDuration">0 days</span>
-                                    </div>
-                                </div>
-                                <div class="mt-2">
-                                    <small class="text-muted">Estimated Expiry:</small><br>
-                                    <span id="previewExpiry">-</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-check mb-3">
-                            <input type="checkbox" name="send_notification" class="form-check-input" id="sendNotif" value="1" checked>
-                            <label class="form-check-label" for="sendNotif">Send notification email to merchant admin</label>
-                        </div>
-                    </div>
-
-                    <div class="card-footer bg-light">
-                        <button type="submit" class="btn btn-primary">Create Subscription</button>
-                        <a href="{{ route('super-admin.subscriptions.index') }}" class="btn btn-outline-secondary">Cancel</a>
-                    </div>
-                </form>
+<div class="create-shell">
+    <div class="container-fluid">
+        <div class="create-hero mb-4 d-flex flex-wrap justify-content-between align-items-start gap-3">
+            <div>
+                <div class="text-uppercase text-white-50 small fw-semibold mb-2">Subscriptions</div>
+                <h1 class="mb-2 fw-bold" style="letter-spacing: -0.03em;">Create New Subscription</h1>
+                <p class="mb-0 text-white-50">Tie a merchant to a package in a cleaner, more guided flow.</p>
             </div>
+            <a href="{{ route('super-admin.subscriptions.index') }}" class="btn btn-light rounded-pill px-3"><i class="bi bi-arrow-left me-2"></i>Back</a>
         </div>
 
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header bg-light"><h5 class="mb-0">Package Features</h5></div>
-                <div class="card-body">
-                    <div id="packageFeatures">
-                        <small class="text-muted">Select a package to see features</small>
-                    </div>
+        @if ($errors->any())
+            <div class="alert alert-danger border-0 rounded-4 mb-4">
+                <strong>Validation Errors:</strong>
+                <ul class="mb-0 mt-2">
+                    @foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <div class="row g-4">
+            <div class="col-xl-8">
+                <div class="card create-card">
+                    <form action="{{ route('super-admin.subscriptions.store') }}" method="POST">
+                        @csrf
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Select Merchant *</label>
+                                    <select name="merchant_id" class="form-select create-field @error('merchant_id') is-invalid @enderror" id="merchantSelect" required>
+                                        <option value="">-- Choose a Merchant --</option>
+                                        @foreach(\App\Models\Merchant::where('is_active', true)->get() as $merchant)
+                                            <option value="{{ $merchant->id }}" {{ old('merchant_id') == $merchant->id ? 'selected' : '' }}>{{ $merchant->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('merchant_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Select Package *</label>
+                                    <select name="package_id" class="form-select create-field @error('package_id') is-invalid @enderror" id="packageSelect" required>
+                                        <option value="">-- Choose a Package --</option>
+                                        @foreach(\App\Models\Package::where('is_active', true)->get() as $package)
+                                            <option value="{{ $package->id }}" data-price="{{ $package->price }}" data-duration="{{ $package->duration_days }}" {{ old('package_id') == $package->id ? 'selected' : '' }}>{{ $package->name }} - {{ $currencySymbol }}{{ number_format($package->price, 2) }}/{{ $package->duration_days }} days</option>
+                                        @endforeach
+                                    </select>
+                                    @error('package_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Start Date *</label>
+                                    <input type="datetime-local" name="start_date" class="form-control create-field @error('start_date') is-invalid @enderror" value="{{ old('start_date', now()->format('Y-m-d\TH:i')) }}" required>
+                                    @error('start_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Duration (days) *</label>
+                                    <input type="number" name="duration_months" class="form-control create-field @error('duration_months') is-invalid @enderror" value="{{ old('duration_months', 1) }}" min="1" required>
+                                    <small class="text-muted">Package duration will be multiplied by this value</small>
+                                    @error('duration_months') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="card border-0 rounded-4 bg-light">
+                                        <div class="card-body">
+                                            <strong>Preview:</strong>
+                                            <div class="row mt-2">
+                                                <div class="col-md-6">
+                                                    <small class="text-muted">Package Price:</small><br>
+                                                    <span id="previewPrice">$0.00</span>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <small class="text-muted">Total Duration:</small><br>
+                                                    <span id="previewDuration">0 days</span>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2">
+                                                <small class="text-muted">Estimated Expiry:</small><br>
+                                                <span id="previewExpiry">-</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="send_notification" class="form-check-input" id="sendNotif" value="1" checked>
+                                        <label class="form-check-label" for="sendNotif">Send notification email to merchant admin</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-white border-0 p-4 p-lg-5 pt-0">
+                            <button type="submit" class="btn btn-primary px-4">Create Subscription</button>
+                            <a href="{{ route('super-admin.subscriptions.index') }}" class="btn btn-outline-secondary px-4">Cancel</a>
+                        </div>
+                    </form>
                 </div>
             </div>
 
-            <div class="card mt-3">
-                <div class="card-header bg-light"><h5 class="mb-0">Merchant Info</h5></div>
-                <div class="card-body">
-                    <div id="merchantInfo">
-                        <small class="text-muted">Select a merchant to see details</small>
+            <div class="col-xl-4">
+                <div class="card create-aside h-100">
+                    <div class="card-body p-4 p-lg-5">
+                        <h5 class="fw-bold mb-3">Helpful panels</h5>
+                        <div class="d-flex flex-column gap-3">
+                            <div class="d-flex gap-3"><i class="bi bi-box-seam mt-1"></i><div>Package and merchant details are surfaced beside the form so the decision stays visible.</div></div>
+                            <div class="d-flex gap-3"><i class="bi bi-bell mt-1"></i><div>Notification is opt-in here, with the checkbox styled to stand out without shouting.</div></div>
+                            <div class="d-flex gap-3"><i class="bi bi-calendar3 mt-1"></i><div>The preview keeps duration and expiry calculation easy to verify before saving.</div></div>
+                        </div>
+                        <div class="card border-0 rounded-4 bg-white bg-opacity-10 mt-4">
+                            <div class="card-body">
+                                <div id="packageFeatures"><small class="text-white-50">Select a package to see features</small></div>
+                                <hr class="border-white border-opacity-25">
+                                <div id="merchantInfo"><small class="text-white-50">Select a merchant to see details</small></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

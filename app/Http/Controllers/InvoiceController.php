@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Branch;
 use App\Models\Invoice;
 use App\Models\Customer;
 use App\Models\ChartOfAccount;
@@ -21,7 +22,9 @@ class InvoiceController extends Controller
     public function create()
     {
         $customers = Customer::pluck('name', 'id');
-        return view('invoices.create', compact('customers'));
+        $branches = Branch::orderBy('name')->get();
+        $selectedBranchIds = request()->input('branch_ids', []);
+        return view('invoices.create', compact('customers', 'branches', 'selectedBranchIds'));
     }
 
     public function store(Request $request)
@@ -33,6 +36,8 @@ class InvoiceController extends Controller
             'tax' => 'nullable|numeric',
             'total' => 'nullable|numeric',
             'branch_id' => 'nullable|integer',
+            'branch_ids' => 'nullable|array',
+            'branch_ids.*' => 'exists:branches,id',
             'items' => 'nullable|array',
             'items.*.product_id' => 'nullable|exists:products,id',
             'items.*.quantity' => 'required_with:items|integer|min:1',
@@ -42,6 +47,7 @@ class InvoiceController extends Controller
         $data['invoice_number'] = strtoupper('INV-' . Str::random(6));
 
         $invoice = Invoice::create($data);
+        $invoice->syncBranches($data['branch_ids'] ?? []);
 
         // Add line items if provided
         if (!empty($data['items'])) {
@@ -70,7 +76,6 @@ class InvoiceController extends Controller
                     'reference_id' => $invoice->id,
                     'branch_id' => $invoice->branch_id,
                     'created_by' => auth()->id(),
-                    'status' => 'draft',
                 ]);
 
                 $journalEntry->addItem($accountsReceivable->id, $invoice->total, 0, 'Accounts Receivable');
@@ -94,7 +99,9 @@ class InvoiceController extends Controller
     {
         $customers = Customer::pluck('name', 'id');
         $invoice->load('items');
-        return view('invoices.edit', compact('invoice', 'customers'));
+        $branches = Branch::orderBy('name')->get();
+        $selectedBranchIds = $invoice->branches()->pluck('branches.id')->all();
+        return view('invoices.edit', compact('invoice', 'customers', 'branches', 'selectedBranchIds'));
     }
 
     public function update(Request $request, Invoice $invoice)

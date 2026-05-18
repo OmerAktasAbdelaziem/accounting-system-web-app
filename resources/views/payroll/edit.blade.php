@@ -20,8 +20,8 @@
             </div>
         </div>
         <div class="mb-3">
-            <label class="form-label">{{ __('Basic Salary') }}</label>
-            <input type="number" step="1" name="basic_salary" class="form-control @error('basic_salary') is-invalid @enderror" value="{{ old('basic_salary', $payroll->basic_salary) }}" required>
+            <label class="form-label">{{ __('Basic Salary') }} <span class="text-danger">*</span></label>
+            <input type="text" name="basic_salary" inputmode="numeric" class="form-control @error('basic_salary') is-invalid @enderror" value="{{ old('basic_salary', $payroll->basic_salary) }}" placeholder="Enter basic salary" required>
             @error('basic_salary')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
         <div class="mb-3">
@@ -33,7 +33,7 @@
         </div>
         <div class="mb-3">
             <label class="form-label">{{ __('Allowances') }}</label>
-            <input type="number" step="1" name="allowances" class="form-control @error('allowances') is-invalid @enderror" value="{{ old('allowances', $payroll->allowances ?? 0) }}">
+            <input type="text" name="allowances" inputmode="numeric" class="form-control @error('allowances') is-invalid @enderror" value="{{ old('allowances', $payroll->allowances ?? 0) }}">
             @error('allowances')<div class="invalid-feedback">{{ $message }}</div>@enderror
             <small class="form-text text-muted">Additional benefits/bonuses (optional)</small>
         </div>

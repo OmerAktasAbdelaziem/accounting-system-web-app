@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Customer extends Model
 {
     use HasFactory;
+    use \App\Models\Concerns\HasBranches;
 
     protected $fillable = [
         'name',

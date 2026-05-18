@@ -18,14 +18,6 @@
                 <a href="{{ route('payroll.payslip', $payroll) }}" class="btn btn-outline-danger" title="Download Payslip">
                     <i class="bi bi-file-pdf"></i> {{ __('messages.download_pdf') }}
                 </a>
-                @if($payroll->status === 'draft')
-                    <form action="{{ route('payroll.process', $payroll) }}" method="POST" class="d-inline">
-                        @csrf
-                        <button class="btn btn-success" title="Process Payroll">
-                            <i class="bi bi-check-circle"></i> {{ __('messages.process') }}
-                        </button>
-                    </form>
-                @endif
                 <a href="{{ route('payroll.edit', $payroll) }}" class="btn btn-warning">
                     <i class="bi bi-pencil"></i>
                 </a>
@@ -34,19 +26,6 @@
                 </a>
             </div>
         </div>
-    </div>
-
-    <!-- Status Badge -->
-    <div class="mb-4">
-        <span class="badge bg-{{ $payroll->status === 'processed' ? 'success' : 'warning' }} p-2">
-            <i class="bi bi-{{ $payroll->status === 'processed' ? 'check-circle' : 'hourglass-split' }}"></i>
-            {{ ucfirst($payroll->status) }}
-        </span>
-        @if($payroll->processed_at)
-            <small class="text-muted ms-2">
-                {{ __('messages.processed_at') }}: {{ $payroll->processed_at->format('d/m/Y H:i') }}
-            </small>
-        @endif
     </div>
 
     <!-- Main Payroll Details -->
@@ -96,6 +75,19 @@
                         </div>
                         <div class="col-md-6 text-end">
                             <small class="text-muted">Additional benefits</small>
+                        </div>
+                    </div>
+
+                    <!-- Advances Deduction -->
+                    <div class="row mb-4 pb-3 border-bottom">
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold text-muted">{{ __('messages.advances') }}</span>
+                                <span class="fs-5 fw-bold text-danger">-{{ $currencySymbol }}{{ number_format($payroll->advances_deducted ?? 0, 2) }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <small class="text-muted">Employee advances (deducted)</small>
                         </div>
                     </div>
 
@@ -156,12 +148,6 @@
                             {{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}
                         </h5>
                     </div>
-                    <div class="mb-3">
-                        <small class="text-muted d-block">{{ __('messages.status') }}</small>
-                        <span class="badge bg-{{ $payroll->status === 'processed' ? 'success' : 'warning' }}">
-                            {{ ucfirst($payroll->status) }}
-                        </span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -181,27 +167,122 @@
         </div>
     @endif
 
-    <!-- Processing Information -->
-    @if($payroll->processed_at)
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="bi bi-info-circle"></i> {{ __('messages.processing_information') }}
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <small class="text-muted d-block">{{ __('messages.processed_by') }}</small>
-                        <h6 class="mb-0">{{ $payroll->processedBy?->name ?? 'System' }}</h6>
-                    </div>
-                    <div class="col-md-6">
-                        <small class="text-muted d-block">{{ __('messages.processed_at') }}</small>
-                        <h6 class="mb-0">{{ $payroll->processed_at->format('d/m/Y H:i:s') }}</h6>
-                    </div>
-                </div>
-            </div>
+    <!-- Commissions Section -->
+    <div class="card mb-4">
+        <div class="card-header" style="background: linear-gradient(135deg, #27ae60, #52be80); color: white;">
+            <h5 class="mb-0">
+                <i class="bi bi-graph-up"></i> Commission Transactions
+            </h5>
         </div>
-    @endif
+        <div class="card-body">
+            @php
+                $allCommissions = \App\Models\Commission::where('employee_id', $payroll->employee_id)
+                    ->orderBy('commission_date', 'desc')
+                    ->get();
+                $commissions = $allCommissions->filter(function($commission) use ($payroll) {
+                    return $commission->commission_date->month == $payroll->month && 
+                           $commission->commission_date->year == $payroll->year;
+                });
+            @endphp
+            
+            @if($commissions->count() > 0)
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th>{{ __('Date') }}</th>
+                                <th>{{ __('Sale Amount') }}</th>
+                                <th>{{ __('Commission Rate') }}</th>
+                                <th>{{ __('Commission Amount') }}</th>
+                                <th>{{ __('Reference') }}</th>
+                                <th>{{ __('Notes') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($commissions as $commission)
+                            <tr>
+                                <td>
+                                    <small class="fw-bold">{{ $commission->commission_date->format('d/m/Y') }}</small>
+                                </td>
+                                <td>
+                                    <span class="fw-bold">{{ $currencySymbol }}{{ number_format($commission->sale_amount, 2) }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark">{{ $commission->commission_rate }}%</span>
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-success">{{ $currencySymbol }}{{ number_format($commission->commission_amount, 2) }}</span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">{{ $commission->reference_type ?? 'N/A' }}</small>
+                                </td>
+                                <td>
+                                    <small class="text-muted">{{ Str::limit($commission->notes, 30) ?? 'N/A' }}</small>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="alert alert-info mb-0">
+                    <i class="bi bi-info-circle"></i> No commission transactions for this period.
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <!-- Advances Section -->
+    <div class="card mb-4">
+        <div class="card-header" style="background: linear-gradient(135deg, #e74c3c, #ec7063); color: white;">
+            <h5 class="mb-0">
+                <i class="bi bi-cash-coin"></i> Advances Transactions
+            </h5>
+        </div>
+        <div class="card-body">
+            @php
+                $advances = \App\Models\EmployeeAdvance::where('employee_id', $payroll->employee_id)
+                    ->orderBy('advance_date', 'desc')
+                    ->get();
+            @endphp
+            
+            @if($advances->count() > 0)
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th>{{ __('Date') }}</th>
+                                <th>{{ __('Amount') }}</th>
+                                <th>{{ __('Description') }}</th>
+                                <th>{{ __('Created By') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($advances as $advance)
+                            <tr>
+                                <td>
+                                    <small class="fw-bold">{{ $advance->advance_date->format('d/m/Y') }}</small>
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-danger">{{ $currencySymbol }}{{ number_format($advance->amount, 2) }}</span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">{{ Str::limit($advance->description, 40) ?? 'N/A' }}</small>
+                                </td>
+                                <td>
+                                    <small class="text-muted">{{ $advance->createdBy?->name ?? 'System' }}</small>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="alert alert-info mb-0">
+                    <i class="bi bi-info-circle"></i> No advance transactions for this employee.
+                </div>
+            @endif
+        </div>
+    </div>
 </div>
 @endsection

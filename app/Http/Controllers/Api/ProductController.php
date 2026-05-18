@@ -23,7 +23,10 @@ class ProductController extends Controller
         $query = Product::with('category');
 
         if ($search) {
-            $query->whereRaw("MATCH(name, name_ar, sku) AGAINST(? IN BOOLEAN MODE)", [$search]);
+            $query->where(function ($searchQuery) use ($search) {
+                $searchQuery->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('name_ar', 'like', '%' . $search . '%');
+            });
         }
 
         if ($categoryId) {
@@ -67,7 +70,6 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'name_ar' => 'nullable|string|max:255',
-            'sku' => 'nullable|unique:products|max:50',
             'barcode' => 'nullable|unique:products|max:100',
             'category_id' => 'nullable|exists:categories,id',
             'description' => 'nullable|string',
@@ -77,7 +79,6 @@ class ProductController extends Controller
             'selling_price' => 'required|numeric|min:0',
             'wholesale_price' => 'nullable|numeric|min:0',
             'profit_margin' => 'nullable|numeric',
-            'min_stock' => 'integer|min:0',
             'is_active' => 'boolean',
             'track_inventory' => 'boolean',
         ]);
@@ -99,7 +100,6 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'string|max:255',
             'name_ar' => 'nullable|string|max:255',
-            'sku' => 'nullable|unique:products,sku,' . $product->id . '|max:50',
             'barcode' => 'nullable|unique:products,barcode,' . $product->id . '|max:100',
             'category_id' => 'nullable|exists:categories,id',
             'description' => 'nullable|string',
@@ -109,7 +109,6 @@ class ProductController extends Controller
             'selling_price' => 'numeric|min:0',
             'wholesale_price' => 'nullable|numeric|min:0',
             'profit_margin' => 'nullable|numeric',
-            'min_stock' => 'integer|min:0',
             'is_active' => 'boolean',
             'track_inventory' => 'boolean',
         ]);
@@ -142,7 +141,7 @@ class ProductController extends Controller
     public function lowStock(): JsonResponse
     {
         $products = Product::where('is_active', true)
-            ->whereRaw('current_stock <= min_stock')
+            ->where('current_stock', '<=', 0)
             ->with('category')
             ->get();
 

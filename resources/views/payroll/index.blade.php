@@ -16,7 +16,6 @@
                         <th>{{ __('Employee') }}</th>
                         <th>{{ __('Commission') }}</th>
                         <th>{{ __('Net Salary') }}</th>
-                        <th>{{ __('Status') }}</th>
                         <th>{{ __('messages.actions') }}</th>
                     </tr>
                 </thead>
@@ -27,7 +26,6 @@
                         <td>{{ $payroll->employee ? (is_string($payroll->employee->name) ? $payroll->employee->name : (is_array($payroll->employee->name) ? ($payroll->employee->name[app()->getLocale()] ?? implode(' - ', $payroll->employee->name)) : json_encode($payroll->employee->name))) : '' }}</td>
                         <td>{{ $currencySymbol }}{{ number_format($payroll->commission,2) }}</td>
                         <td>{{ $currencySymbol }}{{ number_format($payroll->net_salary,2) }}</td>
-                        <td><span class="badge bg-{{ $payroll->status === 'processed' ? 'success' : 'warning' }}">{{ $payroll->status }}</span></td>
                         <td class="action-buttons">
                             <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
                             <a href="{{ route('payroll.edit', $payroll) }}" class="btn btn-sm btn-outline-primary">{{ __('Edit') }}</a>

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Safe extends Model
 {
     use SoftDeletes;
+    use \App\Models\Concerns\HasBranches;
 
     protected $fillable = [
         'name',
@@ -27,5 +28,20 @@ class Safe extends Model
     public function transactions()
     {
         return $this->hasMany(SafeTransaction::class);
+    }
+
+    public function incomes()
+    {
+        return $this->hasMany(SafeIncome::class);
+    }
+
+    public function outcomes()
+    {
+        return $this->hasMany(SafeOutcome::class);
+    }
+
+    public function currencies()
+    {
+        return $this->hasMany(SafeCurrency::class);
     }
 }

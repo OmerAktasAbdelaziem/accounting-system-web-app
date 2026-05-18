@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Categories;
 
 use App\Http\Controllers\Controller;
+use App\Models\Branch;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -43,7 +44,9 @@ class CategoryController extends Controller
     public function create()
     {
         $category = null;
-        return view('categories.form', compact('category'));
+        $branches = Branch::orderBy('name')->get();
+        $selectedBranchIds = request()->input('branch_ids', []);
+        return view('categories.form', compact('category', 'branches', 'selectedBranchIds'));
     }
 
     public function store(Request $request)
@@ -52,15 +55,20 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255|unique:categories',
             'description' => 'nullable|string|max:1000',
             'is_active' => 'boolean',
+            'branch_ids' => 'nullable|array',
+            'branch_ids.*' => 'exists:branches,id',
         ]);
 
-        Category::create($validated);
+        $category = Category::create($validated);
+        $category->syncBranches($validated['branch_ids'] ?? []);
         return redirect()->route('categories.index')->with('success', 'Category created successfully!');
     }
 
     public function edit(Category $category)
     {
-        return view('categories.form', compact('category'));
+        $branches = Branch::orderBy('name')->get();
+        $selectedBranchIds = $category->branches()->pluck('branches.id')->all();
+        return view('categories.form', compact('category', 'branches', 'selectedBranchIds'));
     }
 
     public function update(Request $request, Category $category)
@@ -69,9 +77,12 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'description' => 'nullable|string|max:1000',
             'is_active' => 'boolean',
+            'branch_ids' => 'nullable|array',
+            'branch_ids.*' => 'exists:branches,id',
         ]);
 
         $category->update($validated);
+        $category->syncBranches($validated['branch_ids'] ?? []);
         return redirect()->route('categories.index')->with('success', 'Category updated successfully!');
     }
 

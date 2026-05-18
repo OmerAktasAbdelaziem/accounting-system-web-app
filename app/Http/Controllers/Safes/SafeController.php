@@ -5,11 +5,16 @@ namespace App\Http\Controllers\Safes;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSafeRequest;
 use App\Http\Requests\UpdateSafeRequest;
-use App\Http\Requests\DepositRequest;
-use App\Http\Requests\WithdrawRequest;
+use App\Models\Branch;
 use App\Models\Safe;
 use App\Models\SafeTransaction;
+use App\Models\SafeIncome;
+use App\Models\SafeOutcome;
+use App\Models\SafeCurrency;
+use App\Models\Supplier;
+use App\Models\SupplierPayment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SafeController extends Controller
 {
@@ -27,51 +32,75 @@ class SafeController extends Controller
     public function create()
     {
         $safe = null;
-        return view('safes.form', compact('safe'));
+        $branches = Branch::orderBy('name')->get();
+        $selectedBranchIds = request()->input('branch_ids', []);
+        return view('safes.form', compact('safe', 'branches', 'selectedBranchIds'));
     }
 
     public function show(Safe $safe)
     {
-        $todayDeposits = SafeTransaction::where('safe_id', $safe->id)
-            ->where('type', 'deposit')
+        $todayIncome = SafeIncome::where('safe_id', $safe->id)
             ->whereDate('created_at', today())
             ->sum('amount');
-        
-        $todayWithdrawals = SafeTransaction::where('safe_id', $safe->id)
-            ->where('type', 'withdrawal')
+
+        $todayOutcome = SafeOutcome::where('safe_id', $safe->id)
             ->whereDate('created_at', today())
             ->sum('amount');
-        
-        $todayTransactionCount = SafeTransaction::where('safe_id', $safe->id)
+
+        $todayNetChange = $todayIncome - $todayOutcome;
+
+        $todayTransactionCount = SafeIncome::where('safe_id', $safe->id)
+            ->whereDate('created_at', today())
+            ->count() + SafeOutcome::where('safe_id', $safe->id)
             ->whereDate('created_at', today())
             ->count();
-        
-        $recentTransactions = SafeTransaction::where('safe_id', $safe->id)
-            ->latest()
-            ->take(10)
-            ->get();
 
-        return view('safes.show', compact('safe', 'todayDeposits', 'todayWithdrawals', 'todayTransactionCount', 'recentTransactions'));
+        $totalIncome = SafeIncome::where('safe_id', $safe->id)->sum('amount');
+        $totalOutcome = SafeOutcome::where('safe_id', $safe->id)->sum('amount');
+        $recentIncomes = SafeIncome::where('safe_id', $safe->id)->with('currency')->latest()->take(5)->get();
+        $recentOutcomes = SafeOutcome::where('safe_id', $safe->id)->with(['currency', 'supplier'])->latest()->take(5)->get();
+        $currencies = SafeCurrency::where('safe_id', $safe->id)->where('is_active', true)->get();
+
+        $suppliersWithOutstanding = Supplier::query()
+            ->withSum('purchases as total_purchased', 'total_amount')
+            ->withSum('payments as total_paid', 'amount')
+            ->get()
+            ->map(function ($supplier) {
+                $opening = (float) ($supplier->opening_balance ?? 0);
+                $purchased = (float) ($supplier->total_purchased ?? 0);
+                $paid = (float) ($supplier->total_paid ?? 0);
+                $supplier->outstanding_amount = $opening + $purchased - $paid;
+                return $supplier;
+            })
+            ->filter(fn ($supplier) => $supplier->outstanding_amount > 0)
+            ->sortByDesc('outstanding_amount')
+            ->values();
+
+        return view('safes.show', compact('safe', 'todayIncome', 'todayOutcome', 'todayNetChange', 'todayTransactionCount', 'totalIncome', 'totalOutcome', 'recentIncomes', 'recentOutcomes', 'currencies', 'suppliersWithOutstanding'));
     }
 
     public function store(StoreSafeRequest $request)
     {
         $validated = $request->validated();
         $validated['balance'] = 0;
-        Safe::create($validated);
+        $safe = Safe::create($validated);
+        $safe->syncBranches($validated['branch_ids'] ?? []);
 
         return redirect()->route('safes.index')->with('success', 'Safe created successfully!');
     }
 
     public function edit(Safe $safe)
     {
-        return view('safes.form', compact('safe'));
+        $branches = Branch::orderBy('name')->get();
+        $selectedBranchIds = $safe->branches()->pluck('branches.id')->all();
+        return view('safes.form', compact('safe', 'branches', 'selectedBranchIds'));
     }
 
     public function update(UpdateSafeRequest $request, Safe $safe)
     {
         $validated = $request->validated();
         $safe->update($validated);
+        $safe->syncBranches($validated['branch_ids'] ?? []);
         return redirect()->route('safes.index')->with('success', 'Safe updated successfully!');
     }
 
@@ -81,40 +110,118 @@ class SafeController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function deposit(DepositRequest $request, Safe $safe)
-    {
-        $validated = $request->validated();
-        $validated['safe_id'] = $safe->id;
-        $validated['type'] = 'deposit';
-        $validated['user_id'] = auth()->id();
-
-        SafeTransaction::create($validated);
-        $safe->update(['balance' => $safe->balance + $validated['amount']]);
-
-        return redirect()->route('safes.transactions', $safe->id)->with('success', 'Deposit recorded!');
-    }
-
-    public function withdraw(WithdrawRequest $request, Safe $safe)
-    {
-        $validated = $request->validated();
-
-        if ($validated['amount'] > $safe->balance) {
-            return back()->withErrors(['amount' => 'Insufficient balance!']);
-        }
-
-        $validated['safe_id'] = $safe->id;
-        $validated['type'] = 'withdrawal';
-        $validated['user_id'] = auth()->id();
-
-        SafeTransaction::create($validated);
-        $safe->update(['balance' => $safe->balance - $validated['amount']]);
-
-        return redirect()->route('safes.transactions', $safe->id)->with('success', 'Withdrawal recorded!');
-    }
-
     public function transactions(Safe $safe)
     {
         $transactions = $safe->transactions()->with('user')->paginate(20);
         return view('safes.transactions', compact('safe', 'transactions'));
+    }
+
+    public function addIncome(Request $request, Safe $safe)
+    {
+        $validated = $request->validate([
+            'amount' => 'required|numeric|min:0.01',
+            'source' => 'required|in:cash,bank',
+            'currency_id' => 'nullable|exists:safe_currencies,id',
+            'reference' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+        ]);
+
+        $validated['safe_id'] = $safe->id;
+        SafeIncome::create($validated);
+
+        // Update currency balance if currency is specified
+        if ($validated['currency_id']) {
+            $currency = SafeCurrency::findOrFail($validated['currency_id']);
+            $currency->update(['balance' => $currency->balance + $validated['amount']]);
+        }
+
+        $safe->update(['balance' => $safe->balance + $validated['amount']]);
+
+        return back()->with('success', 'Income recorded successfully!');
+    }
+
+    public function addOutcome(Request $request, Safe $safe)
+    {
+        $validated = $request->validate([
+            'amount' => 'required|numeric|min:0.01',
+            'description' => 'nullable|string',
+            'currency_id' => 'nullable|exists:safe_currencies,id',
+            'reference' => 'nullable|string|max:255',
+            'reference_type' => 'nullable|in:general,supplier',
+            'supplier_id' => 'nullable|exists:suppliers,id|required_if:reference_type,supplier',
+        ]);
+
+        if ($validated['amount'] > $safe->balance) {
+            return back()->withErrors(['amount' => 'Insufficient balance in safe!']);
+        }
+
+        $referenceType = $validated['reference_type'] ?? 'general';
+        $supplierId = $referenceType === 'supplier' ? ($validated['supplier_id'] ?? null) : null;
+
+        if ($referenceType === 'supplier' && $supplierId) {
+            $supplier = Supplier::query()
+                ->withSum('purchases as total_purchased', 'total_amount')
+                ->withSum('payments as total_paid', 'amount')
+                ->findOrFail($supplierId);
+
+            $currentOutstanding = ((float) ($supplier->opening_balance ?? 0)
+                + (float) ($supplier->total_purchased ?? 0)
+                - (float) ($supplier->total_paid ?? 0));
+
+            if ($currentOutstanding <= 0) {
+                return back()->withErrors(['supplier_id' => 'This supplier has no outstanding amount.']);
+            }
+
+            if ((float) $validated['amount'] > $currentOutstanding) {
+                return back()->withErrors(['amount' => 'Outcome amount cannot be greater than supplier outstanding amount.']);
+            }
+        }
+
+        DB::transaction(function () use ($safe, $validated, $referenceType, $supplierId) {
+            $outcome = SafeOutcome::create([
+                'safe_id' => $safe->id,
+                'amount' => $validated['amount'],
+                'description' => $validated['description'] ?? null,
+                'currency_id' => $validated['currency_id'] ?? null,
+                'reference' => $validated['reference'] ?? null,
+                'reference_type' => $referenceType,
+                'supplier_id' => $supplierId,
+            ]);
+
+            if (!empty($validated['currency_id'])) {
+                $currency = SafeCurrency::findOrFail($validated['currency_id']);
+                if ($currency->balance >= $validated['amount']) {
+                    $currency->update(['balance' => $currency->balance - $validated['amount']]);
+                }
+            }
+
+            if ($referenceType === 'supplier' && $supplierId) {
+                SupplierPayment::create([
+                    'supplier_id' => $supplierId,
+                    'payment_date' => now()->toDateString(),
+                    'amount' => $validated['amount'],
+                    'note' => 'Paid from safe: ' . $safe->name . ' (Outcome #' . $outcome->id . ')',
+                ]);
+            }
+
+            $safe->update(['balance' => $safe->balance - $validated['amount']]);
+        });
+
+        return back()->with('success', 'Outcome recorded successfully!');
+    }
+
+    public function addCurrency(Request $request, Safe $safe)
+    {
+        $validated = $request->validate([
+            'code' => 'required|string|max:3|unique:safe_currencies,code,NULL,id,safe_id,' . $safe->id,
+            'name' => 'required|string|max:255',
+        ]);
+
+        $validated['safe_id'] = $safe->id;
+        $validated['balance'] = 0;
+
+        SafeCurrency::create($validated);
+
+        return back()->with('success', 'Currency ' . $validated['code'] . ' added successfully!');
     }
 }

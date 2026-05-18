@@ -37,7 +37,6 @@
             <thead>
                 <tr>
                     <th>{{ __('messages.product_name') }}</th>
-                    <th>{{ __('messages.sku') }}</th>
                     <th>{{ __('messages.category') }}</th>
                     <th>{{ __('messages.quantity') }}</th>
                     <th>{{ __('messages.value') }}</th>
@@ -48,12 +47,11 @@
                 @forelse($products ?? [] as $product)
                     <tr>
                         <td><strong>{{ $product->name }}</strong></td>
-                        <td><code>{{ $product->sku }}</code></td>
                         <td>{{ $product->category->name ?? 'N/A' }}</td>
                         <td>{{ $product->current_stock }}</td>
                         <td>{{ $currencySymbol }}{{ number_format($product->current_stock * $product->selling_price, 2) }}</td>
                         <td>
-                            @if($product->current_stock <= $product->min_stock)
+                            @if($product->current_stock <= 0)
                                 <span class="badge bg-danger">{{ __('messages.low_stock') }}</span>
                             @else
                                 <span class="badge bg-success">{{ __('messages.in_stock') }}</span>
@@ -62,7 +60,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center text-muted">{{ __('messages.no_data') }}</td>
+                        <td colspan="5" class="text-center text-muted">{{ __('messages.no_data') }}</td>
                     </tr>
                 @endforelse
             </tbody>

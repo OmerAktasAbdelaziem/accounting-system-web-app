@@ -47,7 +47,6 @@
                 <tr>
                     <th>{{ __('messages.product_name') }}</th>
                     <th>{{ __('messages.category') }}</th>
-                    <th>{{ __('messages.sku') }}</th>
                     <th>{{ __('messages.quantity') }}</th>
                     <th>{{ __('messages.price') }}</th>
                     <th>{{ __('messages.status') }}</th>
@@ -59,9 +58,8 @@
                     <tr>
                         <td><strong>{{ $product->name }}</strong></td>
                         <td>{{ $product->category->name ?? 'N/A' }}</td>
-                        <td><code>{{ $product->sku }}</code></td>
                         <td>
-                            <span class="badge {{ $product->current_stock <= $product->min_stock ? 'bg-danger' : 'bg-success' }}">
+                            <span class="badge {{ $product->current_stock <= 0 ? 'bg-danger' : 'bg-success' }}">
                                 {{ $product->current_stock }}
                             </span>
                         </td>
@@ -87,7 +85,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center text-muted">{{ __('messages.no_data') }}</td>
+                        <td colspan="6" class="text-center text-muted">{{ __('messages.no_data') }}</td>
                     </tr>
                 @endforelse
             </tbody>

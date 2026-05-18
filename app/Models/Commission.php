@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Commission extends Model
 {
     use SoftDeletes;
+    use \App\Models\Concerns\HasBranches;
 
     protected $fillable = [
         'employee_id',

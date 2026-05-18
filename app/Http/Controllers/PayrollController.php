@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Payroll;
 use App\Models\Employee;
 use App\Models\EmployeeCommission;
+use App\Models\Commission;
+use App\Models\EmployeeAdvance;
 use App\Models\ChartOfAccount;
 use App\Models\JournalEntry;
 use App\Support\SimplePdf;
@@ -38,15 +40,24 @@ class PayrollController extends Controller
         ]);
 
         // Auto-fetch commission from employee's commission records for the given month/year
-        $employeeCommission = EmployeeCommission::where('employee_id', $data['employee_id'])
-            ->where('month', $data['month'])
-            ->where('year', $data['year'])
-            ->first();
-
-        $commission = $employeeCommission?->commission_earned ?? 0;
+        $monthStr = str_pad($data['month'], 2, '0', STR_PAD_LEFT);
+        $yearStr = $data['year'];
+        
+        $commission = Commission::where('employee_id', $data['employee_id'])
+            ->whereRaw("strftime('%m', commission_date) = ?", [$monthStr])
+            ->whereRaw("strftime('%Y', commission_date) = ?", [$yearStr])
+            ->sum('commission_amount') ?? 0;
         $data['commission'] = $commission;
         $data['allowances'] = $data['allowances'] ?? 0;
-        $data['net_salary'] = $data['basic_salary'] + $commission + ($data['allowances'] ?? 0);
+       
+            // Get approved advances for this employee
+            $advances = EmployeeAdvance::where('employee_id', $data['employee_id'])
+                ->sum('amount') ?? 0;
+        
+            $data['commission'] = $commission;
+            $data['allowances'] = $data['allowances'] ?? 0;
+            $data['advances_deducted'] = $advances;
+            $data['net_salary'] = $data['basic_salary'] + $commission + ($data['allowances'] ?? 0) - $advances;
 
         Payroll::create($data);
 
@@ -63,12 +74,13 @@ class PayrollController extends Controller
         $employees = Employee::pluck('name', 'id');
         
         // Get employee's commission for this payroll month/year
-        $employeeCommission = EmployeeCommission::where('employee_id', $payroll->employee_id)
-            ->where('month', $payroll->month)
-            ->where('year', $payroll->year)
-            ->first();
+        $monthStr = str_pad($payroll->month, 2, '0', STR_PAD_LEFT);
+        $yearStr = $payroll->year;
         
-        $payroll->calculated_commission = $employeeCommission?->commission_earned ?? 0;
+        $payroll->calculated_commission = Commission::where('employee_id', $payroll->employee_id)
+            ->whereRaw("strftime('%m', commission_date) = ?", [$monthStr])
+            ->whereRaw("strftime('%Y', commission_date) = ?", [$yearStr])
+            ->sum('commission_amount') ?? 0;
         
         return view('payroll.edit', compact('payroll', 'employees'));
     }
@@ -82,15 +94,23 @@ class PayrollController extends Controller
         ]);
 
         // Auto-fetch commission from employee's commission records
-        $employeeCommission = EmployeeCommission::where('employee_id', $payroll->employee_id)
-            ->where('month', $payroll->month)
-            ->where('year', $payroll->year)
-            ->first();
-
-        $commission = $employeeCommission?->commission_earned ?? 0;
+        $monthStr = str_pad($payroll->month, 2, '0', STR_PAD_LEFT);
+        $yearStr = $payroll->year;
+        
+        $commission = Commission::where('employee_id', $payroll->employee_id)
+            ->whereRaw("strftime('%m', commission_date) = ?", [$monthStr])
+            ->whereRaw("strftime('%Y', commission_date) = ?", [$yearStr])
+            ->sum('commission_amount') ?? 0;
+        
         $data['commission'] = $commission;
         $data['allowances'] = $data['allowances'] ?? 0;
-        $data['net_salary'] = $data['basic_salary'] + $commission + ($data['allowances'] ?? 0);
+        
+            // Get approved advances for this employee
+            $advances = EmployeeAdvance::where('employee_id', $payroll->employee_id)
+                ->sum('amount') ?? 0;
+        
+            $data['advances_deducted'] = $advances;
+            $data['net_salary'] = $data['basic_salary'] + $commission + ($data['allowances'] ?? 0) - $advances;
 
         $payroll->update($data);
 
@@ -103,45 +123,6 @@ class PayrollController extends Controller
         return redirect()->route('payroll.index')->with('success', __('messages.deleted'));
     }
 
-    public function process(Payroll $payroll)
-    {
-        if ($payroll->status !== 'draft') {
-            return redirect()->route('payroll.show', $payroll)->with('error', __('Payroll already processed'));
-        }
-
-        $payroll->update([
-            'status' => 'processed',
-            'processed_by' => auth()->id(),
-            'processed_at' => now(),
-        ]);
-
-        try {
-            $salaryExpense = ChartOfAccount::where('account_code', '5020')->first();
-            $salariesPayable = ChartOfAccount::where('account_code', '2020')->first();
-
-            if ($salaryExpense && $salariesPayable) {
-                $journalEntry = JournalEntry::create([
-                    'date' => now(),
-                    'description' => 'Payroll for ' . ($payroll->employee?->name ?? 'Employee'),
-                    'reference_number' => 'PAY-' . $payroll->id,
-                    'reference_type' => 'payroll',
-                    'reference_id' => $payroll->id,
-                    'branch_id' => $payroll->employee?->branch_id,
-                    'created_by' => auth()->id(),
-                    'status' => 'draft',
-                ]);
-
-                $journalEntry->addItem($salaryExpense->id, $payroll->net_salary, 0, 'Payroll expense');
-                $journalEntry->addItem($salariesPayable->id, 0, $payroll->net_salary, 'Salaries payable');
-                $journalEntry->post();
-            }
-        } catch (\Exception $exception) {
-            logger()->error('Failed to create payroll journal entry: ' . $exception->getMessage());
-        }
-
-        return redirect()->route('payroll.show', $payroll)->with('success', __('Payroll processed'));
-    }
-
     public function downloadPayslip(Payroll $payroll)
     {
         $lines = [
@@ -149,8 +130,9 @@ class PayrollController extends Controller
             'Month/Year: ' . $payroll->month . '/' . $payroll->year,
             'Basic Salary: ' . number_format((float) $payroll->basic_salary, 2),
             'Commission: ' . number_format((float) $payroll->commission, 2),
+            'Allowances: ' . number_format((float) $payroll->allowances, 2),
+            'Advances Deducted: ' . number_format((float) $payroll->advances_deducted, 2),
             'Net Salary: ' . number_format((float) $payroll->net_salary, 2),
-            'Status: ' . $payroll->status,
         ];
 
         $pdf = SimplePdf::textDocument('Payslip ' . ($payroll->employee?->name ?? 'Employee'), $lines);
@@ -161,3 +143,6 @@ class PayrollController extends Controller
         ]);
     }
 }
+
+
+

@@ -5,11 +5,12 @@ namespace App\Http\Controllers\Storages;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStorageRequest;
 use App\Http\Requests\UpdateStorageRequest;
+use App\Models\Branch;
 use App\Models\Storage;
 use App\Models\StorageItem;
 use App\Models\StorageTransfer;
-use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class StorageController extends Controller
 {
@@ -18,6 +19,7 @@ class StorageController extends Controller
         $storages = Storage::with('items')->paginate(20);
         $stats = [
             'total_items' => StorageItem::sum('quantity'),
+            'total_value' => StorageItem::sum('total_price'),
             'total_storages' => Storage::count(),
             'active_storages' => Storage::where('is_active', true)->count(),
         ];
@@ -27,25 +29,31 @@ class StorageController extends Controller
     public function create()
     {
         $storage = null;
-        return view('storages.form', compact('storage'));
+        $branches = Branch::orderBy('name')->get();
+        $selectedBranchIds = request()->input('branch_ids', []);
+        return view('storages.form', compact('storage', 'branches', 'selectedBranchIds'));
     }
 
     public function store(StoreStorageRequest $request)
     {
         $validated = $request->validated();
-        Storage::create($validated);
+        $storage = Storage::create($validated);
+        $storage->syncBranches($validated['branch_ids'] ?? []);
         return redirect()->route('storages.index')->with('success', 'Storage created successfully!');
     }
 
     public function edit(Storage $storage)
     {
-        return view('storages.form', compact('storage'));
+        $branches = Branch::orderBy('name')->get();
+        $selectedBranchIds = $storage->branches()->pluck('branches.id')->all();
+        return view('storages.form', compact('storage', 'branches', 'selectedBranchIds'));
     }
 
     public function update(UpdateStorageRequest $request, Storage $storage)
     {
         $validated = $request->validated();
         $storage->update($validated);
+        $storage->syncBranches($validated['branch_ids'] ?? []);
         return redirect()->route('storages.index')->with('success', 'Storage updated successfully!');
     }
 
@@ -57,35 +65,40 @@ class StorageController extends Controller
 
     public function items(Storage $storage)
     {
-        $items = $storage->items()->with('product')->paginate(20);
-        $products = Product::all();
-        return view('storages.items', compact('storage', 'items', 'products'));
+        $items = $storage->items()->latest()->paginate(20);
+        $summary = [
+            'entry_count' => $storage->items()->count(),
+            'total_quantity' => (float) $storage->items()->sum('quantity'),
+            'total_weight' => (float) $storage->items()->sum('weight'),
+            'total_value' => (float) $storage->items()->sum('total_price'),
+        ];
+        $otherStorages = Storage::where('is_active', true)
+            ->whereKeyNot($storage->id)
+            ->orderBy('name')
+            ->get();
+
+        return view('storages.items', compact('storage', 'items', 'otherStorages', 'summary'));
     }
 
     public function storeItem(Request $request, Storage $storage)
     {
         $validated = $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|numeric|min:1',
-            'location_code' => 'nullable|string|max:255',
-            'entry_date' => 'nullable|date',
-            'expiry_date' => 'nullable|date',
-            'notes' => 'nullable|string',
+            'product_name' => 'required|string|max:255',
+            'quantity' => 'required|numeric|min:0.01',
+            'weight' => 'required|numeric|min:0.01',
+            'unit_price' => 'required|numeric|min:0.01',
         ]);
 
-        $validated['storage_id'] = $storage->id;
-        
-        // Check for existing item
-        $existingItem = StorageItem::where('storage_id', $storage->id)
-            ->where('product_id', $validated['product_id'])
-            ->where('location_code', $validated['location_code'] ?? null)
-            ->first();
+        StorageItem::create([
+            'storage_id' => $storage->id,
+            'product_name' => $validated['product_name'],
+            'quantity' => $validated['quantity'],
+            'weight' => $validated['weight'],
+            'unit_price' => $validated['unit_price'],
+            'total_price' => $validated['quantity'] * $validated['unit_price'],
+        ]);
 
-        if ($existingItem) {
-            $existingItem->update(['quantity' => $existingItem->quantity + $validated['quantity']]);
-        } else {
-            StorageItem::create($validated);
-        }
+        $this->refreshStorageUsage($storage);
 
         return redirect()->route('storages.items', $storage->id)->with('success', 'Item added successfully!');
     }
@@ -95,14 +108,21 @@ class StorageController extends Controller
         $item = StorageItem::findOrFail($itemId);
 
         $validated = $request->validate([
-            'quantity' => 'required|numeric|min:1',
-            'location_code' => 'nullable|string|max:255',
-            'entry_date' => 'nullable|date',
-            'expiry_date' => 'nullable|date',
-            'notes' => 'nullable|string',
+            'product_name' => 'required|string|max:255',
+            'quantity' => 'required|numeric|min:0.01',
+            'weight' => 'required|numeric|min:0.01',
+            'unit_price' => 'required|numeric|min:0.01',
         ]);
 
-        $item->update($validated);
+        $item->update([
+            'product_name' => $validated['product_name'],
+            'quantity' => $validated['quantity'],
+            'weight' => $validated['weight'],
+            'unit_price' => $validated['unit_price'],
+            'total_price' => $validated['quantity'] * $validated['unit_price'],
+        ]);
+
+        $this->refreshStorageUsage($item->storage);
 
         return redirect()->route('storages.items', $item->storage_id)->with('success', 'Item updated successfully!');
     }
@@ -113,88 +133,77 @@ class StorageController extends Controller
         $storageId = $item->storage_id;
         $item->delete();
 
-        return response()->json(['success' => true, 'storage_id' => $storageId]);
+        $this->refreshStorageUsage(Storage::find($storageId));
+
+        return redirect()->route('storages.items', $storageId)->with('success', 'Item deleted successfully!');
     }
 
     public function transfer(Request $request, Storage $storage)
     {
         $validated = $request->validate([
-            'to_storage_id' => 'required|exists:storages,id|different:from_storage_id',
-            'from_storage_id' => 'required',
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|numeric|min:1',
-            'description' => 'nullable|string|max:500',
+            'item_id' => 'required|exists:storage_items,id',
+            'to_storage_id' => 'required|exists:storages,id|not_in:' . $storage->id,
+            'quantity' => 'required|numeric|min:0.01',
+            'weight' => 'required|numeric|min:0.01',
         ]);
 
-        // Check if item exists in source storage
-        $sourceItem = StorageItem::where('storage_id', $storage->id)
-            ->where('product_id', $validated['product_id'])
-            ->first();
+        $sourceItem = StorageItem::where('storage_id', $storage->id)->findOrFail($validated['item_id']);
 
-        if (!$sourceItem || $sourceItem->quantity < $validated['quantity']) {
+        if ((float) $validated['quantity'] > (float) $sourceItem->quantity || (float) $validated['weight'] > (float) $sourceItem->weight) {
             return response()->json([
                 'success' => false,
-                'message' => 'Insufficient quantity in source storage'
+                'message' => 'Insufficient quantity or weight in source storage',
             ], 422);
         }
 
-        // Check if destination storage exists
         $destinationStorage = Storage::findOrFail($validated['to_storage_id']);
-
-        // Begin transaction
-        \DB::beginTransaction();
+        $transferPrice = (float) $validated['quantity'] * (float) $sourceItem->unit_price;
 
         try {
-            // Reduce quantity from source storage
-            $sourceItem->quantity -= $validated['quantity'];
-            if ($sourceItem->quantity <= 0) {
-                $sourceItem->delete();
-            } else {
-                $sourceItem->save();
-            }
+            DB::transaction(function () use ($sourceItem, $validated, $destinationStorage, $storage, $transferPrice) {
+                $remainingQuantity = (float) $sourceItem->quantity - (float) $validated['quantity'];
+                $remainingWeight = (float) $sourceItem->weight - (float) $validated['weight'];
 
-            // Add or update quantity in destination storage
-            $destinationItem = StorageItem::where('storage_id', $validated['to_storage_id'])
-                ->where('product_id', $validated['product_id'])
-                ->first();
+                if ($remainingQuantity <= 0 || $remainingWeight <= 0) {
+                    $sourceItem->delete();
+                } else {
+                    $sourceItem->update([
+                        'quantity' => $remainingQuantity,
+                        'weight' => $remainingWeight,
+                        'total_price' => $remainingQuantity * (float) $sourceItem->unit_price,
+                    ]);
+                }
 
-            if ($destinationItem) {
-                $destinationItem->quantity += $validated['quantity'];
-                $destinationItem->save();
-            } else {
                 StorageItem::create([
-                    'storage_id' => $validated['to_storage_id'],
-                    'product_id' => $validated['product_id'],
+                    'storage_id' => $destinationStorage->id,
+                    'product_name' => $sourceItem->product_name,
                     'quantity' => $validated['quantity'],
-                    'location_code' => null,
-                    'entry_date' => now(),
-                    'notes' => 'Transferred from ' . $storage->name,
+                    'weight' => $validated['weight'],
+                    'unit_price' => $sourceItem->unit_price,
+                    'total_price' => $transferPrice,
                 ]);
-            }
 
-            // Record the transfer
-            StorageTransfer::create([
-                'from_storage_id' => $storage->id,
-                'to_storage_id' => $validated['to_storage_id'],
-                'product_id' => $validated['product_id'],
-                'quantity' => $validated['quantity'],
-                'description' => $validated['description'],
-                'transfer_date' => now(),
-                'transferred_by' => auth()->id(),
-            ]);
+                StorageTransfer::create([
+                    'from_storage_id' => $storage->id,
+                    'to_storage_id' => $destinationStorage->id,
+                    'product_name' => $sourceItem->product_name,
+                    'quantity' => $validated['quantity'],
+                    'weight' => $validated['weight'],
+                    'unit_price' => $sourceItem->unit_price,
+                    'total_price' => $transferPrice,
+                    'transfer_date' => now(),
+                    'transferred_by' => auth()->id(),
+                ]);
 
-            \DB::commit();
+                $this->refreshStorageUsage($storage);
+                $this->refreshStorageUsage($destinationStorage);
+            });
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Product transferred successfully'
-            ]);
+            return redirect()->route('storages.items', $storage)->with('success', 'Product transferred successfully');
         } catch (\Exception $e) {
-            \DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Error transferring product: ' . $e->getMessage()
-            ], 500);
+            return back()->withErrors([
+                'transfer' => 'Error transferring product: ' . $e->getMessage(),
+            ])->withInput();
         }
     }
 
@@ -202,10 +211,25 @@ class StorageController extends Controller
     {
         $transfers = StorageTransfer::where('from_storage_id', $storage->id)
             ->orWhere('to_storage_id', $storage->id)
-            ->with(['fromStorage', 'toStorage', 'product', 'transferredBy'])
-            ->orderBy('transfer_date', 'desc')
+            ->with(['fromStorage', 'toStorage', 'transferredBy'])
+            ->orderByDesc('transfer_date')
             ->paginate(20);
+        $transferStats = [
+            'outgoing' => StorageTransfer::where('from_storage_id', $storage->id)->count(),
+            'incoming' => StorageTransfer::where('to_storage_id', $storage->id)->count(),
+        ];
 
-        return view('storages.transfer-history', compact('storage', 'transfers'));
+        return view('storages.transfer-history', compact('storage', 'transfers', 'transferStats'));
+    }
+
+    private function refreshStorageUsage(?Storage $storage): void
+    {
+        if (!$storage) {
+            return;
+        }
+
+        $storage->update([
+            'current_usage' => (float) StorageItem::where('storage_id', $storage->id)->sum('quantity'),
+        ]);
     }
 }

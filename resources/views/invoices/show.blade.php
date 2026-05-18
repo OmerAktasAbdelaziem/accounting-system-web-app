@@ -17,9 +17,6 @@
                     <p><strong>{{ __('Customer') }}:</strong> {{ $invoice->customer?->name }}</p>
                     <p><strong>{{ __('Date') }}:</strong> {{ $invoice->date?->format('Y-m-d') }}</p>
                 </div>
-                <div class="col-md-6">
-                    <p><strong>{{ __('Status') }}:</strong> <span class="badge bg-info">{{ $invoice->status }}</span></p>
-                </div>
             </div>
         </div>
     </div>

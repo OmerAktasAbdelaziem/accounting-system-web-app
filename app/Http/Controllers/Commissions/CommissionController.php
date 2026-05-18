@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Commissions;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCommissionRequest;
 use App\Http\Requests\UpdateCommissionRequest;
+use App\Models\Branch;
 use App\Models\Commission;
 use App\Models\EmployeeCommission;
 use App\Models\Employee;
@@ -40,14 +41,17 @@ class CommissionController extends Controller
     {
         $commission = null;
         $employees = Employee::where('is_active', true)->get();
-        return view('commissions.form', compact('commission', 'employees'));
+        $branches = Branch::orderBy('name')->get();
+        $selectedBranchIds = request()->input('branch_ids', []);
+        return view('commissions.form', compact('commission', 'employees', 'branches', 'selectedBranchIds'));
     }
 
     public function store(StoreCommissionRequest $request)
     {
         $validated = $request->validated();
-        $validated['commission_amount'] = ($validated['sale_amount'] * $validated['commission_rate']) / 100;
-        Commission::create($validated);
+        $validated['commission_amount'] = ((float)$validated['sale_amount'] * (float)$validated['commission_rate']) / 100;
+        $commission = Commission::create($validated);
+        $commission->syncBranches($validated['branch_ids'] ?? []);
 
         return redirect()->route('commissions.index')->with('success', 'Commission recorded successfully!');
     }
@@ -60,14 +64,17 @@ class CommissionController extends Controller
     public function edit(Commission $commission)
     {
         $employees = Employee::where('is_active', true)->get();
-        return view('commissions.form', compact('commission', 'employees'));
+        $branches = Branch::orderBy('name')->get();
+        $selectedBranchIds = $commission->branches()->pluck('branches.id')->all();
+        return view('commissions.form', compact('commission', 'employees', 'branches', 'selectedBranchIds'));
     }
 
     public function update(UpdateCommissionRequest $request, Commission $commission)
     {
         $validated = $request->validated();
-        $validated['commission_amount'] = ($validated['sale_amount'] * $validated['commission_rate']) / 100;
+        $validated['commission_amount'] = ((float)$validated['sale_amount'] * (float)$validated['commission_rate']) / 100;
         $commission->update($validated);
+        $commission->syncBranches($validated['branch_ids'] ?? []);
 
         return redirect()->route('commissions.index')->with('success', 'Commission updated successfully!');
     }

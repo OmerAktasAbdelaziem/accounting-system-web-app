@@ -11,26 +11,22 @@ class StorageItem extends Model
 
     protected $fillable = [
         'storage_id',
-        'product_id',
+        'product_name',
         'quantity',
-        'location_code',
-        'entry_date',
-        'expiry_date',
-        'notes',
+        'weight',
+        'unit_price',
+        'total_price',
     ];
 
     protected $casts = [
-        'entry_date' => 'date',
-        'expiry_date' => 'date',
+        'quantity' => 'decimal:2',
+        'weight' => 'decimal:2',
+        'unit_price' => 'decimal:2',
+        'total_price' => 'decimal:2',
     ];
 
     public function storage()
     {
         return $this->belongsTo(Storage::class);
-    }
-
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
     }
 }

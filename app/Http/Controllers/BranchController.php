@@ -37,7 +37,47 @@ class BranchController extends Controller
 
     public function show(Branch $branch)
     {
-        return view('branches.show', compact('branch'));
+        $branch->loadCount([
+            'employees',
+            'products',
+            'categories',
+            'suppliers',
+            'customers',
+            'invoices',
+            'storages',
+            'safes',
+            'commissions',
+        ]);
+
+        $recentEmployees = $branch->employees()->latest()->take(5)->get();
+        $recentProducts = $branch->products()->latest()->take(5)->get();
+        $recentCategories = $branch->categories()->latest()->take(5)->get();
+        $recentSuppliers = $branch->suppliers()->latest()->take(5)->get();
+        $recentCustomers = $branch->customers()->latest()->take(5)->get();
+        $recentInvoices = $branch->invoices()->latest()->take(5)->get();
+        $recentStorages = $branch->storages()->latest()->take(5)->get();
+        $recentSafes = $branch->safes()->latest()->take(5)->get();
+        $recentCommissions = $branch->commissions()->latest()->take(5)->get();
+
+        // Load unassigned employees (those with no branches)
+        $unassignedEmployees = \App\Models\Employee::where('is_active', true)
+            ->whereDoesntHave('branches')
+            ->orderBy('name')
+            ->get();
+
+        return view('branches.show', compact(
+            'branch',
+            'recentEmployees',
+            'recentProducts',
+            'recentCategories',
+            'recentSuppliers',
+            'recentCustomers',
+            'recentInvoices',
+            'recentStorages',
+            'recentSafes',
+            'recentCommissions',
+            'unassignedEmployees'
+        ));
     }
 
     public function edit(Branch $branch)
@@ -66,5 +106,30 @@ class BranchController extends Controller
     {
         $branch->delete();
         return redirect()->route('branches.index')->with('success', __('messages.branch_deleted_successfully'));
+    }
+
+    public function assignEmployee(Request $request, Branch $branch)
+    {
+        $validated = $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+        ]);
+
+        $employee = \App\Models\Employee::findOrFail($validated['employee_id']);
+        // Use attach to add the branch without removing existing branches
+        $employee->branches()->attach($branch->id);
+
+        return back()->with('success', $employee->name . ' assigned to branch successfully!');
+    }
+
+    public function removeEmployee(Request $request, Branch $branch)
+    {
+        $validated = $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+        ]);
+
+        $employee = \App\Models\Employee::findOrFail($validated['employee_id']);
+        $employee->branches()->detach($branch->id);
+
+        return back()->with('success', $employee->name . ' removed from branch successfully!');
     }
 }

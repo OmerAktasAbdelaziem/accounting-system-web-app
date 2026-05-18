@@ -17,19 +17,17 @@ class Payroll extends Model
         'basic_salary',
         'commission',
         'allowances',
+        'advances_deducted',
         'net_salary',
-        'status',
         'notes',
-        'processed_by',
-        'processed_at',
     ];
 
     protected $casts = [
         'basic_salary' => 'decimal:2',
         'commission' => 'decimal:2',
         'allowances' => 'decimal:2',
+        'advances_deducted' => 'decimal:2',
         'net_salary' => 'decimal:2',
-        'processed_at' => 'datetime',
     ];
 
     public function employee(): BelongsTo
@@ -37,16 +35,11 @@ class Payroll extends Model
         return $this->belongsTo(Employee::class);
     }
 
-    public function processedBy(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'processed_by');
-    }
-
     /**
      * Calculate net salary based on basic salary, commission, and allowances
      */
     public function calculateNetSalary(): float
     {
-        return (float) ($this->basic_salary + ($this->commission ?? 0) + ($this->allowances ?? 0));
+        return (float) ($this->basic_salary + ($this->commission ?? 0) + ($this->allowances ?? 0) - ($this->advances_deducted ?? 0));
     }
 }

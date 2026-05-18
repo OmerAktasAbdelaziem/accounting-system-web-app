@@ -22,7 +22,6 @@
                     <th>{{ __('messages.name') }}</th>
                     <th>{{ __('messages.position') }}</th>
                     <th>{{ __('messages.salary') }}</th>
-                    <th>{{ __('messages.status') }}</th>
                     <th>{{ __('messages.actions') }}</th>
                 </tr>
             </thead>
@@ -32,13 +31,6 @@
                         <td><strong>{{ $employee->name }}</strong></td>
                         <td>{{ $employee->position }}</td>
                         <td>{{ $currencySymbol }}{{ number_format($employee->base_salary, 2) }}</td>
-                        <td>
-                            @if($employee->is_active)
-                                <span class="badge bg-success">{{ __('messages.active') }}</span>
-                            @else
-                                <span class="badge bg-secondary">{{ __('messages.inactive') }}</span>
-                            @endif
-                        </td>
                         <td>
                             <a href="{{ route('employees.show', $employee->id) }}" class="btn btn-sm btn-info me-1" title="View Details">
                                 <i class="bi bi-eye"></i>
@@ -53,7 +45,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="text-center text-muted">{{ __('messages.no_data') }}</td>
+                        <td colspan="4" class="text-center text-muted">{{ __('messages.no_data') }}</td>
                     </tr>
                 @endforelse
             </tbody>

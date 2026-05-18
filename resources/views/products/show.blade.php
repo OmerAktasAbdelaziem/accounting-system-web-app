@@ -6,7 +6,6 @@
 <div class="row mb-4">
     <div class="col-md-8">
         <h1><i class="bi bi-box-seam"></i> {{ $product->name }}</h1>
-        <p class="text-muted">{{ __('messages.sku') }}: <code>{{ $product->sku }}</code></p>
     </div>
     <div class="col-md-4 text-end">
         <a href="{{ route('products.index') }}" class="btn btn-outline-secondary me-2">
@@ -20,7 +19,7 @@
 
 <!-- Product Statistics -->
 <div class="row mb-4">
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="stat-card">
             <div class="stat-icon" style="background: linear-gradient(135deg, #ff8c00, #ffb347);">
                 <i class="bi bi-tag"></i>
@@ -31,7 +30,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="stat-card">
             <div class="stat-icon" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">
                 <i class="bi bi-box"></i>
@@ -42,18 +41,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #e74c3c, #ec7063);">
-                <i class="bi bi-exclamation-triangle"></i>
-            </div>
-            <div class="stat-content">
-                <h6>{{ __('messages.min_stock') }}</h6>
-                <h3>{{ $product->min_stock }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="stat-card">
             <div class="stat-icon" style="background: linear-gradient(135deg, #3498db, #5dade2);">
                 <i class="bi bi-percent"></i>
@@ -175,28 +163,28 @@
                 <h5 class="mb-0"><i class="bi bi-exclamation-circle"></i> {{ __('messages.stock_status') }}</h5>
             </div>
             <div class="card-body">
-                @if($product->current_stock <= $product->min_stock)
+                @if($product->current_stock <= 0)
                     <div class="alert alert-danger" role="alert">
                         <i class="bi bi-exclamation-triangle"></i> <strong>{{ __('messages.low_stock_warning') }}</strong>
-                        <br><small>{{ __('messages.current_stock') }}: {{ $product->current_stock }}, {{ __('messages.min_stock') }}: {{ $product->min_stock }}</small>
+                        <br><small>{{ __('messages.current_stock') }}: {{ $product->current_stock }}</small>
                     </div>
                 @else
                     <div class="alert alert-success" role="alert">
                         <i class="bi bi-check-circle"></i> <strong>{{ __('messages.stock_level_good') }}</strong>
-                        <br><small>{{ __('messages.units_above_minimum', ['count' => $product->current_stock - $product->min_stock]) }}</small>
+                        <br><small>{{ $product->current_stock }} {{ __('messages.units') }}</small>
                     </div>
                 @endif
 
                 <div class="progress mb-3">
                     @php
-                        $stockPercentage = ($product->current_stock / max($product->min_stock, $product->current_stock)) * 100;
-                        $barColor = $product->current_stock <= $product->min_stock ? 'danger' : 'success';
+                        $stockPercentage = $product->current_stock > 0 ? 100 : 0;
+                        $barColor = $product->current_stock <= 0 ? 'danger' : 'success';
                     @endphp
                     <div class="progress-bar bg-{{ $barColor }}" style="width: {{ min($stockPercentage, 100) }}%"></div>
                 </div>
 
                 <p class="text-muted small">
-                    <strong>{{ __('messages.reorder_point') }}:</strong> {{ $product->min_stock }} {{ __('messages.units') }}
+                    <strong>{{ __('messages.current_stock') }}:</strong> {{ $product->current_stock }} {{ __('messages.units') }}
                 </p>
             </div>
         </div>

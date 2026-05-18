@@ -28,6 +28,8 @@
             </div>
         </div>
 
+        @include('branches.partials.multi-select', ['branches' => $branches ?? [], 'selectedBranchIds' => $selectedBranchIds ?? []])
+
         <!-- Line Items Section -->
         <div class="card mb-4">
             <div class="card-header">

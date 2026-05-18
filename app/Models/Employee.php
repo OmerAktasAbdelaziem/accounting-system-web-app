@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasBranches;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Employee extends Model
 {
     use HasFactory, SoftDeletes;
+    use \App\Models\Concerns\HasBranches;
 
     protected $fillable = [
         'employee_code',
@@ -44,6 +46,14 @@ class Employee extends Model
     public function commissions(): HasMany
     {
         return $this->hasMany(EmployeeCommission::class);
+    }
+
+    /**
+     * Get employee advances
+     */
+    public function advances(): HasMany
+    {
+        return $this->hasMany(EmployeeAdvance::class);
     }
 
     /**
@@ -116,7 +126,6 @@ class Employee extends Model
                 'sales_amount' => $salesAmount,
                 'sales_count' => $salesCount,
                 'commission_earned' => $commissionEarned,
-                'status' => 'pending',
             ]);
         }
 
@@ -131,7 +140,6 @@ class Employee extends Model
         return $this->deductions()
             ->where('month', $month)
             ->where('year', $year)
-            ->where('status', '!=', 'cancelled')
             ->sum('amount');
     }
 

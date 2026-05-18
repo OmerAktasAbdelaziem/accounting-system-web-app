@@ -23,6 +23,8 @@ class StoreCommissionRequest extends FormRequest
             'commission_date' => 'required|date|before_or_equal:today',
             'reference_type' => 'nullable|string|max:50',
             'notes' => 'nullable|string|max:1000',
+            'branch_ids' => 'nullable|array',
+            'branch_ids.*' => 'exists:branches,id',
         ];
     }
 

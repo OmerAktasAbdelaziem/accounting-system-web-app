@@ -75,6 +75,44 @@
             return $rawLabel;
         };
     @endphp
+    @if($isSuperAdmin)
+        <div class="sidebar-section">
+            <div class="sidebar-title">Dashboard Tools</div>
+            <ul class="sidebar-menu main-menu">
+                <li>
+                    <a href="{{ route('super-admin.dashboard') }}" class="{{ request()->routeIs('super-admin.dashboard') ? 'active' : '' }}">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Live Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('reports.sales') }}">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Sales Report</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('reports.financial') }}">
+                        <i class="bi bi-journal-text"></i>
+                        <span>Financial Report</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('super-admin.feature-access.index') }}">
+                        <i class="bi bi-shield-lock"></i>
+                        <span>Feature Access</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('super-admin.merchants.create') }}">
+                        <i class="bi bi-building-add"></i>
+                        <span>New Merchant</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    @endif
+
     @if(!empty($menu['main']))
         <ul class="sidebar-menu main-menu">
             @foreach($menu['main'] as $item)
