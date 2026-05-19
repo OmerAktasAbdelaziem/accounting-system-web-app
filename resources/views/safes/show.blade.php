@@ -731,18 +731,33 @@
         toggleSupplierField();
     }
 
-    // Initialize modals
-    const incomeDetailModal = new bootstrap.Modal(document.getElementById('incomeDetailModal'));
-    const outcomeDetailModal = new bootstrap.Modal(document.getElementById('outcomeDetailModal'));
-    const editIncomeModal = new bootstrap.Modal(document.getElementById('editIncomeModal'));
-    const editOutcomeModal = new bootstrap.Modal(document.getElementById('editOutcomeModal'));
+    // Initialize modals - wait for Bootstrap to be available
+    let incomeDetailModal, outcomeDetailModal, editIncomeModal, editOutcomeModal;
+    
+    function initModals() {
+        try {
+            incomeDetailModal = new bootstrap.Modal(document.getElementById('incomeDetailModal'));
+            outcomeDetailModal = new bootstrap.Modal(document.getElementById('outcomeDetailModal'));
+            editIncomeModal = new bootstrap.Modal(document.getElementById('editIncomeModal'));
+            editOutcomeModal = new bootstrap.Modal(document.getElementById('editOutcomeModal'));
+            console.log('Modals initialized successfully');
+        } catch (error) {
+            console.error('Failed to initialize modals:', error);
+        }
+    }
+    
+    // Initialize modals when ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initModals);
+    } else {
+        initModals();
+    }
 
     // Handle income row click
     document.addEventListener('click', function (e) {
         const row = e.target.closest('.income-row');
         if (!row) return;
 
-        const id = row.getAttribute('data-id');
         const amount = row.getAttribute('data-amount');
         const source = row.getAttribute('data-source');
         const currencyId = row.getAttribute('data-currency_id');
@@ -764,15 +779,16 @@
 
         // Handle edit button
         document.getElementById('incomeDetailEditBtn').onclick = function () {
-            incomeDetailModal.hide();
-            // Populate edit form
-            document.getElementById('editIncomeForm').action = updateUrl;
-            document.querySelector('input[name="amount"]').value = amount;
-            document.querySelector('select[name="source"]').value = source;
-            document.querySelector('select[name="currency_id"]').value = currencyId || '';
-            document.querySelector('input[name="reference"]').value = reference || '';
-            document.querySelector('textarea[name="notes"]').value = notes || '';
-            editIncomeModal.show();
+            if (incomeDetailModal) incomeDetailModal.hide();
+            // Populate edit form - scope selectors to the form
+            const editIncomeForm = document.getElementById('editIncomeForm');
+            editIncomeForm.action = updateUrl;
+            editIncomeForm.querySelector('input[name="amount"]').value = amount;
+            editIncomeForm.querySelector('select[name="source"]').value = source;
+            editIncomeForm.querySelector('select[name="currency_id"]').value = currencyId || '';
+            editIncomeForm.querySelector('input[name="reference"]').value = reference || '';
+            editIncomeForm.querySelector('textarea[name="notes"]').value = notes || '';
+            if (editIncomeModal) editIncomeModal.show();
         };
 
         // Handle delete button
@@ -788,7 +804,7 @@
             }
         };
 
-        incomeDetailModal.show();
+        if (incomeDetailModal) incomeDetailModal.show();
     });
 
     // Handle outcome row click
@@ -796,7 +812,6 @@
         const row = e.target.closest('.outcome-row');
         if (!row) return;
 
-        const id = row.getAttribute('data-id');
         const amount = row.getAttribute('data-amount');
         const description = row.getAttribute('data-description');
         const currencyId = row.getAttribute('data-currency_id');
@@ -827,15 +842,15 @@
 
         // Handle edit button
         document.getElementById('outcomeDetailEditBtn').onclick = function () {
-            outcomeDetailModal.hide();
-            // Populate edit form
+            if (outcomeDetailModal) outcomeDetailModal.hide();
+            // Populate edit form - scope selectors to the form
             const editOutcomeForm = document.getElementById('editOutcomeForm');
             editOutcomeForm.action = updateUrl;
             editOutcomeForm.querySelector('input[name="amount"]').value = amount;
             editOutcomeForm.querySelector('select[name="currency_id"]').value = currencyId || '';
             editOutcomeForm.querySelector('textarea[name="description"]').value = description || '';
             editOutcomeForm.querySelector('input[name="reference"]').value = reference || '';
-            editOutcomeModal.show();
+            if (editOutcomeModal) editOutcomeModal.show();
         };
 
         // Handle delete button
@@ -851,7 +866,7 @@
             }
         };
 
-        outcomeDetailModal.show();
+        if (outcomeDetailModal) outcomeDetailModal.show();
     });
 })();
 </script>
