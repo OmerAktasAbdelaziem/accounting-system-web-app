@@ -224,7 +224,7 @@
                 </button>
 
                 @if(count($recentIncomes) > 0)
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
                         <table class="table table-sm align-middle mb-0">
                             <thead>
                                 <tr>
@@ -288,7 +288,7 @@
                 </button>
 
                 @if(count($recentOutcomes) > 0)
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
                         <table class="table table-sm align-middle mb-0">
                             <thead>
                                 <tr>

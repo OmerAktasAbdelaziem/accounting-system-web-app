@@ -57,8 +57,8 @@ class SafeController extends Controller
 
         $totalIncome = SafeIncome::where('safe_id', $safe->id)->sum('amount');
         $totalOutcome = SafeOutcome::where('safe_id', $safe->id)->sum('amount');
-        $recentIncomes = SafeIncome::where('safe_id', $safe->id)->with('currency')->latest()->take(5)->get();
-        $recentOutcomes = SafeOutcome::where('safe_id', $safe->id)->with(['currency', 'supplier'])->latest()->take(5)->get();
+        $recentIncomes = SafeIncome::where('safe_id', $safe->id)->with('currency')->latest()->get();
+        $recentOutcomes = SafeOutcome::where('safe_id', $safe->id)->with(['currency', 'supplier'])->latest()->get();
         $currencies = SafeCurrency::where('safe_id', $safe->id)->where('is_active', true)->get();
 
         $suppliersWithOutstanding = Supplier::query()
