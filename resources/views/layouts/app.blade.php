@@ -401,7 +401,7 @@
                             @if(hasFeature('user_management'))
                             <li><a class="dropdown-item" href="{{ route('users.index') }}">{{ __('messages.users') }}</a></li>
                             @endif
-                            @if(hasFeature('roles_management'))
+                            @if(auth()->user()?->isSuperAdmin())
                             <li><a class="dropdown-item" href="{{ route('roles.index') }}">{{ __('messages.roles') }}</a></li>
                             @endif
                             @if(hasFeature('permissions_management'))

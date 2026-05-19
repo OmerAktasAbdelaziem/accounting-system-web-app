@@ -11,6 +11,16 @@ use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+            if (! $user || ! method_exists($user, 'isSuperAdmin') || ! $user->isSuperAdmin()) {
+                abort(403);
+            }
+            return $next($request);
+        });
+    }
     /**
      * Display a listing of all roles
      */

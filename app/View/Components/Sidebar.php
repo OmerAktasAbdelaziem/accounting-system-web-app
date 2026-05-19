@@ -76,7 +76,6 @@ class Sidebar extends Component
             $admin = [
                 ['route' => 'profile', 'icon' => 'bi-person', 'label' => 'Profile'],
                 ['route' => 'settings.index', 'icon' => 'bi-gear', 'label' => 'Settings'],
-                ['route' => 'roles.index', 'icon' => 'bi-shield-alt', 'label' => 'Roles Management'],
                 ['route' => 'audit-logs.index', 'icon' => 'bi-journal-text', 'label' => 'Audit Logs'],
             ];
         }
