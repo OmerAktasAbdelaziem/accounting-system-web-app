@@ -228,9 +228,9 @@
                         <table class="table table-sm align-middle mb-0">
                             <thead>
                                 <tr>
-                                    <th>Amount</th>
-                                    <th>Source</th>
-                                    <th>Date</th>
+                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">Amount</th>
+                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">Source</th>
+                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">Date</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -292,9 +292,9 @@
                         <table class="table table-sm align-middle mb-0">
                             <thead>
                                 <tr>
-                                    <th>Amount</th>
-                                    <th>Description</th>
-                                    <th>Date</th>
+                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">Amount</th>
+                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">Description</th>
+                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">Date</th>
                                 </tr>
                             </thead>
                             <tbody>
