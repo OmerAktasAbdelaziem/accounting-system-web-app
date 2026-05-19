@@ -231,6 +231,7 @@
                                     <th>Amount</th>
                                     <th>Source</th>
                                     <th>Date</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -248,6 +249,23 @@
                                             </span>
                                         </td>
                                         <td><small class="text-muted">{{ $income->created_at->format('M d, Y') }}</small></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary edit-income-btn" 
+                                                data-id="{{ $income->id }}"
+                                                data-amount="{{ $income->amount }}"
+                                                data-source="{{ $income->source }}"
+                                                data-currency_id="{{ $income->currency_id }}"
+                                                data-reference="{{ $income->reference }}"
+                                                data-notes="{{ $income->notes }}"
+                                                data-update_url="{{ route('safes.income.update', [$safe->id, $income->id]) }}">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger delete-income-btn" 
+                                                data-id="{{ $income->id }}"
+                                                data-delete_url="{{ route('safes.income.delete', [$safe->id, $income->id]) }}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -284,6 +302,7 @@
                                     <th>Amount</th>
                                     <th>Description</th>
                                     <th>Date</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -302,6 +321,22 @@
                                             @endif
                                         </td>
                                         <td><small class="text-muted">{{ $outcome->created_at->format('M d, Y') }}</small></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-warning edit-outcome-btn"
+                                                data-id="{{ $outcome->id }}"
+                                                data-amount="{{ $outcome->amount }}"
+                                                data-description="{{ $outcome->description }}"
+                                                data-currency_id="{{ $outcome->currency_id }}"
+                                                data-reference="{{ $outcome->reference }}"
+                                                data-update_url="{{ route('safes.outcome.update', [$safe->id, $outcome->id]) }}">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger delete-outcome-btn"
+                                                data-id="{{ $outcome->id }}"
+                                                data-delete_url="{{ route('safes.outcome.delete', [$safe->id, $outcome->id]) }}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -349,6 +384,101 @@
                     </div>
                 @endif
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editIncomeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white;">
+                <h5 class="modal-title"><i class="bi bi-pencil-square"></i> Edit Income</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" id="editIncomeForm" action="">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Amount *</label>
+                        <input type="number" name="amount" class="form-control" step="0.01" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Source *</label>
+                        <select name="source" class="form-select" required>
+                            <option value="">Select Source</option>
+                            <option value="cash">Cash</option>
+                            <option value="bank">Bank</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Currency (Optional)</label>
+                        <select name="currency_id" class="form-select">
+                            <option value="">Select Currency</option>
+                            @foreach($currencies as $currency)
+                                <option value="{{ $currency->id }}">{{ $currency->code }} - {{ $currency->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reference (Optional)</label>
+                        <input type="text" name="reference" class="form-control" placeholder="Invoice #, Check #, etc.">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes (Optional)</label>
+                        <textarea name="notes" class="form-control" rows="3" placeholder="Additional notes about this income..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Update Income</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editOutcomeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #e74c3c, #ec7063); color: white;">
+                <h5 class="modal-title"><i class="bi bi-pencil-square"></i> Edit Outcome</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" id="editOutcomeForm" action="">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <small><strong>Current Balance:</strong> {{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Amount *</label>
+                        <input type="number" name="amount" class="form-control" step="0.01" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Currency (Optional)</label>
+                        <select name="currency_id" class="form-select">
+                            <option value="">Select Currency</option>
+                            @foreach($currencies as $currency)
+                                <option value="{{ $currency->id }}">{{ $currency->code }} - {{ $currency->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description (Optional)</label>
+                        <textarea name="description" class="form-control" rows="3" placeholder="What is this outcome for?"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reference (Optional)</label>
+                        <input type="text" name="reference" class="form-control" placeholder="Reference number or code">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning"><i class="bi bi-check-circle"></i> Update Outcome</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -515,6 +645,88 @@
 
     referenceType.addEventListener('change', toggleSupplierField);
     toggleSupplierField();
+
+    // Income edit modal handling
+    const editIncomeModal = new bootstrap.Modal(document.getElementById('editIncomeModal'));
+    const editIncomeForm = document.getElementById('editIncomeForm');
+
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('.edit-income-btn');
+        if (!btn) return;
+
+        const amount = btn.getAttribute('data-amount');
+        const source = btn.getAttribute('data-source');
+        const currencyId = btn.getAttribute('data-currency_id');
+        const reference = btn.getAttribute('data-reference');
+        const notes = btn.getAttribute('data-notes');
+        const updateUrl = btn.getAttribute('data-update_url');
+
+        editIncomeForm.action = updateUrl;
+        editIncomeForm.querySelector('input[name="amount"]').value = amount || '';
+        editIncomeForm.querySelector('select[name="source"]').value = source || '';
+        editIncomeForm.querySelector('select[name="currency_id"]').value = currencyId || '';
+        editIncomeForm.querySelector('input[name="reference"]').value = reference || '';
+        editIncomeForm.querySelector('textarea[name="notes"]').value = notes || '';
+
+        editIncomeModal.show();
+    });
+
+    // Income delete handling
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('.delete-income-btn');
+        if (!btn) return;
+
+        if (confirm('Are you sure you want to delete this income record?')) {
+            const deleteUrl = btn.getAttribute('data-delete_url');
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = deleteUrl;
+            form.innerHTML = '<input type="hidden" name="_method" value="DELETE">' +
+                            '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+
+    // Outcome edit modal handling
+    const editOutcomeModal = new bootstrap.Modal(document.getElementById('editOutcomeModal'));
+    const editOutcomeForm = document.getElementById('editOutcomeForm');
+
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('.edit-outcome-btn');
+        if (!btn) return;
+
+        const amount = btn.getAttribute('data-amount');
+        const description = btn.getAttribute('data-description');
+        const currencyId = btn.getAttribute('data-currency_id');
+        const reference = btn.getAttribute('data-reference');
+        const updateUrl = btn.getAttribute('data-update_url');
+
+        editOutcomeForm.action = updateUrl;
+        editOutcomeForm.querySelector('input[name="amount"]').value = amount || '';
+        editOutcomeForm.querySelector('select[name="currency_id"]').value = currencyId || '';
+        editOutcomeForm.querySelector('textarea[name="description"]').value = description || '';
+        editOutcomeForm.querySelector('input[name="reference"]').value = reference || '';
+
+        editOutcomeModal.show();
+    });
+
+    // Outcome delete handling
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('.delete-outcome-btn');
+        if (!btn) return;
+
+        if (confirm('Are you sure you want to delete this outcome record?')) {
+            const deleteUrl = btn.getAttribute('data-delete_url');
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = deleteUrl;
+            form.innerHTML = '<input type="hidden" name="_method" value="DELETE">' +
+                            '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
 })();
 </script>
 @endsection

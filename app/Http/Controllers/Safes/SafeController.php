@@ -224,4 +224,137 @@ class SafeController extends Controller
 
         return back()->with('success', 'Currency ' . $validated['code'] . ' added successfully!');
     }
+
+    public function updateIncome(Request $request, Safe $safe, SafeIncome $income)
+    {
+        if ($income->safe_id !== $safe->id) {
+            abort(404);
+        }
+
+        $validated = $request->validate([
+            'amount' => 'required|numeric|min:0.01',
+            'source' => 'required|in:cash,bank',
+            'currency_id' => 'nullable|exists:safe_currencies,id',
+            'reference' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+        ]);
+
+        $oldAmount = $income->amount;
+        $amountDifference = (float) $validated['amount'] - $oldAmount;
+
+        DB::transaction(function () use ($safe, $income, $validated, $amountDifference) {
+            $income->update($validated);
+
+            // Update safe balance
+            if ($amountDifference !== 0) {
+                $safe->update(['balance' => $safe->balance + $amountDifference]);
+            }
+
+            // Update currency balance if needed
+            if ($validated['currency_id']) {
+                $currency = SafeCurrency::findOrFail($validated['currency_id']);
+                $currency->update(['balance' => $currency->balance + $amountDifference]);
+            }
+        });
+
+        return back()->with('success', 'Income updated successfully!');
+    }
+
+    public function deleteIncome(Safe $safe, SafeIncome $income)
+    {
+        if ($income->safe_id !== $safe->id) {
+            abort(404);
+        }
+
+        DB::transaction(function () use ($safe, $income) {
+            $amount = $income->amount;
+            
+            // Update safe balance
+            $safe->update(['balance' => $safe->balance - $amount]);
+
+            // Update currency balance if applicable
+            if ($income->currency_id) {
+                $currency = SafeCurrency::find($income->currency_id);
+                if ($currency) {
+                    $currency->update(['balance' => $currency->balance - $amount]);
+                }
+            }
+
+            $income->delete();
+        });
+
+        return back()->with('success', 'Income deleted successfully!');
+    }
+
+    public function updateOutcome(Request $request, Safe $safe, SafeOutcome $outcome)
+    {
+        if ($outcome->safe_id !== $safe->id) {
+            abort(404);
+        }
+
+        $validated = $request->validate([
+            'amount' => 'required|numeric|min:0.01',
+            'description' => 'nullable|string',
+            'currency_id' => 'nullable|exists:safe_currencies,id',
+            'reference' => 'nullable|string|max:255',
+        ]);
+
+        $oldAmount = $outcome->amount;
+        $amountDifference = $oldAmount - (float) $validated['amount']; // Reverse logic for outcome
+
+        if ((float) $validated['amount'] > ($safe->balance + $oldAmount)) {
+            return back()->withErrors(['amount' => 'Insufficient balance in safe!']);
+        }
+
+        DB::transaction(function () use ($safe, $outcome, $validated, $amountDifference) {
+            $outcome->update($validated);
+
+            // Update safe balance
+            if ($amountDifference !== 0) {
+                $safe->update(['balance' => $safe->balance + $amountDifference]);
+            }
+
+            // Update currency balance if needed
+            if ($validated['currency_id']) {
+                $currency = SafeCurrency::findOrFail($validated['currency_id']);
+                $newBalance = $currency->balance + $amountDifference;
+                $currency->update(['balance' => max(0, $newBalance)]);
+            }
+        });
+
+        return back()->with('success', 'Outcome updated successfully!');
+    }
+
+    public function deleteOutcome(Safe $safe, SafeOutcome $outcome)
+    {
+        if ($outcome->safe_id !== $safe->id) {
+            abort(404);
+        }
+
+        DB::transaction(function () use ($safe, $outcome) {
+            $amount = $outcome->amount;
+            
+            // Update safe balance (restore the amount)
+            $safe->update(['balance' => $safe->balance + $amount]);
+
+            // Update currency balance if applicable
+            if ($outcome->currency_id) {
+                $currency = SafeCurrency::find($outcome->currency_id);
+                if ($currency) {
+                    $currency->update(['balance' => $currency->balance + $amount]);
+                }
+            }
+
+            // Delete associated supplier payment if exists
+            if ($outcome->reference_type === 'supplier' && $outcome->supplier_id) {
+                SupplierPayment::where('supplier_id', $outcome->supplier_id)
+                    ->where('note', 'like', '%Outcome #' . $outcome->id . '%')
+                    ->delete();
+            }
+
+            $outcome->delete();
+        });
+
+        return back()->with('success', 'Outcome deleted successfully!');
+    }
 }

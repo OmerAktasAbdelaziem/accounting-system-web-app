@@ -221,7 +221,11 @@ Route::middleware('auth')->group(function () {
         Route::delete('{safe}', [SafeController::class, 'destroy'])->name('destroy');
         Route::get('{safe}/transactions', [SafeController::class, 'transactions'])->name('transactions');
         Route::post('{safe}/add-income', [SafeController::class, 'addIncome'])->name('add-income');
+        Route::put('{safe}/income/{income}', [SafeController::class, 'updateIncome'])->name('income.update');
+        Route::delete('{safe}/income/{income}', [SafeController::class, 'deleteIncome'])->name('income.delete');
         Route::post('{safe}/add-outcome', [SafeController::class, 'addOutcome'])->name('add-outcome');
+        Route::put('{safe}/outcome/{outcome}', [SafeController::class, 'updateOutcome'])->name('outcome.update');
+        Route::delete('{safe}/outcome/{outcome}', [SafeController::class, 'deleteOutcome'])->name('outcome.delete');
         Route::post('{safe}/add-currency', [SafeController::class, 'addCurrency'])->name('add-currency');
     });
 
