@@ -779,28 +779,47 @@
 
         // Handle edit button
         document.getElementById('incomeDetailEditBtn').onclick = function () {
-            if (incomeDetailModal) incomeDetailModal.hide();
-            // Populate edit form - scope selectors to the form
-            const editIncomeForm = document.getElementById('editIncomeForm');
-            editIncomeForm.action = updateUrl;
-            editIncomeForm.querySelector('input[name="amount"]').value = amount;
-            editIncomeForm.querySelector('select[name="source"]').value = source;
-            editIncomeForm.querySelector('select[name="currency_id"]').value = currencyId || '';
-            editIncomeForm.querySelector('input[name="reference"]').value = reference || '';
-            editIncomeForm.querySelector('textarea[name="notes"]').value = notes || '';
-            if (editIncomeModal) editIncomeModal.show();
+            try {
+                // Populate edit form first
+                const editIncomeForm = document.getElementById('editIncomeForm');
+                if (!editIncomeForm) {
+                    console.error('editIncomeForm not found');
+                    return;
+                }
+                editIncomeForm.action = updateUrl;
+                editIncomeForm.querySelector('input[name="amount"]').value = amount;
+                editIncomeForm.querySelector('select[name="source"]').value = source;
+                editIncomeForm.querySelector('select[name="currency_id"]').value = currencyId || '';
+                editIncomeForm.querySelector('input[name="reference"]').value = reference || '';
+                editIncomeForm.querySelector('textarea[name="notes"]').value = notes || '';
+                
+                // Close detail modal and open edit modal
+                if (incomeDetailModal) incomeDetailModal.hide();
+                setTimeout(() => {
+                    if (editIncomeModal) editIncomeModal.show();
+                }, 300);
+            } catch (error) {
+                console.error('Error in income edit handler:', error);
+            }
         };
 
         // Handle delete button
         document.getElementById('incomeDetailDeleteBtn').onclick = function () {
-            if (confirm('Are you sure you want to delete this income record?')) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = deleteUrl;
-                form.innerHTML = '<input type="hidden" name="_method" value="DELETE">' +
-                                '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
-                document.body.appendChild(form);
-                form.submit();
+            try {
+                if (confirm('Are you sure you want to delete this income record?')) {
+                    if (incomeDetailModal) incomeDetailModal.hide();
+                    setTimeout(() => {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = deleteUrl;
+                        form.innerHTML = '<input type="hidden" name="_method" value="DELETE">' +
+                                        '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
+                        document.body.appendChild(form);
+                        form.submit();
+                    }, 300);
+                }
+            } catch (error) {
+                console.error('Error in income delete handler:', error);
             }
         };
 
@@ -842,27 +861,46 @@
 
         // Handle edit button
         document.getElementById('outcomeDetailEditBtn').onclick = function () {
-            if (outcomeDetailModal) outcomeDetailModal.hide();
-            // Populate edit form - scope selectors to the form
-            const editOutcomeForm = document.getElementById('editOutcomeForm');
-            editOutcomeForm.action = updateUrl;
-            editOutcomeForm.querySelector('input[name="amount"]').value = amount;
-            editOutcomeForm.querySelector('select[name="currency_id"]').value = currencyId || '';
-            editOutcomeForm.querySelector('textarea[name="description"]').value = description || '';
-            editOutcomeForm.querySelector('input[name="reference"]').value = reference || '';
-            if (editOutcomeModal) editOutcomeModal.show();
+            try {
+                // Populate edit form first
+                const editOutcomeForm = document.getElementById('editOutcomeForm');
+                if (!editOutcomeForm) {
+                    console.error('editOutcomeForm not found');
+                    return;
+                }
+                editOutcomeForm.action = updateUrl;
+                editOutcomeForm.querySelector('input[name="amount"]').value = amount;
+                editOutcomeForm.querySelector('select[name="currency_id"]').value = currencyId || '';
+                editOutcomeForm.querySelector('textarea[name="description"]').value = description || '';
+                editOutcomeForm.querySelector('input[name="reference"]').value = reference || '';
+                
+                // Close detail modal and open edit modal
+                if (outcomeDetailModal) outcomeDetailModal.hide();
+                setTimeout(() => {
+                    if (editOutcomeModal) editOutcomeModal.show();
+                }, 300);
+            } catch (error) {
+                console.error('Error in outcome edit handler:', error);
+            }
         };
 
         // Handle delete button
         document.getElementById('outcomeDetailDeleteBtn').onclick = function () {
-            if (confirm('Are you sure you want to delete this outcome record?')) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = deleteUrl;
-                form.innerHTML = '<input type="hidden" name="_method" value="DELETE">' +
-                                '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
-                document.body.appendChild(form);
-                form.submit();
+            try {
+                if (confirm('Are you sure you want to delete this outcome record?')) {
+                    if (outcomeDetailModal) outcomeDetailModal.hide();
+                    setTimeout(() => {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = deleteUrl;
+                        form.innerHTML = '<input type="hidden" name="_method" value="DELETE">' +
+                                        '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
+                        document.body.appendChild(form);
+                        form.submit();
+                    }, 300);
+                }
+            } catch (error) {
+                console.error('Error in outcome delete handler:', error);
             }
         };
 
