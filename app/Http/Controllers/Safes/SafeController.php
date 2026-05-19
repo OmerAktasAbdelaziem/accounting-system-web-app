@@ -151,10 +151,6 @@ class SafeController extends Controller
             'supplier_id' => 'nullable|exists:suppliers,id|required_if:reference_type,supplier',
         ]);
 
-        if ($validated['amount'] > $safe->balance) {
-            return back()->withErrors(['amount' => 'Insufficient balance in safe!']);
-        }
-
         $referenceType = $validated['reference_type'] ?? 'general';
         $supplierId = $referenceType === 'supplier' ? ($validated['supplier_id'] ?? null) : null;
 
@@ -301,10 +297,6 @@ class SafeController extends Controller
 
         $oldAmount = $outcome->amount;
         $amountDifference = $oldAmount - (float) $validated['amount']; // Reverse logic for outcome
-
-        if ((float) $validated['amount'] > ($safe->balance + $oldAmount)) {
-            return back()->withErrors(['amount' => 'Insufficient balance in safe!']);
-        }
 
         DB::transaction(function () use ($safe, $outcome, $validated, $amountDifference) {
             $outcome->update($validated);
