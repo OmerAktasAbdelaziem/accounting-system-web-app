@@ -231,12 +231,22 @@
                                     <th>Amount</th>
                                     <th>Source</th>
                                     <th>Date</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($recentIncomes as $income)
-                                    <tr>
+                                    <tr class="income-row" style="cursor: pointer;" 
+                                        data-id="{{ $income->id }}"
+                                        data-amount="{{ $income->amount }}"
+                                        data-source="{{ $income->source }}"
+                                        data-currency_id="{{ $income->currency_id }}"
+                                        data-reference="{{ $income->reference }}"
+                                        data-notes="{{ $income->notes }}"
+                                        data-currency_name="{{ $income->currency?->name ?? '' }}"
+                                        data-currency_code="{{ $income->currency?->code ?? $currencySymbol }}"
+                                        data-created_at="{{ $income->created_at->format('M d, Y') }}"
+                                        data-update_url="{{ route('safes.income.update', [$safe->id, $income->id]) }}"
+                                        data-delete_url="{{ route('safes.income.delete', [$safe->id, $income->id]) }}">
                                         <td>
                                             <strong>{{ $income->currency?->code ?? $currencySymbol }} {{ number_format($income->amount, 2) }}</strong>
                                             @if($income->currency)
@@ -249,23 +259,6 @@
                                             </span>
                                         </td>
                                         <td><small class="text-muted">{{ $income->created_at->format('M d, Y') }}</small></td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-primary edit-income-btn" 
-                                                data-id="{{ $income->id }}"
-                                                data-amount="{{ $income->amount }}"
-                                                data-source="{{ $income->source }}"
-                                                data-currency_id="{{ $income->currency_id }}"
-                                                data-reference="{{ $income->reference }}"
-                                                data-notes="{{ $income->notes }}"
-                                                data-update_url="{{ route('safes.income.update', [$safe->id, $income->id]) }}">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger delete-income-btn" 
-                                                data-id="{{ $income->id }}"
-                                                data-delete_url="{{ route('safes.income.delete', [$safe->id, $income->id]) }}">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -302,12 +295,23 @@
                                     <th>Amount</th>
                                     <th>Description</th>
                                     <th>Date</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($recentOutcomes as $outcome)
-                                    <tr>
+                                    <tr class="outcome-row" style="cursor: pointer;" 
+                                        data-id="{{ $outcome->id }}"
+                                        data-amount="{{ $outcome->amount }}"
+                                        data-description="{{ $outcome->description }}"
+                                        data-currency_id="{{ $outcome->currency_id }}"
+                                        data-reference="{{ $outcome->reference }}"
+                                        data-currency_name="{{ $outcome->currency?->name ?? '' }}"
+                                        data-currency_code="{{ $outcome->currency?->code ?? $currencySymbol }}"
+                                        data-created_at="{{ $outcome->created_at->format('M d, Y') }}"
+                                        data-supplier_name="{{ $outcome->supplier?->name ?? '' }}"
+                                        data-reference_type="{{ $outcome->reference_type }}"
+                                        data-update_url="{{ route('safes.outcome.update', [$safe->id, $outcome->id]) }}"
+                                        data-delete_url="{{ route('safes.outcome.delete', [$safe->id, $outcome->id]) }}">
                                         <td>
                                             <strong>{{ $outcome->currency?->code ?? $currencySymbol }} {{ number_format($outcome->amount, 2) }}</strong>
                                             @if($outcome->currency)
@@ -321,22 +325,6 @@
                                             @endif
                                         </td>
                                         <td><small class="text-muted">{{ $outcome->created_at->format('M d, Y') }}</small></td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-warning edit-outcome-btn"
-                                                data-id="{{ $outcome->id }}"
-                                                data-amount="{{ $outcome->amount }}"
-                                                data-description="{{ $outcome->description }}"
-                                                data-currency_id="{{ $outcome->currency_id }}"
-                                                data-reference="{{ $outcome->reference }}"
-                                                data-update_url="{{ route('safes.outcome.update', [$safe->id, $outcome->id]) }}">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger delete-outcome-btn"
-                                                data-id="{{ $outcome->id }}"
-                                                data-delete_url="{{ route('safes.outcome.delete', [$safe->id, $outcome->id]) }}">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -388,7 +376,109 @@
     </div>
 </div>
 
-<div class="modal fade" id="editIncomeModal" tabindex="-1">
+<!-- Income Detail Modal -->
+<div class="modal fade" id="incomeDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white;">
+                <h5 class="modal-title"><i class="bi bi-arrow-up-circle"></i> Income Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <label class="text-muted small">Amount</label>
+                        <h5 id="incomeDetailAmount"></h5>
+                    </div>
+                    <div class="col-6">
+                        <label class="text-muted small">Source</label>
+                        <p id="incomeDetailSource"></p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <label class="text-muted small">Date</label>
+                        <p id="incomeDetailDate"></p>
+                    </div>
+                    <div class="col-6">
+                        <label class="text-muted small">Currency</label>
+                        <p id="incomeDetailCurrency"></p>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small">Reference</label>
+                    <p id="incomeDetailReference"></p>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small">Notes</label>
+                    <p id="incomeDetailNotes"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="incomeDetailEditBtn">
+                    <i class="bi bi-pencil"></i> Edit
+                </button>
+                <button type="button" class="btn btn-danger" id="incomeDetailDeleteBtn">
+                    <i class="bi bi-trash"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Outcome Detail Modal -->
+<div class="modal fade" id="outcomeDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #e74c3c, #ec7063); color: white;">
+                <h5 class="modal-title"><i class="bi bi-arrow-down-circle"></i> Outcome Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <label class="text-muted small">Amount</label>
+                        <h5 id="outcomeDetailAmount"></h5>
+                    </div>
+                    <div class="col-6">
+                        <label class="text-muted small">Date</label>
+                        <p id="outcomeDetailDate"></p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <label class="text-muted small">Currency</label>
+                        <p id="outcomeDetailCurrency"></p>
+                    </div>
+                    <div class="col-6" id="outcomeSupplierWrapper" style="display: none;">
+                        <label class="text-muted small">Supplier</label>
+                        <p id="outcomeDetailSupplier"></p>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small">Description</label>
+                    <p id="outcomeDetailDescription"></p>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small">Reference</label>
+                    <p id="outcomeDetailReference"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-warning" id="outcomeDetailEditBtn">
+                    <i class="bi bi-pencil"></i> Edit
+                </button>
+                <button type="button" class="btn btn-danger" id="outcomeDetailDeleteBtn">
+                    <i class="bi bi-trash"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white;">
@@ -629,103 +719,139 @@
     const supplierWrapper = document.getElementById('outcomeSupplierWrapper');
     const supplierSelect = document.getElementById('outcomeSupplierId');
 
-    if (!referenceType || !supplierWrapper || !supplierSelect) {
-        return;
-    }
-
-    function toggleSupplierField() {
-        const isSupplier = referenceType.value === 'supplier';
-        supplierWrapper.classList.toggle('d-none', !isSupplier);
-        supplierSelect.required = isSupplier;
-
-        if (!isSupplier) {
-            supplierSelect.value = '';
+    // Toggle supplier field in add outcome modal
+    if (referenceType && supplierWrapper && supplierSelect) {
+        function toggleSupplierField() {
+            const isSupplier = referenceType.value === 'supplier';
+            supplierWrapper.classList.toggle('d-none', !isSupplier);
+            supplierSelect.required = isSupplier;
+            if (!isSupplier) supplierSelect.value = '';
         }
+        referenceType.addEventListener('change', toggleSupplierField);
+        toggleSupplierField();
     }
 
-    referenceType.addEventListener('change', toggleSupplierField);
-    toggleSupplierField();
-
-    // Income edit modal handling
+    // Initialize modals
+    const incomeDetailModal = new bootstrap.Modal(document.getElementById('incomeDetailModal'));
+    const outcomeDetailModal = new bootstrap.Modal(document.getElementById('outcomeDetailModal'));
     const editIncomeModal = new bootstrap.Modal(document.getElementById('editIncomeModal'));
-    const editIncomeForm = document.getElementById('editIncomeForm');
-
-    document.addEventListener('click', function (e) {
-        const btn = e.target.closest('.edit-income-btn');
-        if (!btn) return;
-
-        const amount = btn.getAttribute('data-amount');
-        const source = btn.getAttribute('data-source');
-        const currencyId = btn.getAttribute('data-currency_id');
-        const reference = btn.getAttribute('data-reference');
-        const notes = btn.getAttribute('data-notes');
-        const updateUrl = btn.getAttribute('data-update_url');
-
-        editIncomeForm.action = updateUrl;
-        editIncomeForm.querySelector('input[name="amount"]').value = amount || '';
-        editIncomeForm.querySelector('select[name="source"]').value = source || '';
-        editIncomeForm.querySelector('select[name="currency_id"]').value = currencyId || '';
-        editIncomeForm.querySelector('input[name="reference"]').value = reference || '';
-        editIncomeForm.querySelector('textarea[name="notes"]').value = notes || '';
-
-        editIncomeModal.show();
-    });
-
-    // Income delete handling
-    document.addEventListener('click', function (e) {
-        const btn = e.target.closest('.delete-income-btn');
-        if (!btn) return;
-
-        if (confirm('Are you sure you want to delete this income record?')) {
-            const deleteUrl = btn.getAttribute('data-delete_url');
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = deleteUrl;
-            form.innerHTML = '<input type="hidden" name="_method" value="DELETE">' +
-                            '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
-            document.body.appendChild(form);
-            form.submit();
-        }
-    });
-
-    // Outcome edit modal handling
     const editOutcomeModal = new bootstrap.Modal(document.getElementById('editOutcomeModal'));
-    const editOutcomeForm = document.getElementById('editOutcomeForm');
 
+    // Handle income row click
     document.addEventListener('click', function (e) {
-        const btn = e.target.closest('.edit-outcome-btn');
-        if (!btn) return;
+        const row = e.target.closest('.income-row');
+        if (!row) return;
 
-        const amount = btn.getAttribute('data-amount');
-        const description = btn.getAttribute('data-description');
-        const currencyId = btn.getAttribute('data-currency_id');
-        const reference = btn.getAttribute('data-reference');
-        const updateUrl = btn.getAttribute('data-update_url');
+        const id = row.getAttribute('data-id');
+        const amount = row.getAttribute('data-amount');
+        const source = row.getAttribute('data-source');
+        const currencyId = row.getAttribute('data-currency_id');
+        const currencyCode = row.getAttribute('data-currency_code');
+        const currencyName = row.getAttribute('data-currency_name');
+        const reference = row.getAttribute('data-reference');
+        const notes = row.getAttribute('data-notes');
+        const createdAt = row.getAttribute('data-created_at');
+        const updateUrl = row.getAttribute('data-update_url');
+        const deleteUrl = row.getAttribute('data-delete_url');
 
-        editOutcomeForm.action = updateUrl;
-        editOutcomeForm.querySelector('input[name="amount"]').value = amount || '';
-        editOutcomeForm.querySelector('select[name="currency_id"]').value = currencyId || '';
-        editOutcomeForm.querySelector('textarea[name="description"]').value = description || '';
-        editOutcomeForm.querySelector('input[name="reference"]').value = reference || '';
+        // Populate detail modal
+        document.getElementById('incomeDetailAmount').textContent = currencyCode + ' ' + parseFloat(amount).toFixed(2);
+        document.getElementById('incomeDetailSource').textContent = source.charAt(0).toUpperCase() + source.slice(1);
+        document.getElementById('incomeDetailDate').textContent = createdAt;
+        document.getElementById('incomeDetailCurrency').textContent = currencyName || 'N/A';
+        document.getElementById('incomeDetailReference').textContent = reference || 'N/A';
+        document.getElementById('incomeDetailNotes').textContent = notes || 'N/A';
 
-        editOutcomeModal.show();
+        // Handle edit button
+        document.getElementById('incomeDetailEditBtn').onclick = function () {
+            incomeDetailModal.hide();
+            // Populate edit form
+            document.getElementById('editIncomeForm').action = updateUrl;
+            document.querySelector('input[name="amount"]').value = amount;
+            document.querySelector('select[name="source"]').value = source;
+            document.querySelector('select[name="currency_id"]').value = currencyId || '';
+            document.querySelector('input[name="reference"]').value = reference || '';
+            document.querySelector('textarea[name="notes"]').value = notes || '';
+            editIncomeModal.show();
+        };
+
+        // Handle delete button
+        document.getElementById('incomeDetailDeleteBtn').onclick = function () {
+            if (confirm('Are you sure you want to delete this income record?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = deleteUrl;
+                form.innerHTML = '<input type="hidden" name="_method" value="DELETE">' +
+                                '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
+                document.body.appendChild(form);
+                form.submit();
+            }
+        };
+
+        incomeDetailModal.show();
     });
 
-    // Outcome delete handling
+    // Handle outcome row click
     document.addEventListener('click', function (e) {
-        const btn = e.target.closest('.delete-outcome-btn');
-        if (!btn) return;
+        const row = e.target.closest('.outcome-row');
+        if (!row) return;
 
-        if (confirm('Are you sure you want to delete this outcome record?')) {
-            const deleteUrl = btn.getAttribute('data-delete_url');
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = deleteUrl;
-            form.innerHTML = '<input type="hidden" name="_method" value="DELETE">' +
-                            '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
-            document.body.appendChild(form);
-            form.submit();
+        const id = row.getAttribute('data-id');
+        const amount = row.getAttribute('data-amount');
+        const description = row.getAttribute('data-description');
+        const currencyId = row.getAttribute('data-currency_id');
+        const currencyCode = row.getAttribute('data-currency_code');
+        const currencyName = row.getAttribute('data-currency_name');
+        const reference = row.getAttribute('data-reference');
+        const createdAt = row.getAttribute('data-created_at');
+        const supplierName = row.getAttribute('data-supplier_name');
+        const referenceType = row.getAttribute('data-reference_type');
+        const updateUrl = row.getAttribute('data-update_url');
+        const deleteUrl = row.getAttribute('data-delete_url');
+
+        // Populate detail modal
+        document.getElementById('outcomeDetailAmount').textContent = currencyCode + ' ' + parseFloat(amount).toFixed(2);
+        document.getElementById('outcomeDetailDate').textContent = createdAt;
+        document.getElementById('outcomeDetailCurrency').textContent = currencyName || 'N/A';
+        document.getElementById('outcomeDetailDescription').textContent = description || 'N/A';
+        document.getElementById('outcomeDetailReference').textContent = reference || 'N/A';
+
+        // Show supplier info if applicable
+        const supplierWrapper = document.getElementById('outcomeSupplierWrapper');
+        if (referenceType === 'supplier' && supplierName) {
+            supplierWrapper.style.display = 'block';
+            document.getElementById('outcomeDetailSupplier').textContent = supplierName;
+        } else {
+            supplierWrapper.style.display = 'none';
         }
+
+        // Handle edit button
+        document.getElementById('outcomeDetailEditBtn').onclick = function () {
+            outcomeDetailModal.hide();
+            // Populate edit form
+            const editOutcomeForm = document.getElementById('editOutcomeForm');
+            editOutcomeForm.action = updateUrl;
+            editOutcomeForm.querySelector('input[name="amount"]').value = amount;
+            editOutcomeForm.querySelector('select[name="currency_id"]').value = currencyId || '';
+            editOutcomeForm.querySelector('textarea[name="description"]').value = description || '';
+            editOutcomeForm.querySelector('input[name="reference"]').value = reference || '';
+            editOutcomeModal.show();
+        };
+
+        // Handle delete button
+        document.getElementById('outcomeDetailDeleteBtn').onclick = function () {
+            if (confirm('Are you sure you want to delete this outcome record?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = deleteUrl;
+                form.innerHTML = '<input type="hidden" name="_method" value="DELETE">' +
+                                '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
+                document.body.appendChild(form);
+                form.submit();
+            }
+        };
+
+        outcomeDetailModal.show();
     });
 })();
 </script>
