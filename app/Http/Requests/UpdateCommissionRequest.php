@@ -20,7 +20,7 @@ class UpdateCommissionRequest extends FormRequest
             'employee_id' => 'required|exists:employees,id',
             'commission_rate' => 'required|numeric|min:0|max:100',
             'sale_amount' => 'required|numeric|min:0|max:999999.99',
-            'commission_date' => 'required|date|before_or_equal:today',
+            'commission_date' => 'required|date',
             'reference_type' => 'nullable|string|max:50',
             'notes' => 'nullable|string|max:1000',
             'branch_ids' => 'nullable|array',
@@ -42,7 +42,6 @@ class UpdateCommissionRequest extends FormRequest
             'sale_amount.min' => 'Sale amount must be greater than or equal to 0',
             'commission_date.required' => 'Commission date is required',
             'commission_date.date' => 'Commission date must be a valid date',
-            'commission_date.before_or_equal' => 'Commission date cannot be in the future',
         ];
     }
 }
