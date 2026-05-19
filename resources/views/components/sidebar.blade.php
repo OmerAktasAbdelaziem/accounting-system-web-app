@@ -164,11 +164,11 @@
         </div>
     @endif
 
-    @if(!empty($menu['admin']))
+    @if(!empty($menu['systems']))
         <div class="sidebar-section">
-            <div class="sidebar-title">Admin User Section</div>
-            <ul class="sidebar-menu admin-menu">
-                @foreach($menu['admin'] as $item)
+            <div class="sidebar-title">Systems Section</div>
+            <ul class="sidebar-menu systems-menu">
+                @foreach($menu['systems'] as $item)
                     @php
                         $label = $resolveLabel($item['label'] ?? '');
                         if (is_array($label)) { $label = json_encode($label); }
@@ -218,11 +218,11 @@
         </div>
     @endif
 
-    @if(!empty($menu['systems']))
+    @if(!empty($menu['admin']))
         <div class="sidebar-section">
-            <div class="sidebar-title">Systems Section</div>
-            <ul class="sidebar-menu systems-menu">
-                @foreach($menu['systems'] as $item)
+            <div class="sidebar-title">Admin User Section</div>
+            <ul class="sidebar-menu admin-menu">
+                @foreach($menu['admin'] as $item)
                     @php
                         $label = $resolveLabel($item['label'] ?? '');
                         if (is_array($label)) { $label = json_encode($label); }

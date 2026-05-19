@@ -35,7 +35,7 @@ class Sidebar extends Component
                     ['route' => 'super-admin.feature-access.index', 'icon' => 'bi-toggles2', 'label' => 'Feature Access'],
                     ['route' => 'super-admin.vat-rates.index', 'icon' => 'bi-percent', 'label' => 'VAT Rates'],
                     ['route' => 'profile', 'icon' => 'bi-person', 'label' => 'Profile'],
-                    ['route' => 'settings.index', 'icon' => 'bi-gear', 'label' => 'Settings'],
+                    ['route' => 'settings.index', 'icon' => 'bi-gear', 'label' => 'System Settings'],
                     ['route' => 'audit-logs.index', 'icon' => 'bi-journal-text', 'label' => 'Audit Logs'],
                 ],
             ];
@@ -98,9 +98,9 @@ class Sidebar extends Component
         $this->menu = [
             'main' => $filter($main),
             'customers' => $filter($suppliers),
-            'admin' => $admin,
-            'reports' => $filter($reports),
             'systems' => $filter($systems),
+            'reports' => $filter($reports),
+            'admin' => $admin,
         ];
 
         // Ensure labels are strings to prevent Blade escaping errors
