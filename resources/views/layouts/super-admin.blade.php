@@ -575,11 +575,9 @@
                         <small class="d-block" style="color: rgba(255,255,255,0.7);">{{ auth()->user()->name }}</small>
                         <small style="color: var(--primary-orange); font-weight: 600;">Super Admin</small>
                     </div>
-                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link">
-                        <i class="bi bi-box-arrow-right"></i>
-                    </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    <form action="{{ route('logout') }}" method="POST" style="display:inline;">
                         @csrf
+                        <button type="submit" class="nav-link btn btn-link p-0 m-0" style="text-decoration:none; color:inherit;"><i class="bi bi-box-arrow-right"></i></button>
                     </form>
                 </div>
             </div>

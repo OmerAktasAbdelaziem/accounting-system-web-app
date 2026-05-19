@@ -570,7 +570,12 @@
                                 <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="bi bi-person"></i> {{ __('messages.profile') }}</a></li>
                                 <li><a class="dropdown-item" href="{{ route('settings.index') }}"><i class="bi bi-gear"></i> {{ __('messages.settings') }}</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bi bi-box-arrow-right"></i> {{ __('messages.logout') }}</a></li>
+                                <li>
+                                    <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item btn btn-link p-0 m-0" style="text-decoration:none; color:inherit;"><i class="bi bi-box-arrow-right"></i> {{ __('messages.logout') }}</button>
+                                    </form>
+                                </li>
                             </ul>
                         </div>
                     </div>

@@ -246,9 +246,9 @@
     @endif
 
     <div class="sidebar-logout">
-        <a class="sidebar-logout-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();"><i class="bi bi-box-arrow-left"></i> <span>{{ __('messages.logout') }}</span></a>
-        <form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
+        <form action="{{ route('logout') }}" method="POST" style="display:inline;">
             @csrf
+            <button type="submit" class="sidebar-logout-link btn btn-link p-0 m-0" style="text-decoration:none; color:inherit;"><i class="bi bi-box-arrow-left"></i> <span>{{ __('messages.logout') }}</span></button>
         </form>
     </div>
 </div>

@@ -421,11 +421,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-danger" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="bi bi-box-arrow-right"></i> {{ __('messages.logout') }}
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: inline;">
                             @csrf
+                            <button type="submit" class="nav-link btn btn-link text-danger p-0 m-0" style="text-decoration: none;">
+                                <i class="bi bi-box-arrow-right"></i> {{ __('messages.logout') }}
+                            </button>
                         </form>
                     </li>
                 </ul>
