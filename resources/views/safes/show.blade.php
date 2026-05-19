@@ -384,44 +384,91 @@
                 <h5 class="modal-title"><i class="bi bi-arrow-up-circle"></i> Income Details</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <div class="row mb-3">
-                    <div class="col-6">
-                        <label class="text-muted small">Amount</label>
-                        <h5 id="incomeDetailAmount"></h5>
+            
+            <!-- Detail View -->
+            <div id="incomeDetailView">
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="text-muted small">Amount</label>
+                            <h5 id="incomeDetailAmount"></h5>
+                        </div>
+                        <div class="col-6">
+                            <label class="text-muted small">Source</label>
+                            <p id="incomeDetailSource"></p>
+                        </div>
                     </div>
-                    <div class="col-6">
-                        <label class="text-muted small">Source</label>
-                        <p id="incomeDetailSource"></p>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="text-muted small">Date</label>
+                            <p id="incomeDetailDate"></p>
+                        </div>
+                        <div class="col-6">
+                            <label class="text-muted small">Currency</label>
+                            <p id="incomeDetailCurrency"></p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-muted small">Reference</label>
+                        <p id="incomeDetailReference"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-muted small">Notes</label>
+                        <p id="incomeDetailNotes"></p>
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <div class="col-6">
-                        <label class="text-muted small">Date</label>
-                        <p id="incomeDetailDate"></p>
-                    </div>
-                    <div class="col-6">
-                        <label class="text-muted small">Currency</label>
-                        <p id="incomeDetailCurrency"></p>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label class="text-muted small">Reference</label>
-                    <p id="incomeDetailReference"></p>
-                </div>
-                <div class="mb-3">
-                    <label class="text-muted small">Notes</label>
-                    <p id="incomeDetailNotes"></p>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="incomeDetailEditBtn">
+                        <i class="bi bi-pencil"></i> Edit
+                    </button>
+                    <button type="button" class="btn btn-danger" id="incomeDetailDeleteBtn">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="incomeDetailEditBtn">
-                    <i class="bi bi-pencil"></i> Edit
-                </button>
-                <button type="button" class="btn btn-danger" id="incomeDetailDeleteBtn">
-                    <i class="bi bi-trash"></i> Delete
-                </button>
+
+            <!-- Edit Form View -->
+            <div id="incomeEditView" style="display: none;">
+                <form method="POST" id="incomeDetailEditForm" action="">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Amount *</label>
+                            <input type="number" name="amount" class="form-control" step="0.01" min="0" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Source *</label>
+                            <select name="source" class="form-select" required>
+                                <option value="">Select Source</option>
+                                <option value="cash">Cash</option>
+                                <option value="bank">Bank</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Currency (Optional)</label>
+                            <select name="currency_id" class="form-select">
+                                <option value="">Select Currency</option>
+                                @foreach($currencies as $currency)
+                                    <option value="{{ $currency->id }}">{{ $currency->code }} - {{ $currency->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Reference (Optional)</label>
+                            <input type="text" name="reference" class="form-control" placeholder="Invoice #, Check #, etc.">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Notes (Optional)</label>
+                            <textarea name="notes" class="form-control" rows="3" placeholder="Additional notes about this income..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="incomeEditCancelBtn">Cancel</button>
+                        <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Update Income</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -435,140 +482,84 @@
                 <h5 class="modal-title"><i class="bi bi-arrow-down-circle"></i> Outcome Details</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <div class="row mb-3">
-                    <div class="col-6">
-                        <label class="text-muted small">Amount</label>
-                        <h5 id="outcomeDetailAmount"></h5>
-                    </div>
-                    <div class="col-6">
-                        <label class="text-muted small">Date</label>
-                        <p id="outcomeDetailDate"></p>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-6">
-                        <label class="text-muted small">Currency</label>
-                        <p id="outcomeDetailCurrency"></p>
-                    </div>
-                    <div class="col-6" id="outcomeSupplierWrapper" style="display: none;">
-                        <label class="text-muted small">Supplier</label>
-                        <p id="outcomeDetailSupplier"></p>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label class="text-muted small">Description</label>
-                    <p id="outcomeDetailDescription"></p>
-                </div>
-                <div class="mb-3">
-                    <label class="text-muted small">Reference</label>
-                    <p id="outcomeDetailReference"></p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-warning" id="outcomeDetailEditBtn">
-                    <i class="bi bi-pencil"></i> Edit
-                </button>
-                <button type="button" class="btn btn-danger" id="outcomeDetailDeleteBtn">
-                    <i class="bi bi-trash"></i> Delete
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
 
-
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white;">
-                <h5 class="modal-title"><i class="bi bi-pencil-square"></i> Edit Income</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <form method="POST" id="editIncomeForm" action="">
-                @csrf
-                @method('PUT')
+            <!-- Detail View -->
+            <div id="outcomeDetailView">
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Amount *</label>
-                        <input type="number" name="amount" class="form-control" step="0.01" min="0" required>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="text-muted small">Amount</label>
+                            <h5 id="outcomeDetailAmount"></h5>
+                        </div>
+                        <div class="col-6">
+                            <label class="text-muted small">Date</label>
+                            <p id="outcomeDetailDate"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="text-muted small">Currency</label>
+                            <p id="outcomeDetailCurrency"></p>
+                        </div>
+                        <div class="col-6" id="outcomeSupplierWrapper" style="display: none;">
+                            <label class="text-muted small">Supplier</label>
+                            <p id="outcomeDetailSupplier"></p>
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Source *</label>
-                        <select name="source" class="form-select" required>
-                            <option value="">Select Source</option>
-                            <option value="cash">Cash</option>
-                            <option value="bank">Bank</option>
-                        </select>
+                        <label class="text-muted small">Description</label>
+                        <p id="outcomeDetailDescription"></p>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Currency (Optional)</label>
-                        <select name="currency_id" class="form-select">
-                            <option value="">Select Currency</option>
-                            @foreach($currencies as $currency)
-                                <option value="{{ $currency->id }}">{{ $currency->code }} - {{ $currency->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Reference (Optional)</label>
-                        <input type="text" name="reference" class="form-control" placeholder="Invoice #, Check #, etc.">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Notes (Optional)</label>
-                        <textarea name="notes" class="form-control" rows="3" placeholder="Additional notes about this income..."></textarea>
+                        <label class="text-muted small">Reference</label>
+                        <p id="outcomeDetailReference"></p>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Update Income</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-warning" id="outcomeDetailEditBtn">
+                        <i class="bi bi-pencil"></i> Edit
+                    </button>
+                    <button type="button" class="btn btn-danger" id="outcomeDetailDeleteBtn">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
                 </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="editOutcomeModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header" style="background: linear-gradient(135deg, #e74c3c, #ec7063); color: white;">
-                <h5 class="modal-title"><i class="bi bi-pencil-square"></i> Edit Outcome</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" id="editOutcomeForm" action="">
-                @csrf
-                @method('PUT')
-                <div class="modal-body">
-                    <div class="alert alert-info">
-                        <small><strong>Current Balance:</strong> {{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</small>
+
+            <!-- Edit Form View -->
+            <div id="outcomeEditView" style="display: none;">
+                <form method="POST" id="outcomeDetailEditForm" action="">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Amount *</label>
+                            <input type="number" name="amount" class="form-control" step="0.01" min="0" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Currency (Optional)</label>
+                            <select name="currency_id" class="form-select">
+                                <option value="">Select Currency</option>
+                                @foreach($currencies as $currency)
+                                    <option value="{{ $currency->id }}">{{ $currency->code }} - {{ $currency->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description (Optional)</label>
+                            <textarea name="description" class="form-control" rows="3" placeholder="Outcome description..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Reference (Optional)</label>
+                            <input type="text" name="reference" class="form-control" placeholder="Invoice #, Reference, etc.">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Amount *</label>
-                        <input type="number" name="amount" class="form-control" step="0.01" min="0" required>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="outcomeEditCancelBtn">Cancel</button>
+                        <button type="submit" class="btn btn-warning"><i class="bi bi-check-circle"></i> Update Outcome</button>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Currency (Optional)</label>
-                        <select name="currency_id" class="form-select">
-                            <option value="">Select Currency</option>
-                            @foreach($currencies as $currency)
-                                <option value="{{ $currency->id }}">{{ $currency->code }} - {{ $currency->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Description (Optional)</label>
-                        <textarea name="description" class="form-control" rows="3" placeholder="What is this outcome for?"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Reference (Optional)</label>
-                        <input type="text" name="reference" class="form-control" placeholder="Reference number or code">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-warning"><i class="bi bi-check-circle"></i> Update Outcome</button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -732,14 +723,12 @@
     }
 
     // Initialize modals - wait for Bootstrap to be available
-    let incomeDetailModal, outcomeDetailModal, editIncomeModal, editOutcomeModal;
+    let incomeDetailModal, outcomeDetailModal;
     
     function initModals() {
         try {
             incomeDetailModal = new bootstrap.Modal(document.getElementById('incomeDetailModal'));
             outcomeDetailModal = new bootstrap.Modal(document.getElementById('outcomeDetailModal'));
-            editIncomeModal = new bootstrap.Modal(document.getElementById('editIncomeModal'));
-            editOutcomeModal = new bootstrap.Modal(document.getElementById('editOutcomeModal'));
             console.log('Modals initialized successfully');
         } catch (error) {
             console.error('Failed to initialize modals:', error);
@@ -777,50 +766,57 @@
         document.getElementById('incomeDetailReference').textContent = reference || 'N/A';
         document.getElementById('incomeDetailNotes').textContent = notes || 'N/A';
 
+        // Store data for editing
+        const detailModal = document.getElementById('incomeDetailModal');
+        detailModal.dataset.amount = amount;
+        detailModal.dataset.source = source;
+        detailModal.dataset.currencyId = currencyId || '';
+        detailModal.dataset.reference = reference || '';
+        detailModal.dataset.notes = notes || '';
+        detailModal.dataset.updateUrl = updateUrl;
+        detailModal.dataset.deleteUrl = deleteUrl;
+
+        // Reset to detail view
+        document.getElementById('incomeDetailView').style.display = 'block';
+        document.getElementById('incomeEditView').style.display = 'none';
+
         // Handle edit button
         document.getElementById('incomeDetailEditBtn').onclick = function () {
-            try {
-                // Populate edit form first
-                const editIncomeForm = document.getElementById('editIncomeForm');
-                if (!editIncomeForm) {
-                    console.error('editIncomeForm not found');
-                    return;
-                }
-                editIncomeForm.action = updateUrl;
-                editIncomeForm.querySelector('input[name="amount"]').value = amount;
-                editIncomeForm.querySelector('select[name="source"]').value = source;
-                editIncomeForm.querySelector('select[name="currency_id"]').value = currencyId || '';
-                editIncomeForm.querySelector('input[name="reference"]').value = reference || '';
-                editIncomeForm.querySelector('textarea[name="notes"]').value = notes || '';
-                
-                // Close detail modal and open edit modal
-                if (incomeDetailModal) incomeDetailModal.hide();
-                setTimeout(() => {
-                    if (editIncomeModal) editIncomeModal.show();
-                }, 300);
-            } catch (error) {
-                console.error('Error in income edit handler:', error);
-            }
+            const detailModal = document.getElementById('incomeDetailModal');
+            const editForm = document.getElementById('incomeDetailEditForm');
+            editForm.action = detailModal.dataset.updateUrl;
+            editForm.querySelector('input[name="amount"]').value = detailModal.dataset.amount;
+            editForm.querySelector('select[name="source"]').value = detailModal.dataset.source;
+            editForm.querySelector('select[name="currency_id"]').value = detailModal.dataset.currencyId;
+            editForm.querySelector('input[name="reference"]').value = detailModal.dataset.reference;
+            editForm.querySelector('textarea[name="notes"]').value = detailModal.dataset.notes;
+            
+            // Switch to edit view
+            document.getElementById('incomeDetailView').style.display = 'none';
+            document.getElementById('incomeEditView').style.display = 'block';
         };
 
         // Handle delete button
         document.getElementById('incomeDetailDeleteBtn').onclick = function () {
-            try {
-                if (confirm('Are you sure you want to delete this income record?')) {
-                    if (incomeDetailModal) incomeDetailModal.hide();
-                    setTimeout(() => {
-                        const form = document.createElement('form');
-                        form.method = 'POST';
-                        form.action = deleteUrl;
-                        form.innerHTML = '<input type="hidden" name="_method" value="DELETE">' +
-                                        '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
-                        document.body.appendChild(form);
-                        form.submit();
-                    }, 300);
-                }
-            } catch (error) {
-                console.error('Error in income delete handler:', error);
+            if (confirm('Are you sure you want to delete this income record?')) {
+                const detailModal = document.getElementById('incomeDetailModal');
+                if (incomeDetailModal) incomeDetailModal.hide();
+                setTimeout(() => {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = detailModal.dataset.deleteUrl;
+                    form.innerHTML = '<input type="hidden" name="_method" value="DELETE">' +
+                                    '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
+                    document.body.appendChild(form);
+                    form.submit();
+                }, 300);
             }
+        };
+
+        // Handle cancel button in edit view
+        document.getElementById('incomeEditCancelBtn').onclick = function () {
+            document.getElementById('incomeDetailView').style.display = 'block';
+            document.getElementById('incomeEditView').style.display = 'none';
         };
 
         if (incomeDetailModal) incomeDetailModal.show();
@@ -859,49 +855,55 @@
             supplierWrapper.style.display = 'none';
         }
 
+        // Store data for editing
+        const detailModal = document.getElementById('outcomeDetailModal');
+        detailModal.dataset.amount = amount;
+        detailModal.dataset.currencyId = currencyId || '';
+        detailModal.dataset.description = description || '';
+        detailModal.dataset.reference = reference || '';
+        detailModal.dataset.updateUrl = updateUrl;
+        detailModal.dataset.deleteUrl = deleteUrl;
+
+        // Reset to detail view
+        document.getElementById('outcomeDetailView').style.display = 'block';
+        document.getElementById('outcomeEditView').style.display = 'none';
+
         // Handle edit button
         document.getElementById('outcomeDetailEditBtn').onclick = function () {
-            try {
-                // Populate edit form first
-                const editOutcomeForm = document.getElementById('editOutcomeForm');
-                if (!editOutcomeForm) {
-                    console.error('editOutcomeForm not found');
-                    return;
-                }
-                editOutcomeForm.action = updateUrl;
-                editOutcomeForm.querySelector('input[name="amount"]').value = amount;
-                editOutcomeForm.querySelector('select[name="currency_id"]').value = currencyId || '';
-                editOutcomeForm.querySelector('textarea[name="description"]').value = description || '';
-                editOutcomeForm.querySelector('input[name="reference"]').value = reference || '';
-                
-                // Close detail modal and open edit modal
-                if (outcomeDetailModal) outcomeDetailModal.hide();
-                setTimeout(() => {
-                    if (editOutcomeModal) editOutcomeModal.show();
-                }, 300);
-            } catch (error) {
-                console.error('Error in outcome edit handler:', error);
-            }
+            const detailModal = document.getElementById('outcomeDetailModal');
+            const editForm = document.getElementById('outcomeDetailEditForm');
+            editForm.action = detailModal.dataset.updateUrl;
+            editForm.querySelector('input[name="amount"]').value = detailModal.dataset.amount;
+            editForm.querySelector('select[name="currency_id"]').value = detailModal.dataset.currencyId;
+            editForm.querySelector('textarea[name="description"]').value = detailModal.dataset.description;
+            editForm.querySelector('input[name="reference"]').value = detailModal.dataset.reference;
+            
+            // Switch to edit view
+            document.getElementById('outcomeDetailView').style.display = 'none';
+            document.getElementById('outcomeEditView').style.display = 'block';
         };
 
         // Handle delete button
         document.getElementById('outcomeDetailDeleteBtn').onclick = function () {
-            try {
-                if (confirm('Are you sure you want to delete this outcome record?')) {
-                    if (outcomeDetailModal) outcomeDetailModal.hide();
-                    setTimeout(() => {
-                        const form = document.createElement('form');
-                        form.method = 'POST';
-                        form.action = deleteUrl;
-                        form.innerHTML = '<input type="hidden" name="_method" value="DELETE">' +
-                                        '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
-                        document.body.appendChild(form);
-                        form.submit();
-                    }, 300);
-                }
-            } catch (error) {
-                console.error('Error in outcome delete handler:', error);
+            if (confirm('Are you sure you want to delete this outcome record?')) {
+                const detailModal = document.getElementById('outcomeDetailModal');
+                if (outcomeDetailModal) outcomeDetailModal.hide();
+                setTimeout(() => {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = detailModal.dataset.deleteUrl;
+                    form.innerHTML = '<input type="hidden" name="_method" value="DELETE">' +
+                                    '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
+                    document.body.appendChild(form);
+                    form.submit();
+                }, 300);
             }
+        };
+
+        // Handle cancel button in edit view
+        document.getElementById('outcomeEditCancelBtn').onclick = function () {
+            document.getElementById('outcomeDetailView').style.display = 'block';
+            document.getElementById('outcomeEditView').style.display = 'none';
         };
 
         if (outcomeDetailModal) outcomeDetailModal.show();
