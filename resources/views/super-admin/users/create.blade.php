@@ -90,10 +90,14 @@
                                 <select class="form-select create-field @error('role_id') is-invalid @enderror" id="role_id" name="role_id">
                                     <option value="">Select Role</option>
                                     @foreach ($roles as $role)
-                                        <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
+                                        <option value="{{ $role->id }}" data-description="{{ $role->description ?? 'No description available for this role.' }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
                                     @endforeach
                                 </select>
                                 @error('role_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                <div class="mt-2 p-3 rounded-4 border bg-light" id="roleDescriptionBox">
+                                    <div class="small text-muted text-uppercase fw-semibold mb-1">Role details</div>
+                                    <div id="roleDescriptionText" class="small text-secondary">Select a role to see what access it gives.</div>
+                                </div>
                             </div>
 
                             <div class="col-md-6">
@@ -149,6 +153,21 @@ function updateMerchantField() {
     }
 }
 
+function updateRoleDescription() {
+    const roleSelect = document.getElementById('role_id');
+    const roleDescriptionText = document.getElementById('roleDescriptionText');
+    const selectedOption = roleSelect ? roleSelect.options[roleSelect.selectedIndex] : null;
+
+    if (!roleDescriptionText || !selectedOption) {
+        return;
+    }
+
+    const description = selectedOption.getAttribute('data-description');
+    roleDescriptionText.textContent = description || 'Select a role to see what access it gives.';
+}
+
 document.addEventListener('DOMContentLoaded', updateMerchantField);
+document.addEventListener('DOMContentLoaded', updateRoleDescription);
+document.getElementById('role_id').addEventListener('change', updateRoleDescription);
 </script>
 @endsection

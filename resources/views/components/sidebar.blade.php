@@ -164,6 +164,33 @@
         </div>
     @endif
 
+    @if(!empty($menu['admin']))
+        <div class="sidebar-section">
+            <div class="sidebar-title">Admin User Section</div>
+            <ul class="sidebar-menu admin-menu">
+                @foreach($menu['admin'] as $item)
+                    @php
+                        $label = $resolveLabel($item['label'] ?? '');
+                        if (is_array($label)) { $label = json_encode($label); }
+                        $routeName = is_string($item['route'] ?? null) ? $item['route'] : '#';
+                        $icon = is_string($item['icon'] ?? null) ? $item['icon'] : 'bi-circle';
+                        $active = $routeName && request()->routeIs(str_replace('.index','*',$routeName));
+                        $extraClass = trim($label === 'Roles Management' ? 'roles-management' : '');
+                    @endphp
+                    <li>
+                        <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ trim(($active ? 'active' : '') . ' ' . $extraClass) }}">
+                            @if($label === 'Roles Management')
+                                <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
+                            @endif
+                            <i class="bi {{ $icon }}"></i>
+                            <span>{{ $label }}</span>
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     @if(!empty($menu['reports']))
         <div class="sidebar-section">
             <div class="sidebar-title">Reports Section</div>
@@ -196,33 +223,6 @@
             <div class="sidebar-title">Systems Section</div>
             <ul class="sidebar-menu systems-menu">
                 @foreach($menu['systems'] as $item)
-                    @php
-                        $label = $resolveLabel($item['label'] ?? '');
-                        if (is_array($label)) { $label = json_encode($label); }
-                        $routeName = is_string($item['route'] ?? null) ? $item['route'] : '#';
-                        $icon = is_string($item['icon'] ?? null) ? $item['icon'] : 'bi-circle';
-                        $active = $routeName && request()->routeIs(str_replace('.index','*',$routeName));
-                        $extraClass = trim($label === 'Roles Management' ? 'roles-management' : '');
-                    @endphp
-                    <li>
-                        <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ trim(($active ? 'active' : '') . ' ' . $extraClass) }}">
-                            @if($label === 'Roles Management')
-                                <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
-                            @endif
-                            <i class="bi {{ $icon }}"></i>
-                            <span>{{ $label }}</span>
-                        </a>
-                    </li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    @if(!empty($menu['admin']))
-        <div class="sidebar-section">
-            <div class="sidebar-title">Admin User Section</div>
-            <ul class="sidebar-menu admin-menu">
-                @foreach($menu['admin'] as $item)
                     @php
                         $label = $resolveLabel($item['label'] ?? '');
                         if (is_array($label)) { $label = json_encode($label); }

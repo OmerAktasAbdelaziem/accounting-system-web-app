@@ -26,7 +26,9 @@ class Sidebar extends Component
                 'reports' => [],
                 'systems' => [],
                 'admin' => [
+                    ['route' => 'super-admin.users.create', 'icon' => 'bi-person-plus', 'label' => 'Create New User'],
                     ['route' => 'super-admin.users.index', 'icon' => 'bi-people', 'label' => 'System Users'],
+                    ['route' => 'roles.index', 'icon' => 'bi-shield-lock', 'label' => 'Roles Management'],
                     ['route' => 'super-admin.merchants.index', 'icon' => 'bi-building', 'label' => 'Merchants'],
                     ['route' => 'super-admin.packages.index', 'icon' => 'bi-box-seam', 'label' => 'Packages'],
                     ['route' => 'super-admin.subscriptions.index', 'icon' => 'bi-bookmark-check', 'label' => 'Subscriptions'],
@@ -96,9 +98,9 @@ class Sidebar extends Component
         $this->menu = [
             'main' => $filter($main),
             'customers' => $filter($suppliers),
+            'admin' => $admin,
             'reports' => $filter($reports),
             'systems' => $filter($systems),
-            'admin' => $admin,
         ];
 
         // Ensure labels are strings to prevent Blade escaping errors
