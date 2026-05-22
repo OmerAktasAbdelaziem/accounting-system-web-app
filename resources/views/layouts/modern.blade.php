@@ -710,6 +710,7 @@
         });
     </script>
 
+    @stack('scripts')
     @yield('js')
 </body>
 </html>
