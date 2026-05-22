@@ -7,6 +7,28 @@
         <a href="{{ route('suppliers.create') }}" class="btn btn-primary">{{ __('Create') }}</a>
     </div>
 
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="GET" action="{{ route('suppliers.index') }}" class="row g-2 align-items-end">
+                <div class="col-md-8">
+                    <label for="supplier-search" class="form-label">Search</label>
+                    <input
+                        type="text"
+                        id="supplier-search"
+                        name="q"
+                        value="{{ $search ?? request('q') }}"
+                        class="form-control"
+                        placeholder="Search by name or address"
+                    >
+                </div>
+                <div class="col-md-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <a href="{{ route('suppliers.index') }}" class="btn btn-outline-secondary">Reset</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="card">
         <div class="card-body">
             <table class="table table-striped">
