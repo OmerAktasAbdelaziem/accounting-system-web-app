@@ -82,29 +82,48 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let timer = null;
     const debounceMs = 300;
+    async function fetchAndRender(urlOrQ) {
+        try {
+            let url;
+            if (typeof urlOrQ === 'string' && (urlOrQ.startsWith('http') || urlOrQ.startsWith('/'))) {
+                url = new URL(urlOrQ, window.location.origin);
+            } else {
+                url = new URL(window.location.href);
+                const q = String(urlOrQ || input.value || '').trim();
+                if (q) url.searchParams.set('q', q);
+                else url.searchParams.delete('q');
+            }
 
-    function fetchAndRender(q) {
-        const url = new URL(window.location.href);
-        if (q) url.searchParams.set('q', q);
-        else url.searchParams.delete('q');
-
-        fetch(url.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-            .then(resp => resp.text())
-            .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const newContainer = doc.getElementById('suppliers-list-container');
-                if (newContainer) {
-                    container.innerHTML = newContainer.innerHTML;
-                    window.history.replaceState({}, '', url);
-                }
-            })
-            .catch(err => console.error('Supplier search failed', err));
+            const resp = await fetch(url.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            if (!resp.ok) throw new Error('Network response was not ok');
+            const html = await resp.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newContainer = doc.getElementById('suppliers-list-container');
+            if (newContainer) {
+                container.innerHTML = newContainer.innerHTML;
+                window.history.replaceState({}, '', url);
+            }
+        } catch (err) {
+            console.error('Supplier search failed', err);
+        }
     }
 
-    input.addEventListener('input', function (e) {
+    input.addEventListener('input', function () {
         clearTimeout(timer);
         timer = setTimeout(() => fetchAndRender(input.value.trim()), debounceMs);
+    });
+
+    // Delegate clicks inside the container to handle pagination links via AJAX
+    container.addEventListener('click', function (e) {
+        const anchor = e.target.closest('a');
+        if (!anchor) return;
+        const href = anchor.getAttribute('href') || '';
+        // detect Laravel paginator links which include "page=" query param
+        if (href.includes('page=')) {
+            e.preventDefault();
+            fetchAndRender(href);
+        }
     });
 });
 </script>

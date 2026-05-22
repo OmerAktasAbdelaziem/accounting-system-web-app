@@ -28,7 +28,7 @@ class SupplierController extends Controller
             ->withSum('purchases as total_purchased', 'total_amount')
             ->withSum('payments as total_paid', 'amount')
             ->latest()
-            ->paginate(20)
+            ->paginate(6)
             ->withQueryString();
 
         return view('suppliers.index', compact('suppliers', 'search'));
