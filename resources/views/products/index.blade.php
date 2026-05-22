@@ -21,22 +21,24 @@
 
 <div class="card mb-3">
     <div class="card-body">
-        <div class="row">
-            <div class="col-md-6">
-                <input type="text" class="form-control" id="searchInput" name="search" value="{{ $search ?? request('search') }}" placeholder="{{ __('messages.search') }}...">
+        <form id="products-filter-form" method="GET" action="{{ route('products.index') }}">
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="searchInput" name="search" value="{{ $search ?? request('search') }}" placeholder="{{ __('messages.search') }}...">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="categoryFilter" name="category">
+                        <option value="">{{ __('messages.all_categories') }}</option>
+                        @foreach($categories ?? [] as $category)
+                            <option value="{{ $category->id }}" @selected(((string) ($categoryId ?? request('category')) === (string) $category->id))>{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <a href="{{ route('products.index') }}" class="btn btn-outline-secondary w-100">Reset</a>
+                </div>
             </div>
-            <div class="col-md-3">
-                <select class="form-select" id="categoryFilter" name="category">
-                    <option value="">{{ __('messages.all_categories') }}</option>
-                    @foreach($categories ?? [] as $category)
-                        <option value="{{ $category->id }}" @selected(((string) ($categoryId ?? request('category')) === (string) $category->id))>{{ $category->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-3 d-flex gap-2">
-                <a href="{{ route('products.index') }}" class="btn btn-outline-secondary w-100">Reset</a>
-            </div>
-        </div>
+        </form>
     </div>
 </div>
 
@@ -104,8 +106,7 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const api = initAjaxList({ containerId: 'products-list-container', searchSelector: '#searchInput', searchParam: 'search', debounceMs: 300 });
-    document.getElementById('categoryFilter')?.addEventListener('change', function () { api.fetch(); });
+    initAjaxList({ containerId: 'products-list-container', formSelector: '#products-filter-form', searchSelector: '#searchInput', searchParam: 'search', debounceMs: 300 });
 });
 </script>
 @endpush
