@@ -30,6 +30,7 @@ use App\Policies\WarehousePolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -99,5 +100,8 @@ class AppServiceProvider extends ServiceProvider
         if (app()->environment('production')) {
             \URL::forceScheme('https');
         }
+
+        // Render pagination links using Bootstrap 5 markup
+        Paginator::useBootstrapFive();
     }
 }
