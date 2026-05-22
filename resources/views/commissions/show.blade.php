@@ -149,7 +149,7 @@
 
     <div class="col-lg-8">
         <div class="card mb-4">
-            <div class="card-header" style="background: linear-gradient(135deg, #3498db, #5dade2); color: white;">
+            <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-clock-history"></i> {{ __('messages.commissions') }}</h5>
                     <span class="badge bg-light text-dark">{{ $commissions->count() }} records</span>
