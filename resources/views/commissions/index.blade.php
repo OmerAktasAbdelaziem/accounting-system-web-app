@@ -46,7 +46,7 @@
                                         <h5 class="mb-1">{{ $profile->name }}</h5>
                                         <small class="text-muted">{{ $profile->employee_code ?? '-' }}</small>
                                     </div>
-                                    <span class="badge bg-light text-dark border">{{ $profile->commissions->count() }} records</span>
+                                    <span class="badge bg-light text-dark border">{{ $profile->commission_count ?? $profile->commissions->count() }} records</span>
                                 </div>
                                 <div class="mb-2 text-muted small">Last commission: {{ $profile->last_commission_date?->format('M d, Y') ?? '-' }}</div>
                                 <div class="mb-3 fw-bold text-success">{{ $currencySymbol }}{{ number_format($profile->total_commission_amount ?? 0, 2) }}</div>

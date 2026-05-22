@@ -22,19 +22,27 @@ class CommissionController extends Controller
             ->latest('commission_date')
             ->paginate(15);
 
-        $commissionProfiles = Employee::where('is_active', true)
-            ->whereHas('commissions')
-            ->with([
-                'commissions' => fn ($query) => $query->orderByDesc('commission_date'),
-            ])
+        $commissionProfiles = Commission::with('employee')
+            ->latest('commission_date')
             ->get()
-            ->map(function (Employee $employee) {
-                $employee->total_commission_amount = (float) $employee->commissions->sum('commission_amount');
-                $employee->last_commission_date = $employee->commissions->first()?->commission_date;
-                $employee->latest_commission = $employee->commissions->first();
+            ->groupBy('employee_id')
+            ->map(function ($items) {
+                $sortedItems = $items->sortByDesc('commission_date')->values();
+                $employee = $sortedItems->first()?->employee;
+
+                if (! $employee) {
+                    return null;
+                }
+
+                $employee->total_commission_amount = (float) $sortedItems->sum('commission_amount');
+                $employee->last_commission_date = $sortedItems->first()?->commission_date;
+                $employee->latest_commission = $sortedItems->first();
+                $employee->commission_count = $sortedItems->count();
+                $employee->commissions = $sortedItems;
 
                 return $employee;
             })
+            ->filter()
             ->sortByDesc(fn (Employee $employee) => $employee->last_commission_date?->timestamp ?? 0)
             ->values();
 
@@ -64,7 +72,7 @@ class CommissionController extends Controller
     {
         $commission = null;
         $employees = Employee::where('is_active', true)
-            ->whereDoesntHave('commissions')
+            ->whereDoesntHave('commissionTransactions')
             ->orderBy('name')
             ->get();
         $branches = Branch::orderBy('name')->get();
@@ -105,8 +113,8 @@ class CommissionController extends Controller
     public function show(Commission $commission)
     {
         $branches = Branch::orderBy('name')->get();
-        $employee = $commission->employee()->with(['branches', 'commissions' => fn ($query) => $query->latest('commission_date')])->first();
-        $commissions = $employee->commissions->sortByDesc('commission_date')->values();
+        $employee = $commission->employee()->with(['branches', 'commissionTransactions' => fn ($query) => $query->latest('commission_date')])->first();
+        $commissions = $employee->commissionTransactions->sortByDesc('commission_date')->values();
         $totalSales = $commissions->sum('sale_amount');
         $totalCommissions = $commissions->sum('commission_amount');
         $averageRate = $commissions->count() ? $commissions->avg('commission_rate') : 0;
@@ -129,7 +137,7 @@ class CommissionController extends Controller
     {
         $employees = Employee::where(function ($query) use ($commission) {
             $query->where('is_active', true)
-                ->whereDoesntHave('commissions')
+                ->whereDoesntHave('commissionTransactions')
                 ->orWhere('id', $commission->employee_id);
         })->orderBy('name')->get();
         $branches = Branch::orderBy('name')->get();

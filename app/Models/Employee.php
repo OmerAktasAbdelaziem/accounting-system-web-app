@@ -49,6 +49,14 @@ class Employee extends Model
     }
 
     /**
+     * Get sales commission transactions
+     */
+    public function commissionTransactions(): HasMany
+    {
+        return $this->hasMany(Commission::class);
+    }
+
+    /**
      * Get employee advances
      */
     public function advances(): HasMany
