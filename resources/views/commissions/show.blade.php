@@ -163,7 +163,6 @@
                             <th>{{ __('messages.sales_amount') }}</th>
                             <th>{{ __('messages.rate') }}</th>
                             <th>{{ __('messages.commission_amount') }}</th>
-                            <th>{{ __('messages.reference_type') }}</th>
                             <th>{{ __('messages.actions') }}</th>
                         </tr>
                     </thead>
@@ -174,7 +173,6 @@
                                 <td>{{ $currencySymbol }}{{ number_format($item->sale_amount, 2) }}</td>
                                 <td>{{ number_format($item->commission_rate, 2) }}%</td>
                                 <td><strong>{{ $currencySymbol }}{{ number_format($item->commission_amount, 2) }}</strong></td>
-                                <td>{{ $item->reference_type ?? '-' }}</td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
                                         <a href="{{ route('commissions.edit', $item) }}" class="btn btn-outline-warning">
@@ -188,7 +186,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-4">No commissions recorded yet.</td>
+                                <td colspan="5" class="text-center text-muted py-4">No commissions recorded yet.</td>
                             </tr>
                         @endforelse
                     </tbody>

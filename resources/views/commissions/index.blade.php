@@ -66,85 +66,6 @@
     </div>
 </div>
 
-<!-- Transaction History Section -->
-<div class="card mb-4">
-    <div class="card-header" style="background: linear-gradient(135deg, #1a1a1a, #333); color: white;">
-        <div class="d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">
-                <i class="bi bi-receipt"></i> Commission Transaction History
-            </h5>
-            <button class="btn btn-sm btn-outline-light" onclick="printTransactions()">
-                <i class="bi bi-printer"></i> Print
-            </button>
-        </div>
-    </div>
-    <div class="table-responsive">
-        <table class="table table-hover table-striped">
-            <thead class="table-light">
-                <tr>
-                    <th>Date</th>
-                    <th>Employee</th>
-                    <th>Sale Amount</th>
-                    <th>Rate</th>
-                    <th>Commission</th>
-                    <th>Reference</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($commissions ?? [] as $commission)
-                    <tr>
-                        <td>
-                            <small>{{ $commission->commission_date?->format('d/m/Y') ?? 'N/A' }}</small>
-                        </td>
-                        <td>
-                            <strong>{{ $commission->employee?->name ?? 'N/A' }}</strong>
-                            <br>
-                            <small class="text-muted">{{ $commission->employee?->employee_code ?? '' }}</small>
-                        </td>
-                        <td>
-                            <span class="badge bg-light text-dark">{{ $currencySymbol }}{{ number_format($commission->sale_amount, 2) }}</span>
-                        </td>
-                        <td>
-                            <span class="badge bg-secondary">{{ number_format($commission->commission_rate, 0) }}%</span>
-                        </td>
-                        <td>
-                            <strong style="color: #27ae60;">{{ $currencySymbol }}{{ number_format($commission->commission_amount, 2) }}</strong>
-                        </td>
-                        <td>
-                            <small style="font-family: monospace;">{{ $commission->reference_type ?? '-' }}</small>
-                        </td>
-                        <td>
-                            <div class="btn-group btn-group-sm">
-                                <a href="{{ route('commissions.show', $commission) }}" class="btn btn-outline-info" title="View">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                                <a href="{{ route('commissions.edit', $commission) }}" class="btn btn-outline-warning" title="Edit">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <button type="button" class="btn btn-outline-danger" onclick="deleteCommission({{ $commission->id }})" title="Delete">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="7" class="text-center text-muted py-4">
-                            No commission transactions found. <a href="{{ route('commissions.create') }}">Create one</a>
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-    @if($commissions instanceof \Illuminate\Pagination\Paginator)
-        <div class="card-footer">
-            {{ $commissions->links() }}
-        </div>
-    @endif
-</div>
-
 <!-- Monthly Commission Aggregation -->
 @if($monthlyCommissions->isNotEmpty())
     <div class="card">
@@ -190,26 +111,5 @@
 
 @section('js')
 <script>
-    function deleteCommission(id) {
-        if (confirm('Are you sure you want to delete this commission record?')) {
-            fetch(`/commissions/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        }
-    }
-
-    function printTransactions() {
-        window.print();
-    }
 </script>
 @endsection
