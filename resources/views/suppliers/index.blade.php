@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="suppliers-list-container">
         <div class="card-body">
             <table class="table table-striped">
                 <thead class="bg-light text-dark">
@@ -72,4 +72,42 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('supplier-search');
+    const container = document.getElementById('suppliers-list-container');
+    if (!input || !container) return;
+
+    let timer = null;
+    const debounceMs = 300;
+
+    function fetchAndRender(q) {
+        const url = new URL(window.location.href);
+        if (q) url.searchParams.set('q', q);
+        else url.searchParams.delete('q');
+
+        fetch(url.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(resp => resp.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newContainer = doc.getElementById('suppliers-list-container');
+                if (newContainer) {
+                    container.innerHTML = newContainer.innerHTML;
+                    window.history.replaceState({}, '', url);
+                }
+            })
+            .catch(err => console.error('Supplier search failed', err));
+    }
+
+    input.addEventListener('input', function (e) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fetchAndRender(input.value.trim()), debounceMs);
+    });
+});
+</script>
+</@push>
+
 @endsection
