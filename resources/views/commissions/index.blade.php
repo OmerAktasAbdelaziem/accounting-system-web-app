@@ -28,7 +28,7 @@
 
 <!-- Commission Profiles -->
 <div class="card mb-4">
-    <div class="card-header" style="background: linear-gradient(135deg, #6f42c1, #9b59b6); color: white;">
+    <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
         <div class="d-flex justify-content-between align-items-center">
             <h5 class="mb-0"><i class="bi bi-person-badge"></i> Commission Profiles</h5>
             <small>Open an employee profile to add more commissions</small>
