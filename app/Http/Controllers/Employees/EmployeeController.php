@@ -22,10 +22,17 @@ class EmployeeController extends Controller
         return $employeeCode;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employee::paginate(20);
-        return view('employees.index', compact('employees'));
+        $search = trim((string) $request->input('q', ''));
+        $employees = Employee::when($search !== '', function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('position', 'like', '%' . $search . '%');
+            })
+            ->paginate(6)
+            ->withQueryString();
+
+        return view('employees.index', compact('employees', 'search'));
     }
 
     public function create()

@@ -19,28 +19,28 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-header">
+<div class="card mb-3">
+    <div class="card-body">
         <div class="row">
             <div class="col-md-6">
-                <input type="text" class="form-control" id="searchInput" placeholder="{{ __('messages.search') }}...">
+                <input type="text" class="form-control" id="searchInput" name="search" value="{{ $search ?? request('search') }}" placeholder="{{ __('messages.search') }}...">
             </div>
             <div class="col-md-3">
-                <select class="form-select" id="categoryFilter">
+                <select class="form-select" id="categoryFilter" name="category">
                     <option value="">{{ __('messages.all_categories') }}</option>
                     @foreach($categories ?? [] as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        <option value="{{ $category->id }}" @selected(((string) ($categoryId ?? request('category')) === (string) $category->id))>{{ $category->name }}</option>
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-3">
-                <button class="btn btn-outline-secondary w-100" onclick="filterProducts()">
-                    <i class="bi bi-funnel"></i> {{ __('messages.filter') }}
-                </button>
+            <div class="col-md-3 d-flex gap-2">
+                <a href="{{ route('products.index') }}" class="btn btn-outline-secondary w-100">Reset</a>
             </div>
         </div>
     </div>
+</div>
 
+<div class="card" id="products-list-container">
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>
@@ -99,23 +99,19 @@
         </div>
     @endif
 </div>
-@endsection
+
+@include('components.ajax-list')
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const api = initAjaxList({ containerId: 'products-list-container', searchSelector: '#searchInput', searchParam: 'search', debounceMs: 300 });
+    document.getElementById('categoryFilter')?.addEventListener('change', function () { api.fetch(); });
+});
+</script>
+@endpush
 
 @section('js')
 <script>
-    function filterProducts() {
-        const search = document.getElementById('searchInput').value;
-        const category = document.getElementById('categoryFilter').value;
-        
-        showLoading();
-        fetch(`{{ route('products.filter') }}?search=${search}&category=${category}`)
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('productsTable').innerHTML = html;
-                hideLoading();
-            });
-    }
-
     function exportToExcel() {
         showLoading();
         fetch('{{ route('products.export') }}')
@@ -153,11 +149,6 @@
             });
         }
     }
-
-    // Real-time search
-    document.getElementById('searchInput')?.addEventListener('keyup', function() {
-        clearTimeout(window.searchTimeout);
-        window.searchTimeout = setTimeout(filterProducts, 300);
-    });
+    
 </script>
 @endsection

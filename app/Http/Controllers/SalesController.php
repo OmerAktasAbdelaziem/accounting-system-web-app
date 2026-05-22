@@ -22,7 +22,7 @@ class SalesController extends Controller
             })
             ->latest('sale_date')
             ->latest('id')
-            ->paginate(20)
+            ->paginate(6)
             ->withQueryString();
 
         $stats = [

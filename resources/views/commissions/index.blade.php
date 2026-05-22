@@ -28,6 +28,20 @@
 
 <!-- Commission Profiles -->
 <div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ route('commissions.index') }}" class="row g-2 align-items-end mb-3">
+            <div class="col-md-8">
+                <label for="commission-search" class="form-label">Search</label>
+                <input id="commission-search" type="text" name="q" value="{{ request('q') ?? '' }}" class="form-control" placeholder="Search by employee name">
+            </div>
+            <div class="col-md-4 d-flex gap-2">
+                <a href="{{ route('commissions.index') }}" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card mb-4" id="commissions-list-container">
     <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
         <div class="d-flex justify-content-between align-items-center">
             <h5 class="mb-0"><i class="bi bi-person-badge"></i> Commission Profiles</h5>
@@ -65,6 +79,15 @@
         @endif
     </div>
 </div>
+
+@include('components.ajax-list')
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    initAjaxList({ containerId: 'commissions-list-container', searchSelector: '#commission-search', searchParam: 'q', debounceMs: 300 });
+});
+</script>
+@endpush
 
 <!-- Monthly Commission Aggregation -->
 @if($monthlyCommissions->isNotEmpty())

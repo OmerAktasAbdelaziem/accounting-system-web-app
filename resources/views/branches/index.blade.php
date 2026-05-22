@@ -7,7 +7,21 @@
         <a href="{{ route('branches.create') }}" class="btn btn-primary">{{ __('messages.add_branch') }}</a>
     </div>
 
-    <div class="card">
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="GET" action="{{ route('branches.index') }}" class="row g-2 align-items-end mb-3">
+                <div class="col-md-8">
+                    <label for="branch-search" class="form-label">Search</label>
+                    <input id="branch-search" type="text" name="q" value="{{ $search ?? request('q') }}" class="form-control" placeholder="Search by name, city or manager">
+                </div>
+                <div class="col-md-4 d-flex gap-2">
+                    <a href="{{ route('branches.index') }}" class="btn btn-outline-secondary">Reset</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card" id="branches-list-container">
         <div class="card-body">
             <table class="table table-striped">
                 <thead class="bg-light text-dark">
@@ -51,4 +65,13 @@
         </div>
     </div>
 </div>
+
+@include('components.ajax-list')
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    initAjaxList({ containerId: 'branches-list-container', searchSelector: '#branch-search', searchParam: 'q', debounceMs: 300 });
+});
+</script>
+@endpush
 @endsection

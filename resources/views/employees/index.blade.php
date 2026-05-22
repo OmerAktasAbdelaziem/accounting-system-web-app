@@ -14,7 +14,21 @@
     </div>
 </div>
 
-<div class="card">
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="GET" action="{{ route('employees.index') }}" class="row g-2 align-items-end mb-3">
+            <div class="col-md-8">
+                <label for="employee-search" class="form-label">Search</label>
+                <input id="employee-search" type="text" name="q" value="{{ $search ?? request('q') }}" class="form-control" placeholder="Search by name or position">
+            </div>
+            <div class="col-md-4 d-flex gap-2">
+                <a href="{{ route('employees.index') }}" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card" id="employees-list-container">
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>
@@ -51,14 +65,23 @@
             </tbody>
         </table>
     </div>
+    </div>
+
+    @if($employees ?? false)
+        <div class="mt-3">
+            {{ $employees->links() }}
+        </div>
+    @endif
 </div>
 
-@if($employees ?? false)
-    <div class="mt-3">
-        {{ $employees->links() }}
-    </div>
-@endif
-@endsection
+@include('components.ajax-list')
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    initAjaxList({ containerId: 'employees-list-container', searchSelector: '#employee-search', searchParam: 'q', debounceMs: 300 });
+});
+</script>
+@endpush
 
 @section('js')
 <script>

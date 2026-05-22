@@ -11,13 +11,20 @@ use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $search = trim((string) $request->input('q', ''));
+
         $categories = Category::withCount(['products'])
             ->with(['products' => function ($query) {
                 $query->select('id', 'category_id', 'selling_price', 'current_stock');
             }])
-            ->paginate(20);
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('description', 'like', '%' . $search . '%');
+            })
+            ->paginate(6)
+            ->withQueryString();
 
         // Calculate sales metrics for each category
         foreach ($categories as $category) {
@@ -38,7 +45,7 @@ class CategoryController extends Controller
                 : 0,
         ];
 
-        return view('categories.index', compact('categories', 'stats'));
+        return view('categories.index', compact('categories', 'stats', 'search'));
     }
 
     public function create()

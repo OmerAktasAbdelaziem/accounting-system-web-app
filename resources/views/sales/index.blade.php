@@ -240,7 +240,7 @@
     </div>
 
     <div class="card sales-panel">
-        <div class="card-header px-4 py-3">
+    <div class="card-header px-4 py-3">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                 <div>
                     <h5 class="mb-1">Recent Sales</h5>
@@ -248,7 +248,7 @@
                 </div>
                 <span class="badge text-bg-light border">{{ $sales->total() }} results</span>
             </div>
-            <form method="GET" class="row g-2 mt-3 align-items-end">
+            <form id="sales-filter-form" method="GET" class="row g-2 mt-3 align-items-end">
                 <div class="col-lg-4 col-md-6">
                     <label class="form-label mb-0 small">Branch</label>
                     <select name="branch_id" class="form-select">
@@ -271,7 +271,7 @@
                 </div>
             </form>
         </div>
-        <div class="card-body p-0">
+        <div class="card-body p-0" id="sales-list-container">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
@@ -482,4 +482,13 @@
     });
 })();
 </script>
+
+@include('components.ajax-list')
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    initAjaxList({ containerId: 'sales-list-container', formSelector: '#sales-filter-form', debounceMs: 300 });
+});
+</script>
+@endpush
 @endsection

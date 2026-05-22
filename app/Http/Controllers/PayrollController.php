@@ -14,10 +14,21 @@ use Illuminate\Http\Request;
 
 class PayrollController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $payrolls = Payroll::with('employee')->latest()->paginate(20);
-        return view('payroll.index', compact('payrolls'));
+        $search = trim((string) $request->input('q', ''));
+
+        $payrolls = Payroll::with('employee')
+            ->when($search !== '', function ($query) use ($search) {
+                $query->whereHas('employee', function ($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%');
+                });
+            })
+            ->latest()
+            ->paginate(6)
+            ->withQueryString();
+
+        return view('payroll.index', compact('payrolls', 'search'));
     }
 
     public function create()

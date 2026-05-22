@@ -12,11 +12,23 @@ use App\Exports\ProductsExport;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with('category')->paginate(20);
+        $search = trim((string) $request->input('search', ''));
+        $categoryId = $request->input('category');
+
+        $products = Product::with('category')
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%');
+            })
+            ->when($categoryId, function ($query) use ($categoryId) {
+                $query->where('category_id', $categoryId);
+            })
+            ->paginate(6)
+            ->withQueryString();
+
         $categories = Category::all();
-        return view('products.index', compact('products', 'categories'));
+        return view('products.index', compact('products', 'categories', 'search', 'categoryId'));
     }
 
     public function create()

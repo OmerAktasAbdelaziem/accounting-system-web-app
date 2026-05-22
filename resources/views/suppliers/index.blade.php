@@ -73,60 +73,12 @@
     </div>
 </div>
 
+@include('components.ajax-list')
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const input = document.getElementById('supplier-search');
-    const container = document.getElementById('suppliers-list-container');
-    if (!input || !container) return;
-
-    let timer = null;
-    const debounceMs = 300;
-    async function fetchAndRender(urlOrQ) {
-        try {
-            let url;
-            if (typeof urlOrQ === 'string' && (urlOrQ.startsWith('http') || urlOrQ.startsWith('/'))) {
-                url = new URL(urlOrQ, window.location.origin);
-            } else {
-                url = new URL(window.location.href);
-                const q = String(urlOrQ || input.value || '').trim();
-                if (q) url.searchParams.set('q', q);
-                else url.searchParams.delete('q');
-            }
-
-            const resp = await fetch(url.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
-            if (!resp.ok) throw new Error('Network response was not ok');
-            const html = await resp.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const newContainer = doc.getElementById('suppliers-list-container');
-            if (newContainer) {
-                container.innerHTML = newContainer.innerHTML;
-                window.history.replaceState({}, '', url);
-            }
-        } catch (err) {
-            console.error('Supplier search failed', err);
-        }
-    }
-
-    input.addEventListener('input', function () {
-        clearTimeout(timer);
-        timer = setTimeout(() => fetchAndRender(input.value.trim()), debounceMs);
-    });
-
-    // Delegate clicks inside the container to handle pagination links via AJAX
-    container.addEventListener('click', function (e) {
-        const anchor = e.target.closest('a');
-        if (!anchor) return;
-        const href = anchor.getAttribute('href') || '';
-        // detect Laravel paginator links which include "page=" query param
-        if (href.includes('page=')) {
-            e.preventDefault();
-            fetchAndRender(href);
-        }
-    });
+    initAjaxList({ containerId: 'suppliers-list-container', searchSelector: '#supplier-search', searchParam: 'q', debounceMs: 300 });
 });
-</script>
 </script>
 @endpush
 
