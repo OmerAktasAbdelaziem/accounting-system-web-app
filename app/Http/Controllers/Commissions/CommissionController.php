@@ -10,6 +10,7 @@ use App\Models\Commission;
 use App\Models\EmployeeCommission;
 use App\Models\Employee;
 use Carbon\Carbon;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 
 class CommissionController extends Controller
@@ -17,15 +18,28 @@ class CommissionController extends Controller
     public function index()
     {
         $employees = Employee::where('is_active', true)->get();
-        
-        // Get commission data from Commission model for transaction history
         $commissions = Commission::with('employee')
             ->latest('commission_date')
             ->paginate(15);
-        
-        // Get aggregated commission stats
+
+        $commissionProfiles = Employee::where('is_active', true)
+            ->whereHas('commissions')
+            ->with([
+                'commissions' => fn ($query) => $query->orderByDesc('commission_date'),
+            ])
+            ->get()
+            ->map(function (Employee $employee) {
+                $employee->total_commission_amount = (float) $employee->commissions->sum('commission_amount');
+                $employee->last_commission_date = $employee->commissions->first()?->commission_date;
+                $employee->latest_commission = $employee->commissions->first();
+
+                return $employee;
+            })
+            ->sortByDesc(fn (Employee $employee) => $employee->last_commission_date?->timestamp ?? 0)
+            ->values();
+
         $totalCommission = Commission::sum('commission_amount');
-        
+
         $monthlyCommissions = EmployeeCommission::query()
             ->get()
             ->groupBy(fn (EmployeeCommission $commission) => Carbon::parse($commission->created_at)->format('Y-m'))
@@ -43,13 +57,16 @@ class CommissionController extends Controller
         
         $stats = compact('totalCommission');
         
-        return view('commissions.index', compact('commissions', 'stats', 'employees', 'monthlyCommissions'));
+        return view('commissions.index', compact('commissions', 'commissionProfiles', 'stats', 'employees', 'monthlyCommissions'));
     }
 
     public function create()
     {
         $commission = null;
-        $employees = Employee::where('is_active', true)->get();
+        $employees = Employee::where('is_active', true)
+            ->whereDoesntHave('commissions')
+            ->orderBy('name')
+            ->get();
         $branches = Branch::orderBy('name')->get();
         $selectedBranchIds = request()->input('branch_ids', []);
         return view('commissions.form', compact('commission', 'employees', 'branches', 'selectedBranchIds'));
@@ -58,6 +75,12 @@ class CommissionController extends Controller
     public function store(StoreCommissionRequest $request)
     {
         $validated = $request->validated();
+        if (Commission::where('employee_id', $validated['employee_id'])->exists()) {
+            throw ValidationException::withMessages([
+                'employee_id' => 'This employee already has a commission profile. Open the profile to add more commissions.',
+            ]);
+        }
+
         $validated['commission_amount'] = ((float)$validated['sale_amount'] * (float)$validated['commission_rate']) / 100;
         $commission = Commission::create($validated);
         $commission->syncBranches($validated['branch_ids'] ?? []);
@@ -65,14 +88,50 @@ class CommissionController extends Controller
         return redirect()->route('commissions.index')->with('success', 'Commission recorded successfully!');
     }
 
+    public function append(StoreCommissionRequest $request, Commission $commission)
+    {
+        $validated = $request->validated();
+        $validated['employee_id'] = $commission->employee_id;
+        $validated['commission_amount'] = ((float) $validated['sale_amount'] * (float) $validated['commission_rate']) / 100;
+
+        $newCommission = Commission::create($validated);
+        $newCommission->syncBranches($validated['branch_ids'] ?? []);
+
+        return redirect()
+            ->route('commissions.show', $newCommission)
+            ->with('success', 'Additional commission added successfully!');
+    }
+
     public function show(Commission $commission)
     {
-        return view('commissions.show', compact('commission'));
+        $branches = Branch::orderBy('name')->get();
+        $employee = $commission->employee()->with(['branches', 'commissions' => fn ($query) => $query->latest('commission_date')])->first();
+        $commissions = $employee->commissions->sortByDesc('commission_date')->values();
+        $totalSales = $commissions->sum('sale_amount');
+        $totalCommissions = $commissions->sum('commission_amount');
+        $averageRate = $commissions->count() ? $commissions->avg('commission_rate') : 0;
+
+        $latestCommission = $commissions->first();
+
+        return view('commissions.show', compact(
+            'employee',
+            'commissions',
+            'commission',
+            'latestCommission',
+            'totalSales',
+            'totalCommissions',
+            'averageRate',
+            'branches'
+        ));
     }
 
     public function edit(Commission $commission)
     {
-        $employees = Employee::where('is_active', true)->get();
+        $employees = Employee::where(function ($query) use ($commission) {
+            $query->where('is_active', true)
+                ->whereDoesntHave('commissions')
+                ->orWhere('id', $commission->employee_id);
+        })->orderBy('name')->get();
         $branches = Branch::orderBy('name')->get();
         $selectedBranchIds = $commission->branches()->pluck('branches.id')->all();
         return view('commissions.form', compact('commission', 'employees', 'branches', 'selectedBranchIds'));

@@ -9,7 +9,7 @@
             <i class="bi bi-percent" style="color: #ff8c00;"></i> {{ __('messages.commissions_management') }}
         </h1>
         <a href="{{ route('commissions.create') }}" class="btn btn-primary-modern">
-            <i class="bi bi-plus-circle"></i> {{ __('messages.add_commission') }}
+            <i class="bi bi-plus-circle"></i> Create First Commission Profile
         </a>
     </div>
 </div>
@@ -23,6 +23,46 @@
                 <h3 class="mb-0" style="color: #ff8c00;">{{ $currencySymbol }}{{ number_format($stats['totalCommission'], 2) }}</h3>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Commission Profiles -->
+<div class="card mb-4">
+    <div class="card-header" style="background: linear-gradient(135deg, #6f42c1, #9b59b6); color: white;">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-person-badge"></i> Commission Profiles</h5>
+            <small>Open an employee profile to add more commissions</small>
+        </div>
+    </div>
+    <div class="card-body">
+        @if(($commissionProfiles ?? collect())->isNotEmpty())
+            <div class="row g-3">
+                @foreach($commissionProfiles as $profile)
+                    <div class="col-md-6 col-xl-4">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h5 class="mb-1">{{ $profile->name }}</h5>
+                                        <small class="text-muted">{{ $profile->employee_code ?? '-' }}</small>
+                                    </div>
+                                    <span class="badge bg-light text-dark border">{{ $profile->commissions->count() }} records</span>
+                                </div>
+                                <div class="mb-2 text-muted small">Last commission: {{ $profile->last_commission_date?->format('M d, Y') ?? '-' }}</div>
+                                <div class="mb-3 fw-bold text-success">{{ $currencySymbol }}{{ number_format($profile->total_commission_amount ?? 0, 2) }}</div>
+                                <a href="{{ route('commissions.show', $profile->latest_commission) }}" class="btn btn-outline-primary w-100">
+                                    <i class="bi bi-eye"></i> View Profile
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div class="text-center text-muted py-4">
+                No commission profiles yet. Use <strong>Create First Commission Profile</strong> for the first record of an employee.
+            </div>
+        @endif
     </div>
 </div>
 

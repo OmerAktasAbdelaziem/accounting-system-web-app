@@ -181,6 +181,7 @@ Route::middleware('auth')->group(function () {
         Route::get('create', [CommissionController::class, 'create'])->name('create');
         Route::post('/', [CommissionController::class, 'store'])->name('store');
         Route::get('{commission}', [CommissionController::class, 'show'])->name('show');
+        Route::post('{commission}/append', [CommissionController::class, 'append'])->name('append');
         Route::get('{commission}/edit', [CommissionController::class, 'edit'])->name('edit');
         Route::put('{commission}', [CommissionController::class, 'update'])->name('update');
         Route::delete('{commission}', [CommissionController::class, 'destroy'])->name('destroy');
