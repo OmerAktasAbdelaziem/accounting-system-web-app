@@ -412,7 +412,6 @@ class ChatController extends Controller
             ->orderBy('name')
             ->get()
             ->map(fn (Employee $employee) => $this->employeeContactPayload($user, $employee))
-            ->filter(fn (array $contact) => $contact['is_linked'] ?? false)
             ->values();
 
         $supportRecipient = $this->supportRecipient($user);

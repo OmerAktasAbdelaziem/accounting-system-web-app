@@ -417,6 +417,42 @@
             bottom: 12px;
         }
 
+        // Switch to contacts list (used when swiping back from a conversation)
+        function goToContactsView() {
+            selectedContact = null;
+            conversationTitleEl.textContent = 'Live Chat';
+            conversationSubtitleEl.textContent = 'Choose a contact to start';
+            messagesEl.innerHTML = '<div class="floating-chat-empty">Choose a contact to start chatting.</div>';
+            renderContacts();
+        }
+
+        // Simple swipe-to-back support for mobile: swipe right inside messages to return to contacts
+        (function setupSwipeBack() {
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            messagesEl.addEventListener('touchstart', (e) => {
+                const t = e.touches && e.touches[0];
+                if (!t) return;
+                touchStartX = t.clientX;
+                touchStartY = t.clientY;
+            }, { passive: true });
+
+            messagesEl.addEventListener('touchend', (e) => {
+                const t = e.changedTouches && e.changedTouches[0];
+                if (!t) return;
+                const dx = t.clientX - touchStartX;
+                const dy = t.clientY - touchStartY;
+                // horizontal swipe, to the right, not much vertical movement
+                if (dx > 60 && Math.abs(dy) < 40) {
+                    // if a conversation is open, go back to contacts
+                    if (selectedContact) {
+                        goToContactsView();
+                    }
+                }
+            }, { passive: true });
+        })();
+
         .floating-chat-window {
             width: calc(100vw - 24px);
             max-width: 360px;
@@ -587,58 +623,42 @@
             return response.json();
         }
 
+        // Render a single, flat users list (no section splits).
         function renderContacts() {
             const normalizedSearch = searchTerm.trim().toLowerCase();
-            const hasItems = sections.some((section) => {
-                return (section.items || []).some((contact) => {
-                    if (!normalizedSearch) return true;
-                    return [contact.name, contact.meta, contact.user_type]
-                        .filter(Boolean)
-                        .some((value) => String(value).toLowerCase().includes(normalizedSearch));
-                });
+            const allItems = sections.flatMap((s) => s.items || []);
+
+            const filtered = allItems.filter((contact) => {
+                if (!normalizedSearch) return true;
+                return [contact.name, contact.meta, contact.user_type]
+                    .filter(Boolean)
+                    .some((value) => String(value).toLowerCase().includes(normalizedSearch));
             });
-            if (!hasItems) {
+
+            if (!filtered.length) {
                 contactsEl.innerHTML = '<div class="p-3 text-muted" style="font-size:12px;">No contacts available.</div>';
                 return;
             }
 
-            contactsEl.innerHTML = sections.map((section) => {
-                const filteredItems = (section.items || []).filter((contact) => {
-                    if (!normalizedSearch) return true;
-                    return [contact.name, contact.meta, contact.user_type]
-                        .filter(Boolean)
-                        .some((value) => String(value).toLowerCase().includes(normalizedSearch));
-                });
-
-                if (!filteredItems.length) {
-                    return '';
-                }
-
-                const itemsHtml = filteredItems.map((contact) => {
-                    const isActive = selectedContact && selectedContact.kind === contact.kind && String(selectedContact.id) === String(contact.id);
-                    const avatarText = String(contact.name || 'U').trim().slice(0, 2).toUpperCase();
-                    const avatarClass = contact.kind === 'support' ? 'support' : (contact.kind === 'user' && contact.meta === 'Merchant' ? 'merchant' : 'employee');
-                    const statusText = contact.is_typing ? 'Typing...' : (contact.is_online ? 'Online now' : formatLastSeen(contact.last_seen_at));
-                    return `
-                        <button type="button" class="floating-chat-contact ${isActive ? 'is-active' : ''}" data-contact-kind="${contact.kind}" data-contact-id="${contact.id}">
-                            <div class="floating-chat-contact-left">
-                                <div class="floating-chat-avatar ${avatarClass} ${contact.is_online ? 'is-online' : ''}">${escapeHtml(avatarText)}</div>
-                                <div class="floating-chat-contact-main">
-                                    <div class="floating-chat-contact-name">${escapeHtml(contact.name || 'User')}</div>
-                                    <div class="floating-chat-contact-meta">${escapeHtml(contact.last_message?.message ? contact.last_message.message : (contact.meta || contact.user_type || ''))}</div>
-                                    <div class="floating-chat-status-line">
-                                        ${contact.is_typing ? '<span class="typing">Typing...</span>' : `<span>${escapeHtml(statusText)}</span>`}
-                                    </div>
+            contactsEl.innerHTML = filtered.map((contact) => {
+                const isActive = selectedContact && selectedContact.kind === contact.kind && String(selectedContact.id) === String(contact.id);
+                const avatarText = String(contact.name || 'U').trim().slice(0, 2).toUpperCase();
+                const avatarClass = contact.kind === 'support' ? 'support' : (contact.kind === 'user' && contact.meta === 'Merchant' ? 'merchant' : 'employee');
+                const statusText = contact.is_typing ? 'Typing...' : (contact.is_online ? 'Online now' : formatLastSeen(contact.last_seen_at));
+                return `
+                    <button type="button" class="floating-chat-contact ${isActive ? 'is-active' : ''}" data-contact-kind="${contact.kind}" data-contact-id="${contact.id}">
+                        <div class="floating-chat-contact-left">
+                            <div class="floating-chat-avatar ${avatarClass} ${contact.is_online ? 'is-online' : ''}">${escapeHtml(avatarText)}</div>
+                            <div class="floating-chat-contact-main">
+                                <div class="floating-chat-contact-name">${escapeHtml(contact.name || 'User')}</div>
+                                <div class="floating-chat-contact-meta">${escapeHtml(contact.last_message?.message ? contact.last_message.message : (contact.meta || contact.user_type || ''))}</div>
+                                <div class="floating-chat-status-line">
+                                    ${contact.is_typing ? '<span class="typing">Typing...</span>' : `<span>${escapeHtml(statusText)}</span>`}
                                 </div>
                             </div>
-                            ${contact.unread_count > 0 ? `<span class="floating-chat-contact-badge">${contact.unread_count > 99 ? '99+' : contact.unread_count}</span>` : ''}
-                        </button>
-                    `;
-                }).join('');
-
-                return `
-                    <div class="px-2 pt-2 pb-1" style="font-size:11px; font-weight:700; color:#777; text-transform:uppercase; letter-spacing:0.08em;">${escapeHtml(section.label || '')}</div>
-                    ${itemsHtml}
+                        </div>
+                        ${contact.unread_count > 0 ? `<span class="floating-chat-contact-badge">${contact.unread_count > 99 ? '99+' : contact.unread_count}</span>` : ''}
+                    </button>
                 `;
             }).join('');
         }
@@ -937,7 +957,18 @@
                 kind: button.dataset.contactKind,
                 name: button.querySelector('.floating-chat-contact-name')?.textContent || 'Chat',
             };
+
             renderContacts();
+
+            // If employee is not linked to a chat user, show an informative placeholder instead of attempting to load messages
+            if (selectedContact && selectedContact.kind === 'employee' && !selectedContact.recipient_user_id) {
+                conversationTitleEl.textContent = selectedContact.name || 'Employee';
+                conversationSubtitleEl.textContent = 'Employee has no chat account';
+                messagesEl.innerHTML = `<div class="floating-chat-empty">This employee does not have a chat account.</div>`;
+                await loadContacts();
+                return;
+            }
+
             await Promise.all([loadMessages(), loadContacts()]);
         });
 
