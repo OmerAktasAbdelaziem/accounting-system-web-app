@@ -167,6 +167,23 @@
         </div>
     @endif
 
+    @if($payroll->employee?->branches?->count())
+        <div class="card mb-4">
+            <div class="card-header" style="background: linear-gradient(135deg, #6c757d, #adb5bd); color: white;">
+                <h5 class="mb-0">
+                    <i class="bi bi-diagram-3"></i> Assigned Branches
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-2">
+                    @foreach($payroll->employee->branches as $branch)
+                        <span class="badge bg-secondary-subtle text-dark border">{{ $branch->name }}</span>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Commissions Section -->
     <div class="card mb-4">
         <div class="card-header" style="background: linear-gradient(135deg, #27ae60, #52be80); color: white;">
