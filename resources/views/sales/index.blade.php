@@ -381,6 +381,8 @@
                                             data-total_amount="{{ (float) $sale->total_amount }}"
                                             data-spent_amount="{{ (float) ($sale->spent_amount ?? 0) }}"
                                             data-notes="{{ e($sale->notes) }}"
+                                                    data-primary-employee-id="{{ $sale->employee_id }}"
+                                                    data-employee-sales='@json($sale->employeeSaleDetails->map(fn ($detail) => ["employee_id" => $detail->employee_id, "description" => $detail->description ?? ""]))'
                                             data-update_url="{{ route('sales.update', $sale->id) }}"
                                         >
                                             <i class="bi bi-pencil"></i>
@@ -494,6 +496,15 @@
                                     <input type="number" name="spent_amount" class="form-control" step="0.01" min="0" placeholder="Amount the store spent">
                                 </div>
                                 <div class="col-12">
+                                    <label class="form-label fw-semibold">Employees Involved</label>
+                                    <div class="field-hint mb-2">Add or change the employees linked to this sale.</div>
+                                    <div id="edit-employee-sales-list" class="d-grid gap-3"></div>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm mt-2 add-edit-employee-field">+ Add Employee</button>
+                                    @error('employee_sales')
+                                        <div class="text-danger small mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-12">
                                     <label class="form-label">Products / Notes</label>
                                     <textarea name="product_sold_text" rows="4" class="form-control" placeholder="One product per line or notes..."></textarea>
                                 </div>
@@ -507,6 +518,29 @@
                 </div>
             </div>
         </div>
+
+        <template id="edit-employee-sale-row-template">
+            <div class="employee-sale-item border rounded-4 p-3 bg-light">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted mb-1">Employee</label>
+                        <select name="employee_sales[__INDEX__][employee_id]" class="form-select" required>
+                            <option value="">Select employee</option>
+                            @foreach($employees as $employee)
+                                <option value="{{ $employee->id }}">{{ $employee->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label small text-muted mb-1">Description</label>
+                        <textarea name="employee_sales[__INDEX__][description]" class="form-control" rows="2" placeholder="What this employee sold today..."></textarea>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end mt-2">
+                    <button type="button" class="btn btn-outline-danger btn-sm remove-employee-row">Remove</button>
+                </div>
+            </div>
+        </template>
 
 <script>
 (function () {
@@ -581,6 +615,34 @@
         }
     }
 
+    function bindEditEmployeeList(container) {
+        const addBtn = document.querySelector('.add-edit-employee-field');
+        const template = document.getElementById('edit-employee-sale-row-template');
+        let nextIndex = container.querySelectorAll('.employee-sale-item').length;
+
+        function bindRemoveButtons() {
+            container.querySelectorAll('.remove-employee-row').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (container.querySelectorAll('.employee-sale-item').length > 1) {
+                        btn.closest('.employee-sale-item')?.remove();
+                    }
+                });
+            });
+        }
+
+        bindRemoveButtons();
+
+        if (addBtn && template) {
+            addBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const html = template.innerHTML.replaceAll('__INDEX__', String(nextIndex++));
+                container.insertAdjacentHTML('beforeend', html);
+                bindRemoveButtons();
+            });
+        }
+    }
+
     document.querySelectorAll('.products-list').forEach(bindProductList);
     const employeeList = document.getElementById('employee-sales-list');
     if (employeeList) {
@@ -602,6 +664,11 @@
             if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
                 try { saleDetailsModal = new bootstrap.Modal(saleDetailsModalEl); } catch (err) { saleDetailsModal = null; }
             }
+        }
+
+        const editEmployeeList = document.getElementById('edit-employee-sales-list');
+        if (editEmployeeList) {
+            bindEditEmployeeList(editEmployeeList);
         }
 
         document.addEventListener('click', function (e) {
@@ -673,6 +740,13 @@
             const totalAmount = btn.getAttribute('data-total_amount');
             const spentAmount = btn.getAttribute('data-spent_amount');
             const notes = btn.getAttribute('data-notes');
+            const employeeSalesData = (() => {
+                try {
+                    return JSON.parse(btn.getAttribute('data-employee-sales') || '[]');
+                } catch (err) {
+                    return [];
+                }
+            })();
             const updateUrl = btn.getAttribute('data-update_url');
 
             const form = document.getElementById('editSaleForm');
@@ -683,12 +757,40 @@
             const totalInput = form.querySelector('input[name="total_amount"]');
             const spentInput = form.querySelector('input[name="spent_amount"]');
             const notesArea = form.querySelector('textarea[name="product_sold_text"]');
+            const editEmployeeList = document.getElementById('edit-employee-sales-list');
+            const editEmployeeTemplate = document.getElementById('edit-employee-sale-row-template');
 
             if (saleDateInput) saleDateInput.value = saleDate || '';
             if (branchSelect) branchSelect.value = branchId || '';
             if (totalInput) totalInput.value = totalAmount || '';
             if (spentInput) spentInput.value = spentAmount || '';
             if (notesArea) notesArea.value = notes || '';
+
+            if (editEmployeeList && editEmployeeTemplate) {
+                const rows = employeeSalesData.length > 0
+                    ? employeeSalesData
+                    : [{ employee_id: btn.getAttribute('data-primary-employee-id') || '', description: '' }];
+
+                editEmployeeList.innerHTML = rows.map((row, index) => editEmployeeTemplate.innerHTML.replaceAll('__INDEX__', String(index))).join('');
+
+                editEmployeeList.querySelectorAll('.employee-sale-item').forEach((rowEl, index) => {
+                    const rowData = rows[index] || {};
+                    const employeeSelect = rowEl.querySelector('select[name^="employee_sales"]');
+                    const descriptionInput = rowEl.querySelector('textarea[name^="employee_sales"]');
+                    if (employeeSelect) employeeSelect.value = String(rowData.employee_id || '');
+                    if (descriptionInput) descriptionInput.value = rowData.description || '';
+                });
+
+                // rebind remove buttons for newly injected rows
+                editEmployeeList.querySelectorAll('.remove-employee-row').forEach((removeBtn) => {
+                    removeBtn.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        if (editEmployeeList.querySelectorAll('.employee-sale-item').length > 1) {
+                            removeBtn.closest('.employee-sale-item')?.remove();
+                        }
+                    });
+                });
+            }
 
             if (editModal) {
                 try { editModal.show(); return; } catch (e) { /* fallback below */ }

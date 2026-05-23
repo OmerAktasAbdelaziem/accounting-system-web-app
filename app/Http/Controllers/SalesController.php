@@ -99,6 +99,7 @@ class SalesController extends Controller
     public function edit(EmployeeSale $sale)
     {
         $branches = Branch::orderBy('name')->get();
+        $employees = Employee::active()->orderBy('name')->get();
         return view('sales.edit', compact('sale', 'branches'));
     }
 
@@ -109,10 +110,23 @@ class SalesController extends Controller
             'branch_id' => 'required|exists:branches,id',
             'total_amount' => 'required|numeric|min:0.01',
             'spent_amount' => 'nullable|numeric|min:0',
+            'employee_sales' => 'required|array|min:1',
+            'employee_sales.*.employee_id' => 'required|exists:employees,id',
+            'employee_sales.*.description' => 'nullable|string|max:1000',
             'product_sold_text' => 'nullable|string|max:2000',
             'product_sold' => 'nullable|array',
             'product_sold.*' => 'nullable|string|max:255',
         ]);
+
+        $employeeSales = collect($validated['employee_sales'])
+            ->filter(fn ($row) => !empty($row['employee_id']))
+            ->values();
+
+        if ($employeeSales->isEmpty()) {
+            return back()
+                ->withErrors(['employee_sales' => 'Select at least one employee.'])
+                ->withInput();
+        }
 
         $notes = null;
         if ($request->filled('product_sold_text')) {
@@ -121,15 +135,27 @@ class SalesController extends Controller
             $notes = implode('\n', array_filter($request->input('product_sold')));
         }
 
-        $sale->update([
-            'quantity' => 1,
-            'unit_price' => $validated['total_amount'],
-            'total_amount' => (float) $validated['total_amount'],
-            'spent_amount' => (float) ($validated['spent_amount'] ?? 0),
-            'sale_date' => $validated['sale_date'],
-            'branch_id' => $validated['branch_id'],
-            'notes' => $notes,
-        ]);
+        DB::transaction(function () use ($sale, $validated, $employeeSales, $notes) {
+            $sale->update([
+                'employee_id' => (int) $employeeSales->first()['employee_id'],
+                'quantity' => 1,
+                'unit_price' => $validated['total_amount'],
+                'total_amount' => (float) $validated['total_amount'],
+                'spent_amount' => (float) ($validated['spent_amount'] ?? 0),
+                'sale_date' => $validated['sale_date'],
+                'branch_id' => $validated['branch_id'],
+                'notes' => $notes,
+            ]);
+
+            $sale->employeeSaleDetails()->delete();
+
+            foreach ($employeeSales as $row) {
+                $sale->employeeSaleDetails()->create([
+                    'employee_id' => (int) $row['employee_id'],
+                    'description' => $row['description'] ?? null,
+                ]);
+            }
+        });
 
         return redirect()->route('sales.index')->with('success', 'Sale updated successfully.');
     }
