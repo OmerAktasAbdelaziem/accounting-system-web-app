@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+            if (Schema::hasTable('merchant_currencies')) {
+                return;
+            }
+
         Schema::create('merchant_currencies', function (Blueprint $table) {
             $table->id();
             $table->foreignId('merchant_id')->constrained('merchants')->cascadeOnDelete();
@@ -21,9 +25,6 @@ return new class extends Migration
 
     public function down(): void
     {
-            if (Schema::hasTable('merchant_currencies')) {
-                return;
-            }
         Schema::dropIfExists('merchant_currencies');
     }
 };
