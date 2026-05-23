@@ -18,24 +18,15 @@ use Illuminate\Support\Facades\DB;
 
 class SafeController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $search = trim((string) $request->input('q', ''));
-
-        $safes = Safe::with('transactions')
-            ->when($search !== '', function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%')
-                      ->orWhere('location', 'like', '%' . $search . '%');
-            })
-            ->paginate(6)
-            ->withQueryString();
-
+        $safes = Safe::with('transactions')->paginate(20);
         $stats = [
             'total_balance' => Safe::sum('balance'),
             'total_safes' => Safe::count(),
             'active_safes' => Safe::where('is_active', true)->count(),
         ];
-        return view('safes.index', compact('safes', 'stats', 'search'));
+        return view('safes.index', compact('safes', 'stats'));
     }
 
     public function create()

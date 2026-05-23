@@ -40,21 +40,7 @@
 </div>
 
 <!-- Safes Table -->
-<div class="card mb-3">
-    <div class="card-body">
-        <form method="GET" action="{{ route('safes.index') }}" class="row g-2 align-items-end mb-3">
-            <div class="col-md-8">
-                <label for="safe-search" class="form-label">Search</label>
-                <input id="safe-search" type="text" name="q" value="{{ $search ?? request('q') }}" class="form-control" placeholder="Search by name or location">
-            </div>
-            <div class="col-md-4 d-flex gap-2">
-                <a href="{{ route('safes.index') }}" class="btn btn-outline-secondary">Reset</a>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="card" id="safes-list-container">
+<div class="card">
     <div class="card-header">
         <i class="bi bi-list"></i> {{ __('messages.all_safes') }}
     </div>
@@ -131,14 +117,7 @@
         {{ $safes->links() }}
     </div>
 @endif
-@include('components.ajax-list')
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    initAjaxList({ containerId: 'safes-list-container', searchSelector: '#safe-search', searchParam: 'q', debounceMs: 300 });
-});
-</script>
-@endpush
+@endsection
 
 @section('js')
 <script>

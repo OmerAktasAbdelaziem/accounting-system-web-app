@@ -40,21 +40,7 @@
 </div>
 
 <!-- Storages Table -->
-<div class="card mb-3">
-    <div class="card-body">
-        <form method="GET" action="{{ route('storages.index') }}" class="row g-2 align-items-end mb-3">
-            <div class="col-md-8">
-                <label for="storage-search" class="form-label">Search</label>
-                <input id="storage-search" type="text" name="q" value="{{ request('q') ?? '' }}" class="form-control" placeholder="Search by name, location or type">
-            </div>
-            <div class="col-md-4 d-flex gap-2">
-                <a href="{{ route('storages.index') }}" class="btn btn-outline-secondary">Reset</a>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="card" id="storages-list-container">
+<div class="card">
     <div class="card-header">
         <i class="bi bi-list"></i> {{ __('messages.all_storages') }}
     </div>
@@ -125,14 +111,7 @@
         {{ $storages->links() }}
     </div>
 @endif
-@include('components.ajax-list')
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    initAjaxList({ containerId: 'storages-list-container', searchSelector: '#storage-search', searchParam: 'q', debounceMs: 300 });
-});
-</script>
-@endpush
+@endsection
 
 @section('js')
 <script>

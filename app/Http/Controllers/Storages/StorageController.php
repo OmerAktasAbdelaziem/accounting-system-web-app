@@ -14,18 +14,9 @@ use Illuminate\Support\Facades\DB;
 
 class StorageController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $search = trim((string) $request->input('q', ''));
-
-        $storages = Storage::with('items')
-            ->when($search !== '', function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%')
-                      ->orWhere('location', 'like', '%' . $search . '%')
-                      ->orWhere('storage_type', 'like', '%' . $search . '%');
-            })
-            ->paginate(6)
-            ->withQueryString();
+        $storages = Storage::with('items')->paginate(20);
         $stats = [
             'total_items' => StorageItem::sum('quantity'),
             'total_value' => StorageItem::sum('total_price'),

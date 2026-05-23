@@ -15,27 +15,17 @@ use Illuminate\Http\Request;
 
 class CommissionController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $employees = Employee::where('is_active', true)->get();
-        $search = trim((string) $request->input('q', ''));
-
         $commissions = Commission::with('employee')
-            ->when($search !== '', function ($query) use ($search) {
-                $query->whereHas('employee', fn ($q) => $q->where('name', 'like', '%' . $search . '%'));
-            })
             ->latest('commission_date')
-            ->paginate(6)
-            ->withQueryString();
+            ->paginate(15);
 
-        $all = Commission::with('employee')
-            ->when($search !== '', function ($query) use ($search) {
-                $query->whereHas('employee', fn ($q) => $q->where('name', 'like', '%' . $search . '%'));
-            })
+        $commissionProfiles = Commission::with('employee')
             ->latest('commission_date')
-            ->get();
-
-        $profiles = $all->groupBy('employee_id')
+            ->get()
+            ->groupBy('employee_id')
             ->map(function ($items) {
                 $sortedItems = $items->sortByDesc('commission_date')->values();
                 $employee = $sortedItems->first()?->employee;
@@ -55,21 +45,6 @@ class CommissionController extends Controller
             ->filter()
             ->sortByDesc(fn (Employee $employee) => $employee->last_commission_date?->timestamp ?? 0)
             ->values();
-
-        // paginate the collection of profiles
-        $perPage = 6;
-        $page = max(1, (int) $request->input('page', 1));
-        $offset = ($page - 1) * $perPage;
-        $totalProfiles = $profiles->count();
-
-        $pagedProfiles = $profiles->slice($offset, $perPage)->values();
-        $commissionProfiles = new \Illuminate\Pagination\LengthAwarePaginator(
-            $pagedProfiles,
-            $totalProfiles,
-            $perPage,
-            $page,
-            ['path' => url()->current(), 'query' => request()->query()]
-        );
 
         $totalCommission = Commission::sum('commission_amount');
 

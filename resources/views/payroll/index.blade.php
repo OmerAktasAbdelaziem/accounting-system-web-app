@@ -7,21 +7,7 @@
         <a href="{{ route('payroll.create') }}" class="btn btn-primary">{{ __('Create') }}</a>
     </div>
 
-    <div class="card mb-3">
-        <div class="card-body">
-            <form method="GET" action="{{ route('payroll.index') }}" class="row g-2 align-items-end mb-3">
-                <div class="col-md-8">
-                    <label for="payroll-search" class="form-label">Search</label>
-                    <input id="payroll-search" type="text" name="q" value="{{ $search ?? request('q') }}" class="form-control" placeholder="Search by employee">
-                </div>
-                <div class="col-md-4 d-flex gap-2">
-                    <a href="{{ route('payroll.index') }}" class="btn btn-outline-secondary">Reset</a>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="card" id="payroll-list-container">
+    <div class="card">
         <div class="card-body">
             <table class="table table-striped">
                 <thead class="bg-light text-dark">
@@ -58,13 +44,4 @@
         </div>
     </div>
 </div>
-@include('components.ajax-list')
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    initAjaxList({ containerId: 'payroll-list-container', searchSelector: '#payroll-search', searchParam: 'q', debounceMs: 300 });
-});
-</script>
-@endpush
-
 @endsection
