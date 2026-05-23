@@ -22,6 +22,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\SuperAdmin\SuperAdminDashboardController;
 use App\Http\Controllers\SuperAdmin\MerchantController;
 use App\Http\Controllers\SuperAdmin\PackageController;
@@ -109,6 +110,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [SalesController::class, 'store'])->name('store');
         Route::get('{sale}/edit', [SalesController::class, 'edit'])->name('edit');
         Route::put('{sale}', [SalesController::class, 'update'])->name('update');
+    });
+
+    // Chat
+    Route::prefix('chat')->name('chat.')->group(function () {
+        Route::get('contacts', [ChatController::class, 'contacts'])->name('contacts');
+        Route::get('messages/{contact}', [ChatController::class, 'messages'])->name('messages');
+        Route::post('messages', [ChatController::class, 'send'])->name('send');
+        Route::post('mark-read', [ChatController::class, 'markRead'])->name('markRead');
     });
 
     // Suppliers
