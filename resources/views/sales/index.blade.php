@@ -222,6 +222,14 @@
             font-weight: 700;
             white-space: nowrap;
         }
+
+        .export-mode-section {
+            display: none;
+        }
+
+        .export-mode-section.active {
+            display: block;
+        }
     </style>
 
     <div class="sales-hero rounded-4 p-4 p-lg-5 mb-4">
@@ -415,7 +423,13 @@
                     <h5 class="mb-1">Recent Sales</h5>
                     <div class="field-hint">Filter by date range.</div>
                 </div>
-                <span class="badge text-bg-light border">{{ $sales->total() }} results</span>
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" id="open-sales-export-modal" class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-file-earmark-pdf"></i>
+                        Download PDF
+                    </button>
+                    <span class="badge text-bg-light border">{{ $sales->total() }} results</span>
+                </div>
             </div>
             <form id="sales-filter-form" method="GET" class="row g-2 mt-3 align-items-end">
                 <div class="col-lg-4 col-md-6">
@@ -445,6 +459,9 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
+                            <th style="width: 44px;">
+                                <input type="checkbox" id="select-all-sales" class="form-check-input" title="Select all visible sales">
+                            </th>
                             <th>Date</th>
                             <th>Branch</th>
                             <th>Total Amount</th>
@@ -457,6 +474,9 @@
                     <tbody>
                         @forelse($sales as $sale)
                             <tr>
+                                <td>
+                                    <input type="checkbox" class="form-check-input sale-select-checkbox" value="{{ $sale->id }}" aria-label="Select sale {{ $sale->id }}">
+                                </td>
                                 <td>{{ $sale->sale_date?->format('Y-m-d') }}</td>
                                 <td>{{ $sale->branch?->name ?? '-' }}</td>
                                 <td>
@@ -505,7 +525,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center text-muted py-5">
+                                <td colspan="8" class="text-center text-muted py-5">
                                     <div class="py-3">
                                         <i class="bi bi-receipt fs-1 d-block mb-2"></i>
                                         No sales recorded yet.
@@ -515,6 +535,78 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <div class="modal fade" id="salesExportModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <form id="sales-export-form" method="POST" action="{{ route('sales.export-pdf') }}">
+                        @csrf
+                        <input type="hidden" name="export_mode" id="sales-export-mode-input" value="selected">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title">Download Sales PDF</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="sales_export_mode_radio" id="export-mode-selected" value="selected" checked>
+                                    <label class="form-check-label" for="export-mode-selected">Selected rows</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="sales_export_mode_radio" id="export-mode-date" value="date">
+                                    <label class="form-check-label" for="export-mode-date">Date filter</label>
+                                </div>
+                            </div>
+
+                            <div id="export-selected-section" class="export-mode-section active">
+                                <div class="alert alert-light border mb-0">
+                                    <div class="d-flex align-items-center justify-content-between gap-2">
+                                        <div>
+                                            <div class="fw-semibold mb-1">Selected sales for export</div>
+                                            <div class="small text-muted">Choose rows using the checkboxes in the table, then export only those rows.</div>
+                                        </div>
+                                        <span class="badge text-bg-primary" id="selected-sales-count">0 selected</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="export-date-section" class="export-mode-section">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Branch</label>
+                                        <select name="branch_id" class="form-select">
+                                            <option value="">All branches</option>
+                                            @foreach($branches as $branch)
+                                                <option value="{{ $branch->id }}" @selected((string) request('branch_id') === (string) $branch->id)>{{ $branch->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">From</label>
+                                        <input type="date" name="from_date" class="form-control" value="{{ request('from_date') }}">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">To</label>
+                                        <input type="date" name="to_date" class="form-control" value="{{ request('to_date') }}">
+                                    </div>
+                                </div>
+                                <div class="small text-muted mt-2">Leave dates empty to export all dates (with optional branch filter).</div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-download"></i>
+                                Download PDF
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
         @if($sales->hasPages())
@@ -804,8 +896,10 @@
     document.addEventListener('DOMContentLoaded', function () {
         const editModalEl = document.getElementById('editSaleModal');
         const saleDetailsModalEl = document.getElementById('saleDetailsModal');
+        const exportModalEl = document.getElementById('salesExportModal');
         let editModal = null;
         let saleDetailsModal = null;
+        let exportModal = null;
         if (editModalEl) {
             if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
                 try { editModal = new bootstrap.Modal(editModalEl); } catch (err) { editModal = null; }
@@ -815,6 +909,119 @@
             if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
                 try { saleDetailsModal = new bootstrap.Modal(saleDetailsModalEl); } catch (err) { saleDetailsModal = null; }
             }
+        }
+        if (exportModalEl) {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                try { exportModal = new bootstrap.Modal(exportModalEl); } catch (err) { exportModal = null; }
+            }
+        }
+
+        function getSelectedSaleCheckboxes() {
+            return Array.from(document.querySelectorAll('.sale-select-checkbox:checked'));
+        }
+
+        function updateSelectedSalesCount() {
+            const countBadge = document.getElementById('selected-sales-count');
+            if (!countBadge) return;
+            const count = getSelectedSaleCheckboxes().length;
+            countBadge.textContent = `${count} selected`;
+        }
+
+        function syncExportModeUI(mode) {
+            const selectedSection = document.getElementById('export-selected-section');
+            const dateSection = document.getElementById('export-date-section');
+            const modeInput = document.getElementById('sales-export-mode-input');
+
+            if (modeInput) {
+                modeInput.value = mode;
+            }
+            if (selectedSection) {
+                selectedSection.classList.toggle('active', mode === 'selected');
+            }
+            if (dateSection) {
+                dateSection.classList.toggle('active', mode === 'date');
+            }
+        }
+
+        function openExportModal() {
+            updateSelectedSalesCount();
+            syncExportModeUI(document.querySelector('input[name="sales_export_mode_radio"]:checked')?.value || 'selected');
+
+            if (exportModal) {
+                try { exportModal.show(); return; } catch (e) { /* fallback below */ }
+            }
+            if (window.jQuery && typeof jQuery(exportModalEl).modal === 'function') {
+                jQuery(exportModalEl).modal('show');
+                return;
+            }
+            if (exportModalEl) {
+                exportModalEl.classList.add('show');
+                exportModalEl.style.display = 'block';
+                exportModalEl.removeAttribute('aria-hidden');
+            }
+        }
+
+        const openExportBtn = document.getElementById('open-sales-export-modal');
+        if (openExportBtn) {
+            openExportBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                openExportModal();
+            });
+        }
+
+        document.querySelectorAll('input[name="sales_export_mode_radio"]').forEach((radio) => {
+            radio.addEventListener('change', function () {
+                syncExportModeUI(radio.value);
+            });
+        });
+
+        const selectAllSales = document.getElementById('select-all-sales');
+        if (selectAllSales) {
+            selectAllSales.addEventListener('change', function () {
+                const allCheckboxes = Array.from(document.querySelectorAll('.sale-select-checkbox'));
+                allCheckboxes.forEach((checkbox) => {
+                    checkbox.checked = selectAllSales.checked;
+                });
+                updateSelectedSalesCount();
+            });
+        }
+
+        document.addEventListener('change', function (event) {
+            if (event.target && event.target.classList && event.target.classList.contains('sale-select-checkbox')) {
+                const all = Array.from(document.querySelectorAll('.sale-select-checkbox'));
+                const checked = all.filter((checkbox) => checkbox.checked);
+                const selectAll = document.getElementById('select-all-sales');
+                if (selectAll) {
+                    selectAll.checked = all.length > 0 && checked.length === all.length;
+                }
+                updateSelectedSalesCount();
+            }
+        });
+
+        const salesExportForm = document.getElementById('sales-export-form');
+        if (salesExportForm) {
+            salesExportForm.addEventListener('submit', function (event) {
+                salesExportForm.querySelectorAll('input[name="sale_ids[]"]').forEach((input) => input.remove());
+
+                const mode = document.getElementById('sales-export-mode-input')?.value || 'selected';
+
+                if (mode === 'selected') {
+                    const selectedIds = getSelectedSaleCheckboxes().map((checkbox) => checkbox.value).filter(Boolean);
+                    if (selectedIds.length === 0) {
+                        event.preventDefault();
+                        alert('Please select at least one sale before downloading PDF.');
+                        return;
+                    }
+
+                    selectedIds.forEach((id) => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'sale_ids[]';
+                        input.value = id;
+                        salesExportForm.appendChild(input);
+                    });
+                }
+            });
         }
 
         const editEmployeeList = document.getElementById('edit-employee-sales-list');

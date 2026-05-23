@@ -6,6 +6,7 @@ use App\Models\Branch;
 use App\Models\Employee;
 use App\Models\EmployeeSale;
 use App\Models\EmployeeSaleDetail;
+use App\Support\SimplePdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -150,5 +151,96 @@ class SalesController extends Controller
         });
 
         return redirect()->route('sales.index')->with('success', 'Sale updated successfully.');
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $validated = $request->validate([
+            'export_mode' => 'required|in:selected,date',
+            'sale_ids' => 'nullable|array',
+            'sale_ids.*' => 'integer|exists:employee_sales,id',
+            'from_date' => 'nullable|date',
+            'to_date' => 'nullable|date|after_or_equal:from_date',
+            'branch_id' => 'nullable|integer|exists:branches,id',
+        ]);
+
+        $query = EmployeeSale::with(['branch', 'employee', 'employeeSaleDetails.employee'])
+            ->latest('sale_date')
+            ->latest('id');
+
+        if ($validated['export_mode'] === 'selected') {
+            $selectedIds = collect($validated['sale_ids'] ?? [])->map(fn ($id) => (int) $id)->filter()->values();
+
+            if ($selectedIds->isEmpty()) {
+                return redirect()->route('sales.index')->with('error', 'Please select at least one sale to export.');
+            }
+
+            $query->whereIn('id', $selectedIds->all());
+        } else {
+            if (!empty($validated['branch_id'])) {
+                $query->where('branch_id', (int) $validated['branch_id']);
+            }
+            if (!empty($validated['from_date'])) {
+                $query->whereDate('sale_date', '>=', $validated['from_date']);
+            }
+            if (!empty($validated['to_date'])) {
+                $query->whereDate('sale_date', '<=', $validated['to_date']);
+            }
+        }
+
+        $sales = $query->get();
+
+        if ($sales->isEmpty()) {
+            return redirect()->route('sales.index')->with('error', 'No sales found for the selected export criteria.');
+        }
+
+        $currencySymbol = config('app.currency_symbol', '$');
+        $lines = [
+            'Sales Export',
+            'Generated: ' . now()->format('Y-m-d H:i'),
+            'Mode: ' . ucfirst($validated['export_mode']),
+            'Entries: ' . $sales->count(),
+            str_repeat('-', 72),
+        ];
+
+        foreach ($sales as $sale) {
+            $lines[] = sprintf(
+                'Date: %s | Branch: %s | Total: %s%s | Spent: %s%s | Net: %s%s',
+                optional($sale->sale_date)->format('Y-m-d') ?? '-',
+                $sale->branch?->name ?? '-',
+                $currencySymbol,
+                number_format((float) $sale->total_amount, 2),
+                $currencySymbol,
+                number_format((float) ($sale->spent_amount ?? 0), 2),
+                $currencySymbol,
+                number_format((float) $sale->net_income, 2)
+            );
+
+            $lines[] = 'Primary Employee: ' . ($sale->employee?->name ?? '-');
+
+            if ($sale->employeeSaleDetails->isNotEmpty()) {
+                foreach ($sale->employeeSaleDetails as $detail) {
+                    $lines[] = sprintf(
+                        '  - %s: %s%s',
+                        $detail->employee?->name ?? 'Deleted employee',
+                        $currencySymbol,
+                        number_format((float) $detail->amount, 2)
+                    );
+                }
+            }
+
+            if (!empty($sale->notes)) {
+                $lines[] = 'Notes: ' . trim((string) $sale->notes);
+            }
+
+            $lines[] = str_repeat('-', 72);
+        }
+
+        $pdf = SimplePdf::textDocument('Sales Report Export', $lines);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="sales-export-' . now()->format('Y-m-d-His') . '.pdf"',
+        ]);
     }
 }

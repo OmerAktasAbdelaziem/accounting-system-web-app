@@ -108,6 +108,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('sales')->name('sales.')->group(function () {
         Route::get('/', [SalesController::class, 'index'])->name('index');
         Route::post('/', [SalesController::class, 'store'])->name('store');
+        Route::post('export-pdf', [SalesController::class, 'exportPdf'])->name('export-pdf');
         Route::get('{sale}/edit', [SalesController::class, 'edit'])->name('edit');
         Route::put('{sale}', [SalesController::class, 'update'])->name('update');
     });
