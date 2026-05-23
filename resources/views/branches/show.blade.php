@@ -634,9 +634,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.history.pushState({ paginatedUrl: link.href, sectionId: sectionId, sectionKey: sectionKey }, '', link.href);
             }
         } catch (error) {
-            window.location.href = link.href;
+            console.error(error);
         } finally {
-            section.classList.remove('opacity-50');
+            const liveSection = document.querySelector('[data-pagination-section="' + sectionKey + '"]');
+            if (liveSection) {
+                liveSection.classList.remove('opacity-50');
+            }
         }
     }
 
@@ -647,8 +650,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         event.preventDefault();
+        event.stopImmediatePropagation();
         loadPaginatedSection(link, true);
-    });
+    }, true);
 
     window.addEventListener('popstate', function (event) {
         if (event.state && event.state.paginatedUrl) {
@@ -656,7 +660,25 @@ document.addEventListener('DOMContentLoaded', function () {
             if (activeLink) {
                 loadPaginatedSection(activeLink, false);
             } else {
-                window.location.href = event.state.paginatedUrl;
+                fetch(event.state.paginatedUrl, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'text/html',
+                    },
+                    credentials: 'same-origin',
+                })
+                .then(function (response) { return response.text(); })
+                .then(function (html) {
+                    const parsedDocument = new DOMParser().parseFromString(html, 'text/html');
+                    const nextSection = parsedDocument.querySelector('[data-pagination-section="' + event.state.sectionKey + '"]');
+                    const currentSection = document.querySelector('[data-pagination-section="' + event.state.sectionKey + '"]');
+                    if (nextSection && currentSection) {
+                        currentSection.outerHTML = nextSection.outerHTML;
+                    }
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
             }
         }
     });
