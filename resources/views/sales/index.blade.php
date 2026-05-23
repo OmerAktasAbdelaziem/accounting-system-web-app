@@ -175,6 +175,7 @@
                         <div class="col-12">
                             <label class="form-label fw-semibold">Employees Involved</label>
                             <div class="field-hint mb-2">Choose one or more employees and add the amount each one sold today.</div>
+                            <div class="small text-muted">Optional — leave empty to record the sale without per-employee breakdown.</div>
                             <div id="employee-sales-list" class="d-grid gap-3">
                                 @foreach($employeeRows as $index => $row)
                                     <div class="employee-sale-item border rounded-4 p-3 bg-light">
