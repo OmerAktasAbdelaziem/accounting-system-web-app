@@ -99,6 +99,7 @@ class MerchantService
             'expires_at' => $expiresAt,
             'is_active' => true,
             'payment_method' => $paymentMethod,
+            'amount_paid' => $amountPaid,
         ]);
 
         // Update merchant subscription expiry

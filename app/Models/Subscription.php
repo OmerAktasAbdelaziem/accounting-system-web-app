@@ -17,13 +17,15 @@ class Subscription extends Model
         'start_date',
         'expires_at',
         'is_active',
-        'payment_method'
+        'payment_method',
+        'amount_paid'
     ];
 
     protected $casts = [
         'start_date' => 'datetime',
         'expires_at' => 'datetime',
         'is_active' => 'boolean',
+        'amount_paid' => 'decimal:2',
     ];
 
     /**
