@@ -275,7 +275,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Super Admin Routes
-    Route::middleware(['super_admin', 'super_admin.telegram_errors'])->prefix('super-admin')->name('super-admin.')->group(function () {
+    Route::middleware('super_admin')->prefix('super-admin')->name('super-admin.')->group(function () {
         // Dashboard
         Route::get('/', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
         Route::get('dashboard/analytics', [SuperAdminDashboardController::class, 'analytics'])->name('dashboard.analytics');
