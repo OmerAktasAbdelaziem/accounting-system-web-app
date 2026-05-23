@@ -234,6 +234,7 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="mt-3">{{ $branchPayrolls->links() }}</div>
                     @else
                         <div class="text-muted">No payrolls found for this branch yet.</div>
                     @endif
@@ -275,6 +276,7 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="mt-3">{{ $branchCommissions->links() }}</div>
                     @else
                         <div class="text-muted">No commissions found for this branch yet.</div>
                     @endif
@@ -314,6 +316,7 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="mt-3">{{ $branchSuppliers->links() }}</div>
                     @else
                         <div class="text-muted">No suppliers found for this branch yet.</div>
                     @endif
@@ -324,7 +327,7 @@
 
     <div class="row g-4">
         @foreach($sections as $section)
-            <div class="col-12 col-xl-6">
+            <div class="col-12">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-white border-0 pb-0 d-flex justify-content-between align-items-center">
                         <div>
@@ -358,6 +361,7 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <div class="mt-3">{{ $section['items']->links() }}</div>
                         @else
                             <div class="text-muted">No records found for this branch yet.</div>
                         @endif

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
-use App\Models\Payroll;
 use App\Models\Commission;
+use App\Models\Payroll;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 
@@ -13,6 +13,7 @@ class BranchController extends Controller
     public function index()
     {
         $branches = Branch::latest()->paginate(20);
+
         return view('branches.index', compact('branches'));
     }
 
@@ -57,44 +58,41 @@ class BranchController extends Controller
                 $query->where('branches.id', $branch->id);
             })
             ->latest()
-            ->take(10)
-            ->get();
+            ->paginate(6, ['*'], 'branch_payrolls_page');
 
         $branchCommissions = Commission::with('employee')
             ->whereHas('employee.branches', function ($query) use ($branch) {
                 $query->where('branches.id', $branch->id);
             })
             ->latest('commission_date')
-            ->take(10)
-            ->get();
+            ->paginate(6, ['*'], 'branch_commissions_page');
 
         $branchSuppliers = $branch->suppliers()
             ->withSum('purchases as total_purchased', 'total_amount')
             ->withSum('payments as total_paid', 'amount')
             ->latest()
-            ->take(10)
-            ->get()
-            ->map(function (Supplier $supplier) {
-                $supplier->outstanding_amount = ((float) ($supplier->opening_balance ?? 0))
-                    + (float) ($supplier->total_purchased ?? 0)
-                    - (float) ($supplier->total_paid ?? 0);
+            ->paginate(6, ['*'], 'branch_suppliers_page');
 
-                return $supplier;
-            });
+        $branchSuppliers->getCollection()->transform(function (Supplier $supplier) {
+            $supplier->outstanding_amount = ((float) ($supplier->opening_balance ?? 0))
+                + (float) ($supplier->total_purchased ?? 0)
+                - (float) ($supplier->total_paid ?? 0);
 
-        $branchOutstandingTotal = (float) $branchSuppliers->sum('outstanding_amount');
+            return $supplier;
+        });
 
-        $recentEmployees = $branch->employees()->latest()->take(5)->get();
-        $recentProducts = $branch->products()->latest()->take(5)->get();
-        $recentCategories = $branch->categories()->latest()->take(5)->get();
-        $recentSuppliers = $branchSuppliers->take(5)->values();
-        $recentCommissions = $branchCommissions->take(5)->values();
-        $recentInvoices = $branch->invoices()->latest()->take(5)->get();
-        $recentStorages = $branch->storages()->latest()->take(5)->get();
-        $recentSafes = $branch->safes()->latest()->take(5)->get();
-        $recentCustomers = $branch->customers()->latest()->take(5)->get();
+        $branchOutstandingTotal = (float) $branchSuppliers->getCollection()->sum('outstanding_amount');
 
-        // Load unassigned employees (those with no branches)
+        $recentEmployees = $branch->employees()->latest()->paginate(6, ['*'], 'employees_page');
+        $recentProducts = $branch->products()->latest()->paginate(6, ['*'], 'products_page');
+        $recentCategories = $branch->categories()->latest()->paginate(6, ['*'], 'categories_page');
+        $recentSuppliers = $branchSuppliers;
+        $recentCustomers = $branch->customers()->latest()->paginate(6, ['*'], 'customers_page');
+        $recentInvoices = $branch->invoices()->latest()->paginate(6, ['*'], 'invoices_page');
+        $recentStorages = $branch->storages()->latest()->paginate(6, ['*'], 'storages_page');
+        $recentSafes = $branch->safes()->latest()->paginate(6, ['*'], 'safes_page');
+        $recentCommissions = $branchCommissions;
+
         $unassignedEmployees = \App\Models\Employee::where('is_active', true)
             ->whereDoesntHave('branches')
             ->orderBy('name')
@@ -144,6 +142,7 @@ class BranchController extends Controller
     public function destroy(Branch $branch)
     {
         $branch->delete();
+
         return redirect()->route('branches.index')->with('success', __('messages.branch_deleted_successfully'));
     }
 
@@ -154,7 +153,6 @@ class BranchController extends Controller
         ]);
 
         $employee = \App\Models\Employee::findOrFail($validated['employee_id']);
-        // Use attach to add the branch without removing existing branches
         $employee->branches()->attach($branch->id);
 
         return back()->with('success', $employee->name . ' assigned to branch successfully!');
