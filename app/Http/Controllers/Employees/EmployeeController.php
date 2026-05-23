@@ -49,8 +49,9 @@ class EmployeeController extends Controller
 
         $validated['name_ar'] = $validated['name'];
         $validated['position_ar'] = $validated['position'];
-        $validated['address_ar'] = $validated['address'] ?? null;
+        $validated['address_ar'] = null;
         $validated['employee_code'] = $this->generateEmployeeCode();
+        $validated['branch_id'] = !empty($validated['branch_ids']) ? (int) $validated['branch_ids'][0] : null;
 
         $employee = Employee::create($validated);
         $employee->syncBranches($validated['branch_ids'] ?? []);
@@ -100,7 +101,8 @@ class EmployeeController extends Controller
 
         $validated['name_ar'] = $validated['name'];
         $validated['position_ar'] = $validated['position'];
-        $validated['address_ar'] = $validated['address'] ?? null;
+        $validated['address_ar'] = null;
+        $validated['branch_id'] = !empty($validated['branch_ids']) ? (int) $validated['branch_ids'][0] : null;
 
         $employee->update($validated);
         $employee->syncBranches($validated['branch_ids'] ?? []);
