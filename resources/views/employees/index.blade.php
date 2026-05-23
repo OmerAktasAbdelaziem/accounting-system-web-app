@@ -14,20 +14,23 @@
     </div>
 </div>
 
-<div class="card shadow-sm" id="employees-list-container">
-    <div class="card-header bg-white">
-        <form method="GET" action="{{ route('employees.index') }}" class="row g-2 align-items-end">
-            <div class="col-lg-8">
-                <label for="employee-search" class="form-label mb-1">Search</label>
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="GET" action="{{ route('employees.index') }}" class="row g-2 align-items-end mb-3">
+            <div class="col-md-8">
+                <label for="employee-search" class="form-label">Search</label>
                 <input id="employee-search" type="text" name="q" value="{{ $search ?? request('q') }}" class="form-control" placeholder="Search by name or position">
             </div>
-            <div class="col-lg-4 d-flex gap-2">
-                <a href="{{ route('employees.index') }}" class="btn btn-outline-secondary w-100">Reset</a>
+            <div class="col-md-4 d-flex gap-2">
+                <a href="{{ route('employees.index') }}" class="btn btn-outline-secondary">Reset</a>
             </div>
         </form>
     </div>
+</div>
+
+<div class="card" id="employees-list-container">
     <div class="table-responsive">
-        <table class="table table-hover mb-0">
+        <table class="table table-hover">
             <thead>
                 <tr>
                     <th>{{ __('messages.name') }}</th>
@@ -56,7 +59,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="text-center text-muted py-4">{{ __('messages.no_data') }}</td>
+                        <td colspan="4" class="text-center text-muted">{{ __('messages.no_data') }}</td>
                     </tr>
                 @endforelse
             </tbody>

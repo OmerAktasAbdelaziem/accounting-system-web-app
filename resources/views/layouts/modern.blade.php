@@ -116,10 +116,9 @@
 
         /* Dashboard Container */
         .dashboard-container {
-            width: 100%;
-            max-width: none;
-            margin: 0;
-            padding: 24px 28px;
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
         /* Stat Cards */
