@@ -79,6 +79,16 @@
                         <label class="form-label fw-bold">{{ __('messages.salary') }}</label>
                         <p class="text-success fw-bold">{{ $currencySymbol }}{{ number_format($employee->base_salary, 2) }}</p>
                     </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">{{ __('messages.branch') }}</label>
+                        <div>
+                            @forelse($employee->branches as $branch)
+                                <span class="badge bg-info text-dark me-1 mb-1">{{ $branch->name }}</span>
+                            @empty
+                                <p class="text-muted mb-0">No branch assigned</p>
+                            @endforelse
+                        </div>
+                    </div>
                 </div>
 
                 <hr>

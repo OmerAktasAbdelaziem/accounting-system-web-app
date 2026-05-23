@@ -59,6 +59,8 @@ class EmployeeController extends Controller
 
     public function show(Employee $employee)
     {
+        $employee->load('branches');
+
         // Fetch total sales from Commission table (sum of all sale_amount)
         $totalSales = Commission::where('employee_id', $employee->id)->sum('sale_amount');
         
