@@ -98,6 +98,130 @@
             border-radius: 18px;
             background: linear-gradient(180deg, rgba(248, 250, 252, 1), rgba(255, 255, 255, 1));
         }
+
+        .sale-details-modal .modal-content {
+            border: 0;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 24px 70px rgba(15, 23, 42, 0.18);
+        }
+
+        .sale-details-modal .modal-header {
+            border: 0;
+            background: linear-gradient(135deg, #111827 0%, #1f2937 55%, #ff8c00 140%);
+            color: #fff;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .sale-details-modal .modal-header .field-hint {
+            color: rgba(255, 255, 255, 0.72);
+        }
+
+        .sale-details-modal .modal-body {
+            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+            padding: 1.5rem;
+        }
+
+        .detail-tile {
+            background: #fff;
+            border: 1px solid rgba(15, 23, 42, 0.06);
+            border-radius: 18px;
+            padding: 0.95rem 1rem;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+            height: 100%;
+        }
+
+        .detail-tile .label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6b7280;
+            margin-bottom: 0.35rem;
+        }
+
+        .detail-tile .value {
+            font-weight: 700;
+            color: #111827;
+            word-break: break-word;
+        }
+
+        .detail-tile .value.amount {
+            font-size: 1.05rem;
+        }
+
+        .detail-notes {
+            background: linear-gradient(180deg, rgba(255, 140, 0, 0.08), rgba(255, 255, 255, 0.95));
+            border: 1px solid rgba(255, 140, 0, 0.14);
+            border-radius: 18px;
+            padding: 1rem 1.1rem;
+        }
+
+        .employee-breakdown-wrap {
+            background: #fff;
+            border: 1px solid rgba(15, 23, 42, 0.06);
+            border-radius: 22px;
+            overflow: hidden;
+        }
+
+        .employee-breakdown-head {
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+            background: linear-gradient(90deg, rgba(255, 140, 0, 0.08), rgba(39, 174, 96, 0.05));
+        }
+
+        .employee-breakdown-list {
+            margin: 0;
+        }
+
+        .employee-breakdown-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+        }
+
+        .employee-breakdown-item:last-child {
+            border-bottom: 0;
+        }
+
+        .employee-badge {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 42px;
+            background: linear-gradient(135deg, #111827, #ff8c00);
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .employee-breakdown-meta {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .employee-breakdown-name {
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.15rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .employee-breakdown-amount {
+            padding: 0.45rem 0.75rem;
+            border-radius: 999px;
+            background: rgba(255, 140, 0, 0.12);
+            color: #9a3412;
+            font-weight: 700;
+            white-space: nowrap;
+        }
     </style>
 
     <div class="sales-hero rounded-4 p-4 p-lg-5 mb-4">
@@ -408,53 +532,72 @@
     </div>
 </div>
 
-        <div class="modal fade" id="saleDetailsModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal fade sale-details-modal" id="saleDetailsModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
                         <div>
-                            <h5 class="modal-title mb-0">Sale Details</h5>
-                            <div class="field-hint">Employee breakdown for this sale</div>
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <span class="badge text-bg-light text-dark border">Sale details</span>
+                                <span class="badge text-bg-warning">Employee breakdown</span>
+                            </div>
+                            <h5 class="modal-title mb-0 fw-bold">Employees Involved</h5>
+                            <div class="field-hint">Review who contributed to the sale and the amounts they sold.</div>
                         </div>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-4">
-                                <div class="small text-muted">Date</div>
-                                <div class="fw-semibold" id="sale-details-date">-</div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6 col-xl-3">
+                                <div class="detail-tile">
+                                    <span class="label">Date</span>
+                                    <div class="value" id="sale-details-date">-</div>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="small text-muted">Branch</div>
-                                <div class="fw-semibold" id="sale-details-branch">-</div>
+                            <div class="col-md-6 col-xl-3">
+                                <div class="detail-tile">
+                                    <span class="label">Branch</span>
+                                    <div class="value" id="sale-details-branch">-</div>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="small text-muted">Primary Employee</div>
-                                <div class="fw-semibold" id="sale-details-primary-employee">-</div>
+                            <div class="col-md-6 col-xl-3">
+                                <div class="detail-tile">
+                                    <span class="label">Primary Employee</span>
+                                    <div class="value" id="sale-details-primary-employee">-</div>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="small text-muted">Total Amount</div>
-                                <div class="fw-semibold" id="sale-details-total">-</div>
+                            <div class="col-md-6 col-xl-3">
+                                <div class="detail-tile">
+                                    <span class="label">Total Amount</span>
+                                    <div class="value amount" id="sale-details-total">-</div>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="small text-muted">Spent</div>
-                                <div class="fw-semibold" id="sale-details-spent">-</div>
+                            <div class="col-md-6 col-xl-3">
+                                <div class="detail-tile">
+                                    <span class="label">Spent</span>
+                                    <div class="value amount" id="sale-details-spent">-</div>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="small text-muted">Net</div>
-                                <div class="fw-semibold" id="sale-details-net">-</div>
+                            <div class="col-md-6 col-xl-3">
+                                <div class="detail-tile">
+                                    <span class="label">Net</span>
+                                    <div class="value amount" id="sale-details-net">-</div>
+                                </div>
                             </div>
                             <div class="col-12">
-                                <div class="small text-muted">Description</div>
-                                <div class="fw-semibold" id="sale-details-notes">-</div>
+                                <div class="detail-notes">
+                                    <div class="label mb-2">Description</div>
+                                    <div class="value" id="sale-details-notes">-</div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="card border-0 bg-light">
-                            <div class="card-header bg-transparent border-0 pb-0">
+                        <div class="employee-breakdown-wrap">
+                            <div class="employee-breakdown-head d-flex justify-content-between align-items-center gap-2">
                                 <h6 class="mb-0">Employees involved</h6>
+                                <span class="badge text-bg-light border" id="sale-details-count-badge">0 employees</span>
                             </div>
-                            <ul class="list-group list-group-flush" id="sale-details-list"></ul>
+                            <div id="sale-details-list" class="employee-breakdown-list"></div>
                         </div>
                     </div>
                 </div>
@@ -709,6 +852,7 @@
                 const saleDetailsSpent = document.getElementById('sale-details-spent');
                 const saleDetailsNet = document.getElementById('sale-details-net');
                 const saleDetailsNotes = document.getElementById('sale-details-notes');
+                const saleDetailsCountBadge = document.getElementById('sale-details-count-badge');
 
                 if (saleDetailsDate) saleDetailsDate.textContent = detailsBtn.getAttribute('data-sale-date') || '-';
                 if (saleDetailsBranch) saleDetailsBranch.textContent = detailsBtn.getAttribute('data-branch-name') || '-';
@@ -717,19 +861,23 @@
                 if (saleDetailsSpent) saleDetailsSpent.textContent = '{{ $currencySymbol ?? '$' }}' + (detailsBtn.getAttribute('data-spent-amount') || '0.00');
                 if (saleDetailsNet) saleDetailsNet.textContent = '{{ $currencySymbol ?? '$' }}' + (detailsBtn.getAttribute('data-net-amount') || '0.00');
                 if (saleDetailsNotes) saleDetailsNotes.textContent = detailsBtn.getAttribute('data-sale-notes') || '-';
+                if (saleDetailsCountBadge) saleDetailsCountBadge.textContent = `${employees.length} ${employees.length === 1 ? 'employee' : 'employees'}`;
 
                 if (saleDetailsList) {
                     saleDetailsList.innerHTML = employees.length
                         ? employees.map((employee, index) => `
-                            <li class="list-group-item d-flex justify-content-between align-items-start gap-3">
-                                <div>
-                                    <div class="fw-semibold">${escapeHtml(employee.name || 'Deleted employee')}</div>
+                            <div class="employee-breakdown-item">
+                                <div class="d-flex align-items-center gap-3 min-w-0">
+                                    <div class="employee-badge">${String(index + 1).padStart(2, '0')}</div>
+                                    <div class="employee-breakdown-meta">
+                                        <div class="employee-breakdown-name">${escapeHtml(employee.name || 'Deleted employee')}</div>
+                                        <div class="text-muted small">Sale contributor</div>
+                                    </div>
                                 </div>
-                                <div class="fw-semibold">{{ $currencySymbol ?? '$' }}${Number(employee.amount || 0).toFixed(2)}</div>
-                                <span class="badge text-bg-light border">#${index + 1}</span>
-                            </li>
+                                <div class="employee-breakdown-amount">{{ $currencySymbol ?? '$' }}${Number(employee.amount || 0).toFixed(2)}</div>
+                            </div>
                         `).join('')
-                        : '<li class="list-group-item text-muted">No employee details recorded for this sale.</li>';
+                        : '<div class="p-4 text-center text-muted">No employee details recorded for this sale.</div>';
                 }
 
                 if (saleDetailsModal) {
