@@ -288,15 +288,8 @@
                         </div>
                         <div class="col-md-12">
                             <label class="form-label fw-semibold">Total Amount Sold</label>
-                            <input type="number" name="total_amount" class="form-control form-control-lg js-total-amount" min="0.01" step="0.01" value="{{ old('total_amount') }}" readonly>
-                            <div class="d-flex align-items-center gap-3 mt-2">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="manual-total-toggle">
-                                    <label class="form-check-label small text-muted" for="manual-total-toggle">Enter total manually</label>
-                                </div>
-                                <div class="small text-muted">Toggle to enable manual total entry instead of auto-calculation.</div>
-                            </div>
-                            <div class="field-hint mt-1">Auto-calculated from employee amounts unless manual entry is enabled.</div>
+                            <input type="number" name="total_amount" class="form-control form-control-lg js-total-amount" min="0.01" step="0.01" value="{{ old('total_amount') }}" required>
+                            <div class="field-hint mt-1">Enter total manually.</div>
                         </div>
                         <div class="col-md-12">
                             <label class="form-label fw-semibold">Amount Spent by Store <span class="text-muted">(Optional)</span></label>
@@ -632,8 +625,8 @@
                                 </div>
                                 <div class="col-md-12">
                                     <label class="form-label">Total Amount</label>
-                                    <input type="number" name="total_amount" class="form-control js-total-amount" step="0.01" min="0.01" readonly>
-                                    <div class="field-hint mt-1">Auto-calculated from employee amounts.</div>
+                                    <input type="number" name="total_amount" class="form-control js-total-amount" step="0.01" min="0.01" required>
+                                    <div class="field-hint mt-1">Enter total manually.</div>
                                 </div>
                                 <div class="col-md-12">
                                     <label class="form-label">Amount Spent by Store <span class="text-muted">(Optional)</span></label>
@@ -669,7 +662,7 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label small text-muted mb-1">Employee</label>
-                        <select name="employee_sales[__INDEX__][employee_id]" class="form-select" required>
+                        <select name="employee_sales[__INDEX__][employee_id]" class="form-select">
                             <option value="">Select employee</option>
                             @foreach($employees as $employee)
                                 <option value="{{ $employee->id }}">{{ $employee->name }}</option>
@@ -678,7 +671,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small text-muted mb-1">Amount Sold</label>
-                        <input type="number" name="employee_sales[__INDEX__][amount]" class="form-control employee-sale-amount" min="0.01" step="0.01" placeholder="0.00" required>
+                        <input type="number" name="employee_sales[__INDEX__][amount]" class="form-control employee-sale-amount" min="0.01" step="0.01" placeholder="0.00">
                     </div>
                 </div>
                 <div class="d-flex justify-content-end mt-2">
@@ -707,15 +700,8 @@
     }
 
     function updateTotalFromEmployeeList(container, totalInput) {
-        if (!container || !totalInput) return;
-        // Respect manual toggle: if manual entry enabled, skip auto-calculation
-        try {
-            const manualToggle = document.getElementById('manual-total-toggle');
-            if (manualToggle && manualToggle.checked) return;
-        } catch (e) { /* ignore */ }
-        const total = Array.from(container.querySelectorAll('.employee-sale-amount'))
-            .reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
-        totalInput.value = total > 0 ? total.toFixed(2) : '';
+        // Total amount is manual now; keep function as no-op for existing bindings.
+        return;
     }
 
     function bindEmployeeList(container, totalInput) {
@@ -793,20 +779,6 @@
     if (employeeList) {
         bindEmployeeList(employeeList, createTotalInput);
         updateTotalFromEmployeeList(employeeList, createTotalInput);
-    }
-
-    // Manual total toggle: enable/disable total input and update behavior
-    const manualToggle = document.getElementById('manual-total-toggle');
-    if (manualToggle && createTotalInput) {
-        manualToggle.addEventListener('change', function () {
-            if (this.checked) {
-                createTotalInput.removeAttribute('readonly');
-            } else {
-                createTotalInput.setAttribute('readonly', 'readonly');
-                // recalc from employee list when disabling manual
-                updateTotalFromEmployeeList(employeeList, createTotalInput);
-            }
-        });
     }
 
     // Edit sale modal handling (delegated + safe modal init)
@@ -944,9 +916,9 @@
                 editEmployeeList.querySelectorAll('.employee-sale-item').forEach((rowEl, index) => {
                     const rowData = rows[index] || {};
                     const employeeSelect = rowEl.querySelector('select[name^="employee_sales"]');
-                    const amountInput = rowEl.querySelector('input[name^="employee_sales"][name$="[amount]"]');
+                    const amountInput = rowEl.querySelector('.employee-sale-amount');
                     if (employeeSelect) employeeSelect.value = String(rowData.employee_id || '');
-                    if (amountInput) amountInput.value = String(rowData.amount || '');
+                    if (amountInput) amountInput.value = String(rowData.amount ?? '');
                 });
 
                 // rebind remove buttons for newly injected rows

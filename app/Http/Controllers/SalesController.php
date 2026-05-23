@@ -47,7 +47,7 @@ class SalesController extends Controller
             'sale_date' => 'required|date|before_or_equal:today',
             'branch_id' => 'required|exists:branches,id',
             'spent_amount' => 'nullable|numeric|min:0',
-            'total_amount' => 'nullable|numeric|min:0',
+            'total_amount' => 'required|numeric|min:0.01',
             // employee_sales is optional now
             'employee_sales' => 'nullable|array',
             'employee_sales.*.employee_id' => 'sometimes|nullable|exists:employees,id',
@@ -56,13 +56,7 @@ class SalesController extends Controller
         ]);
 
         $employeeSales = collect($validated['employee_sales'] ?? [])->filter(fn ($row) => !empty($row['employee_id']))->values();
-
-        // If no employee breakdown provided, fall back to total_amount (if present) or 0
-        if ($employeeSales->isEmpty()) {
-            $totalAmount = (float) ($validated['total_amount'] ?? 0);
-        } else {
-            $totalAmount = (float) $employeeSales->sum(fn ($row) => (float) ($row['amount'] ?? 0));
-        }
+        $totalAmount = (float) $validated['total_amount'];
 
         $sale = DB::transaction(function () use ($validated, $employeeSales, $totalAmount, $request) {
             // Determine a primary employee for the sale: prefer first breakdown, else try to use current user's employee, else fallback to first employee record
@@ -114,7 +108,7 @@ class SalesController extends Controller
             'sale_date' => 'required|date|before_or_equal:today',
             'branch_id' => 'required|exists:branches,id',
             'spent_amount' => 'nullable|numeric|min:0',
-            'total_amount' => 'nullable|numeric|min:0',
+            'total_amount' => 'required|numeric|min:0.01',
             // employee_sales is optional now
             'employee_sales' => 'nullable|array',
             'employee_sales.*.employee_id' => 'sometimes|nullable|exists:employees,id',
@@ -123,12 +117,7 @@ class SalesController extends Controller
         ]);
 
         $employeeSales = collect($validated['employee_sales'] ?? [])->filter(fn ($row) => !empty($row['employee_id']))->values();
-
-        if ($employeeSales->isEmpty()) {
-            $totalAmount = (float) ($validated['total_amount'] ?? 0);
-        } else {
-            $totalAmount = (float) $employeeSales->sum(fn ($row) => (float) ($row['amount'] ?? 0));
-        }
+        $totalAmount = (float) $validated['total_amount'];
 
         DB::transaction(function () use ($sale, $validated, $employeeSales, $totalAmount, $request) {
             $primaryEmployeeId = null;
