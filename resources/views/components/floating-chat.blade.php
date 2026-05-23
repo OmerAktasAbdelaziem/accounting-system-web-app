@@ -519,11 +519,27 @@
         const root = document.getElementById('floatingChatRoot');
         if (!root) return;
 
-        const contactsUrl = root.dataset.contactsUrl;
-        const messagesUrlTemplate = root.dataset.messagesUrlTemplate;
-        const sendUrl = root.dataset.sendUrl;
-        const markReadUrl = root.dataset.markReadUrl;
-        const typingUrl = root.dataset.typingUrl;
+        // Normalize API URLs to same-origin paths to avoid cross-origin/preflight issues
+        function normalizeApiUrl(raw) {
+            if (!raw) return raw;
+            try {
+                const parsed = new URL(raw);
+                // if origin differs, return only the path+query+hash (same-origin request will target our host)
+                if (parsed.origin !== location.origin) {
+                    return parsed.pathname + parsed.search + parsed.hash;
+                }
+                return parsed.href;
+            } catch (err) {
+                // not an absolute URL - return as-is
+                return raw;
+            }
+        }
+
+        const contactsUrl = normalizeApiUrl(root.dataset.contactsUrl || '/chat/contacts');
+        const messagesUrlTemplate = normalizeApiUrl(root.dataset.messagesUrlTemplate || '/chat/messages/__CONTACT__');
+        const sendUrl = normalizeApiUrl(root.dataset.sendUrl || '/chat/messages');
+        const markReadUrl = normalizeApiUrl(root.dataset.markReadUrl || '/chat/mark-read');
+        const typingUrl = normalizeApiUrl(root.dataset.typingUrl || '/chat/typing');
         const currentUserId = Number(root.dataset.currentUserId || 0);
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
@@ -597,23 +613,23 @@
                 },
                 ...options,
             });
-
             if (!response.ok) {
-                let message = 'Request failed';
-                let payload = null;
-                try {
-                    payload = await response.json();
-                } catch (err) {
-                    // ignore JSON parse errors
+                // Common helpful messages for CSRF/session issues or wrong methods
+                if (response.status === 419) {
+                    throw new Error('Session expired (419). Please refresh the page and sign in again.');
+                }
+                if (response.status === 405) {
+                    throw new Error('Method not allowed (405). The request method is invalid for this endpoint.');
                 }
 
-                if (payload) {
-                    if (typeof payload === 'string') {
-                        message = payload;
-                    } else {
-                        message = payload.message || payload.error || message;
+                let message = 'Request failed';
+                try {
+                    const payload = await response.json();
+                    if (payload) {
+                        if (typeof payload === 'string') message = payload;
+                        else message = payload.message || payload.error || message;
                     }
-                } else {
+                } catch (err) {
                     message = response.statusText || message;
                 }
 
