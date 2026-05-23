@@ -174,6 +174,12 @@
         line-height: 1;
     }
 
+    .metric-money {
+        font-size: 1.35rem;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
     .sticky-summary {
         position: sticky;
         top: 1rem;
@@ -311,7 +317,7 @@
                                                 <div class="text-muted small fw-semibold">{{ $metric['label'] }}</div>
                                             </div>
                                             @if($metric['format'] === 'money')
-                                                <div class="stat-value text-{{ $metric['tone'] }}">{{ $currencySymbol }}{{ number_format((float) $metric['value'], 2) }}</div>
+                                                <div class="stat-value metric-money text-{{ $metric['tone'] }}">{{ $currencySymbol }}{{ number_format((float) $metric['value'], 2) }}</div>
                                             @else
                                                 <div class="stat-value text-{{ $metric['tone'] }}">{{ $metric['value'] }}</div>
                                             @endif
