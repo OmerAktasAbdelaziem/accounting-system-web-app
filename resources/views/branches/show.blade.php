@@ -34,13 +34,13 @@
     ];
 
     $directorySections = [
-        ['title' => 'Employees', 'items' => $recentEmployees ?? [], 'icon' => 'bi-people', 'tone' => 'primary', 'empty' => 'No employees are linked to this branch yet.'],
-        ['title' => 'Products', 'items' => $recentProducts ?? [], 'icon' => 'bi-box-seam', 'tone' => 'success', 'empty' => 'No products are linked to this branch yet.'],
-        ['title' => 'Categories', 'items' => $recentCategories ?? [], 'icon' => 'bi-tags', 'tone' => 'warning', 'empty' => 'No categories are linked to this branch yet.'],
-        ['title' => 'Customers', 'items' => $recentCustomers ?? [], 'icon' => 'bi-person-badge', 'tone' => 'info', 'empty' => 'No customers are linked to this branch yet.'],
-        ['title' => 'Invoices', 'items' => $recentInvoices ?? [], 'icon' => 'bi-receipt', 'tone' => 'danger', 'empty' => 'No invoices are linked to this branch yet.'],
-        ['title' => 'Storages', 'items' => $recentStorages ?? [], 'icon' => 'bi-database', 'tone' => 'dark', 'empty' => 'No storages are linked to this branch yet.'],
-        ['title' => 'Safes', 'items' => $recentSafes ?? [], 'icon' => 'bi-safe', 'tone' => 'success', 'empty' => 'No safes are linked to this branch yet.'],
+        ['key' => 'employees', 'title' => 'Employees', 'items' => $recentEmployees ?? [], 'icon' => 'bi-people', 'tone' => 'primary', 'empty' => 'No employees are linked to this branch yet.'],
+        ['key' => 'products', 'title' => 'Products', 'items' => $recentProducts ?? [], 'icon' => 'bi-box-seam', 'tone' => 'success', 'empty' => 'No products are linked to this branch yet.'],
+        ['key' => 'categories', 'title' => 'Categories', 'items' => $recentCategories ?? [], 'icon' => 'bi-tags', 'tone' => 'warning', 'empty' => 'No categories are linked to this branch yet.'],
+        ['key' => 'customers', 'title' => 'Customers', 'items' => $recentCustomers ?? [], 'icon' => 'bi-person-badge', 'tone' => 'info', 'empty' => 'No customers are linked to this branch yet.'],
+        ['key' => 'invoices', 'title' => 'Invoices', 'items' => $recentInvoices ?? [], 'icon' => 'bi-receipt', 'tone' => 'danger', 'empty' => 'No invoices are linked to this branch yet.'],
+        ['key' => 'storages', 'title' => 'Storages', 'items' => $recentStorages ?? [], 'icon' => 'bi-database', 'tone' => 'dark', 'empty' => 'No storages are linked to this branch yet.'],
+        ['key' => 'safes', 'title' => 'Safes', 'items' => $recentSafes ?? [], 'icon' => 'bi-safe', 'tone' => 'success', 'empty' => 'No safes are linked to this branch yet.'],
     ];
 
     $selectedTab = 'overview';
@@ -424,7 +424,7 @@
 
                     <div class="tab-pane fade" id="records-pane" role="tabpanel" aria-labelledby="records-tab">
                         <div class="d-grid gap-4">
-                            <div class="card tab-block">
+                            <div class="card tab-block" data-pagination-section="branch-payrolls" id="branch-payrolls-section">
                                 <div class="card-header panel-head py-3 px-4 d-flex justify-content-between align-items-center">
                                     <div>
                                         <div class="section-title mb-1">Payroll records</div>
@@ -463,7 +463,7 @@
                                 </div>
                             </div>
 
-                            <div class="card tab-block">
+                            <div class="card tab-block" data-pagination-section="branch-commissions" id="branch-commissions-section">
                                 <div class="card-header panel-head py-3 px-4 d-flex justify-content-between align-items-center">
                                     <div>
                                         <div class="section-title mb-1">Commission records</div>
@@ -502,7 +502,7 @@
                                 </div>
                             </div>
 
-                            <div class="card tab-block">
+                            <div class="card tab-block" data-pagination-section="branch-suppliers" id="branch-suppliers-section">
                                 <div class="card-header panel-head py-3 px-4 d-flex justify-content-between align-items-center">
                                     <div>
                                         <div class="section-title mb-1">Supplier ledger</div>
@@ -549,7 +549,7 @@
                     <div class="tab-pane fade" id="directory-pane" role="tabpanel" aria-labelledby="directory-tab">
                         <div class="d-grid gap-4">
                             @foreach($directorySections as $section)
-                                <div class="card tab-block">
+                                <div class="card tab-block" data-pagination-section="branch-directory-{{ $section['key'] }}" id="branch-directory-{{ $section['key'] }}-section">
                                     <div class="card-header panel-head py-3 px-4 d-flex justify-content-between align-items-center">
                                         <div>
                                             <div class="section-title mb-1">Branch directory</div>
@@ -597,19 +597,18 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const recordsPane = document.getElementById('records-pane');
-    if (!recordsPane) {
-        return;
-    }
+    async function loadPaginatedSection(link, updateHistory = true) {
+        const section = link.closest('[data-pagination-section]');
+        if (!section) {
+            return;
+        }
 
-    const tabTrigger = document.querySelector('[data-bs-target="#records-pane"]');
-    const recordsTab = window.bootstrap ? bootstrap.Tab.getOrCreateInstance(tabTrigger) : null;
-
-    async function loadRecordsPage(url, updateHistory = true) {
-        recordsPane.classList.add('opacity-50');
+        const sectionKey = section.getAttribute('data-pagination-section');
+        const sectionId = section.id;
+        section.classList.add('opacity-50');
 
         try {
-            const response = await fetch(url, {
+            const response = await fetch(link.href, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'text/html',
@@ -623,41 +622,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const html = await response.text();
             const parsedDocument = new DOMParser().parseFromString(html, 'text/html');
-            const nextRecordsPane = parsedDocument.getElementById('records-pane');
+            const nextSection = parsedDocument.querySelector('[data-pagination-section="' + sectionKey + '"]');
 
-            if (!nextRecordsPane) {
-                throw new Error('Records pane not found in response.');
+            if (!nextSection) {
+                throw new Error('Paginated section not found in response.');
             }
 
-            recordsPane.innerHTML = nextRecordsPane.innerHTML;
+            section.outerHTML = nextSection.outerHTML;
 
             if (updateHistory) {
-                window.history.pushState({ recordsUrl: url }, '', url);
-            }
-
-            if (recordsTab && tabTrigger) {
-                recordsTab.show();
+                window.history.pushState({ paginatedUrl: link.href, sectionId: sectionId, sectionKey: sectionKey }, '', link.href);
             }
         } catch (error) {
-            window.location.href = url;
+            window.location.href = link.href;
         } finally {
-            recordsPane.classList.remove('opacity-50');
+            section.classList.remove('opacity-50');
         }
     }
 
-    recordsPane.addEventListener('click', function (event) {
-        const link = event.target.closest('.pagination a');
+    document.addEventListener('click', function (event) {
+        const link = event.target.closest('[data-pagination-section] .pagination a');
         if (!link) {
             return;
         }
 
         event.preventDefault();
-        loadRecordsPage(link.href, true);
+        loadPaginatedSection(link, true);
     });
 
     window.addEventListener('popstate', function (event) {
-        if (event.state && event.state.recordsUrl) {
-            loadRecordsPage(event.state.recordsUrl, false);
+        if (event.state && event.state.paginatedUrl) {
+            const activeLink = document.querySelector('[data-pagination-section="' + event.state.sectionKey + '"] .pagination a[href="' + event.state.paginatedUrl + '"]');
+            if (activeLink) {
+                loadPaginatedSection(activeLink, false);
+            } else {
+                window.location.href = event.state.paginatedUrl;
+            }
         }
     });
 });
