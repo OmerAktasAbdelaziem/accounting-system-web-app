@@ -698,6 +698,14 @@
             .replaceAll("'", '&#039;');
     }
 
+    function formatMoney(value) {
+        const number = Number(value || 0);
+        return new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }).format(number);
+    }
+
     function updateTotalFromEmployeeList(container, totalInput) {
         if (!container || !totalInput) return;
         // Respect manual toggle: if manual entry enabled, skip auto-calculation
@@ -857,9 +865,9 @@
                 if (saleDetailsDate) saleDetailsDate.textContent = detailsBtn.getAttribute('data-sale-date') || '-';
                 if (saleDetailsBranch) saleDetailsBranch.textContent = detailsBtn.getAttribute('data-branch-name') || '-';
                 if (saleDetailsPrimary) saleDetailsPrimary.textContent = primaryEmployee;
-                if (saleDetailsTotal) saleDetailsTotal.textContent = '{{ $currencySymbol ?? '$' }}' + (detailsBtn.getAttribute('data-total-amount') || '0.00');
-                if (saleDetailsSpent) saleDetailsSpent.textContent = '{{ $currencySymbol ?? '$' }}' + (detailsBtn.getAttribute('data-spent-amount') || '0.00');
-                if (saleDetailsNet) saleDetailsNet.textContent = '{{ $currencySymbol ?? '$' }}' + (detailsBtn.getAttribute('data-net-amount') || '0.00');
+                if (saleDetailsTotal) saleDetailsTotal.textContent = '{{ $currencySymbol ?? '$' }}' + formatMoney(detailsBtn.getAttribute('data-total-amount'));
+                if (saleDetailsSpent) saleDetailsSpent.textContent = '{{ $currencySymbol ?? '$' }}' + formatMoney(detailsBtn.getAttribute('data-spent-amount'));
+                if (saleDetailsNet) saleDetailsNet.textContent = '{{ $currencySymbol ?? '$' }}' + formatMoney(detailsBtn.getAttribute('data-net-amount'));
                 if (saleDetailsNotes) saleDetailsNotes.textContent = detailsBtn.getAttribute('data-sale-notes') || '-';
                 if (saleDetailsCountBadge) saleDetailsCountBadge.textContent = `${employees.length} ${employees.length === 1 ? 'employee' : 'employees'}`;
 
@@ -874,7 +882,7 @@
                                         <div class="text-muted small">Sale contributor</div>
                                     </div>
                                 </div>
-                                <div class="employee-breakdown-amount">{{ $currencySymbol ?? '$' }}${Number(employee.amount || 0).toFixed(2)}</div>
+                                <div class="employee-breakdown-amount">{{ $currencySymbol ?? '$' }}${formatMoney(employee.amount)}</div>
                             </div>
                         `).join('')
                         : '<div class="p-4 text-center text-muted">No employee details recorded for this sale.</div>';
