@@ -470,7 +470,7 @@
                                         data-net-amount="{{ number_format((float) $sale->net_income, 2, '.', '') }}"
                                         data-primary-employee="{{ e($sale->employee?->name ?? '-') }}"
                                         data-sale-notes="{{ e($sale->notes ?? '') }}"
-                                        data-sale-employees='@json($sale->employeeSaleDetails->map(fn ($detail) => ["name" => $detail->employee?->name ?? "Deleted employee", "amount" => (float) $detail->amount]))'
+                                        data-sale-employees='@json($sale->employeeSaleDetails->map(fn ($detail) => ["name" => $detail->employee?->name ?? "Deleted employee", "amount" => (float) $detail->amount])->values(), JSON_HEX_APOS)'
                                     >
                                         {{ $currencySymbol ?? '$' }}{{ number_format((float) $sale->total_amount, 2) }}
                                     </button>
@@ -495,7 +495,7 @@
                                             data-spent_amount="{{ (float) ($sale->spent_amount ?? 0) }}"
                                             data-notes="{{ e($sale->notes) }}"
                                                     data-primary-employee-id="{{ $sale->employee_id }}"
-                                                    data-employee-sales='@json($sale->employeeSaleDetails->map(fn ($detail) => ["employee_id" => $detail->employee_id, "amount" => (float) $detail->amount]))'
+                                                    data-employee-sales='@json($sale->employeeSaleDetails->map(fn ($detail) => ["employee_id" => $detail->employee_id, "amount" => (float) $detail->amount])->values(), JSON_HEX_APOS)'
                                             data-update_url="{{ route('sales.update', $sale->id) }}"
                                         >
                                             <i class="bi bi-pencil"></i>
@@ -699,6 +699,25 @@
         }).format(number);
     }
 
+    function parseJsonDataAttribute(raw, fallback = []) {
+        if (!raw) return fallback;
+
+        try {
+            return JSON.parse(raw);
+        } catch (e1) {
+            try {
+                const decoded = String(raw)
+                    .replaceAll('&quot;', '"')
+                    .replaceAll('&#34;', '"')
+                    .replaceAll('&apos;', "'")
+                    .replaceAll('&#39;', "'");
+                return JSON.parse(decoded);
+            } catch (e2) {
+                return fallback;
+            }
+        }
+    }
+
     function updateTotalFromEmployeeList(container, totalInput) {
         // Total amount is manual now; keep function as no-op for existing bindings.
         return;
@@ -809,13 +828,7 @@
             if (detailsBtn) {
                 e.preventDefault();
 
-                const saleEmployees = (() => {
-                    try {
-                        return JSON.parse(detailsBtn.getAttribute('data-sale-employees') || '[]');
-                    } catch (err) {
-                        return [];
-                    }
-                })();
+                const saleEmployees = parseJsonDataAttribute(detailsBtn.getAttribute('data-sale-employees'), []);
 
                 const primaryEmployee = detailsBtn.getAttribute('data-primary-employee') || '-';
                 const employees = saleEmployees.length > 0
@@ -880,13 +893,7 @@
             const totalAmount = btn.getAttribute('data-total_amount');
             const spentAmount = btn.getAttribute('data-spent_amount');
             const notes = btn.getAttribute('data-notes');
-            const employeeSalesData = (() => {
-                try {
-                    return JSON.parse(btn.getAttribute('data-employee-sales') || '[]');
-                } catch (err) {
-                    return [];
-                }
-            })();
+            const employeeSalesData = parseJsonDataAttribute(btn.getAttribute('data-employee-sales'), []);
             const updateUrl = btn.getAttribute('data-update_url');
 
             const form = document.getElementById('editSaleForm');
