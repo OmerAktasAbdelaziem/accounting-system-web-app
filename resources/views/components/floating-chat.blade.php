@@ -605,13 +605,13 @@
 
         async function fetchJson(url, options = {}) {
             const response = await fetch(url, {
+                ...options,
                 credentials: 'include',
                 headers: {
-                    'X-CSRF-TOKEN': csrfToken,
                     'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
                     ...(options.headers || {}),
                 },
-                ...options,
             });
             if (!response.ok) {
                 // Common helpful messages for CSRF/session issues or wrong methods
