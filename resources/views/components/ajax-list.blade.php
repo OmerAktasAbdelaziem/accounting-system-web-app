@@ -47,13 +47,21 @@
         });
     }
 
+    function normalizeToCurrentOrigin(url) {
+        const parsedUrl = new URL(url, window.location.href);
+        parsedUrl.protocol = window.location.protocol;
+        parsedUrl.host = window.location.host;
+        return parsedUrl;
+    }
+
     async function fetchAndReplace(url, container, overlay, options) {
         try {
             overlay.classList.remove('d-none');
             disablePagination(container, true);
             setFormDisabled(options.formEl, true);
 
-            const resp = await fetch(url.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            const normalizedUrl = normalizeToCurrentOrigin(url);
+            const resp = await fetch(normalizedUrl.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
             if (!resp.ok) throw new Error('Network response was not ok');
             const html = await resp.text();
             const parser = new DOMParser();
@@ -62,7 +70,7 @@
             if (newContainer) {
                 container.innerHTML = newContainer.innerHTML;
             }
-            window.history.replaceState({}, '', url);
+            window.history.replaceState({}, '', normalizedUrl.toString());
         } finally {
             overlay.classList.add('d-none');
             disablePagination(container, false);
@@ -85,7 +93,7 @@
         async function doFetch(urlOrQ) {
             let url;
             if (typeof urlOrQ === 'string' && (urlOrQ.startsWith('http') || urlOrQ.startsWith('/'))) {
-                url = new URL(urlOrQ, window.location.origin);
+                url = normalizeToCurrentOrigin(urlOrQ);
             } else {
                 url = new URL(window.location.href);
                 const q = String(urlOrQ || (searchEl ? searchEl.value : '') || '').trim();
