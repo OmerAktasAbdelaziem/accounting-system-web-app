@@ -536,6 +536,12 @@
                     </tbody>
                 </table>
             </div>
+
+            @if($sales->hasPages())
+                <div class="card-footer bg-white px-4 py-3">
+                    {{ $sales->links() }}
+                </div>
+            @endif
         </div>
 
         <div class="modal fade" id="salesExportModal" tabindex="-1" aria-hidden="true">
@@ -609,11 +615,6 @@
                 </div>
             </div>
         </div>
-        @if($sales->hasPages())
-            <div class="card-footer bg-white px-4 py-3">
-                {{ $sales->links() }}
-            </div>
-        @endif
     </div>
 </div>
 
