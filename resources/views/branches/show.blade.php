@@ -594,4 +594,73 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const recordsPane = document.getElementById('records-pane');
+    if (!recordsPane) {
+        return;
+    }
+
+    const tabTrigger = document.querySelector('[data-bs-target="#records-pane"]');
+    const recordsTab = window.bootstrap ? bootstrap.Tab.getOrCreateInstance(tabTrigger) : null;
+
+    async function loadRecordsPage(url, updateHistory = true) {
+        recordsPane.classList.add('opacity-50');
+
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'text/html',
+                },
+                credentials: 'same-origin',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to load records page.');
+            }
+
+            const html = await response.text();
+            const parsedDocument = new DOMParser().parseFromString(html, 'text/html');
+            const nextRecordsPane = parsedDocument.getElementById('records-pane');
+
+            if (!nextRecordsPane) {
+                throw new Error('Records pane not found in response.');
+            }
+
+            recordsPane.innerHTML = nextRecordsPane.innerHTML;
+
+            if (updateHistory) {
+                window.history.pushState({ recordsUrl: url }, '', url);
+            }
+
+            if (recordsTab && tabTrigger) {
+                recordsTab.show();
+            }
+        } catch (error) {
+            window.location.href = url;
+        } finally {
+            recordsPane.classList.remove('opacity-50');
+        }
+    }
+
+    recordsPane.addEventListener('click', function (event) {
+        const link = event.target.closest('.pagination a');
+        if (!link) {
+            return;
+        }
+
+        event.preventDefault();
+        loadRecordsPage(link.href, true);
+    });
+
+    window.addEventListener('popstate', function (event) {
+        if (event.state && event.state.recordsUrl) {
+            loadRecordsPage(event.state.recordsUrl, false);
+        }
+    });
+});
+</script>
+
 @endsection
