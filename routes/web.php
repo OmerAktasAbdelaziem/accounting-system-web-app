@@ -192,6 +192,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [CommissionController::class, 'store'])->name('store');
         Route::get('{commission}', [CommissionController::class, 'show'])->name('show');
         Route::post('{commission}/append', [CommissionController::class, 'append'])->name('append');
+        Route::post('{commission}/pay', [CommissionController::class, 'pay'])->name('pay');
         Route::get('{commission}/edit', [CommissionController::class, 'edit'])->name('edit');
         Route::put('{commission}', [CommissionController::class, 'update'])->name('update');
         Route::delete('{commission}', [CommissionController::class, 'destroy'])->name('destroy');

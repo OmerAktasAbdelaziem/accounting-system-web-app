@@ -31,7 +31,7 @@
     <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
         <div class="d-flex justify-content-between align-items-center">
             <h5 class="mb-0"><i class="bi bi-person-badge"></i> Commission Profiles</h5>
-            <small>Open an employee profile to add more commissions</small>
+                <small>Open an employee profile to pay active commissions or add more records</small>
         </div>
     </div>
     <div class="card-body">
@@ -50,9 +50,21 @@
                                 </div>
                                 <div class="mb-2 text-muted small">Last commission: {{ $profile->last_commission_date?->format('M d, Y') ?? '-' }}</div>
                                 <div class="mb-3 fw-bold text-success">{{ $currencySymbol }}{{ number_format($profile->total_commission_amount ?? 0, 2) }}</div>
-                                <a href="{{ route('commissions.show', $profile->latest_commission) }}" class="btn btn-outline-primary w-100">
-                                    <i class="bi bi-eye"></i> View Profile
-                                </a>
+                                <div class="d-grid gap-2">
+                                    <a href="{{ route('commissions.show', $profile->latest_commission) }}" class="btn btn-outline-primary">
+                                        <i class="bi bi-eye"></i> View Profile
+                                    </a>
+                                    @if($profile->latest_commission && $profile->latest_commission->status !== 'paid')
+                                        <form method="POST" action="{{ route('commissions.pay', $profile->latest_commission) }}">
+                                            @csrf
+                                            <button type="submit" class="btn btn-success w-100" onclick="return confirm('Mark this commission as paid? It will be hidden from the active list but stay in the database.')">
+                                                <i class="bi bi-cash-coin"></i> Pay Commission
+                                            </button>
+                                        </form>
+                                    @else
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle py-2">Paid</span>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>

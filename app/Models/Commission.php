@@ -16,6 +16,7 @@ class Commission extends Model
         'sale_amount',
         'commission_amount',
         'commission_date',
+        'status',
         'reference_type',
         'reference_id',
         'notes',
@@ -31,5 +32,27 @@ class Commission extends Model
     public function employee()
     {
         return $this->belongsTo(Employee::class)->withTrashed();
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', '!=', 'paid');
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->status === 'paid';
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === 'pending';
+    }
+
+    public function markAsPaid(): bool
+    {
+        $this->status = 'paid';
+
+        return $this->save();
     }
 }

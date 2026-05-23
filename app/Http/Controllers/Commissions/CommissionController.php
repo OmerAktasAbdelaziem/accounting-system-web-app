@@ -19,10 +19,12 @@ class CommissionController extends Controller
     {
         $employees = Employee::where('is_active', true)->get();
         $commissions = Commission::with('employee')
+            ->active()
             ->latest('commission_date')
             ->paginate(15);
 
         $commissionProfiles = Commission::with('employee')
+            ->active()
             ->latest('commission_date')
             ->get()
             ->groupBy('employee_id')
@@ -46,7 +48,7 @@ class CommissionController extends Controller
             ->sortByDesc(fn (Employee $employee) => $employee->last_commission_date?->timestamp ?? 0)
             ->values();
 
-        $totalCommission = Commission::sum('commission_amount');
+        $totalCommission = Commission::active()->sum('commission_amount');
 
         $monthlyCommissions = EmployeeCommission::query()
             ->get()
@@ -72,7 +74,9 @@ class CommissionController extends Controller
     {
         $commission = null;
         $employees = Employee::where('is_active', true)
-            ->whereDoesntHave('commissionTransactions')
+            ->whereDoesntHave('commissionTransactions', function ($query) {
+                $query->where('status', '!=', 'paid');
+            })
             ->orderBy('name')
             ->get();
         $branches = Branch::orderBy('name')->get();
@@ -137,7 +141,9 @@ class CommissionController extends Controller
     {
         $employees = Employee::where(function ($query) use ($commission) {
             $query->where('is_active', true)
-                ->whereDoesntHave('commissionTransactions')
+                ->whereDoesntHave('commissionTransactions', function ($subQuery) {
+                    $subQuery->where('status', '!=', 'paid');
+                })
                 ->orWhere('id', $commission->employee_id);
         })->orderBy('name')->get();
         $branches = Branch::orderBy('name')->get();
@@ -159,6 +165,15 @@ class CommissionController extends Controller
     {
         $commission->delete();
         return response()->json(['success' => true]);
+    }
+
+    public function pay(Commission $commission)
+    {
+        $commission->markAsPaid();
+
+        return redirect()
+            ->route('commissions.index')
+            ->with('success', 'Commission marked as paid.');
     }
 
     public function exportPdf($id = null)

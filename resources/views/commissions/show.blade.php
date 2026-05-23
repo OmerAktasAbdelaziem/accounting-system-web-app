@@ -26,6 +26,16 @@
         <a href="{{ route('employees.show', $employee->id) }}" class="btn btn-outline-primary">
             <i class="bi bi-person"></i> {{ __('messages.view_employee') }}
         </a>
+        @if($commission->status !== 'paid')
+            <form method="POST" action="{{ route('commissions.pay', $commission) }}">
+                @csrf
+                <button type="submit" class="btn btn-success" onclick="return confirm('Mark this commission as paid? It will be hidden from the active list but stay in the database.')">
+                    <i class="bi bi-cash-coin"></i> Pay Commission
+                </button>
+            </form>
+        @else
+            <span class="badge bg-success align-self-center">Paid</span>
+        @endif
     </div>
 </div>
 
@@ -178,6 +188,16 @@
                                         <a href="{{ route('commissions.edit', $item) }}" class="btn btn-outline-warning">
                                             <i class="bi bi-pencil"></i>
                                         </a>
+                                        @if($item->status !== 'paid')
+                                            <form method="POST" action="{{ route('commissions.pay', $item) }}" class="d-inline">
+                                                @csrf
+                                                <button type="submit" class="btn btn-outline-success" onclick="return confirm('Mark this commission as paid? It will disappear from the active list.')">
+                                                    <i class="bi bi-cash-coin"></i>
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span class="btn btn-outline-success disabled"><i class="bi bi-check2-circle"></i></span>
+                                        @endif
                                         <button type="button" class="btn btn-outline-danger" onclick="deleteCommission({{ $item->id }})">
                                             <i class="bi bi-trash"></i>
                                         </button>
@@ -215,6 +235,14 @@
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.reference_type') }}</label>
                         <div class="text-muted">{{ $latestCommission?->reference_type ?? '-' }}</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Status</label>
+                        <div>
+                            <span class="badge {{ $commission->status === 'paid' ? 'bg-success' : 'bg-warning text-dark' }}">
+                                {{ ucfirst($commission->status) }}
+                            </span>
+                        </div>
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-bold">{{ __('messages.notes') }}</label>
