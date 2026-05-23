@@ -64,7 +64,7 @@ class SalesController extends Controller
             $totalAmount = (float) $employeeSales->sum(fn ($row) => (float) ($row['amount'] ?? 0));
         }
 
-        $sale = DB::transaction(function () use ($validated, $employeeSales, $totalAmount) {
+        $sale = DB::transaction(function () use ($validated, $employeeSales, $totalAmount, $request) {
             // Determine a primary employee for the sale: prefer first breakdown, else try to use current user's employee, else fallback to first employee record
             $primaryEmployeeId = null;
             if ($employeeSales->isNotEmpty()) {
@@ -130,7 +130,7 @@ class SalesController extends Controller
             $totalAmount = (float) $employeeSales->sum(fn ($row) => (float) ($row['amount'] ?? 0));
         }
 
-        DB::transaction(function () use ($sale, $validated, $employeeSales, $totalAmount) {
+        DB::transaction(function () use ($sale, $validated, $employeeSales, $totalAmount, $request) {
             $primaryEmployeeId = null;
             if ($employeeSales->isNotEmpty()) {
                 $primaryEmployeeId = (int) $employeeSales->first()['employee_id'];
