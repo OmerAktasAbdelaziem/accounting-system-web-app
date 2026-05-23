@@ -146,13 +146,6 @@
                                 <td>{{ $currencySymbol ?? '' }}{{ number_format($c->sale_amount ?? 0, 2) }}</td>
                                 <td>{{ $currencySymbol ?? '' }}{{ number_format($c->commission_amount ?? 0, 2) }}</td>
                                 <td>{{ $c->reference_type ? ($c->reference_type . ' #' . $c->reference_id) : '-' }}</td>
-                                <td class="text-end">
-                                    <form method="POST" action="{{ route('commissions.destroy', $c) }}" onsubmit="return confirm('Delete this paid commission record? This action cannot be undone.')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                    </form>
-                                </td>
                             </tr>
                         @endforeach
                     </tbody>
