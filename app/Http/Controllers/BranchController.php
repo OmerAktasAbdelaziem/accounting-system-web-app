@@ -68,15 +68,24 @@ class BranchController extends Controller
             ->paginate(6, ['*'], 'branch_commissions_page');
 
         $branchSuppliersForTotal = $branch->suppliers()
-            ->withSum('purchases as total_purchased', 'total_amount')
-            ->withSum('payments as total_paid', 'amount')
-            ->latest()
+            ->with(['purchases' => function ($query) use ($branch) {
+                $query->where('branch_id', $branch->id);
+            }])
+            ->with(['payments' => function ($query) use ($branch) {
+                $query->where('branch_id', $branch->id);
+            }])
             ->get();
 
-        $branchSuppliersForTotal->transform(function (Supplier $supplier) {
-            $supplier->outstanding_amount = ((float) ($supplier->opening_balance ?? 0))
-                + (float) ($supplier->total_purchased ?? 0)
-                - (float) ($supplier->total_paid ?? 0);
+        $branchSuppliersForTotal->transform(function (Supplier $supplier) use ($branch) {
+            $totalPurchased = (float) $supplier->purchases->sum('total_amount');
+            $totalPaid = (float) $supplier->payments->sum('amount');
+            $openingBalance = (((int) $supplier->branch_id === (int) $branch->id || $supplier->branches()->whereKey($branch->id)->exists())
+                ? (float) $supplier->opening_balance
+                : 0.0);
+
+            $supplier->outstanding_amount = ($openingBalance + $totalPurchased) - $totalPaid;
+            $supplier->branch_total_purchased = $totalPurchased;
+            $supplier->branch_total_paid = $totalPaid;
 
             return $supplier;
         });
@@ -84,15 +93,25 @@ class BranchController extends Controller
         $branchOutstandingTotal = (float) $branchSuppliersForTotal->sum('outstanding_amount');
 
         $branchSuppliers = $branch->suppliers()
-            ->withSum('purchases as total_purchased', 'total_amount')
-            ->withSum('payments as total_paid', 'amount')
+            ->with(['purchases' => function ($query) use ($branch) {
+                $query->where('branch_id', $branch->id);
+            }])
+            ->with(['payments' => function ($query) use ($branch) {
+                $query->where('branch_id', $branch->id);
+            }])
             ->latest()
             ->paginate(6, ['*'], 'branch_suppliers_page');
 
-        $branchSuppliers->getCollection()->transform(function (Supplier $supplier) {
-            $supplier->outstanding_amount = ((float) ($supplier->opening_balance ?? 0))
-                + (float) ($supplier->total_purchased ?? 0)
-                - (float) ($supplier->total_paid ?? 0);
+        $branchSuppliers->getCollection()->transform(function (Supplier $supplier) use ($branch) {
+            $totalPurchased = (float) $supplier->purchases->sum('total_amount');
+            $totalPaid = (float) $supplier->payments->sum('amount');
+            $openingBalance = (((int) $supplier->branch_id === (int) $branch->id || $supplier->branches()->whereKey($branch->id)->exists())
+                ? (float) $supplier->opening_balance
+                : 0.0);
+
+            $supplier->outstanding_amount = ($openingBalance + $totalPurchased) - $totalPaid;
+            $supplier->branch_total_purchased = $totalPurchased;
+            $supplier->branch_total_paid = $totalPaid;
 
             return $supplier;
         });

@@ -299,6 +299,8 @@
                                 <thead>
                                     <tr>
                                         <th>Supplier</th>
+                                        <th class="text-end">Purchased</th>
+                                        <th class="text-end">Paid</th>
                                         <th class="text-end">Outstanding</th>
                                     </tr>
                                 </thead>
@@ -307,8 +309,10 @@
                                         <tr>
                                             <td>
                                                 <div class="fw-semibold">{{ $supplier->name }}</div>
-                                                <small class="text-muted">Opening {{ $currencySymbol }}{{ number_format((float) ($supplier->opening_balance ?? 0), 2) }}</small>
+                                                <small class="text-muted">Opening {{ $currencySymbol }}{{ number_format(((int) ($supplier->branch_id ?? 0) === (int) $branch->id || $supplier->branches()->whereKey($branch->id)->exists()) ? (float) ($supplier->opening_balance ?? 0) : 0, 2) }}</small>
                                             </td>
+                                            <td class="text-end text-primary">{{ $currencySymbol }}{{ number_format((float) ($supplier->branch_total_purchased ?? 0), 2) }}</td>
+                                            <td class="text-end text-success">{{ $currencySymbol }}{{ number_format((float) ($supplier->branch_total_paid ?? 0), 2) }}</td>
                                             <td class="text-end text-danger">{{ $currencySymbol }}{{ number_format((float) ($supplier->outstanding_amount ?? 0), 2) }}</td>
                                         </tr>
                                     @endforeach
