@@ -14,6 +14,7 @@
         ['label' => 'Storages', 'count' => $branch->storages_count ?? 0, 'icon' => 'bi-database', 'color' => 'dark'],
         ['label' => 'Safes', 'count' => $branch->safes_count ?? 0, 'icon' => 'bi-safe', 'color' => 'success'],
         ['label' => 'Commissions', 'count' => $branch->commissions_count ?? 0, 'icon' => 'bi-graph-up', 'color' => 'primary'],
+        ['label' => 'Payrolls', 'count' => count($branchPayrolls ?? []), 'icon' => 'bi-wallet2', 'color' => 'danger'],
     ];
 
     $quickActions = [
@@ -25,6 +26,7 @@
         ['label' => 'Storage', 'route' => 'storages.create', 'icon' => 'bi-database', 'class' => 'btn-dark'],
         ['label' => 'Safe', 'route' => 'safes.create', 'icon' => 'bi-safe', 'class' => 'btn-success'],
         ['label' => 'Commission', 'route' => 'commissions.create', 'icon' => 'bi-graph-up', 'class' => 'btn-primary'],
+        ['label' => 'Payroll', 'route' => 'payroll.create', 'icon' => 'bi-wallet2', 'class' => 'btn-danger'],
     ];
 
     $sections = [
@@ -86,6 +88,18 @@
                 </div>
             </div>
         @endforeach
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-12 col-xl-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted small text-uppercase fw-semibold mb-2">Branch outstanding</div>
+                    <div class="display-6 fw-bold text-danger">{{ $currencySymbol }}{{ number_format($branchOutstandingTotal ?? 0, 2) }}</div>
+                    <div class="text-muted mt-2">Outstanding supplier balance for this branch only.</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="card border-0 shadow-sm mb-4">
@@ -184,6 +198,129 @@
         </div>
     </div>
     @endif
+
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-xl-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 pb-0 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0"><i class="bi bi-wallet2 me-2 text-danger"></i>Payrolls</h5>
+                        <small class="text-muted">Payrolls for employees assigned to this branch</small>
+                    </div>
+                    <span class="badge bg-light text-dark">{{ count($branchPayrolls ?? []) }}</span>
+                </div>
+                <div class="card-body">
+                    @if(count($branchPayrolls ?? []))
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Period</th>
+                                        <th class="text-end">Net</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($branchPayrolls as $payroll)
+                                        <tr>
+                                            <td>
+                                                <div class="fw-semibold">{{ $payroll->employee?->name ?? '-' }}</div>
+                                                <small class="text-muted">{{ strtoupper($payroll->status ?? 'draft') }}</small>
+                                            </td>
+                                            <td>{{ $payroll->month }}/{{ $payroll->year }}</td>
+                                            <td class="text-end text-success">{{ $currencySymbol }}{{ number_format((float) ($payroll->net_salary ?? 0), 2) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="text-muted">No payrolls found for this branch yet.</div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 pb-0 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0"><i class="bi bi-graph-up me-2 text-primary"></i>Commissions</h5>
+                        <small class="text-muted">Commission records attached to this branch</small>
+                    </div>
+                    <span class="badge bg-light text-dark">{{ count($branchCommissions ?? []) }}</span>
+                </div>
+                <div class="card-body">
+                    @if(count($branchCommissions ?? []))
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Date</th>
+                                        <th class="text-end">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($branchCommissions as $commission)
+                                        <tr>
+                                            <td>
+                                                <div class="fw-semibold">{{ $commission->employee?->name ?? '-' }}</div>
+                                                <small class="text-muted">{{ strtoupper($commission->status ?? 'pending') }}</small>
+                                            </td>
+                                            <td>{{ optional($commission->commission_date)->format('M d, Y') ?? '-' }}</td>
+                                            <td class="text-end text-success">{{ $currencySymbol }}{{ number_format((float) ($commission->commission_amount ?? 0), 2) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="text-muted">No commissions found for this branch yet.</div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 pb-0 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0"><i class="bi bi-truck me-2 text-secondary"></i>Suppliers</h5>
+                        <small class="text-muted">Branch suppliers with outstanding balances</small>
+                    </div>
+                    <span class="badge bg-light text-dark">{{ count($branchSuppliers ?? []) }}</span>
+                </div>
+                <div class="card-body">
+                    @if(count($branchSuppliers ?? []))
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Supplier</th>
+                                        <th class="text-end">Outstanding</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($branchSuppliers as $supplier)
+                                        <tr>
+                                            <td>
+                                                <div class="fw-semibold">{{ $supplier->name }}</div>
+                                                <small class="text-muted">Opening {{ $currencySymbol }}{{ number_format((float) ($supplier->opening_balance ?? 0), 2) }}</small>
+                                            </td>
+                                            <td class="text-end text-danger">{{ $currencySymbol }}{{ number_format((float) ($supplier->outstanding_amount ?? 0), 2) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="text-muted">No suppliers found for this branch yet.</div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row g-4">
         @foreach($sections as $section)

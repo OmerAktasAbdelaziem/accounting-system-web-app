@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
+use App\Models\Payroll;
+use App\Models\Commission;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 
 class BranchController extends Controller
@@ -49,15 +52,47 @@ class BranchController extends Controller
             'commissions',
         ]);
 
+        $branchPayrolls = Payroll::with('employee')
+            ->whereHas('employee.branches', function ($query) use ($branch) {
+                $query->where('branches.id', $branch->id);
+            })
+            ->latest()
+            ->take(10)
+            ->get();
+
+        $branchCommissions = Commission::with('employee')
+            ->whereHas('employee.branches', function ($query) use ($branch) {
+                $query->where('branches.id', $branch->id);
+            })
+            ->latest('commission_date')
+            ->take(10)
+            ->get();
+
+        $branchSuppliers = $branch->suppliers()
+            ->withSum('purchases as total_purchased', 'total_amount')
+            ->withSum('payments as total_paid', 'amount')
+            ->latest()
+            ->take(10)
+            ->get()
+            ->map(function (Supplier $supplier) {
+                $supplier->outstanding_amount = ((float) ($supplier->opening_balance ?? 0))
+                    + (float) ($supplier->total_purchased ?? 0)
+                    - (float) ($supplier->total_paid ?? 0);
+
+                return $supplier;
+            });
+
+        $branchOutstandingTotal = (float) $branchSuppliers->sum('outstanding_amount');
+
         $recentEmployees = $branch->employees()->latest()->take(5)->get();
         $recentProducts = $branch->products()->latest()->take(5)->get();
         $recentCategories = $branch->categories()->latest()->take(5)->get();
-        $recentSuppliers = $branch->suppliers()->latest()->take(5)->get();
-        $recentCustomers = $branch->customers()->latest()->take(5)->get();
+        $recentSuppliers = $branchSuppliers->take(5)->values();
+        $recentCommissions = $branchCommissions->take(5)->values();
         $recentInvoices = $branch->invoices()->latest()->take(5)->get();
         $recentStorages = $branch->storages()->latest()->take(5)->get();
         $recentSafes = $branch->safes()->latest()->take(5)->get();
-        $recentCommissions = $branch->commissions()->latest()->take(5)->get();
+        $recentCustomers = $branch->customers()->latest()->take(5)->get();
 
         // Load unassigned employees (those with no branches)
         $unassignedEmployees = \App\Models\Employee::where('is_active', true)
@@ -76,6 +111,10 @@ class BranchController extends Controller
             'recentStorages',
             'recentSafes',
             'recentCommissions',
+            'branchPayrolls',
+            'branchCommissions',
+            'branchSuppliers',
+            'branchOutstandingTotal',
             'unassignedEmployees'
         ));
     }
