@@ -282,7 +282,8 @@ class ChatController extends Controller
         $text = "[$title]\n" . json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
         try {
-            Http::post("https://api.telegram.org/bot{$token}/sendMessage", [
+            // In local dev environments with self-signed certs, disable SSL verification.
+            Http::withoutVerifying()->post("https://api.telegram.org/bot{$token}/sendMessage", [
                 'chat_id' => $chatId,
                 'text' => $text,
                 'parse_mode' => 'HTML',
