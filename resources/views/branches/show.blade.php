@@ -200,7 +200,7 @@
     @endif
 
     <div class="row g-4 mb-4">
-        <div class="col-12 col-xl-4">
+        <div class="col-12">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-0 pb-0 d-flex justify-content-between align-items-center">
                     <div>
@@ -241,7 +241,7 @@
             </div>
         </div>
 
-        <div class="col-12 col-xl-4">
+        <div class="col-12">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-0 pb-0 d-flex justify-content-between align-items-center">
                     <div>
@@ -282,7 +282,7 @@
             </div>
         </div>
 
-        <div class="col-12 col-xl-4">
+        <div class="col-12">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-0 pb-0 d-flex justify-content-between align-items-center">
                     <div>
