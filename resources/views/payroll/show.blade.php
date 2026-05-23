@@ -57,7 +57,7 @@
                         <div class="col-md-6">
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="fw-bold text-muted">{{ __('messages.commission') }}</span>
-                                <span class="fs-5 fw-bold text-success">+{{ $currencySymbol }}{{ number_format($payroll->commission ?? 0, 2) }}</span>
+                                <span class="fs-5 fw-bold text-success">+{{ $currencySymbol }}{{ number_format($payroll->calculated_commission ?? $payroll->commission ?? 0, 2) }}</span>
                             </div>
                         </div>
                         <div class="col-md-6 text-end">
@@ -175,17 +175,7 @@
             </h5>
         </div>
         <div class="card-body">
-            @php
-                $allCommissions = \App\Models\Commission::where('employee_id', $payroll->employee_id)
-                    ->orderBy('commission_date', 'desc')
-                    ->get();
-                $commissions = $allCommissions->filter(function($commission) use ($payroll) {
-                    return $commission->commission_date->month == $payroll->month && 
-                           $commission->commission_date->year == $payroll->year;
-                });
-            @endphp
-            
-            @if($commissions->count() > 0)
+            @if(isset($commissions) && $commissions->count() > 0)
                 <div class="table-responsive">
                     <table class="table table-hover table-sm">
                         <thead class="table-light">
