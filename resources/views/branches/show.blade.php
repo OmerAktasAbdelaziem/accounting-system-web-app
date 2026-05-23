@@ -38,7 +38,6 @@
         ['title' => 'Invoices', 'items' => $recentInvoices ?? [], 'icon' => 'bi-receipt'],
         ['title' => 'Storages', 'items' => $recentStorages ?? [], 'icon' => 'bi-database'],
         ['title' => 'Safes', 'items' => $recentSafes ?? [], 'icon' => 'bi-safe'],
-        ['title' => 'Commissions', 'items' => $recentCommissions ?? [], 'icon' => 'bi-graph-up'],
     ];
 @endphp
 

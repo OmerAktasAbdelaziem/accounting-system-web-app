@@ -67,6 +67,22 @@ class BranchController extends Controller
             ->latest('commission_date')
             ->paginate(6, ['*'], 'branch_commissions_page');
 
+        $branchSuppliersForTotal = $branch->suppliers()
+            ->withSum('purchases as total_purchased', 'total_amount')
+            ->withSum('payments as total_paid', 'amount')
+            ->latest()
+            ->get();
+
+        $branchSuppliersForTotal->transform(function (Supplier $supplier) {
+            $supplier->outstanding_amount = ((float) ($supplier->opening_balance ?? 0))
+                + (float) ($supplier->total_purchased ?? 0)
+                - (float) ($supplier->total_paid ?? 0);
+
+            return $supplier;
+        });
+
+        $branchOutstandingTotal = (float) $branchSuppliersForTotal->sum('outstanding_amount');
+
         $branchSuppliers = $branch->suppliers()
             ->withSum('purchases as total_purchased', 'total_amount')
             ->withSum('payments as total_paid', 'amount')
@@ -80,8 +96,6 @@ class BranchController extends Controller
 
             return $supplier;
         });
-
-        $branchOutstandingTotal = (float) $branchSuppliers->getCollection()->sum('outstanding_amount');
 
         $recentEmployees = $branch->employees()->latest()->paginate(6, ['*'], 'employees_page');
         $recentProducts = $branch->products()->latest()->paginate(6, ['*'], 'products_page');
