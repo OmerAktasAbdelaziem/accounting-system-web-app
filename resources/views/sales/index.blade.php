@@ -141,7 +141,7 @@
                 <div class="card-header px-4 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
                     <div>
                         <h5 class="mb-1">Record a Sale</h5>
-                        <div class="field-hint">Select branch, date, and total amount sold.</div>
+                        <div class="field-hint">Select branch, date, employees, and total amount sold.</div>
                     </div>
                     <span class="badge text-bg-light border">Live total calculator</span>
                 </div>
@@ -202,6 +202,45 @@
             <div class="card sales-panel h-100">
                 <div class="card-header px-4 py-3">
                     <h5 class="mb-1">What this screen captures</h5>
+
+                        @php
+                            $employeeAssignmentsOld = old('employee_assignments');
+                            if (! is_array($employeeAssignmentsOld) || empty($employeeAssignmentsOld)) {
+                                $employeeAssignmentsOld = [['employee_id' => '', 'description' => '']];
+                            }
+                        @endphp
+
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label fw-semibold mb-0">Employees Involved</label>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" id="add-employee-assignment">+ Add Employee</button>
+                            </div>
+                            <div class="employee-assignments-list" id="create-employee-assignments-list">
+                                @foreach($employeeAssignmentsOld as $index => $assignment)
+                                    <div class="employee-assignment-row border rounded-3 p-3 mb-2">
+                                        <div class="row g-2 align-items-start">
+                                            <div class="col-md-5">
+                                                <label class="form-label small text-muted mb-1">Employee</label>
+                                                <select name="employee_assignments[{{ $index }}][employee_id]" class="form-select employee-assignment-employee" required>
+                                                    <option value="">Select employee</option>
+                                                    @foreach($employees as $employee)
+                                                        <option value="{{ $employee->id }}" @selected((string) ($assignment['employee_id'] ?? '') === (string) $employee->id)>{{ $employee->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label small text-muted mb-1">Description</label>
+                                                <textarea name="employee_assignments[{{ $index }}][description]" class="form-control employee-assignment-description" rows="2" placeholder="What did this employee sell today?">{{ $assignment['description'] ?? '' }}</textarea>
+                                            </div>
+                                            <div class="col-md-1 d-grid">
+                                                <label class="form-label small text-muted mb-1 d-none d-md-block">&nbsp;</label>
+                                                <button type="button" class="btn btn-outline-danger remove-employee-assignment">Remove</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                     <div class="field-hint">Quick entry for total daily sales amount with optional product notes.</div>
                 </div>
                 <div class="card-body p-4">
@@ -290,7 +329,29 @@
                             <tr>
                                 <td>{{ $sale->sale_date?->format('Y-m-d') }}</td>
                                 <td>{{ $sale->branch?->name ?? '-' }}</td>
-                                <td><strong>{{ $currencySymbol ?? '$' }}{{ number_format((float) $sale->total_amount, 2) }}</strong></td>
+                                @php
+                                    $saleEmployeeAssignments = $sale->employee_assignments ?? [];
+                                    if (empty($saleEmployeeAssignments) && $sale->employee_id) {
+                                        $saleEmployeeAssignments = [[
+                                            'employee_id' => $sale->employee_id,
+                                            'description' => '',
+                                        ]];
+                                    }
+                                @endphp
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="btn btn-link p-0 sale-details-btn text-decoration-none fw-bold"
+                                        data-sale-date="{{ $sale->sale_date?->format('Y-m-d') }}"
+                                        data-branch="{{ e($sale->branch?->name ?? '-') }}"
+                                        data-total="{{ (float) $sale->total_amount }}"
+                                        data-spent="{{ (float) ($sale->spent_amount ?? 0) }}"
+                                        data-notes='@json($sale->notes)'
+                                        data-employee-assignments='@json($saleEmployeeAssignments)'
+                                    >
+                                        {{ $currencySymbol ?? '$' }}{{ number_format((float) $sale->total_amount, 2) }}
+                                    </button>
+                                </td>
                                 <td>{{ $currencySymbol ?? '$' }}{{ number_format((float) ($sale->spent_amount ?? 0), 2) }}</td>
                                 <td><strong>{{ $currencySymbol ?? '$' }}{{ number_format((float) $sale->net_income, 2) }}</strong></td>
                                 <td>
@@ -310,6 +371,7 @@
                                             data-total_amount="{{ (float) $sale->total_amount }}"
                                             data-spent_amount="{{ (float) ($sale->spent_amount ?? 0) }}"
                                             data-notes="{{ e($sale->notes) }}"
+                                            data-employee_assignments='@json($saleEmployeeAssignments)'
                                             data-update_url="{{ route('sales.update', $sale->id) }}"
                                         >
                                             <i class="bi bi-pencil"></i>
@@ -374,6 +436,13 @@
                                     <input type="number" name="spent_amount" class="form-control" step="0.01" min="0" placeholder="Amount the store spent">
                                 </div>
                                 <div class="col-12">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <label class="form-label mb-0">Employees Involved</label>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" id="edit-add-employee-assignment">+ Add Employee</button>
+                                    </div>
+                                    <div class="employee-assignments-list" id="edit-employee-assignments-list"></div>
+                                </div>
+                                <div class="col-12">
                                     <label class="form-label">Products / Notes</label>
                                     <textarea name="product_sold_text" rows="4" class="form-control" placeholder="One product per line or notes..."></textarea>
                                 </div>
@@ -387,6 +456,73 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="saleDetailsModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Sale Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">Date</small>
+                                <strong id="sale-details-date">-</strong>
+                            </div>
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">Branch</small>
+                                <strong id="sale-details-branch">-</strong>
+                            </div>
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">Total Amount</small>
+                                <strong id="sale-details-total">-</strong>
+                            </div>
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">Spent</small>
+                                <strong id="sale-details-spent">-</strong>
+                            </div>
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">Net</small>
+                                <strong id="sale-details-net">-</strong>
+                            </div>
+                            <div class="col-12">
+                                <small class="text-muted d-block mb-2">Employees Involved</small>
+                                <div id="sale-details-employees" class="vstack gap-2"></div>
+                            </div>
+                            <div class="col-12">
+                                <small class="text-muted d-block mb-2">Products / Notes</small>
+                                <div id="sale-details-notes" class="border rounded-3 p-3 bg-light">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <template id="employee-assignment-template">
+            <div class="employee-assignment-row border rounded-3 p-3 mb-2">
+                <div class="row g-2 align-items-start">
+                    <div class="col-md-5">
+                        <label class="form-label small text-muted mb-1">Employee</label>
+                        <select class="form-select employee-assignment-employee" required>
+                            <option value="">Select employee</option>
+                            @foreach($employees as $employee)
+                                <option value="{{ $employee->id }}">{{ $employee->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted mb-1">Description</label>
+                        <textarea class="form-control employee-assignment-description" rows="2" placeholder="What did this employee sell today?"></textarea>
+                    </div>
+                    <div class="col-md-1 d-grid">
+                        <label class="form-label small text-muted mb-1 d-none d-md-block">&nbsp;</label>
+                        <button type="button" class="btn btn-outline-danger remove-employee-assignment">Remove</button>
+                    </div>
+                </div>
+            </div>
+        </template>
 
 <script>
 (function () {
@@ -436,8 +572,202 @@
             }
         }
 
+        const saleDetailsModalEl = document.getElementById('saleDetailsModal');
+        let saleDetailsModal = null;
+        if (saleDetailsModalEl && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+            try { saleDetailsModal = new bootstrap.Modal(saleDetailsModalEl); } catch (err) { saleDetailsModal = null; }
+        }
+
+        const employeeTemplate = document.getElementById('employee-assignment-template');
+        const createAssignmentsList = document.getElementById('create-employee-assignments-list');
+        const editAssignmentsList = document.getElementById('edit-employee-assignments-list');
+        const addCreateAssignmentBtn = document.getElementById('add-employee-assignment');
+        const addEditAssignmentBtn = document.getElementById('edit-add-employee-assignment');
+        const employeeNames = @json($employees->pluck('name', 'id')->all());
+        const currencySymbol = @json($currencySymbol ?? '$');
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+
+        function formatMoney(value) {
+            const amount = Number(value || 0);
+            return currencySymbol + amount.toFixed(2);
+        }
+
+        function updateEmployeeAssignmentNames(container) {
+            if (!container) return;
+
+            container.querySelectorAll('.employee-assignment-row').forEach(function (row, index) {
+                const select = row.querySelector('.employee-assignment-employee');
+                const description = row.querySelector('.employee-assignment-description');
+
+                if (select) {
+                    select.name = `employee_assignments[${index}][employee_id]`;
+                }
+
+                if (description) {
+                    description.name = `employee_assignments[${index}][description]`;
+                }
+            });
+        }
+
+        function createEmployeeAssignmentRow(assignment) {
+            if (!employeeTemplate) return null;
+
+            const fragment = employeeTemplate.content.cloneNode(true);
+            const row = fragment.querySelector('.employee-assignment-row');
+            const select = row ? row.querySelector('.employee-assignment-employee') : null;
+            const description = row ? row.querySelector('.employee-assignment-description') : null;
+
+            if (select && assignment && assignment.employee_id) {
+                select.value = String(assignment.employee_id);
+            }
+
+            if (description && assignment && assignment.description) {
+                description.value = assignment.description;
+            }
+
+            return row;
+        }
+
+        function renderEmployeeAssignments(container, assignments) {
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            const list = Array.isArray(assignments) && assignments.length
+                ? assignments
+                : [{ employee_id: '', description: '' }];
+
+            list.forEach(function (assignment) {
+                const row = createEmployeeAssignmentRow(assignment);
+                if (row) {
+                    container.appendChild(row);
+                }
+            });
+
+            updateEmployeeAssignmentNames(container);
+        }
+
+        function bindEmployeeAssignmentControls(container, addButton) {
+            if (!container || container.dataset.bound === '1') return;
+
+            container.dataset.bound = '1';
+
+            container.addEventListener('click', function (e) {
+                const removeBtn = e.target.closest('.remove-employee-assignment');
+                if (!removeBtn || !container.contains(removeBtn)) return;
+
+                e.preventDefault();
+
+                if (container.querySelectorAll('.employee-assignment-row').length > 1) {
+                    removeBtn.closest('.employee-assignment-row')?.remove();
+                    updateEmployeeAssignmentNames(container);
+                }
+            });
+
+            if (addButton) {
+                addButton.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const row = createEmployeeAssignmentRow({ employee_id: '', description: '' });
+                    if (row) {
+                        container.appendChild(row);
+                        updateEmployeeAssignmentNames(container);
+                    }
+                });
+            }
+        }
+
+        bindEmployeeAssignmentControls(createAssignmentsList, addCreateAssignmentBtn);
+        bindEmployeeAssignmentControls(editAssignmentsList, addEditAssignmentBtn);
+        updateEmployeeAssignmentNames(createAssignmentsList);
+
+        function openSaleDetails(btn) {
+            if (!saleDetailsModalEl) return;
+
+            const saleDate = btn.getAttribute('data-sale-date') || '-';
+            const branch = btn.getAttribute('data-branch') || '-';
+            const total = btn.getAttribute('data-total') || '0';
+            const spent = btn.getAttribute('data-spent') || '0';
+            const notesAttr = btn.getAttribute('data-notes') || 'null';
+            const assignmentsAttr = btn.getAttribute('data-employee-assignments') || '[]';
+
+            let notes = '';
+            let assignments = [];
+
+            try {
+                notes = JSON.parse(notesAttr) || '';
+            } catch (err) {
+                notes = notesAttr;
+            }
+
+            try {
+                assignments = JSON.parse(assignmentsAttr) || [];
+            } catch (err) {
+                assignments = [];
+            }
+
+            const detailsDate = saleDetailsModalEl.querySelector('#sale-details-date');
+            const detailsBranch = saleDetailsModalEl.querySelector('#sale-details-branch');
+            const detailsTotal = saleDetailsModalEl.querySelector('#sale-details-total');
+            const detailsSpent = saleDetailsModalEl.querySelector('#sale-details-spent');
+            const detailsNet = saleDetailsModalEl.querySelector('#sale-details-net');
+            const detailsEmployees = saleDetailsModalEl.querySelector('#sale-details-employees');
+            const detailsNotes = saleDetailsModalEl.querySelector('#sale-details-notes');
+
+            if (detailsDate) detailsDate.textContent = saleDate;
+            if (detailsBranch) detailsBranch.textContent = branch;
+            if (detailsTotal) detailsTotal.textContent = formatMoney(total);
+            if (detailsSpent) detailsSpent.textContent = formatMoney(spent);
+            if (detailsNet) detailsNet.textContent = formatMoney(Number(total || 0) - Number(spent || 0));
+
+            if (detailsEmployees) {
+                if (assignments.length) {
+                    detailsEmployees.innerHTML = assignments.map(function (assignment) {
+                        const employeeName = employeeNames[String(assignment.employee_id)] || `Employee #${assignment.employee_id}`;
+                        const description = assignment.description ? assignment.description : '-';
+                        return `
+                            <div class="border rounded-3 p-3 bg-light">
+                                <div class="fw-semibold">${escapeHtml(employeeName)}</div>
+                                <div class="text-muted small mt-1">${escapeHtml(description)}</div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    detailsEmployees.innerHTML = '<div class="text-muted">-</div>';
+                }
+            }
+
+            if (detailsNotes) {
+                detailsNotes.textContent = notes ? notes : '-';
+            }
+
+            if (saleDetailsModal) {
+                saleDetailsModal.show();
+            } else if (window.jQuery && typeof jQuery(saleDetailsModalEl).modal === 'function') {
+                jQuery(saleDetailsModalEl).modal('show');
+            } else {
+                saleDetailsModalEl.classList.add('show');
+                saleDetailsModalEl.style.display = 'block';
+                saleDetailsModalEl.removeAttribute('aria-hidden');
+            }
+        }
+
         const table = document.querySelector('.table');
         (table || document).addEventListener('click', function (e) {
+            const detailsBtn = e.target.closest && e.target.closest('.sale-details-btn');
+            if (detailsBtn) {
+                e.preventDefault();
+                openSaleDetails(detailsBtn);
+                return;
+            }
+
             const btn = e.target.closest && e.target.closest('.edit-sale-btn');
             if (!btn) return;
             e.preventDefault();
@@ -447,7 +777,15 @@
             const totalAmount = btn.getAttribute('data-total_amount');
             const spentAmount = btn.getAttribute('data-spent_amount');
             const notes = btn.getAttribute('data-notes');
+            const employeeAssignmentsAttr = btn.getAttribute('data-employee_assignments') || '[]';
             const updateUrl = btn.getAttribute('data-update_url');
+
+            let employeeAssignments = [];
+            try {
+                employeeAssignments = JSON.parse(employeeAssignmentsAttr) || [];
+            } catch (err) {
+                employeeAssignments = [];
+            }
 
             const form = document.getElementById('editSaleForm');
             if (!form) return;
@@ -457,12 +795,14 @@
             const totalInput = form.querySelector('input[name="total_amount"]');
             const spentInput = form.querySelector('input[name="spent_amount"]');
             const notesArea = form.querySelector('textarea[name="product_sold_text"]');
+            const assignmentsContainer = form.querySelector('#edit-employee-assignments-list');
 
             if (saleDateInput) saleDateInput.value = saleDate || '';
             if (branchSelect) branchSelect.value = branchId || '';
             if (totalInput) totalInput.value = totalAmount || '';
             if (spentInput) spentInput.value = spentAmount || '';
             if (notesArea) notesArea.value = notes || '';
+            renderEmployeeAssignments(assignmentsContainer, employeeAssignments.length ? employeeAssignments : [{ employee_id: '', description: '' }]);
 
             if (editModal) {
                 try { editModal.show(); return; } catch (e) { /* fallback below */ }
