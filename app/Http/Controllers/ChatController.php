@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class ChatController extends Controller
 {
@@ -132,6 +133,17 @@ class ChatController extends Controller
     {
         $user = $request->user();
         $this->touchLastSeen($user);
+
+        Log::info('chat.send.enter', [
+            'user_id' => $user?->id ?? null,
+            'route' => $request->path(),
+            'method' => $request->method(),
+            'payload' => $request->all(),
+            'headers' => [
+                'x-csrf-token' => $request->header('X-CSRF-TOKEN'),
+                'cookie' => $request->header('Cookie'),
+            ],
+        ]);
 
         $validated = $request->validate([
             'recipient_id' => 'nullable',
