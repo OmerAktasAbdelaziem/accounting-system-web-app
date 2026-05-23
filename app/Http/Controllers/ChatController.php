@@ -83,7 +83,13 @@ class ChatController extends Controller
             $employee = Employee::query()->findOrFail((int) substr($contact, 9));
             $contactUser = $this->resolveEmployeeUser($employee);
 
-            if (! $contactUser || ! $this->canChatWith($user, $contactUser)) {
+            // If the employee has no linked chat user, return an empty conversation
+            // so the frontend can show a friendly placeholder instead of a 403.
+            if (! $contactUser) {
+                return response()->json(['messages' => []]);
+            }
+
+            if (! $this->canChatWith($user, $contactUser)) {
                 abort(403);
             }
 

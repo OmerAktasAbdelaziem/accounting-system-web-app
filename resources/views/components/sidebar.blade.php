@@ -130,7 +130,7 @@
                             <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
                         @endif
                         <i class="bi {{ $icon }}"></i>
-                        <span>{{ $label }}</span>
+                        <span>{{ is_array($label) ? json_encode($label) : $label }}</span>
                     </a>
                 </li>
             @endforeach
@@ -156,7 +156,7 @@
                                 <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
                             @endif
                             <i class="bi {{ $icon }}"></i>
-                            <span>{{ $label }}</span>
+                            <span>{{ is_array($label) ? json_encode($label) : $label }}</span>
                         </a>
                     </li>
                 @endforeach
@@ -183,7 +183,7 @@
                                 <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
                             @endif
                             <i class="bi {{ $icon }}"></i>
-                            <span>{{ $label }}</span>
+                            <span>{{ is_array($label) ? json_encode($label) : $label }}</span>
                         </a>
                     </li>
                 @endforeach
@@ -210,7 +210,7 @@
                                 <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
                             @endif
                             <i class="bi {{ $icon }}"></i>
-                            <span>{{ $label }}</span>
+                            <span>{{ is_array($label) ? json_encode($label) : $label }}</span>
                         </a>
                     </li>
                 @endforeach
@@ -237,7 +237,7 @@
                                 <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
                             @endif
                             <i class="bi {{ $icon }}"></i>
-                            <span>{{ $label }}</span>
+                            <span>{{ is_array($label) ? json_encode($label) : $label }}</span>
                         </a>
                     </li>
                 @endforeach
