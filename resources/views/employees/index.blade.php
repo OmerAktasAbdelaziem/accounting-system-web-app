@@ -65,8 +65,10 @@
             </tbody>
         </table>
     </div>
+    </div>
+
     @if($employees ?? false)
-        <div class="card-footer bg-white">
+        <div class="mt-3">
             {{ $employees->links() }}
         </div>
     @endif
