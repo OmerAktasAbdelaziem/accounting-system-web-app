@@ -148,6 +148,7 @@
                 <div class="card-body p-4">
                     <form method="POST" action="{{ route('sales.store') }}" class="row g-3">
                         @csrf
+                        @php($employeeRows = old('employee_sales', [['employee_id' => '', 'description' => '']]))
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Branch</label>
                             <select name="branch_id" class="form-select form-select-lg" required>
@@ -171,6 +172,39 @@
                         </div>
 
                         <div class="col-12">
+                            <label class="form-label fw-semibold">Employees Involved</label>
+                            <div class="field-hint mb-2">Choose one or more employees and add what each one sold today.</div>
+                            <div id="employee-sales-list" class="d-grid gap-3">
+                                @foreach($employeeRows as $index => $row)
+                                    <div class="employee-sale-item border rounded-4 p-3 bg-light">
+                                        <div class="row g-3">
+                                            <div class="col-md-4">
+                                                <label class="form-label small text-muted mb-1">Employee</label>
+                                                <select name="employee_sales[{{ $index }}][employee_id]" class="form-select" required>
+                                                    <option value="">Select employee</option>
+                                                    @foreach($employees as $employee)
+                                                        <option value="{{ $employee->id }}" @selected((string) ($row['employee_id'] ?? '') === (string) $employee->id)>{{ $employee->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <label class="form-label small text-muted mb-1">Description</label>
+                                                <textarea name="employee_sales[{{ $index }}][description]" class="form-control" rows="2" placeholder="What this employee sold today...">{{ $row['description'] ?? '' }}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-end mt-2">
+                                            <button type="button" class="btn btn-outline-danger btn-sm remove-employee-row">Remove</button>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            @error('employee_sales')
+                                <div class="text-danger small mt-2">{{ $message }}</div>
+                            @enderror
+                            <button type="button" class="btn btn-outline-secondary btn-sm add-employee-field mt-2">+ Add Employee</button>
+                        </div>
+
+                        <div class="col-12">
                             <label class="form-label fw-semibold">Products Sold <span class="text-muted">(Optional)</span></label>
                             <div class="products-list">
                                 @if(old('product_sold'))
@@ -189,6 +223,29 @@
                             </div>
                             <button type="button" class="btn btn-outline-secondary btn-sm add-product-field mt-2">+ Add Product Field</button>
                         </div>
+
+                        <template id="employee-sale-row-template">
+                            <div class="employee-sale-item border rounded-4 p-3 bg-light">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label small text-muted mb-1">Employee</label>
+                                        <select name="employee_sales[__INDEX__][employee_id]" class="form-select" required>
+                                            <option value="">Select employee</option>
+                                            @foreach($employees as $employee)
+                                                <option value="{{ $employee->id }}">{{ $employee->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <label class="form-label small text-muted mb-1">Description</label>
+                                        <textarea name="employee_sales[__INDEX__][description]" class="form-control" rows="2" placeholder="What this employee sold today..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end mt-2">
+                                    <button type="button" class="btn btn-outline-danger btn-sm remove-employee-row">Remove</button>
+                                </div>
+                            </div>
+                        </template>
 
                         <div class="col-12 d-grid d-md-flex justify-content-md-end gap-2 mt-4">
                             <button type="submit" class="btn btn-primary btn-lg px-4">Save Sale</button>
@@ -240,7 +297,7 @@
     </div>
 
     <div class="card sales-panel">
-        <div class="card-header px-4 py-3">
+    <div class="card-header px-4 py-3">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                 <div>
                     <h5 class="mb-1">Recent Sales</h5>
@@ -248,7 +305,7 @@
                 </div>
                 <span class="badge text-bg-light border">{{ $sales->total() }} results</span>
             </div>
-            <form method="GET" class="row g-2 mt-3 align-items-end">
+            <form id="sales-filter-form" method="GET" class="row g-2 mt-3 align-items-end">
                 <div class="col-lg-4 col-md-6">
                     <label class="form-label mb-0 small">Branch</label>
                     <select name="branch_id" class="form-select">
@@ -271,7 +328,7 @@
                 </div>
             </form>
         </div>
-        <div class="card-body p-0">
+        <div class="card-body p-0" id="sales-list-container">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
@@ -290,7 +347,21 @@
                             <tr>
                                 <td>{{ $sale->sale_date?->format('Y-m-d') }}</td>
                                 <td>{{ $sale->branch?->name ?? '-' }}</td>
-                                <td><strong>{{ $currencySymbol ?? '$' }}{{ number_format((float) $sale->total_amount, 2) }}</strong></td>
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="btn btn-link p-0 align-baseline text-decoration-none fw-bold sale-details-btn"
+                                        data-sale-date="{{ $sale->sale_date?->format('Y-m-d') }}"
+                                        data-branch-name="{{ e($sale->branch?->name ?? '-') }}"
+                                        data-total-amount="{{ number_format((float) $sale->total_amount, 2, '.', '') }}"
+                                        data-spent-amount="{{ number_format((float) ($sale->spent_amount ?? 0), 2, '.', '') }}"
+                                        data-net-amount="{{ number_format((float) $sale->net_income, 2, '.', '') }}"
+                                        data-primary-employee="{{ e($sale->employee?->name ?? '-') }}"
+                                        data-sale-employees='@json($sale->employeeSaleDetails->map(fn ($detail) => ["name" => $detail->employee?->name ?? "Deleted employee", "description" => $detail->description ?? ""]))'
+                                    >
+                                        {{ $currencySymbol ?? '$' }}{{ number_format((float) $sale->total_amount, 2) }}
+                                    </button>
+                                </td>
                                 <td>{{ $currencySymbol ?? '$' }}{{ number_format((float) ($sale->spent_amount ?? 0), 2) }}</td>
                                 <td><strong>{{ $currencySymbol ?? '$' }}{{ number_format((float) $sale->net_income, 2) }}</strong></td>
                                 <td>
@@ -319,7 +390,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-5">
+                                <td colspan="7" class="text-center text-muted py-5">
                                     <div class="py-3">
                                         <i class="bi bi-receipt fs-1 d-block mb-2"></i>
                                         No sales recorded yet.
@@ -338,6 +409,55 @@
         @endif
     </div>
 </div>
+
+        <div class="modal fade" id="saleDetailsModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div>
+                            <h5 class="modal-title mb-0">Sale Details</h5>
+                            <div class="field-hint">Employee breakdown for this sale</div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <div class="small text-muted">Date</div>
+                                <div class="fw-semibold" id="sale-details-date">-</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="small text-muted">Branch</div>
+                                <div class="fw-semibold" id="sale-details-branch">-</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="small text-muted">Primary Employee</div>
+                                <div class="fw-semibold" id="sale-details-primary-employee">-</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="small text-muted">Total Amount</div>
+                                <div class="fw-semibold" id="sale-details-total">-</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="small text-muted">Spent</div>
+                                <div class="fw-semibold" id="sale-details-spent">-</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="small text-muted">Net</div>
+                                <div class="fw-semibold" id="sale-details-net">-</div>
+                            </div>
+                        </div>
+
+                        <div class="card border-0 bg-light">
+                            <div class="card-header bg-transparent border-0 pb-0">
+                                <h6 class="mb-0">Employees involved</h6>
+                            </div>
+                            <ul class="list-group list-group-flush" id="sale-details-list"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Edit Sale Modal -->
         <div class="modal fade" id="editSaleModal" tabindex="-1" aria-hidden="true">
@@ -390,6 +510,15 @@
 
 <script>
 (function () {
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
     // Handle product field management for simplified sales form
     function bindProductList(container) {
         const addBtn = container.closest('form')?.querySelector('.add-product-field');
@@ -424,20 +553,117 @@
         }
     }
 
+    function bindEmployeeList(container) {
+        const addBtn = document.querySelector('.add-employee-field');
+        const template = document.getElementById('employee-sale-row-template');
+        let nextIndex = container.querySelectorAll('.employee-sale-item').length;
+
+        function bindRemoveButtons() {
+            container.querySelectorAll('.remove-employee-row').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (container.querySelectorAll('.employee-sale-item').length > 1) {
+                        btn.closest('.employee-sale-item')?.remove();
+                    }
+                });
+            });
+        }
+
+        bindRemoveButtons();
+
+        if (addBtn && template) {
+            addBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const html = template.innerHTML.replaceAll('__INDEX__', String(nextIndex++));
+                container.insertAdjacentHTML('beforeend', html);
+                bindRemoveButtons();
+            });
+        }
+    }
+
     document.querySelectorAll('.products-list').forEach(bindProductList);
+    const employeeList = document.getElementById('employee-sales-list');
+    if (employeeList) {
+        bindEmployeeList(employeeList);
+    }
 
     // Edit sale modal handling (delegated + safe modal init)
     document.addEventListener('DOMContentLoaded', function () {
         const editModalEl = document.getElementById('editSaleModal');
+        const saleDetailsModalEl = document.getElementById('saleDetailsModal');
         let editModal = null;
+        let saleDetailsModal = null;
         if (editModalEl) {
             if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
                 try { editModal = new bootstrap.Modal(editModalEl); } catch (err) { editModal = null; }
             }
         }
+        if (saleDetailsModalEl) {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                try { saleDetailsModal = new bootstrap.Modal(saleDetailsModalEl); } catch (err) { saleDetailsModal = null; }
+            }
+        }
 
-        const table = document.querySelector('.table');
-        (table || document).addEventListener('click', function (e) {
+        document.addEventListener('click', function (e) {
+            const detailsBtn = e.target.closest && e.target.closest('.sale-details-btn');
+            if (detailsBtn) {
+                e.preventDefault();
+
+                const saleEmployees = (() => {
+                    try {
+                        return JSON.parse(detailsBtn.getAttribute('data-sale-employees') || '[]');
+                    } catch (err) {
+                        return [];
+                    }
+                })();
+
+                const primaryEmployee = detailsBtn.getAttribute('data-primary-employee') || '-';
+                const employees = saleEmployees.length > 0
+                    ? saleEmployees
+                    : (primaryEmployee && primaryEmployee !== '-')
+                        ? [{ name: primaryEmployee, description: 'Primary employee' }]
+                        : [];
+
+                const saleDetailsList = document.getElementById('sale-details-list');
+                const saleDetailsDate = document.getElementById('sale-details-date');
+                const saleDetailsBranch = document.getElementById('sale-details-branch');
+                const saleDetailsPrimary = document.getElementById('sale-details-primary-employee');
+                const saleDetailsTotal = document.getElementById('sale-details-total');
+                const saleDetailsSpent = document.getElementById('sale-details-spent');
+                const saleDetailsNet = document.getElementById('sale-details-net');
+
+                if (saleDetailsDate) saleDetailsDate.textContent = detailsBtn.getAttribute('data-sale-date') || '-';
+                if (saleDetailsBranch) saleDetailsBranch.textContent = detailsBtn.getAttribute('data-branch-name') || '-';
+                if (saleDetailsPrimary) saleDetailsPrimary.textContent = primaryEmployee;
+                if (saleDetailsTotal) saleDetailsTotal.textContent = '{{ $currencySymbol ?? '$' }}' + (detailsBtn.getAttribute('data-total-amount') || '0.00');
+                if (saleDetailsSpent) saleDetailsSpent.textContent = '{{ $currencySymbol ?? '$' }}' + (detailsBtn.getAttribute('data-spent-amount') || '0.00');
+                if (saleDetailsNet) saleDetailsNet.textContent = '{{ $currencySymbol ?? '$' }}' + (detailsBtn.getAttribute('data-net-amount') || '0.00');
+
+                if (saleDetailsList) {
+                    saleDetailsList.innerHTML = employees.length
+                        ? employees.map((employee, index) => `
+                            <li class="list-group-item d-flex justify-content-between align-items-start gap-3">
+                                <div>
+                                    <div class="fw-semibold">${escapeHtml(employee.name || 'Deleted employee')}</div>
+                                    <div class="text-muted small">${escapeHtml(employee.description || 'No description provided.')}</div>
+                                </div>
+                                <span class="badge text-bg-light border">#${index + 1}</span>
+                            </li>
+                        `).join('')
+                        : '<li class="list-group-item text-muted">No employee details recorded for this sale.</li>';
+                }
+
+                if (saleDetailsModal) {
+                    try { saleDetailsModal.show(); return; } catch (err) { /* fallback below */ }
+                }
+                if (saleDetailsModalEl) {
+                    saleDetailsModalEl.classList.add('show');
+                    saleDetailsModalEl.style.display = 'block';
+                    saleDetailsModalEl.removeAttribute('aria-hidden');
+                }
+                return;
+            }
+
             const btn = e.target.closest && e.target.closest('.edit-sale-btn');
             if (!btn) return;
             e.preventDefault();
@@ -482,4 +708,13 @@
     });
 })();
 </script>
+
+@include('components.ajax-list')
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    initAjaxList({ containerId: 'sales-list-container', formSelector: '#sales-filter-form', debounceMs: 300 });
+});
+</script>
+@endpush
 @endsection

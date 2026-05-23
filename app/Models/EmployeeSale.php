@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class EmployeeSale extends Model
@@ -37,7 +38,7 @@ class EmployeeSale extends Model
      */
     public function employee(): BelongsTo
     {
-        return $this->belongsTo(Employee::class);
+        return $this->belongsTo(Employee::class)->withTrashed();
     }
 
     /**
@@ -54,6 +55,14 @@ class EmployeeSale extends Model
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
+    }
+
+    /**
+     * Get all employee participation records for the sale.
+     */
+    public function employeeSaleDetails(): HasMany
+    {
+        return $this->hasMany(EmployeeSaleDetail::class);
     }
 
     /**

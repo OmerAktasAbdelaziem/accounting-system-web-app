@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
+use App\Models\Employee;
 use App\Models\EmployeeSale;
+use App\Models\EmployeeSaleDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SalesController extends Controller
 {
     public function index(Request $request)
     {
-        $sales = EmployeeSale::with('branch')
+        $sales = EmployeeSale::with(['branch', 'employee', 'employeeSaleDetails.employee'])
             ->when($request->filled('branch_id'), function ($query) use ($request) {
                 $query->where('branch_id', $request->integer('branch_id'));
             })
@@ -22,7 +25,7 @@ class SalesController extends Controller
             })
             ->latest('sale_date')
             ->latest('id')
-            ->paginate(20)
+            ->paginate(6)
             ->withQueryString();
 
         $stats = [
@@ -33,8 +36,9 @@ class SalesController extends Controller
         $stats['net_total'] = $stats['gross_total'] - $stats['spent_total'];
 
         $branches = Branch::orderBy('name')->get();
+        $employees = Employee::active()->orderBy('name')->get();
 
-        return view('sales.index', compact('sales', 'stats', 'branches'));
+        return view('sales.index', compact('sales', 'stats', 'branches', 'employees'));
     }
 
     public function store(Request $request)
@@ -44,24 +48,50 @@ class SalesController extends Controller
             'branch_id' => 'required|exists:branches,id',
             'total_amount' => 'required|numeric|min:0.01',
             'spent_amount' => 'nullable|numeric|min:0',
+            'employee_sales' => 'required|array|min:1',
+            'employee_sales.*.employee_id' => 'required|exists:employees,id',
+            'employee_sales.*.description' => 'nullable|string|max:1000',
             'product_sold' => 'nullable|array',
             'product_sold.*' => 'nullable|string|max:255',
         ]);
 
-        // Create a base sale record with nullable employee/product for simplified entry
-        $sale = EmployeeSale::create([
-            'employee_id' => null,
-            'product_id' => null,
-            'quantity' => 1,
-            'unit_price' => $validated['total_amount'],
-            'total_amount' => (float) $validated['total_amount'],
-            'spent_amount' => (float) ($validated['spent_amount'] ?? 0),
-            'sale_date' => $validated['sale_date'],
-            'branch_id' => $validated['branch_id'],
-            'sale_reference' => null,
-            'notes' => !empty($validated['product_sold']) ? implode('\n', array_filter($validated['product_sold'])) : null,
-            'notes_ar' => null,
-        ]);
+        $employeeSales = collect($validated['employee_sales'])
+            ->filter(fn ($row) => !empty($row['employee_id']))
+            ->values();
+
+        if ($employeeSales->isEmpty()) {
+            return back()
+                ->withErrors(['employee_sales' => 'Select at least one employee.'])
+                ->withInput();
+        }
+
+        $sale = DB::transaction(function () use ($validated, $employeeSales) {
+            // Keep a primary employee on the sale for compatibility with existing employee views.
+            $primaryEmployeeId = (int) $employeeSales->first()['employee_id'];
+
+            $sale = EmployeeSale::create([
+                'employee_id' => $primaryEmployeeId,
+                'product_id' => null,
+                'quantity' => 1,
+                'unit_price' => $validated['total_amount'],
+                'total_amount' => (float) $validated['total_amount'],
+                'spent_amount' => (float) ($validated['spent_amount'] ?? 0),
+                'sale_date' => $validated['sale_date'],
+                'branch_id' => $validated['branch_id'],
+                'sale_reference' => null,
+                'notes' => !empty($validated['product_sold']) ? implode('\n', array_filter($validated['product_sold'])) : null,
+                'notes_ar' => null,
+            ]);
+
+            foreach ($employeeSales as $row) {
+                $sale->employeeSaleDetails()->create([
+                    'employee_id' => (int) $row['employee_id'],
+                    'description' => $row['description'] ?? null,
+                ]);
+            }
+
+            return $sale;
+        });
 
         return redirect()->route('sales.index')->with('success', 'Sale recorded successfully.');
     }

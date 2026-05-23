@@ -81,14 +81,23 @@ class Employee extends Model
     }
 
     /**
+     * Get sale participation rows for all employee sales they helped close.
+     */
+    public function saleDetails(): HasMany
+    {
+        return $this->hasMany(EmployeeSaleDetail::class);
+    }
+
+    /**
      * Calculate total sales for a period
      */
     public function calculateSalesForPeriod($month, $year): float
     {
-        return $this->sales()
-            ->whereYear('sale_date', $year)
-            ->whereMonth('sale_date', $month)
-            ->sum('total_amount');
+        $saleIds = $this->saleIdsForPeriod($month, $year);
+
+        return $saleIds->isEmpty()
+            ? 0.0
+            : (float) EmployeeSale::whereIn('id', $saleIds)->sum('total_amount');
     }
 
     /**
@@ -102,10 +111,7 @@ class Employee extends Model
             return ($salesAmount * $this->commission_rate) / 100;
         } else {
             // Fixed amount per sale
-            $salesCount = $this->sales()
-                ->whereYear('sale_date', $year)
-                ->whereMonth('sale_date', $month)
-                ->count();
+            $salesCount = $this->saleIdsForPeriod($month, $year)->count();
             return $this->commission_rate * $salesCount;
         }
     }
@@ -122,10 +128,7 @@ class Employee extends Model
 
         if (!$commission) {
             $salesAmount = $this->calculateSalesForPeriod($month, $year);
-            $salesCount = $this->sales()
-                ->whereYear('sale_date', $year)
-                ->whereMonth('sale_date', $month)
-                ->count();
+            $salesCount = $this->saleIdsForPeriod($month, $year)->count();
             $commissionEarned = $this->calculateCommission($month, $year);
 
             $commission = $this->commissions()->create([
@@ -201,5 +204,25 @@ class Employee extends Model
     public function isEmployed(): bool
     {
         return $this->is_active && !$this->termination_date;
+    }
+
+    /**
+     * Get the unique sale IDs associated with the employee for a period.
+     */
+    protected function saleIdsForPeriod($month, $year)
+    {
+        $primarySaleIds = $this->sales()
+            ->whereYear('sale_date', $year)
+            ->whereMonth('sale_date', $month)
+            ->pluck('id');
+
+        $participatingSaleIds = $this->saleDetails()
+            ->whereHas('sale', function ($query) use ($month, $year) {
+                $query->whereYear('sale_date', $year)
+                    ->whereMonth('sale_date', $month);
+            })
+            ->pluck('employee_sale_id');
+
+        return $primarySaleIds->merge($participatingSaleIds)->unique()->values();
     }
 }
