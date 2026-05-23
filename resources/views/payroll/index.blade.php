@@ -41,41 +41,7 @@
     </div>
 
     <div class="row g-4 mb-4">
-        <div class="col-xl-5">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-0 pb-0">
-                    <h5 class="mb-1">{{ __('Unpaid Net Salaries') }}</h5>
-                    <div class="text-muted small">{{ __('Quick view of the payroll amounts still pending payment.') }}</div>
-                </div>
-                <div class="card-body">
-                    <div class="list-group list-group-flush">
-                        @forelse($unpaidPayrollWidgets ?? [] as $payroll)
-                            @php
-                                $employeeName = '';
-                                if ($payroll->employee) {
-                                    $employeeName = is_string($payroll->employee->name)
-                                        ? $payroll->employee->name
-                                        : (is_array($payroll->employee->name)
-                                            ? ($payroll->employee->name[app()->getLocale()] ?? implode(' - ', $payroll->employee->name))
-                                            : json_encode($payroll->employee->name));
-                                }
-                            @endphp
-                            <div class="list-group-item px-0 d-flex justify-content-between align-items-center">
-                                <div>
-                                    <div class="fw-semibold">{{ $employeeName }}</div>
-                                    <div class="text-muted small">{{ $payroll->month }}/{{ $payroll->year }}</div>
-                                </div>
-                                <div class="fw-bold text-warning">{{ $currencySymbol }}{{ number_format($payroll->calculated_net_salary ?? $payroll->net_salary, 2) }}</div>
-                            </div>
-                        @empty
-                            <div class="text-center text-muted py-4">{{ __('No unpaid payrolls found.') }}</div>
-                        @endforelse
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-7">
+        <div class="col-12">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-0 pb-0">
                     <h5 class="mb-1">{{ __('Active Payrolls') }}</h5>
