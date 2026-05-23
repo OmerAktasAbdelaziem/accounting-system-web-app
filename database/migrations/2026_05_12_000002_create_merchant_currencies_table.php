@@ -21,6 +21,9 @@ return new class extends Migration
 
     public function down(): void
     {
+            if (Schema::hasTable('merchant_currencies')) {
+                return;
+            }
         Schema::dropIfExists('merchant_currencies');
     }
 };
