@@ -597,6 +597,13 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    function normalizeToCurrentOrigin(url) {
+        const parsedUrl = new URL(url, window.location.href);
+        parsedUrl.protocol = window.location.protocol;
+        parsedUrl.host = window.location.host;
+        return parsedUrl.toString();
+    }
+
     async function loadPaginatedSection(link, updateHistory = true) {
         const section = link.closest('[data-pagination-section]');
         if (!section) {
@@ -605,10 +612,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const sectionKey = section.getAttribute('data-pagination-section');
         const sectionId = section.id;
+        const normalizedUrl = normalizeToCurrentOrigin(link.href);
         section.classList.add('opacity-50');
 
         try {
-            const response = await fetch(link.href, {
+            const response = await fetch(normalizedUrl, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'text/html',
@@ -631,7 +639,7 @@ document.addEventListener('DOMContentLoaded', function () {
             section.outerHTML = nextSection.outerHTML;
 
             if (updateHistory) {
-                window.history.pushState({ paginatedUrl: link.href, sectionId: sectionId, sectionKey: sectionKey }, '', link.href);
+                window.history.pushState({ paginatedUrl: normalizedUrl, sectionId: sectionId, sectionKey: sectionKey }, '', normalizedUrl);
             }
         } catch (error) {
             console.error(error);
@@ -660,7 +668,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (activeLink) {
                 loadPaginatedSection(activeLink, false);
             } else {
-                fetch(event.state.paginatedUrl, {
+                fetch(normalizeToCurrentOrigin(event.state.paginatedUrl), {
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
                         'Accept': 'text/html',
