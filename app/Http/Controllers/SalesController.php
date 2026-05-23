@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
-use App\Models\Employee;
 use App\Models\EmployeeSale;
 use Illuminate\Http\Request;
 
@@ -34,9 +33,8 @@ class SalesController extends Controller
         $stats['net_total'] = $stats['gross_total'] - $stats['spent_total'];
 
         $branches = Branch::orderBy('name')->get();
-        $employees = Employee::withTrashed()->orderBy('name')->get();
 
-        return view('sales.index', compact('sales', 'stats', 'branches', 'employees'));
+        return view('sales.index', compact('sales', 'stats', 'branches'));
     }
 
     public function store(Request $request)
@@ -46,31 +44,13 @@ class SalesController extends Controller
             'branch_id' => 'required|exists:branches,id',
             'total_amount' => 'required|numeric|min:0.01',
             'spent_amount' => 'nullable|numeric|min:0',
-            'employee_assignments' => 'required|array|min:1',
-            'employee_assignments.*.employee_id' => 'required|exists:employees,id',
-            'employee_assignments.*.description' => 'nullable|string|max:1000',
             'product_sold' => 'nullable|array',
             'product_sold.*' => 'nullable|string|max:255',
         ]);
 
-        $employeeAssignments = collect($validated['employee_assignments'] ?? [])
-            ->filter(fn ($assignment) => ! empty($assignment['employee_id']))
-            ->map(function ($assignment) {
-                return [
-                    'employee_id' => (int) $assignment['employee_id'],
-                    'description' => isset($assignment['description']) && trim((string) $assignment['description']) !== ''
-                        ? trim((string) $assignment['description'])
-                        : null,
-                ];
-            })
-            ->values()
-            ->all();
-
-        $primaryEmployeeId = $employeeAssignments[0]['employee_id'] ?? null;
-
         // Create a base sale record with nullable employee/product for simplified entry
         $sale = EmployeeSale::create([
-            'employee_id' => $primaryEmployeeId,
+            'employee_id' => null,
             'product_id' => null,
             'quantity' => 1,
             'unit_price' => $validated['total_amount'],
@@ -81,7 +61,6 @@ class SalesController extends Controller
             'sale_reference' => null,
             'notes' => !empty($validated['product_sold']) ? implode('\n', array_filter($validated['product_sold'])) : null,
             'notes_ar' => null,
-            'employee_assignments' => $employeeAssignments,
         ]);
 
         return redirect()->route('sales.index')->with('success', 'Sale recorded successfully.');
@@ -90,8 +69,7 @@ class SalesController extends Controller
     public function edit(EmployeeSale $sale)
     {
         $branches = Branch::orderBy('name')->get();
-        $employees = Employee::withTrashed()->orderBy('name')->get();
-        return view('sales.edit', compact('sale', 'branches', 'employees'));
+        return view('sales.edit', compact('sale', 'branches'));
     }
 
     public function update(Request $request, EmployeeSale $sale)
@@ -101,28 +79,10 @@ class SalesController extends Controller
             'branch_id' => 'required|exists:branches,id',
             'total_amount' => 'required|numeric|min:0.01',
             'spent_amount' => 'nullable|numeric|min:0',
-            'employee_assignments' => 'required|array|min:1',
-            'employee_assignments.*.employee_id' => 'required|exists:employees,id',
-            'employee_assignments.*.description' => 'nullable|string|max:1000',
             'product_sold_text' => 'nullable|string|max:2000',
             'product_sold' => 'nullable|array',
             'product_sold.*' => 'nullable|string|max:255',
         ]);
-
-        $employeeAssignments = collect($validated['employee_assignments'] ?? [])
-            ->filter(fn ($assignment) => ! empty($assignment['employee_id']))
-            ->map(function ($assignment) {
-                return [
-                    'employee_id' => (int) $assignment['employee_id'],
-                    'description' => isset($assignment['description']) && trim((string) $assignment['description']) !== ''
-                        ? trim((string) $assignment['description'])
-                        : null,
-                ];
-            })
-            ->values()
-            ->all();
-
-        $primaryEmployeeId = $employeeAssignments[0]['employee_id'] ?? null;
 
         $notes = null;
         if ($request->filled('product_sold_text')) {
@@ -132,7 +92,6 @@ class SalesController extends Controller
         }
 
         $sale->update([
-            'employee_id' => $primaryEmployeeId,
             'quantity' => 1,
             'unit_price' => $validated['total_amount'],
             'total_amount' => (float) $validated['total_amount'],
@@ -140,7 +99,6 @@ class SalesController extends Controller
             'sale_date' => $validated['sale_date'],
             'branch_id' => $validated['branch_id'],
             'notes' => $notes,
-            'employee_assignments' => $employeeAssignments,
         ]);
 
         return redirect()->route('sales.index')->with('success', 'Sale updated successfully.');

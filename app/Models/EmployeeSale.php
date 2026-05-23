@@ -22,7 +22,6 @@ class EmployeeSale extends Model
         'sale_reference',
         'notes',
         'notes_ar',
-        'employee_assignments',
         'branch_id',
     ];
 
@@ -31,7 +30,6 @@ class EmployeeSale extends Model
         'unit_price' => 'decimal:2',
         'total_amount' => 'decimal:2',
         'spent_amount' => 'decimal:2',
-        'employee_assignments' => 'array',
     ];
 
     /**
@@ -39,7 +37,7 @@ class EmployeeSale extends Model
      */
     public function employee(): BelongsTo
     {
-        return $this->belongsTo(Employee::class)->withTrashed();
+        return $this->belongsTo(Employee::class);
     }
 
     /**
