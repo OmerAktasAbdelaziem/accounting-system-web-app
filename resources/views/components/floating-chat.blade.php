@@ -292,7 +292,7 @@
     data-current-user-id="{{ (int) auth()->id() }}">
     <div class="floating-chat-window" id="floatingChatWindow">
         <div class="floating-chat-header">
-            <div class="floating-chat-title">Live Chat</div>
+            <div class="floating-chat-title" id="floatingChatConversationTitle">Live Chat</div>
             <div class="floating-chat-header-actions">
                 <button type="button" id="floatingChatEnableNotifications" title="Enable desktop notifications">
                     <i class="bi bi-bell"></i>
@@ -344,9 +344,10 @@
         const inputEl = document.getElementById('floatingChatInput');
         const notificationsEl = document.getElementById('floatingChatNotifications');
         const enableNotificationsBtn = document.getElementById('floatingChatEnableNotifications');
+        const conversationTitleEl = document.getElementById('floatingChatConversationTitle');
 
-        let contacts = [];
-        let selectedContactId = null;
+        let sections = [];
+        let selectedContact = null;
         let isOpen = false;
         let contactsTimer = null;
         let messagesTimer = null;
@@ -394,22 +395,29 @@
         }
 
         function renderContacts() {
-            if (!contacts.length) {
+            const hasItems = sections.some((section) => Array.isArray(section.items) && section.items.length);
+            if (!hasItems) {
                 contactsEl.innerHTML = '<div class="p-3 text-muted" style="font-size:12px;">No contacts available.</div>';
                 return;
             }
 
-            contactsEl.innerHTML = contacts.map((contact) => {
-                const isActive = Number(contact.id) === Number(selectedContactId);
-                const meta = contact.merchant_name ? escapeHtml(contact.merchant_name) : escapeHtml(contact.user_type || '');
+            contactsEl.innerHTML = sections.map((section) => {
+                const itemsHtml = (section.items || []).map((contact) => {
+                    const isActive = selectedContact && selectedContact.kind === contact.kind && String(selectedContact.id) === String(contact.id);
+                    return `
+                        <button type="button" class="floating-chat-contact ${isActive ? 'is-active' : ''}" data-contact-kind="${contact.kind}" data-contact-id="${contact.id}">
+                            <div>
+                                <div class="floating-chat-contact-name">${escapeHtml(contact.name || 'User')}</div>
+                                <div class="floating-chat-contact-meta">${escapeHtml(contact.meta || contact.user_type || '')}</div>
+                            </div>
+                            ${contact.unread_count > 0 ? `<span class="floating-chat-contact-badge">${contact.unread_count > 99 ? '99+' : contact.unread_count}</span>` : ''}
+                        </button>
+                    `;
+                }).join('');
+
                 return `
-                    <button type="button" class="floating-chat-contact ${isActive ? 'is-active' : ''}" data-contact-id="${contact.id}">
-                        <div>
-                            <div class="floating-chat-contact-name">${escapeHtml(contact.name || 'User')}</div>
-                            <div class="floating-chat-contact-meta">${meta}</div>
-                        </div>
-                        ${contact.unread_count > 0 ? `<span class="floating-chat-contact-badge">${contact.unread_count > 99 ? '99+' : contact.unread_count}</span>` : ''}
-                    </button>
+                    <div class="px-2 pt-2 pb-1" style="font-size:11px; font-weight:700; color:#777; text-transform:uppercase; letter-spacing:0.08em;">${escapeHtml(section.label || '')}</div>
+                    ${itemsHtml}
                 `;
             }).join('');
         }
@@ -467,19 +475,21 @@
         async function loadContacts() {
             try {
                 const data = await fetchJson(contactsUrl);
-                contacts = Array.isArray(data.contacts) ? data.contacts : [];
+                sections = Array.isArray(data.sections) ? data.sections : [];
                 setUnreadBadge(data.unread_total || 0);
 
-                if (!selectedContactId && contacts.length) {
-                    selectedContactId = Number(contacts[0].id);
+                if (!selectedContact && sections.length && sections[0].items && sections[0].items.length) {
+                    selectedContact = sections[0].items[0];
                 }
 
                 renderContacts();
 
-                contacts.forEach((contact) => {
-                    if (Number(contact.unread_count || 0) > 0 && contact.last_message) {
-                        notifyNewMessage(contact, contact.last_message);
-                    }
+                sections.forEach((section) => {
+                    (section.items || []).forEach((contact) => {
+                        if (Number(contact.unread_count || 0) > 0 && contact.last_message) {
+                            notifyNewMessage(contact, contact.last_message);
+                        }
+                    });
                 });
             } catch (error) {
                 // Keep widget running even if one poll fails.
@@ -487,12 +497,13 @@
         }
 
         async function loadMessages() {
-            if (!selectedContactId) {
+            if (!selectedContact) {
                 messagesEl.innerHTML = '<div class="floating-chat-empty">Choose a contact to start chatting.</div>';
                 return;
             }
 
-            const url = messagesUrlTemplate.replace('__CONTACT__', String(selectedContactId));
+            const url = messagesUrlTemplate.replace('__CONTACT__', selectedContact.kind === 'support' ? 'support' : String(selectedContact.id));
+            conversationTitleEl.textContent = selectedContact.kind === 'support' ? 'Support System' : (selectedContact.name || 'Live Chat');
 
             try {
                 const data = await fetchJson(url);
@@ -518,7 +529,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ contact_id: selectedContactId }),
+                    body: JSON.stringify({ contact_id: selectedContact.kind === 'support' ? 'support' : selectedContact.id }),
                 });
             } catch (error) {
                 // Ignore polling errors to avoid interrupting chat UI.
@@ -527,7 +538,7 @@
 
         async function sendMessage() {
             const text = (inputEl.value || '').trim();
-            if (!text || !selectedContactId) {
+            if (!text || !selectedContact) {
                 return;
             }
 
@@ -542,7 +553,8 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        recipient_id: selectedContactId,
+                        recipient_id: selectedContact.kind === 'support' ? null : selectedContact.id,
+                        recipient_type: selectedContact.kind === 'support' ? 'support' : 'user',
                         message,
                     }),
                 });
@@ -615,12 +627,16 @@
         });
 
         contactsEl.addEventListener('click', async (event) => {
-            const button = event.target.closest('.floating-chat-contact[data-contact-id]');
+            const button = event.target.closest('.floating-chat-contact[data-contact-id][data-contact-kind]');
             if (!button) {
                 return;
             }
 
-            selectedContactId = Number(button.dataset.contactId);
+            selectedContact = {
+                id: button.dataset.contactId,
+                kind: button.dataset.contactKind,
+                name: button.querySelector('.floating-chat-contact-name')?.textContent || 'Chat',
+            };
             renderContacts();
             await Promise.all([loadMessages(), loadContacts()]);
         });
