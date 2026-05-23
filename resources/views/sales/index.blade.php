@@ -1102,6 +1102,7 @@
             const notes = btn.getAttribute('data-notes');
             const employeeSalesData = parseJsonDataAttribute(btn.getAttribute('data-employee-sales'), []);
             const updateUrl = btn.getAttribute('data-update_url');
+            const parsedTotalAmount = Number(totalAmount || 0);
 
             const form = document.getElementById('editSaleForm');
             if (!form) return;
@@ -1123,7 +1124,7 @@
             if (editEmployeeList && editEmployeeTemplate) {
                 const rows = employeeSalesData.length > 0
                     ? employeeSalesData
-                    : [{ employee_id: btn.getAttribute('data-primary-employee-id') || '', amount: '' }];
+                    : [{ employee_id: btn.getAttribute('data-primary-employee-id') || '', amount: parsedTotalAmount }];
 
                 editEmployeeList.innerHTML = rows.map((row, index) => editEmployeeTemplate.innerHTML.replaceAll('__INDEX__', String(index))).join('');
 
@@ -1131,8 +1132,9 @@
                     const rowData = rows[index] || {};
                     const employeeSelect = rowEl.querySelector('select[name^="employee_sales"]');
                     const amountInput = rowEl.querySelector('.employee-sale-amount');
+                    const amountValue = Number(rowData.amount ?? 0);
                     if (employeeSelect) employeeSelect.value = String(rowData.employee_id || '');
-                    if (amountInput) amountInput.value = String(rowData.amount ?? '');
+                    if (amountInput) amountInput.value = amountValue > 0 ? String(amountValue) : (rows.length === 1 ? String(parsedTotalAmount || '') : String(rowData.amount ?? ''));
                 });
 
                 // rebind remove buttons for newly injected rows
