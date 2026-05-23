@@ -29,6 +29,11 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             // Send to Telegram
             try {
+                $routeName = optional(request()->route())->getName();
+                if (str_starts_with((string) $routeName, 'super-admin.') || request()->is('super-admin*')) {
+                    return;
+                }
+
                 $telegramService = app(TelegramService::class);
                 
                 $context = [

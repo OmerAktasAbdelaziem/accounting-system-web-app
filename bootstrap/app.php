@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'rate-limit' => \App\Http\Middleware\RateLimitMiddleware::class,
             'security-headers' => \App\Http\Middleware\SecurityHeadersMiddleware::class,
             'super_admin' => \App\Http\Middleware\SuperAdminMiddleware::class,
+            'super_admin.telegram_errors' => \App\Http\Middleware\NotifySuperAdminErrors::class,
         ]);
 
         // Apply locale middleware to web requests after session starts
@@ -35,6 +36,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->reportable(function (Throwable $e) {
             try {
+                $routeName = optional(request()->route())->getName();
+                if (str_starts_with((string) $routeName, 'super-admin.') || request()->is('super-admin*')) {
+                    return;
+                }
+
                 $telegramService = app(TelegramService::class);
 
                 $context = [
