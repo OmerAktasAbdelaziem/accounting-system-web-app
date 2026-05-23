@@ -13,6 +13,7 @@
                     {{ __('messages.payroll') }} - {{ $payroll->employee?->name }}
                 </h1>
                 <p class="text-muted">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}</p>
+                <span class="badge {{ $payroll->status === 'paid' ? 'bg-success' : 'bg-warning text-dark' }}">{{ strtoupper($payroll->status ?? 'draft') }}</span>
             </div>
             <div class="d-flex gap-2">
                 <a href="{{ route('payroll.payslip', $payroll) }}" class="btn btn-outline-danger" title="Download Payslip">
@@ -77,6 +78,29 @@
                             <small class="text-muted">Additional benefits</small>
                         </div>
                     </div>
+
+                    <div class="row mb-4 pb-3 border-bottom">
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold text-muted">{{ __('messages.deductions') }}</span>
+                                <span class="fs-5 fw-bold text-danger">-{{ $currencySymbol }}{{ number_format($payroll->calculated_deductions ?? $payroll->deductions ?? 0, 2) }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <small class="text-muted">Payroll deductions and advances</small>
+                        </div>
+                    </div>
+
+                    @if($payroll->safe || $payroll->processedBy || $payroll->processed_at)
+                    <div class="alert alert-light border mb-4">
+                        <div class="row g-2">
+                            <div class="col-md-4"><strong>{{ __('messages.status') }}:</strong> {{ strtoupper($payroll->status ?? 'draft') }}</div>
+                            <div class="col-md-4"><strong>Safe:</strong> {{ $payroll->safe?->name ?? '-' }}</div>
+                            <div class="col-md-4"><strong>Processed By:</strong> {{ $payroll->processedBy?->name ?? '-' }}</div>
+                            <div class="col-md-4"><strong>Processed At:</strong> {{ optional($payroll->processed_at)->format('Y-m-d H:i') ?? '-' }}</div>
+                        </div>
+                    </div>
+                    @endif
 
                     <!-- Advances Deduction -->
                     <div class="row mb-4 pb-3 border-bottom">

@@ -8,9 +8,12 @@ use App\Models\EmployeeCommission;
 use App\Models\Commission;
 use App\Models\EmployeeAdvance;
 use App\Models\EmployeeDeduction;
+use App\Models\Safe;
+use App\Models\SafeOutcome;
 use App\Models\ChartOfAccount;
 use App\Models\JournalEntry;
 use App\Support\SimplePdf;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class PayrollController extends Controller
@@ -73,39 +76,71 @@ class PayrollController extends Controller
         ];
     }
 
+    private function applyPayrollCalculations(Payroll $payroll): Payroll
+    {
+        if ($payroll->employee) {
+            $payroll->calculated_commission = $this->calculateCommissionForEmployeePeriod(
+                $payroll->employee,
+                (int) $payroll->month,
+                (int) $payroll->year
+            );
+
+            $payroll->calculated_deductions = $this->calculateDeductionsForEmployeePeriod(
+                $payroll->employee,
+                (int) $payroll->month,
+                (int) $payroll->year
+            );
+
+            $totals = $this->calculateGrossAndNet(
+                (float) $payroll->basic_salary,
+                (float) $payroll->calculated_commission,
+                (float) ($payroll->allowances ?? 0),
+                (float) $payroll->calculated_deductions
+            );
+
+            $payroll->gross_salary = $totals['gross'];
+            $payroll->calculated_net_salary = $totals['net'];
+        }
+
+        return $payroll;
+    }
+
     public function index()
     {
-        $payrolls = Payroll::with('employee.branches')->latest()->paginate(20);
+        $activePayrolls = Payroll::with(['employee.branches', 'safe'])
+            ->unpaid()
+            ->latest()
+            ->paginate(20);
 
-        $payrolls->getCollection()->transform(function (Payroll $payroll) {
-            if ($payroll->employee) {
-                $payroll->calculated_commission = $this->calculateCommissionForEmployeePeriod(
-                    $payroll->employee,
-                    (int) $payroll->month,
-                    (int) $payroll->year
-                );
+        $activePayrolls->getCollection()->transform(fn (Payroll $payroll) => $this->applyPayrollCalculations($payroll));
 
-                $payroll->calculated_deductions = $this->calculateDeductionsForEmployeePeriod(
-                    $payroll->employee,
-                    (int) $payroll->month,
-                    (int) $payroll->year
-                );
+        $paidPayrolls = Payroll::with(['employee.branches', 'safe'])
+            ->paid()
+            ->latest('processed_at')
+            ->paginate(15, ['*'], 'paid_page');
 
-                $totals = $this->calculateGrossAndNet(
-                    (float) $payroll->basic_salary,
-                    (float) $payroll->calculated_commission,
-                    (float) ($payroll->allowances ?? 0),
-                    (float) $payroll->calculated_deductions
-                );
+        $paidPayrolls->getCollection()->transform(fn (Payroll $payroll) => $this->applyPayrollCalculations($payroll));
 
-                $payroll->gross_salary = $totals['gross'];
-                $payroll->calculated_net_salary = $totals['net'];
-            }
+        $unpaidPayrollWidgets = Payroll::with('employee')
+            ->unpaid()
+            ->latest()
+            ->get()
+            ->transform(fn (Payroll $payroll) => $this->applyPayrollCalculations($payroll));
 
-            return $payroll;
-        });
+        $unpaidNetSalaryTotal = (float) $unpaidPayrollWidgets->sum(fn (Payroll $payroll) => (float) ($payroll->calculated_net_salary ?? $payroll->net_salary ?? 0));
+        $unpaidPayrollCount = $unpaidPayrollWidgets->count();
+        $paidPayrollCount = $paidPayrolls->total();
+        $safes = Safe::where('is_active', true)->orderBy('name')->get();
 
-        return view('payroll.index', compact('payrolls'));
+        return view('payroll.index', compact(
+            'activePayrolls',
+            'paidPayrolls',
+            'unpaidPayrollWidgets',
+            'unpaidNetSalaryTotal',
+            'unpaidPayrollCount',
+            'paidPayrollCount',
+            'safes'
+        ));
     }
 
     public function create()
@@ -151,7 +186,7 @@ class PayrollController extends Controller
 
     public function show(Payroll $payroll)
     {
-        $payroll->loadMissing('employee.branches');
+        $payroll->loadMissing('employee.branches', 'safe', 'processedBy');
 
         $commissions = collect();
         if ($payroll->employee) {
@@ -190,29 +225,7 @@ class PayrollController extends Controller
         $employees = Employee::pluck('name', 'id');
 
         $payroll->loadMissing('employee.branches');
-        if ($payroll->employee) {
-            $payroll->calculated_commission = $this->calculateCommissionForEmployeePeriod(
-                $payroll->employee,
-                (int) $payroll->month,
-                (int) $payroll->year
-            );
-
-            $payroll->calculated_deductions = $this->calculateDeductionsForEmployeePeriod(
-                $payroll->employee,
-                (int) $payroll->month,
-                (int) $payroll->year
-            );
-
-            $totals = $this->calculateGrossAndNet(
-                (float) $payroll->basic_salary,
-                (float) $payroll->calculated_commission,
-                (float) ($payroll->allowances ?? 0),
-                (float) $payroll->calculated_deductions
-            );
-
-            $payroll->gross_salary = $totals['gross'];
-            $payroll->calculated_net_salary = $totals['net'];
-        }
+        $this->applyPayrollCalculations($payroll);
         
         return view('payroll.edit', compact('payroll', 'employees'));
     }
@@ -222,6 +235,7 @@ class PayrollController extends Controller
         $data = $request->validate([
             'basic_salary' => 'required|numeric|min:0',
             'allowances' => 'nullable|numeric|min:0',
+            'deductions' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
         ]);
 
@@ -233,7 +247,9 @@ class PayrollController extends Controller
         $commission = $this->calculateCommissionForEmployeePeriod($employee, $month, $year);
 
         $allowances = (float) ($data['allowances'] ?? 0);
-        $deductions = $this->calculateDeductionsForEmployeePeriod($employee, $month, $year);
+        $deductions = array_key_exists('deductions', $data) && $data['deductions'] !== null
+            ? (float) $data['deductions']
+            : (float) $payroll->deductions;
         $totals = $this->calculateGrossAndNet((float) $data['basic_salary'], $commission, $allowances, $deductions);
 
         $data['commission'] = $commission;
@@ -244,6 +260,76 @@ class PayrollController extends Controller
         $payroll->update($data);
 
         return redirect()->route('payroll.index')->with('success', __('messages.updated'));
+    }
+
+    public function pay(Request $request, Payroll $payroll)
+    {
+        if ($payroll->isPaid()) {
+            return back()->with('warning', 'Payroll is already paid.');
+        }
+
+        $data = $request->validate([
+            'safe_id' => 'required|exists:safes,id,is_active,1',
+        ]);
+
+        $payroll->loadMissing('employee.branches');
+        $employee = $payroll->employee()->with('branches')->firstOrFail();
+        $safe = Safe::findOrFail($data['safe_id']);
+
+        $commission = $this->calculateCommissionForEmployeePeriod($employee, (int) $payroll->month, (int) $payroll->year);
+        $allowances = (float) ($payroll->allowances ?? 0);
+        $deductions = (float) ($payroll->deductions ?? 0);
+        $totals = $this->calculateGrossAndNet((float) $payroll->basic_salary, $commission, $allowances, $deductions);
+
+        if ((float) $safe->balance < (float) $totals['net']) {
+            return back()->withErrors(['safe_id' => 'Selected safe does not have enough balance for this payroll payment.']);
+        }
+
+        DB::transaction(function () use ($payroll, $employee, $safe, $commission, $allowances, $deductions, $totals) {
+            $now = now();
+            $month = (int) $payroll->month;
+            $year = (int) $payroll->year;
+
+            $payroll->update([
+                'commission' => $commission,
+                'allowances' => $allowances,
+                'deductions' => $deductions,
+                'net_salary' => $totals['net'],
+                'status' => 'paid',
+                'safe_id' => $safe->id,
+                'processed_by' => auth()->id(),
+                'processed_at' => $now,
+            ]);
+
+            SafeOutcome::create([
+                'safe_id' => $safe->id,
+                'amount' => $totals['net'],
+                'description' => sprintf('Payroll payment for %s (%s/%s)', $employee->name, $month, $year),
+                'reference' => 'Payroll #' . $payroll->id,
+                'reference_type' => 'payroll',
+            ]);
+
+            $safe->update([
+                'balance' => (float) $safe->balance - (float) $totals['net'],
+            ]);
+
+            Commission::query()
+                ->where('employee_id', $employee->id)
+                ->whereMonth('commission_date', $month)
+                ->whereYear('commission_date', $year)
+                ->where('status', '!=', 'paid')
+                ->get()
+                ->each
+                ->markAsPaid();
+
+            $employeeCommission = $employee->getOrCreateCommission($month, $year);
+            $employeeCommission->update([
+                'status' => 'paid',
+                'paid_at' => $now,
+            ]);
+        });
+
+        return redirect()->route('payroll.index')->with('success', 'Payroll marked as paid successfully.');
     }
 
     public function destroy(Payroll $payroll)

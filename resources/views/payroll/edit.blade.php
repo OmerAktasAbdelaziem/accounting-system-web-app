@@ -38,6 +38,12 @@
             <small class="form-text text-muted">Additional benefits/bonuses (optional)</small>
         </div>
         <div class="mb-3">
+            <label class="form-label">{{ __('Deductions') }}</label>
+            <input type="text" name="deductions" inputmode="numeric" class="form-control @error('deductions') is-invalid @enderror" value="{{ old('deductions', $payroll->deductions ?? 0) }}">
+            @error('deductions')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            <small class="form-text text-muted">Manual deductions / advances to apply (optional)</small>
+        </div>
+        <div class="mb-3">
             <label class="form-label">{{ __('Notes') }}</label>
             <textarea name="notes" class="form-control">{{ old('notes', $payroll->notes) }}</textarea>
         </div>

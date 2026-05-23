@@ -159,6 +159,7 @@ Route::middleware('auth')->group(function () {
         Route::get('{payroll}', [PayrollController::class, 'show'])->name('show');
         Route::get('{payroll}/edit', [PayrollController::class, 'edit'])->name('edit');
         Route::put('{payroll}', [PayrollController::class, 'update'])->name('update');
+        Route::post('{payroll}/pay', [PayrollController::class, 'pay'])->name('pay');
         Route::delete('{payroll}', [PayrollController::class, 'destroy'])->name('destroy');
         Route::get('{payroll}/payslip', [PayrollController::class, 'downloadPayslip'])->name('payslip');
     });

@@ -19,6 +19,10 @@ class Payroll extends Model
         'allowances',
         'deductions',
         'net_salary',
+        'status',
+        'safe_id',
+        'processed_by',
+        'processed_at',
         'notes',
     ];
 
@@ -28,11 +32,44 @@ class Payroll extends Model
         'allowances' => 'decimal:2',
         'deductions' => 'decimal:2',
         'net_salary' => 'decimal:2',
+        'processed_at' => 'datetime',
     ];
 
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    public function safe(): BelongsTo
+    {
+        return $this->belongsTo(Safe::class);
+    }
+
+    public function processedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'processed_by');
+    }
+
+    public function scopeUnpaid($query)
+    {
+        return $query->where('status', '!=', 'paid');
+    }
+
+    public function scopePaid($query)
+    {
+        return $query->where('status', 'paid');
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->status === 'paid';
+    }
+
+    public function markAsPaid(): bool
+    {
+        $this->status = 'paid';
+
+        return $this->save();
     }
 
     /**

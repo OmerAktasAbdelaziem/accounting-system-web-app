@@ -19,6 +19,7 @@ class EmployeeCommission extends Model
         'sales_count',
         'commission_earned',
         'bonus',
+        'status',
         'notes',
         'notes_ar',
         'approved_at',
@@ -47,5 +48,10 @@ class EmployeeCommission extends Model
     public function getTotalAmountAttribute(): float
     {
         return $this->commission_earned + $this->bonus;
+    }
+
+    public function scopePaid($query)
+    {
+        return $query->where('status', 'paid');
     }
 }

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Reports;
 
 use App\Http\Controllers\Controller;
+use App\Models\Commission;
+use App\Models\Payroll;
 use App\Models\JournalEntry;
 use App\Models\Product;
 use App\Models\Employee;
+use App\Models\SafeOutcome;
 use Illuminate\Http\Request;
 use App\Support\SimplePdf;
 
@@ -64,7 +67,38 @@ class ReportController extends Controller
             ->when($branchId, fn ($query) => $query->where('branch_id', $branchId))
             ->latest()
             ->paginate(20);
-        return view('reports.financial', compact('entries', 'branchId', 'fromDate', 'toDate'));
+
+        $payrollSettlements = Payroll::with(['employee', 'safe'])
+            ->paid()
+            ->when($fromDate, fn ($query) => $query->whereDate('processed_at', '>=', $fromDate))
+            ->when($toDate, fn ($query) => $query->whereDate('processed_at', '<=', $toDate))
+            ->when($branchId, fn ($query) => $query->whereHas('employee.branches', function ($branchQuery) use ($branchId) {
+                $branchQuery->where('branches.id', $branchId);
+            }))
+            ->latest('processed_at')
+            ->get();
+
+        $commissionSettlements = Commission::with('employee')
+            ->where('status', 'paid')
+            ->when($fromDate, fn ($query) => $query->whereDate('updated_at', '>=', $fromDate))
+            ->when($toDate, fn ($query) => $query->whereDate('updated_at', '<=', $toDate))
+            ->when($branchId, fn ($query) => $query->whereHas('employee.branches', function ($branchQuery) use ($branchId) {
+                $branchQuery->where('branches.id', $branchId);
+            }))
+            ->latest('updated_at')
+            ->get();
+
+        $safePayrollOutcomes = SafeOutcome::with('safe')
+            ->where('reference_type', 'payroll')
+            ->when($fromDate, fn ($query) => $query->whereDate('created_at', '>=', $fromDate))
+            ->when($toDate, fn ($query) => $query->whereDate('created_at', '<=', $toDate))
+            ->when($branchId, fn ($query) => $query->whereHas('safe.branches', function ($branchQuery) use ($branchId) {
+                $branchQuery->where('branches.id', $branchId);
+            }))
+            ->latest()
+            ->get();
+
+        return view('reports.financial', compact('entries', 'branchId', 'fromDate', 'toDate', 'payrollSettlements', 'commissionSettlements', 'safePayrollOutcomes'));
     }
 
     public function generatePdf(Request $request)
@@ -148,10 +182,42 @@ class ReportController extends Controller
             ->latest()
             ->get();
 
+        $payrollSettlements = Payroll::with(['employee', 'safe'])
+            ->paid()
+            ->when($fromDate, fn ($query) => $query->whereDate('processed_at', '>=', $fromDate))
+            ->when($toDate, fn ($query) => $query->whereDate('processed_at', '<=', $toDate))
+            ->when($branchId, fn ($query) => $query->whereHas('employee.branches', function ($branchQuery) use ($branchId) {
+                $branchQuery->where('branches.id', $branchId);
+            }))
+            ->latest('processed_at')
+            ->get();
+
+        $commissionSettlements = Commission::with('employee')
+            ->where('status', 'paid')
+            ->when($fromDate, fn ($query) => $query->whereDate('updated_at', '>=', $fromDate))
+            ->when($toDate, fn ($query) => $query->whereDate('updated_at', '<=', $toDate))
+            ->when($branchId, fn ($query) => $query->whereHas('employee.branches', function ($branchQuery) use ($branchId) {
+                $branchQuery->where('branches.id', $branchId);
+            }))
+            ->latest('updated_at')
+            ->get();
+
+        $safePayrollOutcomes = SafeOutcome::with('safe')
+            ->where('reference_type', 'payroll')
+            ->when($fromDate, fn ($query) => $query->whereDate('created_at', '>=', $fromDate))
+            ->when($toDate, fn ($query) => $query->whereDate('created_at', '<=', $toDate))
+            ->when($branchId, fn ($query) => $query->whereHas('safe.branches', function ($branchQuery) use ($branchId) {
+                $branchQuery->where('branches.id', $branchId);
+            }))
+            ->latest()
+            ->get();
+
         $lines = [
             'Financial report export',
             'Generated: ' . now()->format('Y-m-d H:i'),
             'Entries: ' . $entries->count(),
+            'Paid payrolls: ' . $payrollSettlements->count(),
+            'Paid commissions: ' . $commissionSettlements->count(),
         ];
 
         foreach ($entries as $entry) {
@@ -164,6 +230,49 @@ class ReportController extends Controller
                     $item->debit > 0 ? number_format((float) $item->debit, 2) : '-',
                     $item->credit > 0 ? number_format((float) $item->credit, 2) : '-',
                     $item->description ?? '-'
+                );
+            }
+        }
+
+        if ($payrollSettlements->isNotEmpty()) {
+            $lines[] = 'Payroll settlements';
+
+            foreach ($payrollSettlements as $payroll) {
+                $lines[] = sprintf(
+                    '%s | %s | Safe: %s | Net: %s | Paid: %s',
+                    optional($payroll->processed_at)->format('Y-m-d') ?? '-',
+                    $payroll->employee?->name ?? '-',
+                    $payroll->safe?->name ?? '-',
+                    number_format((float) $payroll->net_salary, 2),
+                    optional($payroll->processed_at)->format('H:i') ?? '-'
+                );
+            }
+        }
+
+        if ($commissionSettlements->isNotEmpty()) {
+            $lines[] = 'Commission settlements';
+
+            foreach ($commissionSettlements as $commission) {
+                $lines[] = sprintf(
+                    '%s | %s | Commission: %s | Status: %s',
+                    optional($commission->updated_at)->format('Y-m-d') ?? '-',
+                    $commission->employee?->name ?? '-',
+                    number_format((float) $commission->commission_amount, 2),
+                    $commission->status ?? '-'
+                );
+            }
+        }
+
+        if ($safePayrollOutcomes->isNotEmpty()) {
+            $lines[] = 'Payroll safe outcomes';
+
+            foreach ($safePayrollOutcomes as $outcome) {
+                $lines[] = sprintf(
+                    '%s | Safe: %s | Amount: %s | %s',
+                    optional($outcome->created_at)->format('Y-m-d') ?? '-',
+                    $outcome->safe?->name ?? '-',
+                    number_format((float) $outcome->amount, 2),
+                    $outcome->description ?? '-'
                 );
             }
         }
