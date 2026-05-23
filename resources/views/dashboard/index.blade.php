@@ -367,7 +367,7 @@
                     <div class="hero-kpi-value" id="hero-total-sales">{{ $currencySymbol }}{{ number_format($totalSales ?? 0, 2) }}</div>
                 </div>
                 <div class="hero-kpi">
-                    <span class="hero-kpi-label">Balance</span>
+                    <span class="hero-kpi-label">Total Balance</span>
                     <div class="hero-kpi-value" id="hero-safe-balance">{{ $currencySymbol }}{{ number_format($safeBalance ?? 0, 2) }}</div>
                 </div>
                 <div class="hero-kpi">
