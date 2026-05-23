@@ -82,12 +82,24 @@
                     <div class="row mb-4 pb-3 border-bottom">
                         <div class="col-md-6">
                             <div class="d-flex justify-content-between align-items-center">
-                                    <span class="fw-bold text-muted">{{ __('messages.deductions') }}</span>
-                                    <span class="fs-5 fw-bold text-danger">-{{ $currencySymbol }}{{ number_format($payroll->deductions ?? 0, 2) }}</span>
+                                <span class="fw-bold text-muted">Total Before Deductions</span>
+                                <span class="fs-5 fw-bold">{{ $currencySymbol }}{{ number_format($payroll->gross_salary ?? (($payroll->basic_salary ?? 0) + ($payroll->calculated_commission ?? $payroll->commission ?? 0) + ($payroll->allowances ?? 0)), 2) }}</span>
                             </div>
                         </div>
                         <div class="col-md-6 text-end">
-                            <small class="text-muted">Employee advances (deducted)</small>
+                            <small class="text-muted">Basic salary + commission + allowances</small>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 pb-3 border-bottom">
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-muted">{{ __('messages.deductions') }}</span>
+                                    <span class="fs-5 fw-bold text-danger">-{{ $currencySymbol }}{{ number_format($payroll->calculated_deductions ?? $payroll->deductions ?? 0, 2) }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <small class="text-muted">Advances + deduction records</small>
                         </div>
                     </div>
 
@@ -97,7 +109,7 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="fw-bold" style="font-size: 1.1rem;">{{ __('messages.net_salary') }}</span>
                                 <span class="fs-4 fw-bold text-success" style="color: #27ae60 !important;">
-                                    {{ $currencySymbol }}{{ number_format($payroll->net_salary, 2) }}
+                                    {{ $currencySymbol }}{{ number_format($payroll->calculated_net_salary ?? $payroll->net_salary, 2) }}
                                 </span>
                             </div>
                         </div>

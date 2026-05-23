@@ -25,7 +25,7 @@
                         <td>{{ $payroll->id }}</td>
                         <td>{{ $payroll->employee ? (is_string($payroll->employee->name) ? $payroll->employee->name : (is_array($payroll->employee->name) ? ($payroll->employee->name[app()->getLocale()] ?? implode(' - ', $payroll->employee->name)) : json_encode($payroll->employee->name))) : '' }}</td>
                         <td>{{ $currencySymbol }}{{ number_format($payroll->calculated_commission ?? $payroll->commission, 2) }}</td>
-                        <td>{{ $currencySymbol }}{{ number_format($payroll->net_salary,2) }}</td>
+                        <td>{{ $currencySymbol }}{{ number_format($payroll->calculated_net_salary ?? $payroll->net_salary, 2) }}</td>
                         <td class="action-buttons">
                             <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
                             <a href="{{ route('payroll.edit', $payroll) }}" class="btn btn-sm btn-outline-primary">{{ __('Edit') }}</a>

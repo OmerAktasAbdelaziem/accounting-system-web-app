@@ -7,6 +7,7 @@ use App\Models\Employee;
 use App\Models\EmployeeCommission;
 use App\Models\Commission;
 use App\Models\EmployeeAdvance;
+use App\Models\EmployeeDeduction;
 use App\Models\ChartOfAccount;
 use App\Models\JournalEntry;
 use App\Support\SimplePdf;
@@ -44,6 +45,34 @@ class PayrollController extends Controller
             ->get();
     }
 
+    private function calculateDeductionsForEmployeePeriod(Employee $employee, int $month, int $year): float
+    {
+        $advances = (float) EmployeeAdvance::query()
+            ->where('employee_id', $employee->id)
+            ->whereMonth('advance_date', $month)
+            ->whereYear('advance_date', $year)
+            ->sum('amount');
+
+        $deductions = (float) EmployeeDeduction::query()
+            ->where('employee_id', $employee->id)
+            ->where('month', $month)
+            ->where('year', $year)
+            ->sum('amount');
+
+        return $advances + $deductions;
+    }
+
+    private function calculateGrossAndNet(float $basicSalary, float $commission, float $allowances, float $deductions): array
+    {
+        $gross = $basicSalary + $commission + $allowances;
+        $net = $gross - $deductions;
+
+        return [
+            'gross' => $gross,
+            'net' => $net,
+        ];
+    }
+
     public function index()
     {
         $payrolls = Payroll::with('employee.branches')->latest()->paginate(20);
@@ -55,6 +84,22 @@ class PayrollController extends Controller
                     (int) $payroll->month,
                     (int) $payroll->year
                 );
+
+                $payroll->calculated_deductions = $this->calculateDeductionsForEmployeePeriod(
+                    $payroll->employee,
+                    (int) $payroll->month,
+                    (int) $payroll->year
+                );
+
+                $totals = $this->calculateGrossAndNet(
+                    (float) $payroll->basic_salary,
+                    (float) $payroll->calculated_commission,
+                    (float) ($payroll->allowances ?? 0),
+                    (float) $payroll->calculated_deductions
+                );
+
+                $payroll->gross_salary = $totals['gross'];
+                $payroll->calculated_net_salary = $totals['net'];
             }
 
             return $payroll;
@@ -88,15 +133,14 @@ class PayrollController extends Controller
 
         $employee = Employee::with('branches')->findOrFail($data['employee_id']);
         $commission = $this->calculateCommissionForEmployeePeriod($employee, $month, $year);
+        $allowances = (float) ($data['allowances'] ?? 0);
+        $deductions = $this->calculateDeductionsForEmployeePeriod($employee, $month, $year);
+        $totals = $this->calculateGrossAndNet((float) $data['basic_salary'], $commission, $allowances, $deductions);
+
         $data['commission'] = $commission;
-        $data['allowances'] = $data['allowances'] ?? 0;
-
-        // Get approved advances for this employee
-        $advances = EmployeeAdvance::where('employee_id', $data['employee_id'])
-            ->sum('amount') ?? 0;
-
-        $data['deductions'] = $advances;
-        $data['net_salary'] = $data['basic_salary'] + $commission + ($data['allowances'] ?? 0) - $advances;
+        $data['allowances'] = $allowances;
+        $data['deductions'] = $deductions;
+        $data['net_salary'] = $totals['net'];
 
         Payroll::create($data);
 
@@ -118,6 +162,24 @@ class PayrollController extends Controller
 
         $payroll->calculated_commission = (float) $commissions->sum('commission_amount');
 
+        if ($payroll->employee) {
+            $payroll->calculated_deductions = $this->calculateDeductionsForEmployeePeriod(
+                $payroll->employee,
+                (int) $payroll->month,
+                (int) $payroll->year
+            );
+
+            $totals = $this->calculateGrossAndNet(
+                (float) $payroll->basic_salary,
+                (float) $payroll->calculated_commission,
+                (float) ($payroll->allowances ?? 0),
+                (float) $payroll->calculated_deductions
+            );
+
+            $payroll->gross_salary = $totals['gross'];
+            $payroll->calculated_net_salary = $totals['net'];
+        }
+
         return view('payroll.show', compact('payroll', 'commissions'));
     }
 
@@ -132,6 +194,22 @@ class PayrollController extends Controller
                 (int) $payroll->month,
                 (int) $payroll->year
             );
+
+            $payroll->calculated_deductions = $this->calculateDeductionsForEmployeePeriod(
+                $payroll->employee,
+                (int) $payroll->month,
+                (int) $payroll->year
+            );
+
+            $totals = $this->calculateGrossAndNet(
+                (float) $payroll->basic_salary,
+                (float) $payroll->calculated_commission,
+                (float) ($payroll->allowances ?? 0),
+                (float) $payroll->calculated_deductions
+            );
+
+            $payroll->gross_salary = $totals['gross'];
+            $payroll->calculated_net_salary = $totals['net'];
         }
         
         return view('payroll.edit', compact('payroll', 'employees'));
@@ -151,16 +229,15 @@ class PayrollController extends Controller
 
         $employee = $payroll->employee()->with('branches')->firstOrFail();
         $commission = $this->calculateCommissionForEmployeePeriod($employee, $month, $year);
-        
+
+        $allowances = (float) ($data['allowances'] ?? 0);
+        $deductions = $this->calculateDeductionsForEmployeePeriod($employee, $month, $year);
+        $totals = $this->calculateGrossAndNet((float) $data['basic_salary'], $commission, $allowances, $deductions);
+
         $data['commission'] = $commission;
-        $data['allowances'] = $data['allowances'] ?? 0;
-
-        // Get approved advances for this employee
-        $advances = EmployeeAdvance::where('employee_id', $payroll->employee_id)
-            ->sum('amount') ?? 0;
-
-        $data['deductions'] = $advances;
-        $data['net_salary'] = $data['basic_salary'] + $commission + ($data['allowances'] ?? 0) - $advances;
+        $data['allowances'] = $allowances;
+        $data['deductions'] = $deductions;
+        $data['net_salary'] = $totals['net'];
 
         $payroll->update($data);
 
@@ -180,14 +257,26 @@ class PayrollController extends Controller
             ? $this->calculateCommissionForEmployeePeriod($payroll->employee, (int) $payroll->month, (int) $payroll->year)
             : (float) $payroll->commission;
 
+        $deductions = $payroll->employee
+            ? $this->calculateDeductionsForEmployeePeriod($payroll->employee, (int) $payroll->month, (int) $payroll->year)
+            : (float) $payroll->deductions;
+
+        $totals = $this->calculateGrossAndNet(
+            (float) $payroll->basic_salary,
+            (float) $commission,
+            (float) ($payroll->allowances ?? 0),
+            (float) $deductions
+        );
+
         $lines = [
             'Employee: ' . ($payroll->employee?->name ?? '-'),
             'Month/Year: ' . $payroll->month . '/' . $payroll->year,
             'Basic Salary: ' . number_format((float) $payroll->basic_salary, 2),
             'Commission: ' . number_format((float) $commission, 2),
             'Allowances: ' . number_format((float) $payroll->allowances, 2),
-            'Deductions: ' . number_format((float) $payroll->deductions, 2),
-            'Net Salary: ' . number_format((float) $payroll->net_salary, 2),
+            'Total Before Deductions: ' . number_format((float) $totals['gross'], 2),
+            'Deductions: ' . number_format((float) $deductions, 2),
+            'Net Salary: ' . number_format((float) $totals['net'], 2),
         ];
 
         $pdf = SimplePdf::textDocument('Payslip ' . ($payroll->employee?->name ?? 'Employee'), $lines);
