@@ -169,7 +169,14 @@ class CommissionController extends Controller
     public function destroy(Commission $commission)
     {
         $commission->delete();
-        return response()->json(['success' => true]);
+
+        if (request()->wantsJson()) {
+            return response()->json(['success' => true]);
+        }
+
+        return redirect()
+            ->route('commissions.index')
+            ->with('success', 'Commission deleted successfully.');
     }
 
     public function pay(Commission $commission)
