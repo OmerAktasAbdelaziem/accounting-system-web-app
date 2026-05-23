@@ -66,6 +66,13 @@
                             </div>
 
                             <div class="col-12">
+                                <label class="form-label fw-semibold">{{ __('Deductions') }}</label>
+                                <input type="text" name="deductions" inputmode="numeric" class="form-control create-field @error('deductions') is-invalid @enderror" value="{{ old('deductions', 0) }}">
+                                @error('deductions')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                <small class="form-text text-muted">Manual deductions / advances to apply (optional)</small>
+                            </div>
+
+                            <div class="col-12">
                                 <label class="form-label fw-semibold">{{ __('Notes') }}</label>
                                 <textarea name="notes" class="form-control create-field">{{ old('notes') }}</textarea>
                             </div>

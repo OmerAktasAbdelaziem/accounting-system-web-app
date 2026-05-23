@@ -124,6 +124,7 @@ class PayrollController extends Controller
             'month' => 'required|integer|min:1|max:12',
             'basic_salary' => 'required|numeric|min:0',
             'allowances' => 'nullable|numeric|min:0',
+            'deductions' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
         ]);
 
@@ -134,7 +135,8 @@ class PayrollController extends Controller
         $employee = Employee::with('branches')->findOrFail($data['employee_id']);
         $commission = $this->calculateCommissionForEmployeePeriod($employee, $month, $year);
         $allowances = (float) ($data['allowances'] ?? 0);
-        $deductions = $this->calculateDeductionsForEmployeePeriod($employee, $month, $year);
+        // Allow manual override of deductions if provided in the form
+        $deductions = isset($data['deductions']) ? (float) $data['deductions'] : $this->calculateDeductionsForEmployeePeriod($employee, $month, $year);
         $totals = $this->calculateGrossAndNet((float) $data['basic_salary'], $commission, $allowances, $deductions);
 
         $data['commission'] = $commission;

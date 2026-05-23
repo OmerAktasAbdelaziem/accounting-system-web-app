@@ -119,6 +119,46 @@
         </div>
     </div>
 @endif
+ 
+<!-- Paid Commissions History -->
+<div class="card mt-4">
+    <div class="card-header bg-secondary text-white">
+        <h5 class="mb-0"><i class="bi bi-clock-history"></i> Paid Commissions History</h5>
+    </div>
+    <div class="card-body">
+        @if(($paidCommissions ?? collect())->isNotEmpty())
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Employee</th>
+                            <th>Sale Amount</th>
+                            <th>Commission</th>
+                            <th>Reference</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($paidCommissions as $c)
+                            <tr>
+                                <td>{{ $c->commission_date?->format('Y-m-d') }}</td>
+                                <td>{{ $c->employee?->name ?? '-' }}</td>
+                                <td>{{ $currencySymbol ?? '' }}{{ number_format($c->sale_amount ?? 0, 2) }}</td>
+                                <td>{{ $currencySymbol ?? '' }}{{ number_format($c->commission_amount ?? 0, 2) }}</td>
+                                <td>{{ $c->reference_type ? ($c->reference_type . ' #' . $c->reference_id) : '-' }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-end">
+                {{ $paidCommissions->appends(request()->except('paid_page'))->links() }}
+            </div>
+        @else
+            <div class="text-center text-muted py-4">No paid commissions yet.</div>
+        @endif
+    </div>
+</div>
 @endsection
 
 @section('js')

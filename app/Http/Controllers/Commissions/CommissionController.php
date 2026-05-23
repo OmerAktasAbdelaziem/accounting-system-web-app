@@ -66,8 +66,13 @@ class CommissionController extends Controller
             ->values();
         
         $stats = compact('totalCommission');
-        
-        return view('commissions.index', compact('commissions', 'commissionProfiles', 'stats', 'employees', 'monthlyCommissions'));
+
+        $paidCommissions = Commission::with('employee')
+            ->where('status', 'paid')
+            ->latest('commission_date')
+            ->paginate(15, ['*'], 'paid_page');
+
+        return view('commissions.index', compact('commissions', 'commissionProfiles', 'stats', 'employees', 'monthlyCommissions', 'paidCommissions'));
     }
 
     public function create()
