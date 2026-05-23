@@ -563,7 +563,15 @@
             });
 
             if (!response.ok) {
-                throw new Error('Request failed: ' + response.status);
+                let message = 'Request failed';
+                try {
+                    const payload = await response.json();
+                    message = payload.message || payload.error || message;
+                } catch (error) {
+                    message = response.statusText || message;
+                }
+
+                throw new Error(message);
             }
 
             return response.json();
@@ -600,6 +608,7 @@
                     const isActive = selectedContact && selectedContact.kind === contact.kind && String(selectedContact.id) === String(contact.id);
                     const avatarText = String(contact.name || 'U').trim().slice(0, 2).toUpperCase();
                     const avatarClass = contact.kind === 'support' ? 'support' : (contact.kind === 'user' && contact.meta === 'Merchant' ? 'merchant' : 'employee');
+                    const statusText = contact.is_typing ? 'Typing...' : (contact.is_online ? 'Online now' : formatLastSeen(contact.last_seen_at));
                     return `
                         <button type="button" class="floating-chat-contact ${isActive ? 'is-active' : ''}" data-contact-kind="${contact.kind}" data-contact-id="${contact.id}">
                             <div class="floating-chat-contact-left">
@@ -608,7 +617,7 @@
                                     <div class="floating-chat-contact-name">${escapeHtml(contact.name || 'User')}</div>
                                     <div class="floating-chat-contact-meta">${escapeHtml(contact.last_message?.message ? contact.last_message.message : (contact.meta || contact.user_type || ''))}</div>
                                     <div class="floating-chat-status-line">
-                                        ${contact.is_typing ? '<span class="typing">Typing...</span>' : `<span>${contact.is_online ? 'Online' : formatLastSeen(contact.last_seen_at)}</span>`}
+                                        ${contact.is_typing ? '<span class="typing">Typing...</span>' : `<span>${escapeHtml(statusText)}</span>`}
                                     </div>
                                 </div>
                             </div>
@@ -670,6 +679,13 @@
             return '<span class="floating-chat-message-status"><i class="bi bi-check2"></i> Sent</span>';
         }
 
+        function conversationToken(contact) {
+            if (!contact) return '';
+            if (contact.kind === 'support') return 'support';
+            if (contact.kind === 'employee') return `employee:${contact.id}`;
+            return String(contact.id);
+        }
+
         async function sendTypingState(isTyping) {
             if (!selectedContact) return;
 
@@ -680,7 +696,7 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        contact_id: selectedContact.kind === 'support' ? 'support' : selectedContact.id,
+                        contact_id: conversationToken(selectedContact),
                         typing: !!isTyping,
                     }),
                 });
@@ -718,6 +734,13 @@
                 }
 
                 if (selectedContact) {
+                    const latest = sections.flatMap((section) => section.items || []).find((item) => String(item.id) === String(selectedContact.id) && item.kind === selectedContact.kind);
+                    if (latest) {
+                        selectedContact = latest;
+                    }
+                }
+
+                if (selectedContact) {
                     const latest = sections
                         .flatMap((section) => section.items || [])
                         .find((item) => String(item.id) === String(selectedContact.id) && item.kind === selectedContact.kind);
@@ -747,7 +770,7 @@
                 return;
             }
 
-            const url = messagesUrlTemplate.replace('__CONTACT__', selectedContact.kind === 'support' ? 'support' : String(selectedContact.id));
+            const url = messagesUrlTemplate.replace('__CONTACT__', encodeURIComponent(conversationToken(selectedContact)));
             conversationTitleEl.textContent = selectedContact.kind === 'support' ? 'Support System' : (selectedContact.name || 'Live Chat');
             conversationSubtitleEl.textContent = selectedContact.kind === 'support'
                 ? (selectedContact.is_typing ? 'Support is typing...' : (selectedContact.is_online ? 'Support is online' : formatLastSeen(selectedContact.last_seen_at)))
@@ -787,7 +810,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ contact_id: selectedContact.kind === 'support' ? 'support' : selectedContact.id }),
+                    body: JSON.stringify({ contact_id: conversationToken(selectedContact) }),
                 });
             } catch (error) {
                 // Ignore polling errors to avoid interrupting chat UI.
@@ -812,14 +835,14 @@
                     },
                     body: JSON.stringify({
                         recipient_id: selectedContact.kind === 'support' ? null : selectedContact.id,
-                        recipient_type: selectedContact.kind === 'support' ? 'support' : 'user',
+                        recipient_type: selectedContact.kind === 'support' ? 'support' : (selectedContact.kind === 'employee' ? 'employee' : 'user'),
                         message,
                     }),
                 });
                 await Promise.all([loadMessages(), loadContacts()]);
                 await sendTypingState(false);
             } catch (error) {
-                showInAppNotification('Message not sent', 'Please try again.');
+                showInAppNotification('Message not sent', error?.message || 'Please try again.');
                 inputEl.value = message;
             }
         }

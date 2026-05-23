@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChatMessage;
+use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -75,6 +76,21 @@ class ChatController extends Controller
             return response()->json(['messages' => $messages]);
         }
 
+        if (str_starts_with($contact, 'employee:')) {
+            $employee = Employee::query()->findOrFail((int) substr($contact, 9));
+            $contactUser = $this->resolveEmployeeUser($employee);
+
+            if (! $contactUser || ! $this->canChatWith($user, $contactUser)) {
+                abort(403);
+            }
+
+            $this->markConversationDeliveredAndRead($user, $contactUser);
+
+            $messages = $this->conversationMessages($user, $contactUser);
+
+            return response()->json(['messages' => $messages]);
+        }
+
         $contactUser = User::findOrFail((int) $contact);
 
         if (! $this->canChatWith($user, $contactUser)) {
@@ -119,7 +135,7 @@ class ChatController extends Controller
 
         $validated = $request->validate([
             'recipient_id' => 'nullable',
-            'recipient_type' => 'nullable|in:user,support',
+            'recipient_type' => 'nullable|in:user,employee,support',
             'message' => 'required|string|max:2000',
         ]);
 
@@ -144,6 +160,25 @@ class ChatController extends Controller
 
             return response()->json([
                 'message' => $this->messagePayload($createdMessage),
+            ]);
+        }
+
+        if (($validated['recipient_type'] ?? 'user') === 'employee') {
+            $employee = Employee::query()->findOrFail((int) $validated['recipient_id']);
+            $recipient = $this->resolveEmployeeUser($employee);
+
+            if (! $recipient || ! $this->canChatWith($user, $recipient)) {
+                abort(422, 'Selected employee is not linked to a chat account.');
+            }
+
+            $chatMessage = ChatMessage::create([
+                'sender_id' => $user->id,
+                'recipient_id' => $recipient->id,
+                'message' => $messageText,
+            ]);
+
+            return response()->json([
+                'message' => $this->messagePayload($chatMessage),
             ]);
         }
 
@@ -193,6 +228,19 @@ class ChatController extends Controller
                 ->where('recipient_id', $user->id)
                 ->whereNull('read_at')
                 ->update(['read_at' => now()]);
+
+            return response()->json(['ok' => true]);
+        }
+
+        if (str_starts_with((string) $validated['contact_id'], 'employee:')) {
+            $employee = Employee::query()->findOrFail((int) substr((string) $validated['contact_id'], 9));
+            $contact = $this->resolveEmployeeUser($employee);
+
+            if (! $contact || ! $this->canChatWith($user, $contact)) {
+                abort(403);
+            }
+
+            $this->markConversationDeliveredAndRead($user, $contact);
 
             return response()->json(['ok' => true]);
         }
@@ -264,23 +312,23 @@ class ChatController extends Controller
             ]];
         }
 
-        $employees = User::query()
-            ->with('merchant')
+        $employees = Employee::query()
             ->where('merchant_id', $user->merchant_id)
-            ->where('user_type', 'employee')
             ->where('is_active', true)
-            ->where('id', '!=', $user->id)
             ->orderBy('name')
             ->get()
-            ->map(fn (User $contact) => $this->contactPayload($user, $contact));
-
-        $supportUnread = ChatMessage::query()
-            ->where('sender_id', optional($this->supportRecipient($user))->id)
-            ->where('recipient_id', $user->id)
-            ->whereNull('read_at')
-            ->count();
+            ->map(fn (Employee $employee) => $this->employeeContactPayload($user, $employee))
+            ->filter(fn (array $contact) => $contact['is_linked'] ?? false)
+            ->values();
 
         $supportRecipient = $this->supportRecipient($user);
+        $supportUnread = $supportRecipient
+            ? ChatMessage::query()
+                ->where('sender_id', $supportRecipient->id)
+                ->where('recipient_id', $user->id)
+                ->whereNull('read_at')
+                ->count()
+            : 0;
 
         return [
             [
@@ -303,6 +351,29 @@ class ChatController extends Controller
                     'last_message' => $this->supportLastMessage($user),
                 ]],
             ],
+        ];
+    }
+
+    private function employeeContactPayload(User $user, Employee $employee): array
+    {
+        $employeeUser = $this->resolveEmployeeUser($employee);
+        $lastMessage = $employeeUser ? $this->lastMessageBetween($user, $employeeUser) : null;
+
+        return [
+            'id' => $employee->id,
+            'kind' => 'employee',
+            'name' => $employee->name,
+            'meta' => $employee->position ?? 'Employee',
+            'user_type' => 'employee',
+            'merchant_id' => $employee->merchant_id,
+            'merchant_name' => $user->merchant?->business_name,
+            'is_linked' => (bool) $employeeUser,
+            'recipient_user_id' => $employeeUser?->id,
+            'unread_count' => $employeeUser ? $this->unreadCountBetween($employeeUser->id, $user->id) : 0,
+            'is_typing' => $employeeUser ? $this->isTyping($employeeUser->id, (string) $user->id) : false,
+            'is_online' => $employeeUser ? $this->isOnline($employeeUser) : false,
+            'last_seen_at' => $employeeUser?->last_seen_at?->toISOString(),
+            'last_message' => $this->messagePayload($lastMessage),
         ];
     }
 
@@ -361,14 +432,6 @@ class ChatController extends Controller
 
         return $target->merchant_id === $user->merchant_id
             && $target->user_type === 'merchant_admin';
-    }
-
-    private function activeSuperAdminIds(): Collection
-    {
-        return User::query()
-            ->where('user_type', 'super_admin')
-            ->where('is_active', true)
-            ->pluck('id');
     }
 
     private function touchLastSeen(User $user): void
@@ -432,6 +495,77 @@ class ChatController extends Controller
             ->first();
 
         return $this->messagePayload($message);
+    }
+
+    private function resolveEmployeeUser(Employee $employee): ?User
+    {
+        if (empty($employee->email)) {
+            return null;
+        }
+
+        return User::query()
+            ->where('merchant_id', $employee->merchant_id)
+            ->where('user_type', 'employee')
+            ->where('email', $employee->email)
+            ->first();
+    }
+
+    private function lastMessageBetween(User $left, User $right): ?ChatMessage
+    {
+        return ChatMessage::query()
+            ->where(function ($query) use ($left, $right) {
+                $query->where('sender_id', $left->id)
+                    ->where('recipient_id', $right->id);
+            })
+            ->orWhere(function ($query) use ($left, $right) {
+                $query->where('sender_id', $right->id)
+                    ->where('recipient_id', $left->id);
+            })
+            ->latest('id')
+            ->first();
+    }
+
+    private function conversationMessages(User $left, User $right)
+    {
+        return ChatMessage::query()
+            ->where(function ($query) use ($left, $right) {
+                $query->where('sender_id', $left->id)
+                    ->where('recipient_id', $right->id);
+            })
+            ->orWhere(function ($query) use ($left, $right) {
+                $query->where('sender_id', $right->id)
+                    ->where('recipient_id', $left->id);
+            })
+            ->latest('id')
+            ->take(100)
+            ->get()
+            ->reverse()
+            ->values()
+            ->map(fn (ChatMessage $message) => $this->messagePayload($message));
+    }
+
+    private function unreadCountBetween(int $senderId, int $recipientId): int
+    {
+        return ChatMessage::query()
+            ->where('sender_id', $senderId)
+            ->where('recipient_id', $recipientId)
+            ->whereNull('read_at')
+            ->count();
+    }
+
+    private function markConversationDeliveredAndRead(User $recipient, User $sender): void
+    {
+        ChatMessage::query()
+            ->where('sender_id', $sender->id)
+            ->where('recipient_id', $recipient->id)
+            ->whereNull('delivered_at')
+            ->update(['delivered_at' => now()]);
+
+        ChatMessage::query()
+            ->where('sender_id', $sender->id)
+            ->where('recipient_id', $recipient->id)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
     }
 
     private function messagePayload(?ChatMessage $message): ?array
