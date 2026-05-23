@@ -181,7 +181,7 @@
                                         <div class="row g-3">
                                             <div class="col-md-6">
                                                 <label class="form-label small text-muted mb-1">Employee</label>
-                                                <select name="employee_sales[{{ $index }}][employee_id]" class="form-select" required>
+                                                <select name="employee_sales[{{ $index }}][employee_id]" class="form-select">
                                                     <option value="">Select employee</option>
                                                     @foreach($employees as $employee)
                                                         <option value="{{ $employee->id }}" @selected((string) ($row['employee_id'] ?? '') === (string) $employee->id)>{{ $employee->name }}</option>
@@ -190,7 +190,7 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label small text-muted mb-1">Amount Sold</label>
-                                                <input type="number" name="employee_sales[{{ $index }}][amount]" class="form-control employee-sale-amount" min="0.01" step="0.01" value="{{ $row['amount'] ?? '' }}" placeholder="0.00" required>
+                                                <input type="number" name="employee_sales[{{ $index }}][amount]" class="form-control employee-sale-amount" min="0.01" step="0.01" value="{{ $row['amount'] ?? '' }}" placeholder="0.00">
                                             </div>
                                         </div>
                                         <div class="d-flex justify-content-end mt-2">
@@ -216,7 +216,7 @@
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="form-label small text-muted mb-1">Employee</label>
-                                        <select name="employee_sales[__INDEX__][employee_id]" class="form-select" required>
+                                        <select name="employee_sales[__INDEX__][employee_id]" class="form-select">
                                             <option value="">Select employee</option>
                                             @foreach($employees as $employee)
                                                 <option value="{{ $employee->id }}">{{ $employee->name }}</option>
@@ -225,7 +225,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label small text-muted mb-1">Amount Sold</label>
-                                        <input type="number" name="employee_sales[__INDEX__][amount]" class="form-control employee-sale-amount" min="0.01" step="0.01" placeholder="0.00" required>
+                                        <input type="number" name="employee_sales[__INDEX__][amount]" class="form-control employee-sale-amount" min="0.01" step="0.01" placeholder="0.00">
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-end mt-2">
