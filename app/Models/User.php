@@ -33,6 +33,7 @@ class User extends Authenticatable
         'address',
         'notes',
         'profile_photo_path',
+        'last_seen_at',
         'last_login',
         'api_token',
         'api_token_expires_at',
@@ -59,6 +60,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_seen_at' => 'datetime',
             'last_login' => 'datetime',
             'api_token_expires_at' => 'datetime',
         ];

@@ -37,8 +37,8 @@
     }
 
     .floating-chat-window {
-        width: 360px;
-        height: 520px;
+        width: 430px;
+        height: 700px;
         border-radius: 14px;
         overflow: hidden;
         background: #fff;
@@ -53,7 +53,9 @@
     }
 
     .floating-chat-header {
-        background: linear-gradient(135deg, #1a1a1a, #333333);
+        background: linear-gradient(135deg, #ffffff, #f4f6f8);
+        border-bottom: 1px solid #e9ecef;
+        color: #111;
         color: #fff;
         padding: 12px 14px;
         display: flex;
@@ -65,6 +67,13 @@
     .floating-chat-title {
         font-weight: 700;
         font-size: 14px;
+        color: #111;
+    }
+
+    .floating-chat-subtitle {
+        font-size: 11px;
+        color: #6c757d;
+        margin-top: 2px;
     }
 
     .floating-chat-header-actions {
@@ -74,8 +83,8 @@
 
     .floating-chat-header-actions button {
         border: none;
-        background: rgba(255, 255, 255, 0.18);
-        color: #fff;
+        background: #eef1f4;
+        color: #444;
         border-radius: 7px;
         width: 30px;
         height: 30px;
@@ -90,9 +99,25 @@
 
     .floating-chat-contacts {
         border-bottom: 1px solid #ececec;
-        max-height: 150px;
+        max-height: 280px;
         overflow-y: auto;
-        background: #fafafa;
+        background: #fff;
+        padding-bottom: 4px;
+    }
+
+    .floating-chat-search-wrap {
+        padding: 10px 12px 8px;
+        border-bottom: 1px solid #f0f0f0;
+        background: #fff;
+    }
+
+    .floating-chat-search {
+        width: 100%;
+        border: 1px solid #dfe3e8;
+        border-radius: 999px;
+        padding: 9px 13px;
+        font-size: 13px;
+        background: #f8f9fb;
     }
 
     .floating-chat-contact {
@@ -113,18 +138,87 @@
     }
 
     .floating-chat-contact.is-active {
-        background: #ffe8cc;
+        background: #e7f3ff;
+    }
+
+    .floating-chat-contact-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .floating-chat-avatar {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 800;
+        color: #fff;
+        flex: 0 0 auto;
+        background: linear-gradient(135deg, #ff8c00, #ff6a00);
+    }
+
+    .floating-chat-avatar.employee { background: linear-gradient(135deg, #1f7aec, #39a0ff); }
+    .floating-chat-avatar.support { background: linear-gradient(135deg, #2dbf6c, #18a058); }
+    .floating-chat-avatar.merchant { background: linear-gradient(135deg, #ff8c00, #ff6a00); }
+
+    .floating-chat-avatar::after {
+        content: '';
+        position: absolute;
+        right: 1px;
+        bottom: 1px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        background: #adb5bd;
+    }
+
+    .floating-chat-avatar.is-online::after {
+        background: #2ecc71;
+    }
+
+    .floating-chat-contact-main {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
     }
 
     .floating-chat-contact-name {
         font-weight: 600;
         font-size: 13px;
         color: #222;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .floating-chat-contact-meta {
         font-size: 11px;
         color: #666;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 220px;
+    }
+
+    .floating-chat-status-line {
+        font-size: 11px;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .floating-chat-status-line .typing {
+        color: #1f7aec;
+        font-weight: 700;
     }
 
     .floating-chat-contact-badge {
@@ -144,7 +238,7 @@
         flex: 1;
         min-height: 0;
         overflow-y: auto;
-        background: #f7f7f7;
+        background: linear-gradient(180deg, #f8fafc, #f3f4f6);
         padding: 12px;
         display: flex;
         flex-direction: column;
@@ -160,7 +254,7 @@
 
     .floating-chat-message {
         max-width: 82%;
-        border-radius: 12px;
+        border-radius: 18px;
         padding: 8px 10px;
         font-size: 13px;
         line-height: 1.35;
@@ -169,9 +263,9 @@
 
     .floating-chat-message.me {
         align-self: flex-end;
-        background: #1f7aec;
+        background: linear-gradient(135deg, #1f7aec, #4f8dff);
         color: #fff;
-        border-bottom-right-radius: 4px;
+        border-bottom-right-radius: 6px;
     }
 
     .floating-chat-message.them {
@@ -179,7 +273,8 @@
         background: #ffffff;
         color: #222;
         border: 1px solid #e9e9e9;
-        border-bottom-left-radius: 4px;
+        border-bottom-left-radius: 6px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
     }
 
     .floating-chat-message-time {
@@ -189,29 +284,83 @@
         opacity: 0.7;
     }
 
+    .floating-chat-message-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 4px;
+        font-size: 10px;
+        opacity: 0.95;
+        justify-content: flex-end;
+    }
+
+    .floating-chat-message-status i {
+        font-size: 10px;
+        line-height: 1;
+    }
+
+    .floating-chat-message.me .floating-chat-message-status {
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .floating-chat-message.them .floating-chat-message-status {
+        color: #6c757d;
+    }
+
+    .floating-chat-typing-indicator {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        color: #6c757d;
+        font-size: 12px;
+        padding: 4px 2px 0;
+    }
+
+    .floating-chat-typing-dots {
+        display: inline-flex;
+        gap: 4px;
+    }
+
+    .floating-chat-typing-dots span {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #1f7aec;
+        animation: floating-chat-bounce 1.2s infinite ease-in-out;
+    }
+
+    .floating-chat-typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+    .floating-chat-typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes floating-chat-bounce {
+        0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+        40% { transform: translateY(-4px); opacity: 1; }
+    }
+
     .floating-chat-input-wrap {
         border-top: 1px solid #ececec;
         background: #fff;
-        padding: 10px;
+        padding: 12px;
         display: flex;
         gap: 8px;
     }
 
     .floating-chat-input {
         border: 1px solid #d9d9d9;
-        border-radius: 9px;
+        border-radius: 999px;
         flex: 1;
         min-width: 0;
-        padding: 8px 10px;
+        padding: 10px 14px;
         font-size: 13px;
+        background: #f8f9fb;
     }
 
     .floating-chat-send {
         border: none;
-        border-radius: 9px;
-        background: #1f7aec;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #1f7aec, #4f8dff);
         color: #fff;
-        padding: 0 14px;
+        padding: 0 16px;
         font-size: 15px;
     }
 
@@ -289,10 +438,14 @@
     data-messages-url-template="{{ url('/chat/messages/__CONTACT__') }}"
     data-send-url="{{ route('chat.send') }}"
     data-mark-read-url="{{ route('chat.markRead') }}"
+    data-typing-url="{{ route('chat.typing') }}"
     data-current-user-id="{{ (int) auth()->id() }}">
     <div class="floating-chat-window" id="floatingChatWindow">
         <div class="floating-chat-header">
-            <div class="floating-chat-title" id="floatingChatConversationTitle">Live Chat</div>
+            <div>
+                <div class="floating-chat-title" id="floatingChatConversationTitle">Live Chat</div>
+                <div class="floating-chat-subtitle" id="floatingChatConversationSubtitle">Choose a contact to start</div>
+            </div>
             <div class="floating-chat-header-actions">
                 <button type="button" id="floatingChatEnableNotifications" title="Enable desktop notifications">
                     <i class="bi bi-bell"></i>
@@ -303,6 +456,9 @@
             </div>
         </div>
         <div class="floating-chat-body">
+            <div class="floating-chat-search-wrap">
+                <input type="text" class="floating-chat-search" id="floatingChatSearch" placeholder="Search chats..." autocomplete="off">
+            </div>
             <div class="floating-chat-contacts" id="floatingChatContacts"></div>
             <div class="floating-chat-messages" id="floatingChatMessages">
                 <div class="floating-chat-empty">Choose a contact to start chatting.</div>
@@ -331,6 +487,7 @@
         const messagesUrlTemplate = root.dataset.messagesUrlTemplate;
         const sendUrl = root.dataset.sendUrl;
         const markReadUrl = root.dataset.markReadUrl;
+        const typingUrl = root.dataset.typingUrl;
         const currentUserId = Number(root.dataset.currentUserId || 0);
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
@@ -342,15 +499,20 @@
         const messagesEl = document.getElementById('floatingChatMessages');
         const formEl = document.getElementById('floatingChatForm');
         const inputEl = document.getElementById('floatingChatInput');
+        const searchEl = document.getElementById('floatingChatSearch');
         const notificationsEl = document.getElementById('floatingChatNotifications');
         const enableNotificationsBtn = document.getElementById('floatingChatEnableNotifications');
         const conversationTitleEl = document.getElementById('floatingChatConversationTitle');
+        const conversationSubtitleEl = document.getElementById('floatingChatConversationSubtitle');
 
         let sections = [];
         let selectedContact = null;
+        let searchTerm = '';
         let isOpen = false;
         let contactsTimer = null;
         let messagesTimer = null;
+        let typingTimer = null;
+        let typingStateTimer = null;
         const notifiedMessageIds = new Set();
 
         function formatTime(iso) {
@@ -358,6 +520,19 @@
             const d = new Date(iso);
             if (Number.isNaN(d.getTime())) return '';
             return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatLastSeen(iso) {
+            if (!iso) return 'Offline';
+            const d = new Date(iso);
+            if (Number.isNaN(d.getTime())) return 'Offline';
+            const diffMs = Date.now() - d.getTime();
+            const diffMin = Math.floor(diffMs / 60000);
+            if (diffMin < 1) return 'Active now';
+            if (diffMin < 60) return `Active ${diffMin}m ago`;
+            const diffHour = Math.floor(diffMin / 60);
+            if (diffHour < 24) return `Active ${diffHour}h ago`;
+            return `Last seen ${d.toLocaleDateString()}`;
         }
 
         function escapeHtml(text) {
@@ -395,20 +570,47 @@
         }
 
         function renderContacts() {
-            const hasItems = sections.some((section) => Array.isArray(section.items) && section.items.length);
+            const normalizedSearch = searchTerm.trim().toLowerCase();
+            const hasItems = sections.some((section) => {
+                return (section.items || []).some((contact) => {
+                    if (!normalizedSearch) return true;
+                    return [contact.name, contact.meta, contact.user_type]
+                        .filter(Boolean)
+                        .some((value) => String(value).toLowerCase().includes(normalizedSearch));
+                });
+            });
             if (!hasItems) {
                 contactsEl.innerHTML = '<div class="p-3 text-muted" style="font-size:12px;">No contacts available.</div>';
                 return;
             }
 
             contactsEl.innerHTML = sections.map((section) => {
-                const itemsHtml = (section.items || []).map((contact) => {
+                const filteredItems = (section.items || []).filter((contact) => {
+                    if (!normalizedSearch) return true;
+                    return [contact.name, contact.meta, contact.user_type]
+                        .filter(Boolean)
+                        .some((value) => String(value).toLowerCase().includes(normalizedSearch));
+                });
+
+                if (!filteredItems.length) {
+                    return '';
+                }
+
+                const itemsHtml = filteredItems.map((contact) => {
                     const isActive = selectedContact && selectedContact.kind === contact.kind && String(selectedContact.id) === String(contact.id);
+                    const avatarText = String(contact.name || 'U').trim().slice(0, 2).toUpperCase();
+                    const avatarClass = contact.kind === 'support' ? 'support' : (contact.kind === 'user' && contact.meta === 'Merchant' ? 'merchant' : 'employee');
                     return `
                         <button type="button" class="floating-chat-contact ${isActive ? 'is-active' : ''}" data-contact-kind="${contact.kind}" data-contact-id="${contact.id}">
-                            <div>
-                                <div class="floating-chat-contact-name">${escapeHtml(contact.name || 'User')}</div>
-                                <div class="floating-chat-contact-meta">${escapeHtml(contact.meta || contact.user_type || '')}</div>
+                            <div class="floating-chat-contact-left">
+                                <div class="floating-chat-avatar ${avatarClass} ${contact.is_online ? 'is-online' : ''}">${escapeHtml(avatarText)}</div>
+                                <div class="floating-chat-contact-main">
+                                    <div class="floating-chat-contact-name">${escapeHtml(contact.name || 'User')}</div>
+                                    <div class="floating-chat-contact-meta">${escapeHtml(contact.last_message?.message ? contact.last_message.message : (contact.meta || contact.user_type || ''))}</div>
+                                    <div class="floating-chat-status-line">
+                                        ${contact.is_typing ? '<span class="typing">Typing...</span>' : `<span>${contact.is_online ? 'Online' : formatLastSeen(contact.last_seen_at)}</span>`}
+                                    </div>
+                                </div>
                             </div>
                             ${contact.unread_count > 0 ? `<span class="floating-chat-contact-badge">${contact.unread_count > 99 ? '99+' : contact.unread_count}</span>` : ''}
                         </button>
@@ -454,6 +656,39 @@
             }
         }
 
+        function renderMessageTicks(message, isMe) {
+            if (!isMe) return '';
+
+            if (message.read_at) {
+                return '<span class="floating-chat-message-status"><i class="bi bi-check2-all"></i> Read</span>';
+            }
+
+            if (message.delivered_at) {
+                return '<span class="floating-chat-message-status"><i class="bi bi-check2-all"></i> Delivered</span>';
+            }
+
+            return '<span class="floating-chat-message-status"><i class="bi bi-check2"></i> Sent</span>';
+        }
+
+        async function sendTypingState(isTyping) {
+            if (!selectedContact) return;
+
+            try {
+                await fetchJson(typingUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contact_id: selectedContact.kind === 'support' ? 'support' : selectedContact.id,
+                        typing: !!isTyping,
+                    }),
+                });
+            } catch (error) {
+                // Ignore typing errors.
+            }
+        }
+
         function notifyNewMessage(contact, message) {
             if (!message || !message.id || message.sender_id === currentUserId) {
                 return;
@@ -482,6 +717,16 @@
                     selectedContact = sections[0].items[0];
                 }
 
+                if (selectedContact) {
+                    const latest = sections
+                        .flatMap((section) => section.items || [])
+                        .find((item) => String(item.id) === String(selectedContact.id) && item.kind === selectedContact.kind);
+
+                    if (latest) {
+                        selectedContact = latest;
+                    }
+                }
+
                 renderContacts();
 
                 sections.forEach((section) => {
@@ -504,6 +749,9 @@
 
             const url = messagesUrlTemplate.replace('__CONTACT__', selectedContact.kind === 'support' ? 'support' : String(selectedContact.id));
             conversationTitleEl.textContent = selectedContact.kind === 'support' ? 'Support System' : (selectedContact.name || 'Live Chat');
+            conversationSubtitleEl.textContent = selectedContact.kind === 'support'
+                ? (selectedContact.is_typing ? 'Support is typing...' : (selectedContact.is_online ? 'Support is online' : formatLastSeen(selectedContact.last_seen_at)))
+                : (selectedContact.is_typing ? 'Typing...' : (selectedContact.is_online ? 'Online now' : formatLastSeen(selectedContact.last_seen_at)));
 
             try {
                 const data = await fetchJson(url);
@@ -518,9 +766,19 @@
                             <div class="floating-chat-message ${me ? 'me' : 'them'}">
                                 ${escapeHtml(message.message || '')}
                                 <span class="floating-chat-message-time">${formatTime(message.created_at)}</span>
+                                ${renderMessageTicks(message, me)}
                             </div>
                         `;
                     }).join('');
+                }
+
+                if (selectedContact?.is_typing) {
+                    messagesEl.insertAdjacentHTML('beforeend', `
+                        <div class="floating-chat-typing-indicator">
+                            <span>${escapeHtml(selectedContact.kind === 'support' ? 'Support is typing' : (selectedContact.name || 'Typing'))}</span>
+                            <span class="floating-chat-typing-dots"><span></span><span></span><span></span></span>
+                        </div>
+                    `);
                 }
 
                 messagesEl.scrollTop = messagesEl.scrollHeight;
@@ -559,6 +817,7 @@
                     }),
                 });
                 await Promise.all([loadMessages(), loadContacts()]);
+                await sendTypingState(false);
             } catch (error) {
                 showInAppNotification('Message not sent', 'Please try again.');
                 inputEl.value = message;
@@ -632,13 +891,43 @@
                 return;
             }
 
-            selectedContact = {
+            const matchedContact = sections
+                .flatMap((section) => section.items || [])
+                .find((item) => String(item.id) === String(button.dataset.contactId) && item.kind === button.dataset.contactKind);
+
+            selectedContact = matchedContact ? {
+                ...matchedContact,
+                id: button.dataset.contactId,
+                kind: button.dataset.contactKind,
+            } : {
                 id: button.dataset.contactId,
                 kind: button.dataset.contactKind,
                 name: button.querySelector('.floating-chat-contact-name')?.textContent || 'Chat',
             };
             renderContacts();
             await Promise.all([loadMessages(), loadContacts()]);
+        });
+
+        searchEl.addEventListener('input', () => {
+            searchTerm = searchEl.value || '';
+            renderContacts();
+        });
+
+        inputEl.addEventListener('input', () => {
+            if (typingTimer) {
+                clearTimeout(typingTimer);
+            }
+
+            if (typingStateTimer) {
+                clearTimeout(typingStateTimer);
+            }
+
+            sendTypingState(true);
+            typingTimer = window.setTimeout(() => sendTypingState(false), 2200);
+        });
+
+        inputEl.addEventListener('blur', () => {
+            sendTypingState(false);
         });
 
         formEl.addEventListener('submit', (event) => {

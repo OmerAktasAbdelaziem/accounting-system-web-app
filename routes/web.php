@@ -118,6 +118,7 @@ Route::middleware('auth')->group(function () {
         Route::get('messages/{contact}', [ChatController::class, 'messages'])->name('messages');
         Route::post('messages', [ChatController::class, 'send'])->name('send');
         Route::post('mark-read', [ChatController::class, 'markRead'])->name('markRead');
+        Route::post('typing', [ChatController::class, 'typing'])->name('typing');
     });
 
     // Suppliers

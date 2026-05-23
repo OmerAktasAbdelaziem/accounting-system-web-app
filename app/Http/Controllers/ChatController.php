@@ -6,6 +6,7 @@ use App\Models\ChatMessage;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Collection;
 
 class ChatController extends Controller
@@ -13,6 +14,7 @@ class ChatController extends Controller
     public function contacts(Request $request): JsonResponse
     {
         $user = $request->user();
+        $this->touchLastSeen($user);
         $sections = $this->contactSections($user);
 
         $unreadTotal = ChatMessage::query()
@@ -29,27 +31,38 @@ class ChatController extends Controller
     public function messages(Request $request, string $contact): JsonResponse
     {
         $user = $request->user();
+        $this->touchLastSeen($user);
 
         if ($contact === 'support') {
             if ($user->isSuperAdmin()) {
                 abort(403);
             }
 
-            $superAdminIds = $this->activeSuperAdminIds();
+            $superAdmin = $this->supportRecipient($user);
+
+            if (! $superAdmin) {
+                return response()->json(['messages' => []]);
+            }
 
             ChatMessage::query()
-                ->whereIn('sender_id', $superAdminIds)
+                ->where('sender_id', $superAdmin->id)
+                ->where('recipient_id', $user->id)
+                ->whereNull('delivered_at')
+                ->update(['delivered_at' => now()]);
+
+            ChatMessage::query()
+                ->where('sender_id', $superAdmin->id)
                 ->where('recipient_id', $user->id)
                 ->whereNull('read_at')
                 ->update(['read_at' => now()]);
 
             $messages = ChatMessage::query()
-                ->where(function ($query) use ($user, $superAdminIds) {
+                ->where(function ($query) use ($user, $superAdmin) {
                     $query->where('sender_id', $user->id)
-                        ->whereIn('recipient_id', $superAdminIds);
+                        ->where('recipient_id', $superAdmin->id);
                 })
-                ->orWhere(function ($query) use ($user, $superAdminIds) {
-                    $query->whereIn('sender_id', $superAdminIds)
+                ->orWhere(function ($query) use ($user, $superAdmin) {
+                    $query->where('sender_id', $superAdmin->id)
                         ->where('recipient_id', $user->id);
                 })
                 ->latest('id')
@@ -67,6 +80,12 @@ class ChatController extends Controller
         if (! $this->canChatWith($user, $contactUser)) {
             abort(403);
         }
+
+        ChatMessage::query()
+            ->where('sender_id', $contactUser->id)
+            ->where('recipient_id', $user->id)
+            ->whereNull('delivered_at')
+            ->update(['delivered_at' => now()]);
 
         ChatMessage::query()
             ->where('sender_id', $contactUser->id)
@@ -96,6 +115,7 @@ class ChatController extends Controller
     public function send(Request $request): JsonResponse
     {
         $user = $request->user();
+        $this->touchLastSeen($user);
 
         $validated = $request->validate([
             'recipient_id' => 'nullable',
@@ -110,26 +130,20 @@ class ChatController extends Controller
                 abort(403);
             }
 
-            $superAdmins = User::query()
-                ->where('user_type', 'super_admin')
-                ->where('is_active', true)
-                ->orderBy('id')
-                ->get();
+            $superAdmin = $this->supportRecipient($user);
 
-            if ($superAdmins->isEmpty()) {
+            if (! $superAdmin) {
                 abort(422, 'No support users are available.');
             }
 
-            $createdMessages = $superAdmins->map(function (User $superAdmin) use ($user, $messageText) {
-                return ChatMessage::create([
-                    'sender_id' => $user->id,
-                    'recipient_id' => $superAdmin->id,
-                    'message' => $messageText,
-                ]);
-            });
+            $createdMessage = ChatMessage::create([
+                'sender_id' => $user->id,
+                'recipient_id' => $superAdmin->id,
+                'message' => $messageText,
+            ]);
 
             return response()->json([
-                'message' => $this->messagePayload($createdMessages->first()),
+                'message' => $this->messagePayload($createdMessage),
             ]);
         }
 
@@ -153,6 +167,7 @@ class ChatController extends Controller
     public function markRead(Request $request): JsonResponse
     {
         $user = $request->user();
+        $this->touchLastSeen($user);
         $validated = $request->validate([
             'contact_id' => 'required',
         ]);
@@ -162,8 +177,19 @@ class ChatController extends Controller
                 abort(403);
             }
 
+            $superAdmin = $this->supportRecipient($user);
+            if (! $superAdmin) {
+                return response()->json(['ok' => true]);
+            }
+
             ChatMessage::query()
-                ->whereIn('sender_id', $this->activeSuperAdminIds())
+                ->where('sender_id', $superAdmin->id)
+                ->where('recipient_id', $user->id)
+                ->whereNull('delivered_at')
+                ->update(['delivered_at' => now()]);
+
+            ChatMessage::query()
+                ->where('sender_id', $superAdmin->id)
                 ->where('recipient_id', $user->id)
                 ->whereNull('read_at')
                 ->update(['read_at' => now()]);
@@ -180,8 +206,40 @@ class ChatController extends Controller
         ChatMessage::query()
             ->where('sender_id', $contact->id)
             ->where('recipient_id', $user->id)
+            ->whereNull('delivered_at')
+            ->update(['delivered_at' => now()]);
+
+        ChatMessage::query()
+            ->where('sender_id', $contact->id)
+            ->where('recipient_id', $user->id)
             ->whereNull('read_at')
             ->update(['read_at' => now()]);
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function typing(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $validated = $request->validate([
+            'contact_id' => 'required',
+            'typing' => 'boolean',
+        ]);
+
+        $isTyping = $request->boolean('typing', true);
+        $recipientKey = $validated['contact_id'];
+
+        if ($recipientKey !== 'support') {
+            $recipient = User::findOrFail((int) $recipientKey);
+
+            if (! $this->canChatWith($user, $recipient)) {
+                abort(403);
+            }
+
+            $recipientKey = (string) $recipient->id;
+        }
+
+        Cache::put($this->typingCacheKey($user->id, $recipientKey), $isTyping ? 1 : 0, now()->addSeconds(5));
 
         return response()->json(['ok' => true]);
     }
@@ -217,10 +275,12 @@ class ChatController extends Controller
             ->map(fn (User $contact) => $this->contactPayload($user, $contact));
 
         $supportUnread = ChatMessage::query()
-            ->whereIn('sender_id', $this->activeSuperAdminIds())
+            ->where('sender_id', optional($this->supportRecipient($user))->id)
             ->where('recipient_id', $user->id)
             ->whereNull('read_at')
             ->count();
+
+        $supportRecipient = $this->supportRecipient($user);
 
         return [
             [
@@ -235,8 +295,11 @@ class ChatController extends Controller
                     'id' => 'support',
                     'kind' => 'support',
                     'name' => 'Support System',
-                    'meta' => 'Connect with super admin',
+                    'meta' => $supportRecipient ? 'Connected to ' . ($supportRecipient->name ?? 'Support') : 'No support agent available',
                     'unread_count' => $supportUnread,
+                    'is_typing' => $supportRecipient ? $this->isTyping($supportRecipient->id, (string) $user->id) : false,
+                    'is_online' => $supportRecipient ? $this->isOnline($supportRecipient) : false,
+                    'last_seen_at' => $supportRecipient?->last_seen_at?->toISOString(),
                     'last_message' => $this->supportLastMessage($user),
                 ]],
             ],
@@ -270,6 +333,9 @@ class ChatController extends Controller
             'merchant_id' => $contact->merchant_id,
             'merchant_name' => $contact->merchant?->business_name,
             'unread_count' => $unreadCount,
+            'is_typing' => $this->isTyping($contact->id, (string) $user->id),
+            'is_online' => $this->isOnline($contact),
+            'last_seen_at' => $contact->last_seen_at?->toISOString(),
             'last_message' => $this->messagePayload($lastMessage),
         ];
     }
@@ -305,14 +371,62 @@ class ChatController extends Controller
             ->pluck('id');
     }
 
+    private function touchLastSeen(User $user): void
+    {
+        $user->forceFill(['last_seen_at' => now()])->save();
+    }
+
+    private function isOnline(User $user): bool
+    {
+        if ($user->last_seen_at === null) {
+            return false;
+        }
+
+        return $user->last_seen_at->greaterThanOrEqualTo(now()->subSeconds(45));
+    }
+
+    private function isTyping(int $senderId, string $recipientId): bool
+    {
+        return Cache::get($this->typingCacheKey($senderId, $recipientId), 0) === 1;
+    }
+
+    private function typingCacheKey(int $senderId, string $recipientId): string
+    {
+        return 'chat.typing.' . $senderId . '.to.' . $recipientId;
+    }
+
+    private function supportRecipient(User $user): ?User
+    {
+        $merchant = $user->merchant()->with('superAdmin')->first();
+        $merchantSuperAdmin = $merchant?->superAdmin;
+
+        if ($merchantSuperAdmin && $merchantSuperAdmin->isSuperAdmin() && $merchantSuperAdmin->is_active) {
+            return $merchantSuperAdmin;
+        }
+
+        return User::query()
+            ->where('user_type', 'super_admin')
+            ->where('is_active', true)
+            ->orderBy('id')
+            ->first();
+    }
+
     private function supportLastMessage(User $user): ?array
     {
+        $superAdmin = $this->supportRecipient($user);
+
+        if (! $superAdmin) {
+            return null;
+        }
+
         $message = ChatMessage::query()
-            ->whereIn('sender_id', $this->activeSuperAdminIds())
-            ->where('recipient_id', $user->id)
-            ->orWhere(function ($query) use ($user) {
+            ->where(function ($query) use ($user, $superAdmin) {
+                $query->where('sender_id', $superAdmin->id)
+                    ->where('recipient_id', $user->id);
+            })
+            ->orWhere(function ($query) use ($user, $superAdmin) {
                 $query->where('sender_id', $user->id)
-                    ->whereIn('recipient_id', $this->activeSuperAdminIds());
+                    ->where('recipient_id', $superAdmin->id);
             })
             ->latest('id')
             ->first();
@@ -331,6 +445,7 @@ class ChatController extends Controller
             'sender_id' => $message->sender_id,
             'recipient_id' => $message->recipient_id,
             'message' => $message->message,
+            'delivered_at' => $message->delivered_at?->toISOString(),
             'read_at' => $message->read_at?->toISOString(),
             'created_at' => $message->created_at?->toISOString(),
         ];
