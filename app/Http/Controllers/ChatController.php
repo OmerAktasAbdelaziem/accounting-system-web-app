@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
+use Throwable;
 
 class ChatController extends Controller
 {
@@ -145,6 +147,8 @@ class ChatController extends Controller
             ],
         ]);
 
+        try {
+
         $validated = $request->validate([
             'recipient_id' => 'nullable',
             'recipient_type' => 'nullable|in:user,employee,support',
@@ -169,6 +173,19 @@ class ChatController extends Controller
                 'recipient_id' => $superAdmin->id,
                 'message' => $messageText,
             ]);
+            // notify Telegram
+            try {
+                $this->notifyTelegram('chat.send.success', [
+                    'user_id' => $user->id,
+                    'recipient_type' => 'support',
+                    'recipient_id' => null,
+                    'recipient_resolved_id' => $superAdmin->id,
+                    'message_id' => $createdMessage->id,
+                    'message' => $messageText,
+                ]);
+            } catch (Throwable $ignored) {
+                Log::warning('telegram.notify.failed', ['reason' => $ignored->getMessage()]);
+            }
 
             return response()->json([
                 'message' => $this->messagePayload($createdMessage),
@@ -188,6 +205,18 @@ class ChatController extends Controller
                 'recipient_id' => $recipient->id,
                 'message' => $messageText,
             ]);
+            try {
+                $this->notifyTelegram('chat.send.success', [
+                    'user_id' => $user->id,
+                    'recipient_type' => 'employee',
+                    'recipient_id' => $validated['recipient_id'] ?? null,
+                    'recipient_resolved_id' => $recipient->id,
+                    'message_id' => $chatMessage->id,
+                    'message' => $messageText,
+                ]);
+            } catch (Throwable $ignored) {
+                Log::warning('telegram.notify.failed', ['reason' => $ignored->getMessage()]);
+            }
 
             return response()->json([
                 'message' => $this->messagePayload($chatMessage),
@@ -205,10 +234,62 @@ class ChatController extends Controller
             'recipient_id' => $recipient->id,
             'message' => $messageText,
         ]);
-
-        return response()->json([
+        $response = response()->json([
             'message' => $this->messagePayload($chatMessage),
         ]);
+
+        // Send Telegram notification for successful message
+        try {
+            $this->notifyTelegram('chat.send.success', [
+                'user_id' => $user->id,
+                'recipient_type' => $validated['recipient_type'] ?? 'user',
+                'recipient_id' => $validated['recipient_id'] ?? null,
+                'recipient_resolved_id' => $recipient->id ?? null,
+                'message_id' => $chatMessage->id,
+                'message' => $messageText,
+            ]);
+        } catch (Throwable $ignored) {
+            Log::warning('telegram.notify.failed', ['reason' => $ignored->getMessage()]);
+        }
+
+        return $response;
+        } catch (Throwable $e) {
+            // Notify Telegram about the error
+            try {
+                $this->notifyTelegram('chat.send.error', [
+                    'user_id' => $request->user()?->id ?? null,
+                    'payload' => $request->all(),
+                    'error' => $e->getMessage(),
+                    'trace' => substr($e->getTraceAsString(), 0, 1500),
+                ]);
+            } catch (Throwable $ignored) {
+                Log::error('telegram.notify.error', ['reason' => $ignored->getMessage()]);
+            }
+
+            throw $e;
+        }
+    }
+
+    private function notifyTelegram(string $title, array $data): void
+    {
+        $token = env('TELEGRAM_BOT_TOKEN');
+        $chatId = env('TELEGRAM_CHAT_ID');
+
+        if (empty($token) || empty($chatId)) {
+            return;
+        }
+
+        $text = "[$title]\n" . json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+        try {
+            Http::post("https://api.telegram.org/bot{$token}/sendMessage", [
+                'chat_id' => $chatId,
+                'text' => $text,
+                'parse_mode' => 'HTML',
+            ]);
+        } catch (Throwable $e) {
+            Log::error('telegram.send.failed', ['error' => $e->getMessage()]);
+        }
     }
 
     public function markRead(Request $request): JsonResponse
