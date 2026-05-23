@@ -165,7 +165,14 @@
                         <div class="col-md-12">
                             <label class="form-label fw-semibold">Total Amount Sold</label>
                             <input type="number" name="total_amount" class="form-control form-control-lg js-total-amount" min="0.01" step="0.01" value="{{ old('total_amount') }}" readonly>
-                            <div class="field-hint mt-1">Auto-calculated from employee amounts.</div>
+                            <div class="d-flex align-items-center gap-3 mt-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="manual-total-toggle">
+                                    <label class="form-check-label small text-muted" for="manual-total-toggle">Enter total manually</label>
+                                </div>
+                                <div class="small text-muted">Toggle to enable manual total entry instead of auto-calculation.</div>
+                            </div>
+                            <div class="field-hint mt-1">Auto-calculated from employee amounts unless manual entry is enabled.</div>
                         </div>
                         <div class="col-md-12">
                             <label class="form-label fw-semibold">Amount Spent by Store <span class="text-muted">(Optional)</span></label>
@@ -550,6 +557,11 @@
 
     function updateTotalFromEmployeeList(container, totalInput) {
         if (!container || !totalInput) return;
+        // Respect manual toggle: if manual entry enabled, skip auto-calculation
+        try {
+            const manualToggle = document.getElementById('manual-total-toggle');
+            if (manualToggle && manualToggle.checked) return;
+        } catch (e) { /* ignore */ }
         const total = Array.from(container.querySelectorAll('.employee-sale-amount'))
             .reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
         totalInput.value = total > 0 ? total.toFixed(2) : '';
@@ -630,6 +642,20 @@
     if (employeeList) {
         bindEmployeeList(employeeList, createTotalInput);
         updateTotalFromEmployeeList(employeeList, createTotalInput);
+    }
+
+    // Manual total toggle: enable/disable total input and update behavior
+    const manualToggle = document.getElementById('manual-total-toggle');
+    if (manualToggle && createTotalInput) {
+        manualToggle.addEventListener('change', function () {
+            if (this.checked) {
+                createTotalInput.removeAttribute('readonly');
+            } else {
+                createTotalInput.setAttribute('readonly', 'readonly');
+                // recalc from employee list when disabling manual
+                updateTotalFromEmployeeList(employeeList, createTotalInput);
+            }
+        });
     }
 
     // Edit sale modal handling (delegated + safe modal init)
