@@ -564,14 +564,24 @@
 
             if (!response.ok) {
                 let message = 'Request failed';
+                let payload = null;
                 try {
-                    const payload = await response.json();
-                    message = payload.message || payload.error || message;
-                } catch (error) {
+                    payload = await response.json();
+                } catch (err) {
+                    // ignore JSON parse errors
+                }
+
+                if (payload) {
+                    if (typeof payload === 'string') {
+                        message = payload;
+                    } else {
+                        message = payload.message || payload.error || message;
+                    }
+                } else {
                     message = response.statusText || message;
                 }
 
-                throw new Error(message);
+                throw new Error(`${response.status} ${message}`.trim());
             }
 
             return response.json();
