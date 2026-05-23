@@ -46,13 +46,11 @@ class SalesController extends Controller
         $validated = $request->validate([
             'sale_date' => 'required|date|before_or_equal:today',
             'branch_id' => 'required|exists:branches,id',
-            'total_amount' => 'required|numeric|min:0.01',
             'spent_amount' => 'nullable|numeric|min:0',
             'employee_sales' => 'required|array|min:1',
             'employee_sales.*.employee_id' => 'required|exists:employees,id',
-            'employee_sales.*.description' => 'nullable|string|max:1000',
-            'product_sold' => 'nullable|array',
-            'product_sold.*' => 'nullable|string|max:255',
+            'employee_sales.*.amount' => 'required|numeric|min:0.01',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         $employeeSales = collect($validated['employee_sales'])
@@ -65,7 +63,9 @@ class SalesController extends Controller
                 ->withInput();
         }
 
-        $sale = DB::transaction(function () use ($validated, $employeeSales) {
+        $totalAmount = (float) $employeeSales->sum(fn ($row) => (float) ($row['amount'] ?? 0));
+
+        $sale = DB::transaction(function () use ($validated, $employeeSales, $totalAmount) {
             // Keep a primary employee on the sale for compatibility with existing employee views.
             $primaryEmployeeId = (int) $employeeSales->first()['employee_id'];
 
@@ -73,20 +73,21 @@ class SalesController extends Controller
                 'employee_id' => $primaryEmployeeId,
                 'product_id' => null,
                 'quantity' => 1,
-                'unit_price' => $validated['total_amount'],
-                'total_amount' => (float) $validated['total_amount'],
+                'unit_price' => $totalAmount,
+                'total_amount' => $totalAmount,
                 'spent_amount' => (float) ($validated['spent_amount'] ?? 0),
                 'sale_date' => $validated['sale_date'],
                 'branch_id' => $validated['branch_id'],
                 'sale_reference' => null,
-                'notes' => !empty($validated['product_sold']) ? implode('\n', array_filter($validated['product_sold'])) : null,
+                'notes' => $validated['notes'] ?? null,
                 'notes_ar' => null,
             ]);
 
             foreach ($employeeSales as $row) {
                 $sale->employeeSaleDetails()->create([
                     'employee_id' => (int) $row['employee_id'],
-                    'description' => $row['description'] ?? null,
+                    'amount' => (float) ($row['amount'] ?? 0),
+                    'description' => null,
                 ]);
             }
 
@@ -108,14 +109,11 @@ class SalesController extends Controller
         $validated = $request->validate([
             'sale_date' => 'required|date|before_or_equal:today',
             'branch_id' => 'required|exists:branches,id',
-            'total_amount' => 'required|numeric|min:0.01',
             'spent_amount' => 'nullable|numeric|min:0',
             'employee_sales' => 'required|array|min:1',
             'employee_sales.*.employee_id' => 'required|exists:employees,id',
-            'employee_sales.*.description' => 'nullable|string|max:1000',
-            'product_sold_text' => 'nullable|string|max:2000',
-            'product_sold' => 'nullable|array',
-            'product_sold.*' => 'nullable|string|max:255',
+            'employee_sales.*.amount' => 'required|numeric|min:0.01',
+            'notes' => 'nullable|string|max:2000',
         ]);
 
         $employeeSales = collect($validated['employee_sales'])
@@ -128,23 +126,18 @@ class SalesController extends Controller
                 ->withInput();
         }
 
-        $notes = null;
-        if ($request->filled('product_sold_text')) {
-            $notes = $request->input('product_sold_text');
-        } elseif ($request->has('product_sold') && is_array($request->input('product_sold'))) {
-            $notes = implode('\n', array_filter($request->input('product_sold')));
-        }
+        $totalAmount = (float) $employeeSales->sum(fn ($row) => (float) ($row['amount'] ?? 0));
 
-        DB::transaction(function () use ($sale, $validated, $employeeSales, $notes) {
+        DB::transaction(function () use ($sale, $validated, $employeeSales, $totalAmount) {
             $sale->update([
                 'employee_id' => (int) $employeeSales->first()['employee_id'],
                 'quantity' => 1,
-                'unit_price' => $validated['total_amount'],
-                'total_amount' => (float) $validated['total_amount'],
+                'unit_price' => $totalAmount,
+                'total_amount' => $totalAmount,
                 'spent_amount' => (float) ($validated['spent_amount'] ?? 0),
                 'sale_date' => $validated['sale_date'],
                 'branch_id' => $validated['branch_id'],
-                'notes' => $notes,
+                'notes' => $validated['notes'] ?? null,
             ]);
 
             $sale->employeeSaleDetails()->delete();
@@ -152,7 +145,8 @@ class SalesController extends Controller
             foreach ($employeeSales as $row) {
                 $sale->employeeSaleDetails()->create([
                     'employee_id' => (int) $row['employee_id'],
-                    'description' => $row['description'] ?? null,
+                    'amount' => (float) ($row['amount'] ?? 0),
+                    'description' => null,
                 ]);
             }
         });

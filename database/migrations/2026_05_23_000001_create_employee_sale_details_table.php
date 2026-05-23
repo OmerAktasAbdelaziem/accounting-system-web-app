@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('employee_sale_id')->constrained('employee_sales')->cascadeOnDelete();
             $table->foreignId('employee_id')->nullable()->constrained('employees')->nullOnDelete();
+            $table->decimal('amount', 12, 2)->default(0);
             $table->text('description')->nullable();
             $table->timestamps();
 

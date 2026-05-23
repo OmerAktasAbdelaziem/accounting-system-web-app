@@ -13,7 +13,12 @@ class EmployeeSaleDetail extends Model
     protected $fillable = [
         'employee_sale_id',
         'employee_id',
+        'amount',
         'description',
+    ];
+
+    protected $casts = [
+        'amount' => 'decimal:2',
     ];
 
     public function sale(): BelongsTo

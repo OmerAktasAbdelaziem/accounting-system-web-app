@@ -93,11 +93,20 @@ class Employee extends Model
      */
     public function calculateSalesForPeriod($month, $year): float
     {
-        $saleIds = $this->saleIdsForPeriod($month, $year);
+        $detailTotal = (float) $this->saleDetails()
+            ->whereHas('sale', function ($query) use ($month, $year) {
+                $query->whereYear('sale_date', $year)
+                    ->whereMonth('sale_date', $month);
+            })
+            ->sum('amount');
 
-        return $saleIds->isEmpty()
-            ? 0.0
-            : (float) EmployeeSale::whereIn('id', $saleIds)->sum('total_amount');
+        $legacyTotal = (float) $this->sales()
+            ->whereYear('sale_date', $year)
+            ->whereMonth('sale_date', $month)
+            ->whereDoesntHave('employeeSaleDetails')
+            ->sum('total_amount');
+
+        return $detailTotal + $legacyTotal;
     }
 
     /**
@@ -111,7 +120,20 @@ class Employee extends Model
             return ($salesAmount * $this->commission_rate) / 100;
         } else {
             // Fixed amount per sale
-            $salesCount = $this->saleIdsForPeriod($month, $year)->count();
+            $detailCount = $this->saleDetails()
+                ->whereHas('sale', function ($query) use ($month, $year) {
+                    $query->whereYear('sale_date', $year)
+                        ->whereMonth('sale_date', $month);
+                })
+                ->count();
+
+            $legacyCount = $this->sales()
+                ->whereYear('sale_date', $year)
+                ->whereMonth('sale_date', $month)
+                ->whereDoesntHave('employeeSaleDetails')
+                ->count();
+
+            $salesCount = $detailCount + $legacyCount;
             return $this->commission_rate * $salesCount;
         }
     }

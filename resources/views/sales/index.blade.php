@@ -109,7 +109,7 @@
                 </div>
                 <h2 class="fw-bold mb-2">Sales</h2>
                 <p class="mb-0 text-white-75" style="max-width: 720px;">
-                    Record daily sales total with optional product notes.
+                    Record daily sales total from employee amounts with one description for the full sale.
                 </p>
             </div>
             <div class="col-lg-5">
@@ -148,7 +148,7 @@
                 <div class="card-body p-4">
                     <form method="POST" action="{{ route('sales.store') }}" class="row g-3">
                         @csrf
-                        @php($employeeRows = old('employee_sales', [['employee_id' => '', 'description' => '']]))
+                        @php($employeeRows = old('employee_sales', [['employee_id' => '', 'amount' => '']]))
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Branch</label>
                             <select name="branch_id" class="form-select form-select-lg" required>
@@ -164,7 +164,8 @@
                         </div>
                         <div class="col-md-12">
                             <label class="form-label fw-semibold">Total Amount Sold</label>
-                            <input type="number" name="total_amount" class="form-control form-control-lg" min="0.01" step="0.01" value="{{ old('total_amount') }}" required>
+                            <input type="number" name="total_amount" class="form-control form-control-lg js-total-amount" min="0.01" step="0.01" value="{{ old('total_amount') }}" readonly>
+                            <div class="field-hint mt-1">Auto-calculated from employee amounts.</div>
                         </div>
                         <div class="col-md-12">
                             <label class="form-label fw-semibold">Amount Spent by Store <span class="text-muted">(Optional)</span></label>
@@ -173,12 +174,12 @@
 
                         <div class="col-12">
                             <label class="form-label fw-semibold">Employees Involved</label>
-                            <div class="field-hint mb-2">Choose one or more employees and add what each one sold today.</div>
+                            <div class="field-hint mb-2">Choose one or more employees and add the amount each one sold today.</div>
                             <div id="employee-sales-list" class="d-grid gap-3">
                                 @foreach($employeeRows as $index => $row)
                                     <div class="employee-sale-item border rounded-4 p-3 bg-light">
                                         <div class="row g-3">
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <label class="form-label small text-muted mb-1">Employee</label>
                                                 <select name="employee_sales[{{ $index }}][employee_id]" class="form-select" required>
                                                     <option value="">Select employee</option>
@@ -187,9 +188,9 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <div class="col-md-8">
-                                                <label class="form-label small text-muted mb-1">Description</label>
-                                                <textarea name="employee_sales[{{ $index }}][description]" class="form-control" rows="2" placeholder="What this employee sold today...">{{ $row['description'] ?? '' }}</textarea>
+                                            <div class="col-md-6">
+                                                <label class="form-label small text-muted mb-1">Amount Sold</label>
+                                                <input type="number" name="employee_sales[{{ $index }}][amount]" class="form-control employee-sale-amount" min="0.01" step="0.01" value="{{ $row['amount'] ?? '' }}" placeholder="0.00" required>
                                             </div>
                                         </div>
                                         <div class="d-flex justify-content-end mt-2">
@@ -205,29 +206,15 @@
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label fw-semibold">Products Sold <span class="text-muted">(Optional)</span></label>
-                            <div class="products-list">
-                                @if(old('product_sold'))
-                                    @foreach(old('product_sold') as $product)
-                                        <div class="input-group mb-2">
-                                            <input type="text" name="product_sold[]" class="form-control" value="{{ $product }}" placeholder="e.g., Product name, quantity, details...">
-                                            <button type="button" class="btn btn-outline-danger remove-product">Remove</button>
-                                        </div>
-                                    @endforeach
-                                @else
-                                    <div class="input-group mb-2">
-                                        <input type="text" name="product_sold[]" class="form-control" placeholder="e.g., Product name, quantity, details...">
-                                        <button type="button" class="btn btn-outline-danger remove-product">Remove</button>
-                                    </div>
-                                @endif
-                            </div>
-                            <button type="button" class="btn btn-outline-secondary btn-sm add-product-field mt-2">+ Add Product Field</button>
+                            <label class="form-label fw-semibold">Description</label>
+                            <textarea name="notes" class="form-control" rows="4" placeholder="Add a description for the whole sale...">{{ old('notes') }}</textarea>
+                            <div class="field-hint mt-1">This description applies to the whole sale, not to individual employees.</div>
                         </div>
 
                         <template id="employee-sale-row-template">
                             <div class="employee-sale-item border rounded-4 p-3 bg-light">
                                 <div class="row g-3">
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <label class="form-label small text-muted mb-1">Employee</label>
                                         <select name="employee_sales[__INDEX__][employee_id]" class="form-select" required>
                                             <option value="">Select employee</option>
@@ -236,9 +223,9 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-8">
-                                        <label class="form-label small text-muted mb-1">Description</label>
-                                        <textarea name="employee_sales[__INDEX__][description]" class="form-control" rows="2" placeholder="What this employee sold today..."></textarea>
+                                    <div class="col-md-6">
+                                        <label class="form-label small text-muted mb-1">Amount Sold</label>
+                                        <input type="number" name="employee_sales[__INDEX__][amount]" class="form-control employee-sale-amount" min="0.01" step="0.01" placeholder="0.00" required>
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-end mt-2">
@@ -259,7 +246,7 @@
             <div class="card sales-panel h-100">
                 <div class="card-header px-4 py-3">
                     <h5 class="mb-1">What this screen captures</h5>
-                    <div class="field-hint">Quick entry for total daily sales amount with optional product notes.</div>
+                    <div class="field-hint">Quick entry for total daily sales amount built from employee amounts.</div>
                 </div>
                 <div class="card-body p-4">
                     <div class="sales-empty p-4 mb-3">
@@ -269,7 +256,7 @@
                             </div>
                             <div>
                                 <h6 class="mb-1">Daily sales tracking</h6>
-                                <div class="text-muted small">Record total amount sold for the day with optional product notes. Add more product fields as needed.</div>
+                                <div class="text-muted small">Record total amount sold by adding each employee's amount. The total updates automatically.</div>
                             </div>
                         </div>
                     </div>
@@ -338,7 +325,7 @@
                             <th>Total Amount</th>
                             <th>Spent</th>
                             <th>Net</th>
-                            <th>Products Sold</th>
+                            <th>Description</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -357,7 +344,8 @@
                                         data-spent-amount="{{ number_format((float) ($sale->spent_amount ?? 0), 2, '.', '') }}"
                                         data-net-amount="{{ number_format((float) $sale->net_income, 2, '.', '') }}"
                                         data-primary-employee="{{ e($sale->employee?->name ?? '-') }}"
-                                        data-sale-employees='@json($sale->employeeSaleDetails->map(fn ($detail) => ["name" => $detail->employee?->name ?? "Deleted employee", "description" => $detail->description ?? ""]))'
+                                        data-sale-notes="{{ e($sale->notes ?? '') }}"
+                                        data-sale-employees='@json($sale->employeeSaleDetails->map(fn ($detail) => ["name" => $detail->employee?->name ?? "Deleted employee", "amount" => (float) $detail->amount]))'
                                     >
                                         {{ $currencySymbol ?? '$' }}{{ number_format((float) $sale->total_amount, 2) }}
                                     </button>
@@ -382,7 +370,7 @@
                                             data-spent_amount="{{ (float) ($sale->spent_amount ?? 0) }}"
                                             data-notes="{{ e($sale->notes) }}"
                                                     data-primary-employee-id="{{ $sale->employee_id }}"
-                                                    data-employee-sales='@json($sale->employeeSaleDetails->map(fn ($detail) => ["employee_id" => $detail->employee_id, "description" => $detail->description ?? ""]))'
+                                                    data-employee-sales='@json($sale->employeeSaleDetails->map(fn ($detail) => ["employee_id" => $detail->employee_id, "amount" => (float) $detail->amount]))'
                                             data-update_url="{{ route('sales.update', $sale->id) }}"
                                         >
                                             <i class="bi bi-pencil"></i>
@@ -448,6 +436,10 @@
                                 <div class="small text-muted">Net</div>
                                 <div class="fw-semibold" id="sale-details-net">-</div>
                             </div>
+                            <div class="col-12">
+                                <div class="small text-muted">Description</div>
+                                <div class="fw-semibold" id="sale-details-notes">-</div>
+                            </div>
                         </div>
 
                         <div class="card border-0 bg-light">
@@ -489,7 +481,8 @@
                                 </div>
                                 <div class="col-md-12">
                                     <label class="form-label">Total Amount</label>
-                                    <input type="number" name="total_amount" class="form-control" step="0.01" min="0.01" required>
+                                    <input type="number" name="total_amount" class="form-control js-total-amount" step="0.01" min="0.01" readonly>
+                                    <div class="field-hint mt-1">Auto-calculated from employee amounts.</div>
                                 </div>
                                 <div class="col-md-12">
                                     <label class="form-label">Amount Spent by Store <span class="text-muted">(Optional)</span></label>
@@ -497,7 +490,7 @@
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label fw-semibold">Employees Involved</label>
-                                    <div class="field-hint mb-2">Add or change the employees linked to this sale.</div>
+                                    <div class="field-hint mb-2">Add or change the employees linked to this sale and their sold amounts.</div>
                                     <div id="edit-employee-sales-list" class="d-grid gap-3"></div>
                                     <button type="button" class="btn btn-outline-secondary btn-sm mt-2 add-edit-employee-field">+ Add Employee</button>
                                     @error('employee_sales')
@@ -505,8 +498,9 @@
                                     @enderror
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label">Products / Notes</label>
-                                    <textarea name="product_sold_text" rows="4" class="form-control" placeholder="One product per line or notes..."></textarea>
+                                    <label class="form-label">Description</label>
+                                    <textarea name="notes" rows="4" class="form-control" placeholder="Add a description for the whole sale..."></textarea>
+                                    <div class="field-hint mt-1">This description applies to the whole sale, not to individual employees.</div>
                                 </div>
                             </div>
                         </div>
@@ -522,7 +516,7 @@
         <template id="edit-employee-sale-row-template">
             <div class="employee-sale-item border rounded-4 p-3 bg-light">
                 <div class="row g-3">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label small text-muted mb-1">Employee</label>
                         <select name="employee_sales[__INDEX__][employee_id]" class="form-select" required>
                             <option value="">Select employee</option>
@@ -531,9 +525,9 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-8">
-                        <label class="form-label small text-muted mb-1">Description</label>
-                        <textarea name="employee_sales[__INDEX__][description]" class="form-control" rows="2" placeholder="What this employee sold today..."></textarea>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted mb-1">Amount Sold</label>
+                        <input type="number" name="employee_sales[__INDEX__][amount]" class="form-control employee-sale-amount" min="0.01" step="0.01" placeholder="0.00" required>
                     </div>
                 </div>
                 <div class="d-flex justify-content-end mt-2">
@@ -553,41 +547,14 @@
             .replaceAll("'", '&#039;');
     }
 
-    // Handle product field management for simplified sales form
-    function bindProductList(container) {
-        const addBtn = container.closest('form')?.querySelector('.add-product-field');
-        const productsList = container;
-
-        function bindRemoveButtons() {
-            container.querySelectorAll('.remove-product').forEach((btn) => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    // Only remove if there's more than one field
-                    if (container.querySelectorAll('.input-group').length > 1) {
-                        btn.closest('.input-group').remove();
-                    }
-                });
-            });
-        }
-
-        bindRemoveButtons();
-
-        if (addBtn) {
-            addBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const newField = document.createElement('div');
-                newField.className = 'input-group mb-2';
-                newField.innerHTML = `
-                    <input type="text" name="product_sold[]" class="form-control" placeholder="e.g., Product name, quantity, details...">
-                    <button type="button" class="btn btn-outline-danger remove-product">Remove</button>
-                `;
-                productsList.appendChild(newField);
-                bindRemoveButtons();
-            });
-        }
+    function updateTotalFromEmployeeList(container, totalInput) {
+        if (!container || !totalInput) return;
+        const total = Array.from(container.querySelectorAll('.employee-sale-amount'))
+            .reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
+        totalInput.value = total > 0 ? total.toFixed(2) : '';
     }
 
-    function bindEmployeeList(container) {
+    function bindEmployeeList(container, totalInput) {
         const addBtn = document.querySelector('.add-employee-field');
         const template = document.getElementById('employee-sale-row-template');
         let nextIndex = container.querySelectorAll('.employee-sale-item').length;
@@ -605,17 +572,24 @@
 
         bindRemoveButtons();
 
+        container.addEventListener('input', function (e) {
+            if (e.target && e.target.classList.contains('employee-sale-amount')) {
+                updateTotalFromEmployeeList(container, totalInput);
+            }
+        });
+
         if (addBtn && template) {
             addBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 const html = template.innerHTML.replaceAll('__INDEX__', String(nextIndex++));
                 container.insertAdjacentHTML('beforeend', html);
                 bindRemoveButtons();
+                updateTotalFromEmployeeList(container, totalInput);
             });
         }
     }
 
-    function bindEditEmployeeList(container) {
+    function bindEditEmployeeList(container, totalInput) {
         const addBtn = document.querySelector('.add-edit-employee-field');
         const template = document.getElementById('edit-employee-sale-row-template');
         let nextIndex = container.querySelectorAll('.employee-sale-item').length;
@@ -633,20 +607,28 @@
 
         bindRemoveButtons();
 
+        container.addEventListener('input', function (e) {
+            if (e.target && e.target.classList.contains('employee-sale-amount')) {
+                updateTotalFromEmployeeList(container, totalInput);
+            }
+        });
+
         if (addBtn && template) {
             addBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 const html = template.innerHTML.replaceAll('__INDEX__', String(nextIndex++));
                 container.insertAdjacentHTML('beforeend', html);
                 bindRemoveButtons();
+                updateTotalFromEmployeeList(container, totalInput);
             });
         }
     }
 
-    document.querySelectorAll('.products-list').forEach(bindProductList);
     const employeeList = document.getElementById('employee-sales-list');
+    const createTotalInput = document.querySelector('input[name="total_amount"]');
     if (employeeList) {
-        bindEmployeeList(employeeList);
+        bindEmployeeList(employeeList, createTotalInput);
+        updateTotalFromEmployeeList(employeeList, createTotalInput);
     }
 
     // Edit sale modal handling (delegated + safe modal init)
@@ -667,8 +649,9 @@
         }
 
         const editEmployeeList = document.getElementById('edit-employee-sales-list');
+        const editTotalInput = document.querySelector('#editSaleForm input[name="total_amount"]');
         if (editEmployeeList) {
-            bindEditEmployeeList(editEmployeeList);
+            bindEditEmployeeList(editEmployeeList, editTotalInput);
         }
 
         document.addEventListener('click', function (e) {
@@ -688,7 +671,7 @@
                 const employees = saleEmployees.length > 0
                     ? saleEmployees
                     : (primaryEmployee && primaryEmployee !== '-')
-                        ? [{ name: primaryEmployee, description: 'Primary employee' }]
+                        ? [{ name: primaryEmployee, amount: detailsBtn.getAttribute('data-total-amount') || 0 }]
                         : [];
 
                 const saleDetailsList = document.getElementById('sale-details-list');
@@ -698,6 +681,7 @@
                 const saleDetailsTotal = document.getElementById('sale-details-total');
                 const saleDetailsSpent = document.getElementById('sale-details-spent');
                 const saleDetailsNet = document.getElementById('sale-details-net');
+                const saleDetailsNotes = document.getElementById('sale-details-notes');
 
                 if (saleDetailsDate) saleDetailsDate.textContent = detailsBtn.getAttribute('data-sale-date') || '-';
                 if (saleDetailsBranch) saleDetailsBranch.textContent = detailsBtn.getAttribute('data-branch-name') || '-';
@@ -705,6 +689,7 @@
                 if (saleDetailsTotal) saleDetailsTotal.textContent = '{{ $currencySymbol ?? '$' }}' + (detailsBtn.getAttribute('data-total-amount') || '0.00');
                 if (saleDetailsSpent) saleDetailsSpent.textContent = '{{ $currencySymbol ?? '$' }}' + (detailsBtn.getAttribute('data-spent-amount') || '0.00');
                 if (saleDetailsNet) saleDetailsNet.textContent = '{{ $currencySymbol ?? '$' }}' + (detailsBtn.getAttribute('data-net-amount') || '0.00');
+                if (saleDetailsNotes) saleDetailsNotes.textContent = detailsBtn.getAttribute('data-sale-notes') || '-';
 
                 if (saleDetailsList) {
                     saleDetailsList.innerHTML = employees.length
@@ -712,8 +697,8 @@
                             <li class="list-group-item d-flex justify-content-between align-items-start gap-3">
                                 <div>
                                     <div class="fw-semibold">${escapeHtml(employee.name || 'Deleted employee')}</div>
-                                    <div class="text-muted small">${escapeHtml(employee.description || 'No description provided.')}</div>
                                 </div>
+                                <div class="fw-semibold">{{ $currencySymbol ?? '$' }}${Number(employee.amount || 0).toFixed(2)}</div>
                                 <span class="badge text-bg-light border">#${index + 1}</span>
                             </li>
                         `).join('')
@@ -756,7 +741,7 @@
             const branchSelect = form.querySelector('select[name="branch_id"]');
             const totalInput = form.querySelector('input[name="total_amount"]');
             const spentInput = form.querySelector('input[name="spent_amount"]');
-            const notesArea = form.querySelector('textarea[name="product_sold_text"]');
+            const notesArea = form.querySelector('textarea[name="notes"]');
             const editEmployeeList = document.getElementById('edit-employee-sales-list');
             const editEmployeeTemplate = document.getElementById('edit-employee-sale-row-template');
 
@@ -769,16 +754,16 @@
             if (editEmployeeList && editEmployeeTemplate) {
                 const rows = employeeSalesData.length > 0
                     ? employeeSalesData
-                    : [{ employee_id: btn.getAttribute('data-primary-employee-id') || '', description: '' }];
+                    : [{ employee_id: btn.getAttribute('data-primary-employee-id') || '', amount: '' }];
 
                 editEmployeeList.innerHTML = rows.map((row, index) => editEmployeeTemplate.innerHTML.replaceAll('__INDEX__', String(index))).join('');
 
                 editEmployeeList.querySelectorAll('.employee-sale-item').forEach((rowEl, index) => {
                     const rowData = rows[index] || {};
                     const employeeSelect = rowEl.querySelector('select[name^="employee_sales"]');
-                    const descriptionInput = rowEl.querySelector('textarea[name^="employee_sales"]');
+                    const amountInput = rowEl.querySelector('input[name^="employee_sales"][name$="[amount]"]');
                     if (employeeSelect) employeeSelect.value = String(rowData.employee_id || '');
-                    if (descriptionInput) descriptionInput.value = rowData.description || '';
+                    if (amountInput) amountInput.value = String(rowData.amount || '');
                 });
 
                 // rebind remove buttons for newly injected rows
@@ -787,9 +772,12 @@
                         event.preventDefault();
                         if (editEmployeeList.querySelectorAll('.employee-sale-item').length > 1) {
                             removeBtn.closest('.employee-sale-item')?.remove();
+                            updateTotalFromEmployeeList(editEmployeeList, totalInput);
                         }
                     });
                 });
+
+                updateTotalFromEmployeeList(editEmployeeList, totalInput);
             }
 
             if (editModal) {
