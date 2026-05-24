@@ -110,8 +110,8 @@
 
                                 <button type="submit"
                                         class="btn btn-sm {{ $access ? 'btn-success' : 'btn-outline-secondary' }} toggle-btn"
-                                        data-enabled-text="<i class=\"icon icon-check\"></i> Enabled"
-                                        data-disabled-text="<i class=\"icon icon-x\"></i> Disabled"
+                                    data-enabled-label="Enabled"
+                                    data-disabled-label="Disabled"
                                         data-enabled-class="btn btn-sm btn-success toggle-btn"
                                         data-disabled-class="btn btn-sm btn-outline-secondary toggle-btn"
                                         title="Click to toggle"
@@ -405,11 +405,18 @@ document.addEventListener('DOMContentLoaded', function() {
         return '<span class="badge bg-info text-dark">' + safeLabel + '</span>';
     }
 
+    function renderToggleButton(enabled, button) {
+        const label = enabled ? (button?.dataset.enabledLabel || 'Enabled') : (button?.dataset.disabledLabel || 'Disabled');
+        const icon = enabled ? 'icon-check' : 'icon-x';
+
+        return '<i class="icon ' + icon + '"></i> ' + label;
+    }
+
     function updateMatrixButtonState(button, enabled) {
         if (!button) return;
 
         button.className = enabled ? button.dataset.enabledClass : button.dataset.disabledClass;
-        button.innerHTML = enabled ? button.dataset.enabledText : button.dataset.disabledText;
+        button.innerHTML = renderToggleButton(enabled, button);
 
         const form = button.closest('form');
         const actionInput = form ? form.querySelector('input[name="action"]') : null;
@@ -460,7 +467,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const actionInput = form.querySelector('input[name="action"]');
-            const isEnabling = actionInput && actionInput.value === 'enable';
             const originalHtml = button.innerHTML;
             const originalClassName = button.className;
 
