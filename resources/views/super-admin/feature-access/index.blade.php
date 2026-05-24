@@ -22,6 +22,11 @@
     </div>
 @endif
 
+<div id="featureAccessAlert" class="alert d-none alert-dismissible fade show" role="alert">
+    <span class="feature-access-alert-message"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+
 <!-- Merchant Selection -->
 <div class="form-section mb-4">
     <h5 class="mb-3">Select Merchant</h5>
@@ -40,7 +45,7 @@
         </div>
         @if($selectedMerchant)
         <div class="col-md-4 d-flex gap-2">
-            <form action="{{ route('super-admin.feature-access.reset') }}" method="POST" style="display:inline;">
+            <form action="{{ route('super-admin.feature-access.reset') }}" method="POST" class="feature-access-reset-form" style="display:inline;">
                 @csrf
                 <input type="hidden" name="merchant_id" value="{{ $selectedMerchant->id }}">
                 <button type="submit" class="btn btn-outline-warning btn-sm" onclick="return confirm('Reset all features to package defaults?')">
@@ -96,15 +101,21 @@
                                 $access = $featureAccess[$feature][$role->id] ?? false;
                                 $canEdit = true; // Check authorization if needed
                             @endphp
-                            <form method="POST" action="{{ route('super-admin.feature-access.update') }}" style="display:inline;">
+                            <form method="POST" action="{{ route('super-admin.feature-access.update') }}" class="feature-access-toggle-form" data-role-id="{{ $role->id }}" data-feature-key="{{ $feature }}" style="display:inline;">
                                 @csrf
                                 <input type="hidden" name="merchant_id" value="{{ $selectedMerchant->id }}">
                                 <input type="hidden" name="role_id" value="{{ $role->id }}">
                                 <input type="hidden" name="feature" value="{{ $feature }}">
                                 <input type="hidden" name="action" value="{{ $access ? 'disable' : 'enable' }}">
 
-                                <button type="submit" class="btn btn-sm {{ $access ? 'btn-success' : 'btn-outline-secondary' }} toggle-btn" 
-                                    title="Click to toggle" {{ !$canEdit ? 'disabled' : '' }}>
+                                <button type="submit"
+                                        class="btn btn-sm {{ $access ? 'btn-success' : 'btn-outline-secondary' }} toggle-btn"
+                                        data-enabled-text="<i class=\"icon icon-check\"></i> Enabled"
+                                        data-disabled-text="<i class=\"icon icon-x\"></i> Disabled"
+                                        data-enabled-class="btn btn-sm btn-success toggle-btn"
+                                        data-disabled-class="btn btn-sm btn-outline-secondary toggle-btn"
+                                        title="Click to toggle"
+                                        {{ !$canEdit ? 'disabled' : '' }}>
                                     @if($access)
                                     <i class="icon icon-check"></i> Enabled
                                     @else
@@ -159,11 +170,11 @@
                             $employeeGrantedFeatureKeys = $linkedUser ? ($employeeOverrides[$linkedUser->id] ?? collect())->where('is_enabled', true)->pluck('feature_key')->toArray() : [];
                             $employeeDeniedFeatureKeys = $linkedUser ? ($employeeOverrides[$linkedUser->id] ?? collect())->where('is_enabled', false)->pluck('feature_key')->toArray() : [];
                         @endphp
-                        <tr>
+                        <tr data-employee-row="{{ $linkedUser?->id ?? '' }}">
                             <td>{{ $employee->name }}</td>
                             <td>{{ $employee->email }}</td>
                             <td>{{ $linkedUser?->role?->name ?? $employee->position ?? '-' }}</td>
-                            <td>
+                            <td class="employee-special-access-cell">
                                 @if(!empty($employeeGrantedFeatureKeys) || !empty($employeeDeniedFeatureKeys))
                                     <div class="d-flex flex-wrap gap-1">
                                         @foreach($employeeGrantedFeatureKeys as $featureKey)
@@ -364,17 +375,170 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Smooth form submission for toggle buttons
-    const toggleForms = document.querySelectorAll('.toggle-btn');
-    toggleForms.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const form = this.closest('form');
-            // Add loading state
-            this.disabled = true;
-            this.innerHTML = '<i class="icon icon-loader"></i> Updating...';
-            // Submit form
-            form.submit();
+    const alertBox = document.getElementById('featureAccessAlert');
+    const alertMessage = alertBox ? alertBox.querySelector('.feature-access-alert-message') : null;
+    const featureLabels = @json($availableFeatures ?? []);
+
+    function showAlert(message, type) {
+        if (!alertBox || !alertMessage) {
+            return;
+        }
+
+        alertBox.classList.remove('d-none', 'alert-success', 'alert-danger', 'alert-warning');
+        alertBox.classList.add(type === 'success' ? 'alert-success' : 'alert-danger');
+        alertMessage.textContent = message;
+    }
+
+    function getCsrfToken(form) {
+        const tokenInput = form.querySelector('input[name="_token"]');
+        return tokenInput ? tokenInput.value : '';
+    }
+
+    function renderFeatureBadge(featureKey, type) {
+        const label = featureLabels[featureKey] || featureKey.replace(/_/g, ' ');
+        const safeLabel = label.charAt(0).toUpperCase() + label.slice(1);
+
+        if (type === 'deny') {
+            return '<span class="badge bg-danger">Denied: ' + safeLabel + '</span>';
+        }
+
+        return '<span class="badge bg-info text-dark">' + safeLabel + '</span>';
+    }
+
+    function updateMatrixButtonState(button, enabled) {
+        if (!button) return;
+
+        button.className = enabled ? button.dataset.enabledClass : button.dataset.disabledClass;
+        button.innerHTML = enabled ? button.dataset.enabledText : button.dataset.disabledText;
+
+        const form = button.closest('form');
+        const actionInput = form ? form.querySelector('input[name="action"]') : null;
+        if (actionInput) {
+            actionInput.value = enabled ? 'disable' : 'enable';
+        }
+    }
+
+    function updateMatrixFromReset(payload) {
+        const enabledRoles = Array.isArray(payload.enabled_role_ids) ? payload.enabled_role_ids.map(String) : [];
+        const packageFeatures = Array.isArray(payload.package_features) ? payload.package_features : [];
+
+        document.querySelectorAll('.feature-access-toggle-form').forEach(function (form) {
+            const button = form.querySelector('.toggle-btn');
+            const roleId = String(form.dataset.roleId || '');
+            const featureKey = form.dataset.featureKey || '';
+            const enabled = enabledRoles.includes(roleId) && packageFeatures.includes(featureKey);
+            updateMatrixButtonState(button, enabled);
+        });
+    }
+
+    function updateEmployeeRow(userId, decision, features) {
+        const row = document.querySelector('[data-employee-row="' + userId + '"]');
+        if (!row) return;
+
+        const cell = row.querySelector('.employee-special-access-cell');
+        if (!cell) return;
+
+        if (!features || !features.length) {
+            cell.innerHTML = '<span class="text-muted">No special access</span>';
+            return;
+        }
+
+        const badges = features.map(function (featureKey) {
+            return renderFeatureBadge(featureKey, decision);
+        }).join('');
+
+        cell.innerHTML = '<div class="d-flex flex-wrap gap-1">' + badges + '</div>';
+    }
+
+    document.querySelectorAll('.feature-access-toggle-form').forEach(function (form) {
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const button = form.querySelector('.toggle-btn');
+            if (!button || button.disabled) {
+                return;
+            }
+
+            const actionInput = form.querySelector('input[name="action"]');
+            const isEnabling = actionInput && actionInput.value === 'enable';
+            const originalHtml = button.innerHTML;
+            const originalClassName = button.className;
+
+            button.disabled = true;
+            button.innerHTML = '<i class="icon icon-loader"></i> Updating...';
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': getCsrfToken(form),
+                    },
+                    body: new FormData(form),
+                });
+
+                const payload = await response.json().catch(() => ({}));
+
+                if (!response.ok || !payload.success) {
+                    throw new Error(payload.message || 'Unable to update feature access.');
+                }
+
+                updateMatrixButtonState(button, !!payload.enabled);
+                showAlert(payload.message || 'Feature access updated', 'success');
+            } catch (error) {
+                button.className = originalClassName;
+                button.innerHTML = originalHtml;
+                showAlert(error.message || 'Unable to update feature access.', 'danger');
+            } finally {
+                button.disabled = false;
+            }
+        });
+    });
+
+    document.querySelectorAll('.feature-access-reset-form').forEach(function (form) {
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            if (!confirm('Reset all features to package defaults?')) {
+                return;
+            }
+
+            const button = form.querySelector('button[type="submit"]');
+            const originalHtml = button ? button.innerHTML : '';
+
+            if (button) {
+                button.disabled = true;
+                button.innerHTML = '<i class="icon icon-loader"></i> Resetting...';
+            }
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': getCsrfToken(form),
+                    },
+                    body: new FormData(form),
+                });
+
+                const payload = await response.json().catch(() => ({}));
+
+                if (!response.ok || !payload.success) {
+                    throw new Error(payload.message || 'Unable to reset feature access.');
+                }
+
+                updateMatrixFromReset(payload);
+                showAlert(payload.message || 'Feature access reset to package defaults', 'success');
+            } catch (error) {
+                showAlert(error.message || 'Unable to reset feature access.', 'danger');
+            } finally {
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML = originalHtml;
+                }
+            }
         });
     });
 
@@ -407,6 +571,55 @@ document.addEventListener('DOMContentLoaded', function() {
                     checkbox.checked = activeKeys.includes(checkbox.value);
                 });
             }, { once: true });
+        });
+    }
+
+    const employeeAccessForm = document.getElementById('employeeAccessForm');
+    if (employeeAccessForm) {
+        employeeAccessForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const button = employeeAccessForm.querySelector('button[type="submit"]');
+            const originalHtml = button ? button.innerHTML : '';
+
+            if (button) {
+                button.disabled = true;
+                button.innerHTML = '<i class="icon icon-loader"></i> Saving...';
+            }
+
+            try {
+                const response = await fetch(employeeAccessForm.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': getCsrfToken(employeeAccessForm),
+                    },
+                    body: new FormData(employeeAccessForm),
+                });
+
+                const payload = await response.json().catch(() => ({}));
+
+                if (!response.ok || !payload.success) {
+                    throw new Error(payload.message || 'Unable to save employee access.');
+                }
+
+                updateEmployeeRow(payload.user_id, payload.decision, payload.features);
+                showAlert(payload.message || 'Employee access updated', 'success');
+
+                const modalElement = document.getElementById('employeeAccessModal');
+                const modalInstance = modalElement && window.bootstrap ? bootstrap.Modal.getInstance(modalElement) : null;
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            } catch (error) {
+                showAlert(error.message || 'Unable to save employee access.', 'danger');
+            } finally {
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML = originalHtml;
+                }
+            }
         });
     }
 

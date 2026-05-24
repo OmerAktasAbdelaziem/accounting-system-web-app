@@ -165,6 +165,17 @@ class FeatureAccessController extends Controller
             }
         }
 
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Feature access updated',
+                'merchant_id' => (int) $validated['merchant_id'],
+                'role_id' => (int) $role->id,
+                'feature' => $validated['feature'],
+                'enabled' => $validated['action'] === 'enable',
+            ]);
+        }
+
         return redirect()->route('super-admin.feature-access.index', ['merchant_id' => $validated['merchant_id']])
             ->with('success', 'Feature access updated');
     }
@@ -205,6 +216,17 @@ class FeatureAccessController extends Controller
         $message = $validated['decision'] === 'grant'
             ? "Special access granted for {$user->name}"
             : "Access denied for selected pages for {$user->name}";
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'merchant_id' => (int) $validated['merchant_id'],
+                'user_id' => (int) $user->id,
+                'decision' => $validated['decision'],
+                'features' => array_values($validated['features'] ?? []),
+            ]);
+        }
 
         return redirect()->route('super-admin.feature-access.index', ['merchant_id' => $validated['merchant_id']])
             ->with('success', $message);
@@ -287,6 +309,26 @@ class FeatureAccessController extends Controller
                     ]);
                 }
             }
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Feature access reset to package defaults',
+                    'merchant_id' => (int) $merchant->id,
+                    'package_features' => array_values($packageFeatures),
+                    'enabled_role_ids' => $roles->pluck('id')->values()->all(),
+                ]);
+            }
+        }
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Feature access reset to package defaults',
+                'merchant_id' => (int) $merchant->id,
+                'package_features' => [],
+                'enabled_role_ids' => [],
+            ]);
         }
 
         return redirect()->route('super-admin.feature-access.index', ['merchant_id' => $validated['merchant_id']])
