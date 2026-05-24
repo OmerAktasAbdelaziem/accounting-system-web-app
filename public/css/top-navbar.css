@@ -6,7 +6,7 @@
   --glass: rgba(255,255,255,0.06);
   --muted: rgba(255,255,255,0.75);
 }
-.modern-top-navbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:linear-gradient(90deg, rgba(20,20,20,0.98), rgba(34,34,34,0.98));border-bottom:1px solid rgba(255,255,255,0.04);backdrop-filter:blur(6px);}
+.modern-top-navbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:linear-gradient(90deg, rgba(20,20,20,0.98), rgba(34,34,34,0.98));border-bottom:1px solid rgba(255,255,255,0.04);backdrop-filter:blur(6px);position:sticky;top:0;z-index:1100}
 .modern-top-navbar .brand{display:flex;align-items:center;gap:12px;font-weight:800;color:#fff;text-decoration:none}
 .modern-top-navbar .brand .logo-mark{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:18px}
 .modern-top-navbar .brand .app-name{font-size:18px;color:#fff}

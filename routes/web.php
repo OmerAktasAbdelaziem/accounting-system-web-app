@@ -65,6 +65,10 @@ Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/home', [DashboardController::class, 'index'])->name('home');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // AJAX utilities: search and notifications
+    Route::get('search', [\App\Http\Controllers\SearchController::class, 'index'])->name('search');
+    Route::get('notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('notifications/mark-read', [\App\Http\Controllers\NotificationController::class, 'markRead'])->name('notifications.markRead');
     Route::get('dashboard/analytics', [DashboardController::class, 'analytics'])->name('dashboard.analytics');
     Route::get('system-dashboard-fix', [DashboardController::class, 'index'])->name('system.dashboard');
 
