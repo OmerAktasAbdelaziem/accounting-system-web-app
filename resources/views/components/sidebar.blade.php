@@ -74,18 +74,7 @@
                         <span>Merchant Dashboard</span>
                     </a>
                 </li>
-                <li>
-                    <a href="{{ route('super-admin.feature-access.index') }}">
-                        <i class="bi bi-shield-lock"></i>
-                        <span>Feature Access</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('super-admin.merchants.create') }}">
-                        <i class="bi bi-building-add"></i>
-                        <span>New Merchant</span>
-                    </a>
-                </li>
+                {{-- Removed Feature Access and New Merchant per admin request --}}
             </ul>
         </div>
     @endif

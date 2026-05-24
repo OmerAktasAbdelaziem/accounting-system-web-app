@@ -26,13 +26,11 @@ class Sidebar extends Component
                 'reports' => [],
                 'systems' => [],
                 'admin' => [
-                    ['route' => 'super-admin.users.create', 'icon' => 'bi-person-plus', 'label' => 'Create New User'],
                     ['route' => 'super-admin.users.index', 'icon' => 'bi-people', 'label' => 'System Users'],
                     ['route' => 'roles.index', 'icon' => 'bi-shield-lock', 'label' => 'Roles Management'],
                     ['route' => 'super-admin.merchants.index', 'icon' => 'bi-building', 'label' => 'Merchants'],
                     ['route' => 'super-admin.packages.index', 'icon' => 'bi-box-seam', 'label' => 'Packages'],
                     ['route' => 'super-admin.subscriptions.index', 'icon' => 'bi-bookmark-check', 'label' => 'Subscriptions'],
-                    ['route' => 'super-admin.feature-access.index', 'icon' => 'bi-toggles2', 'label' => 'Feature Access'],
                     ['route' => 'super-admin.vat-rates.index', 'icon' => 'bi-percent', 'label' => 'VAT Rates'],
                     ['route' => 'profile', 'icon' => 'bi-person', 'label' => 'Profile'],
                     ['route' => 'settings.index', 'icon' => 'bi-gear', 'label' => 'System Settings'],
