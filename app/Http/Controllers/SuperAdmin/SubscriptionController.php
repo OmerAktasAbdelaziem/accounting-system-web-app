@@ -131,11 +131,11 @@ class SubscriptionController extends Controller
             $days = (int) $request->custom_days;
         } else {
             $months = (int) ($validated['renewal_option'] ?? 1);
-            $days = $subscription->package->duration_days * $months;
+            $days = (int) $subscription->package->duration_days * $months;
         }
 
         $oldExpiry = $subscription->expires_at;
-        $subscription->expires_at = $oldExpiry->addDays($days);
+        $subscription->expires_at = $oldExpiry->addDays((int) $days);
         $subscription->save();
 
         if ($request->send_confirmation) {
@@ -186,7 +186,7 @@ class SubscriptionController extends Controller
         ]);
 
         $oldExpiry = $subscription->expires_at;
-        $subscription->expires_at = $oldExpiry->addDays($validated['days']);
+        $subscription->expires_at = $oldExpiry->addDays((int) $validated['days']);
         $subscription->save();
 
         return redirect()->route('super-admin.subscriptions.show', $subscription)

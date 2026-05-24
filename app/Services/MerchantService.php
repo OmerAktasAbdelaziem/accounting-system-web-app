@@ -90,7 +90,7 @@ class MerchantService
         $merchant->subscription()->where('is_active', true)->update(['is_active' => false]);
 
         $startsAt = now();
-        $expiresAt = now()->addDays($package->duration_days);
+        $expiresAt = now()->addDays((int) $package->duration_days);
 
         $subscription = Subscription::create([
             'merchant_id' => $merchant->id,
@@ -113,7 +113,7 @@ class MerchantService
      */
     public function renewSubscription(Subscription $subscription): Subscription
     {
-        $expiresAt = $subscription->expires_at->addDays($subscription->package->duration_days);
+        $expiresAt = $subscription->expires_at->addDays((int) $subscription->package->duration_days);
 
         $subscription->update([
             'expires_at' => $expiresAt,
