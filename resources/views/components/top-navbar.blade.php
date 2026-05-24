@@ -71,10 +71,21 @@
     </div>
 </nav>
 @if(!empty($subscription_blocked))
+    @php
+        $merchantName = $subscription_block_details['merchant'] ?? 'Merchant';
+        $merchantInitials = collect(explode(' ', $merchantName))->filter()->take(2)->map(function ($part) {
+            return mb_strtoupper(mb_substr($part, 0, 1));
+        })->implode('');
+        if ($merchantInitials === '') {
+            $merchantInitials = 'M';
+        }
+        $supportEmail = 'contact.us.omer@gmail.com';
+        $supportWhatsapp = '905070493081';
+    @endphp
     <div id="subscription-overlay" class="sub-lock-overlay" role="dialog" aria-modal="true" aria-labelledby="subLockTitle">
         <div class="sub-lock-modal">
             <div class="sub-lock-head">
-                <div class="sub-lock-icon"><i class="bi bi-shield-exclamation"></i></div>
+                <div class="sub-lock-icon sub-lock-avatar" aria-hidden="true">{{ $merchantInitials }}</div>
                 <div>
                     <h3 id="subLockTitle" class="sub-lock-title">Subscription Ended</h3>
                     <p class="sub-lock-subtitle">Access is temporarily locked until reactivation.</p>
@@ -101,6 +112,14 @@
             </p>
 
             <div class="sub-lock-actions">
+                <div class="sub-lock-actions-left">
+                    <a class="sub-lock-icon-btn" href="mailto:{{ $supportEmail }}" title="Email support" aria-label="Email support">
+                        <i class="bi bi-envelope-paper"></i>
+                    </a>
+                    <a class="sub-lock-icon-btn" href="https://wa.me/{{ $supportWhatsapp }}" target="_blank" rel="noopener" title="WhatsApp support" aria-label="WhatsApp support">
+                        <i class="bi bi-whatsapp"></i>
+                    </a>
+                </div>
                 <a href="{{ url('/contact') }}" class="sub-lock-btn">Contact Support</a>
             </div>
         </div>
