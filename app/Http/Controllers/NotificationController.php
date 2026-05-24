@@ -3,12 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class NotificationController extends Controller
 {
     public function index(Request $request)
     {
         $user = $request->user();
+        // If the notifications table doesn't exist (e.g. migrations not run),
+        // return an empty response instead of throwing a QueryException.
+        if (!Schema::hasTable('notifications')) {
+            return response()->json(['unread' => 0, 'notifications' => []]);
+        }
         if (!$user) {
             return response()->json(['unread' => 0, 'notifications' => []]);
         }
@@ -29,6 +35,9 @@ class NotificationController extends Controller
     public function markRead(Request $request)
     {
         $user = $request->user();
+        if (!Schema::hasTable('notifications')) {
+            return response()->json(['success' => true]);
+        }
         $ids = $request->input('ids', []);
         if ($user) {
             if (!empty($ids) && is_array($ids)) {
