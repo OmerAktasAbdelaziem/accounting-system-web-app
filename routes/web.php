@@ -323,6 +323,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('feature-access')->name('feature-access.')->group(function () {
             Route::get('/', [FeatureAccessController::class, 'index'])->name('index');
             Route::post('/update', [FeatureAccessController::class, 'update'])->name('update');
+            Route::post('/employee-login', [FeatureAccessController::class, 'createEmployeeLogin'])->name('employee.login');
             Route::post('/employee-update', [FeatureAccessController::class, 'updateEmployeeAccess'])->name('employee.update');
             Route::post('/reset', [FeatureAccessController::class, 'reset'])->name('reset');
         });

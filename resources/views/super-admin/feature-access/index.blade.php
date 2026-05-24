@@ -155,13 +155,14 @@
                 <tbody>
                     @forelse($employees as $employee)
                         @php
-                            $employeeGrantedFeatureKeys = ($employeeOverrides[$employee->id] ?? collect())->where('is_enabled', true)->pluck('feature_key')->toArray();
-                            $employeeDeniedFeatureKeys = ($employeeOverrides[$employee->id] ?? collect())->where('is_enabled', false)->pluck('feature_key')->toArray();
+                            $linkedUser = $employeeUserMap[$employee->email] ?? null;
+                            $employeeGrantedFeatureKeys = $linkedUser ? ($employeeOverrides[$linkedUser->id] ?? collect())->where('is_enabled', true)->pluck('feature_key')->toArray() : [];
+                            $employeeDeniedFeatureKeys = $linkedUser ? ($employeeOverrides[$linkedUser->id] ?? collect())->where('is_enabled', false)->pluck('feature_key')->toArray() : [];
                         @endphp
                         <tr>
                             <td>{{ $employee->name }}</td>
                             <td>{{ $employee->email }}</td>
-                            <td>{{ $employee->role?->name ?? ucfirst($employee->user_type) }}</td>
+                            <td>{{ $linkedUser?->role?->name ?? $employee->position ?? '-' }}</td>
                             <td>
                                 @if(!empty($employeeGrantedFeatureKeys) || !empty($employeeDeniedFeatureKeys))
                                     <div class="d-flex flex-wrap gap-1">
@@ -177,16 +178,28 @@
                                 @endif
                             </td>
                             <td>
-                                <button type="button"
-                                        class="btn btn-sm btn-outline-orange edit-employee-access-btn"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#employeeAccessModal"
-                                        data-employee-id="{{ $employee->id }}"
-                                        data-employee-name="{{ $employee->name }}"
-                                        data-granted-feature-keys='@json($employeeGrantedFeatureKeys)'
-                                        data-denied-feature-keys='@json($employeeDeniedFeatureKeys)'>
-                                    Manage Access
-                                </button>
+                                @if($linkedUser)
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-orange edit-employee-access-btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#employeeAccessModal"
+                                            data-employee-id="{{ $linkedUser->id }}"
+                                            data-employee-name="{{ $employee->name }}"
+                                            data-granted-feature-keys='@json($employeeGrantedFeatureKeys)'
+                                            data-denied-feature-keys='@json($employeeDeniedFeatureKeys)'>
+                                        Manage Access
+                                    </button>
+                                @else
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-success create-employee-login-btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#employeeLoginModal"
+                                            data-employee-id="{{ $employee->id }}"
+                                            data-employee-name="{{ $employee->name }}"
+                                            data-employee-email="{{ $employee->email }}">
+                                        Create Login User
+                                    </button>
+                                @endif
                             </td>
                         </tr>
                     @empty
@@ -283,6 +296,41 @@
     </div>
 </div>
 
+<div class="modal fade" id="employeeLoginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="POST" action="{{ route('super-admin.feature-access.employee.login') }}" id="employeeLoginForm">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">Create Login User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="merchant_id" value="{{ $selectedMerchant?->id }}">
+                    <input type="hidden" name="employee_id" id="employeeLoginEmployeeId">
+                    <div class="mb-3">
+                        <strong id="employeeLoginName">Employee</strong>
+                        <div class="text-muted small">This will create a login account for the selected employee.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="employeeLoginEmail" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Temporary Password</label>
+                        <input type="text" name="password" class="form-control" placeholder="Leave empty to auto-generate">
+                        <small class="text-muted">If left empty, the system will generate a secure temporary password.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Create Login User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <style>
     .toggle-btn {
         transition: all 0.3s ease;
@@ -347,6 +395,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     checkbox.checked = activeKeys.includes(checkbox.value);
                 });
             }, { once: true });
+        });
+    }
+
+    const employeeLoginModal = document.getElementById('employeeLoginModal');
+    if (employeeLoginModal) {
+        employeeLoginModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            if (!button) {
+                return;
+            }
+
+            document.getElementById('employeeLoginEmployeeId').value = button.getAttribute('data-employee-id');
+            document.getElementById('employeeLoginName').textContent = button.getAttribute('data-employee-name');
+            document.getElementById('employeeLoginEmail').value = button.getAttribute('data-employee-email') || '';
         });
     }
 });

@@ -5,10 +5,13 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\FeatureAccess;
 use App\Models\FeatureAccessOverride;
+use App\Models\Employee;
 use App\Models\Merchant;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class FeatureAccessController extends Controller
 {
@@ -78,6 +81,7 @@ class FeatureAccessController extends Controller
         $featureAccess = [];
         $employees = collect();
         $employeeOverrides = collect();
+        $employeeUserMap = collect();
 
         if ($request->merchant_id) {
             $selectedMerchant = Merchant::findOrFail($request->merchant_id);
@@ -92,11 +96,14 @@ class FeatureAccessController extends Controller
             // Build feature access matrix
             $featureAccess = $this->buildFeatureAccessMatrix($selectedMerchant, $roleModels, $columns, $rows);
 
-            $employees = User::where('merchant_id', $selectedMerchant->id)
-                ->where('user_type', 'employee')
-                ->with('role')
+            $employees = Employee::where('merchant_id', $selectedMerchant->id)
                 ->orderBy('name')
                 ->get();
+
+            $employeeUserMap = User::where('merchant_id', $selectedMerchant->id)
+                ->where('user_type', 'employee')
+                ->get()
+                ->keyBy('email');
 
             $employeeOverrides = FeatureAccessOverride::where('merchant_id', $selectedMerchant->id)
                 ->get()
@@ -111,6 +118,7 @@ class FeatureAccessController extends Controller
             'featureAccess',
             'employees',
             'employeeOverrides',
+            'employeeUserMap',
             'availableFeatures'
         ));
     }
@@ -192,6 +200,60 @@ class FeatureAccessController extends Controller
         $message = $validated['decision'] === 'grant'
             ? "Special access granted for {$user->name}"
             : "Access denied for selected pages for {$user->name}";
+
+        return redirect()->back()->with('success', $message);
+    }
+
+    /**
+     * Create a login user account for an employee.
+     */
+    public function createEmployeeLogin(Request $request)
+    {
+        $this->authorize('update', FeatureAccess::class);
+
+        $validated = $request->validate([
+            'merchant_id' => 'required|exists:merchants,id',
+            'employee_id' => 'required|exists:employees,id',
+            'password' => 'nullable|string|min:8',
+        ]);
+
+        $employee = Employee::where('merchant_id', $validated['merchant_id'])
+            ->whereKey($validated['employee_id'])
+            ->firstOrFail();
+
+        if (empty($employee->email)) {
+            return redirect()->back()->withErrors(['employee' => 'Employee must have an email address to create a login user.']);
+        }
+
+        if (User::where('email', $employee->email)->exists()) {
+            return redirect()->back()->withErrors(['employee' => 'A login user already exists for this employee email.']);
+        }
+
+        $employeeRole = Role::firstOrCreate(
+            ['name' => 'employee'],
+            ['description' => 'Merchant employee user']
+        );
+
+        $plainPassword = $validated['password'] ?? Str::random(12);
+
+        $user = User::create([
+            'name' => $employee->name,
+            'email' => $employee->email,
+            'password' => Hash::make($plainPassword),
+            'merchant_id' => $employee->merchant_id,
+            'user_type' => 'employee',
+            'role_id' => $employeeRole->id,
+            'is_active' => true,
+            'phone' => $employee->phone,
+            'address' => $employee->address,
+        ]);
+
+        $message = "Login user created for {$employee->name}";
+        if ($request->filled('password')) {
+            $message .= ". Temporary password was saved from your input.";
+        } else {
+            $message .= ". Temporary password: {$plainPassword}";
+        }
 
         return redirect()->back()->with('success', $message);
     }
