@@ -109,6 +109,12 @@
                         <span>New Merchant</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('super-admin.merchants.unassigned') }}" class="{{ request()->routeIs('super-admin.merchants.unassigned') ? 'active' : '' }}">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Unassigned Users</span>
+                    </a>
+                </li>
             </ul>
         </div>
     @endif

@@ -292,6 +292,8 @@ Route::middleware('auth')->group(function () {
         });
 
         // Merchants Management
+        Route::get('merchants/unassigned', [MerchantController::class, 'unassigned'])->name('merchants.unassigned');
+        Route::post('merchants/assign-user', [MerchantController::class, 'assignUser'])->name('merchants.assignUser');
         Route::resource('merchants', MerchantController::class);
         Route::post('merchants/{merchant}/inspect', [SystemUserController::class, 'inspectMerchant'])->name('merchants.inspect');
         Route::post('merchants/{merchant}/currencies', [MerchantController::class, 'addCurrency'])->name('merchants.addCurrency');
