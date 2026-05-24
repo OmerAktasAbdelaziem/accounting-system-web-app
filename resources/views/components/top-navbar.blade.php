@@ -1,6 +1,25 @@
 @php
     $appName = \App\Models\Setting::getApplicationName();
     $dashboardRoute = auth()->user()?->isSuperAdmin() ? 'super-admin.dashboard' : 'dashboard';
+@endphp
+<link rel="stylesheet" href="{{ asset('css/top-navbar.css') }}">
+<script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.11.3/dist/echo.iife.js"></script>
+<nav class="modern-top-navbar">
+    <div class="brand">
+        <a href="{{ route($dashboardRoute) }}" class="brand">
+            <div class="logo-mark">A</div>
+            <div class="app-name">{{ $appName }}</div>
+        </a>
+    </div>
+    <div class="center">
+        <div class="search" id="globalSearch">
+            <i class="bi bi-search" style="color:rgba(255,255,255,0.6);margin-left:6px"></i>
+            <input id="globalSearchInput" type="search" placeholder="Search... (press Enter)" aria-label="Search">
+            <div id="globalSearchResults" style="position:absolute;top:48px;left:50%;transform:translateX(-50%);background:#111;padding:8px;border-radius:8px;min-width:320px;display:none;z-index:2000;max-height:320px;overflow:auto"></div>
+        </div>
+    </div>
+    <div class="actions">
         <div class="notif-shell">
             <button id="notifButton" class="notif-trigger icon-badge" type="button" title="Notifications" aria-expanded="false" aria-controls="notifDropdown">
                 <i class="bi bi-bell-fill" aria-hidden="true"></i>
@@ -17,34 +36,14 @@
                 </div>
                 <div id="notifList" class="notif-list"></div>
             </div>
-        <div class="search" id="globalSearch">
-            <i class="bi bi-search" style="color:rgba(255,255,255,0.6);margin-left:6px"></i>
-            <input id="globalSearchInput" type="search" placeholder="Search... (press Enter)" aria-label="Search">
-            <div id="globalSearchResults" style="position:absolute;top:48px;left:50%;transform:translateX(-50%);background:#111;padding:8px;border-radius:8px;min-width:320px;display:none;z-index:2000;max-height:320px;overflow:auto"></div>
-        </div>
-    </div>
-    <div class="actions">
-        {{-- Create button removed per request --}}
-        <button id="notifButton" class="icon-btn icon-badge" title="Notifications" aria-expanded="false" aria-controls="notifDropdown">
-            <i class="bi bi-bell" style="font-size:18px"></i>
-            <span id="notifBadge" class="badge" style="display:none">0</span>
-                @if(session()->has('original_admin_id'))
-                    <form action="{{ route('super-admin.exit-inspection') }}" method="POST" style="display:inline;margin-right:10px;">
-                        @csrf
-                        <button type="submit" class="btn btn-sm btn-warning" title="Exit inspection">Exit Inspection</button>
-                    </form>
-                @endif
-        <div id="notifDropdown" class="notif-dropdown" style="display:none" role="menu" aria-label="Notifications">
-            <div class="notif-dropdown-head">
-                <div>
-                    <div class="notif-title">Notifications</div>
-                    <div class="notif-subtitle">Live updates from your workspace</div>
-                </div>
-                <button id="markAllReadBtn" class="notif-mark-read" type="button">Mark all read</button>
-            </div>
-            <div id="notifList" class="notif-list"></div>
         </div>
         <div class="user">
+            @if(session()->has('original_admin_id'))
+                <form action="{{ route('super-admin.exit-inspection') }}" method="POST" style="display:inline;margin-right:10px;">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-warning" title="Exit inspection">Exit Inspection</button>
+                </form>
+            @endif
             @php
                 $avatarPath = auth()->user()->profile_photo_path;
                 $avatarUrl = null;
@@ -129,7 +128,6 @@
     </div>
     <script>
         (function(){
-            // Freeze page scrolling while the subscription lock is active.
             document.documentElement.style.overflow = 'hidden';
             document.body.style.overflow = 'hidden';
             document.documentElement.style.height = '100%';
@@ -146,8 +144,6 @@
 @endif
 <script>
     (function(){
-        // Client-side deterrents only; they do not provide real security.
-        // They reduce casual access to devtools / source shortcuts across the app.
         document.addEventListener('contextmenu', function(e){
             e.preventDefault();
         }, true);
@@ -167,11 +163,10 @@
             }
         }, true);
 
-        // Initialize Echo config from server values (if present)
         const LARAVEL_ECHO_KEY = @json(config('broadcasting.connections.pusher.key')) || null;
         const LARAVEL_ECHO_CLUSTER = @json(data_get(config('broadcasting.connections.pusher.options', []), 'cluster')) || @json(config('broadcasting.connections.pusher.cluster')) || null;
         const LARAVEL_BROADCAST_DRIVER = @json(config('broadcasting.default')) || null;
-        // Debounce helper
+
         function debounce(fn, wait){
             let t;
             return function(){
@@ -197,12 +192,9 @@
         input && input.addEventListener('input', debounce(function(e){ doSearch(e.target.value); }, 300));
         input && input.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ resultsBox.style.display='none'; } });
 
-        // Notifications
         const notifBtn = document.getElementById('notifButton');
         const notifBadge = document.getElementById('notifBadge');
         const notifDropdown = document.getElementById('notifDropdown');
-
-        // Real-time notifications via Echo (if configured). Falls back to polling.
         const currentUserId = {{ auth()->id() ?? 'null' }};
         let echoEnabled = false;
 
@@ -229,7 +221,6 @@
             const ctaText = data.action_text || 'Open';
             const createdAt = raw?.created_at || raw?.createdAt || data.created_at || new Date().toISOString();
             const readAt = raw?.read_at || raw?.readAt || null;
-
             const lowerType = String(typeText).toLowerCase();
             let icon = 'bi-bell';
             let tone = 'info';
@@ -267,9 +258,7 @@
             const n = normalizeNotification(raw);
             return `
                 <article class="notif-item notif-tone-${n.tone} ${n.isUnread ? 'notif-unread' : 'notif-read'}" data-id="${n.id}">
-                    <div class="notif-icon-wrap">
-                        <i class="bi ${n.icon}"></i>
-                    </div>
+                    <div class="notif-icon-wrap"><i class="bi ${n.icon}"></i></div>
                     <div class="notif-content">
                         <div class="notif-meta">
                             <span class="notif-chip">${n.type}</span>
@@ -308,7 +297,6 @@
             if (Number.isNaN(d.getTime())) return false;
             const now = new Date();
             const day = now.getDay();
-            // Week starts on Monday
             const diffToMonday = (day === 0 ? -6 : 1 - day);
             const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             startOfWeek.setDate(startOfWeek.getDate() + diffToMonday);
@@ -321,7 +309,6 @@
             const yesterday = [];
             const thisWeek = [];
             const older = [];
-
             const sorted = [...list].sort((a, b) => {
                 const ad = new Date(a?.created_at || a?.createdAt || 0).getTime();
                 const bd = new Date(b?.created_at || b?.createdAt || 0).getTime();
@@ -337,28 +324,18 @@
             });
 
             const sections = [];
-            if (today.length) {
-                sections.push(`<div class="notif-group"><div class="notif-group-title">Today</div>${today.map(renderNotificationCard).join('')}</div>`);
-            }
-            if (yesterday.length) {
-                sections.push(`<div class="notif-group"><div class="notif-group-title">Yesterday</div>${yesterday.map(renderNotificationCard).join('')}</div>`);
-            }
-            if (thisWeek.length) {
-                sections.push(`<div class="notif-group"><div class="notif-group-title">This Week</div>${thisWeek.map(renderNotificationCard).join('')}</div>`);
-            }
-            if (older.length) {
-                sections.push(`<div class="notif-group"><div class="notif-group-title">Older</div>${older.map(renderNotificationCard).join('')}</div>`);
-            }
+            if (today.length) sections.push(`<div class="notif-group"><div class="notif-group-title">Today</div>${today.map(renderNotificationCard).join('')}</div>`);
+            if (yesterday.length) sections.push(`<div class="notif-group"><div class="notif-group-title">Yesterday</div>${yesterday.map(renderNotificationCard).join('')}</div>`);
+            if (thisWeek.length) sections.push(`<div class="notif-group"><div class="notif-group-title">This Week</div>${thisWeek.map(renderNotificationCard).join('')}</div>`);
+            if (older.length) sections.push(`<div class="notif-group"><div class="notif-group-title">Older</div>${older.map(renderNotificationCard).join('')}</div>`);
             return sections.join('');
         }
 
         function handleIncomingNotification(n){
             try{
-                // increment badge
                 const current = parseInt(notifBadge.textContent || '0') || 0;
                 notifBadge.textContent = current + 1;
                 notifBadge.style.display = 'inline-block';
-                // prepend to dropdown
                 const notifList = document.getElementById('notifList');
                 const html = renderNotificationCard(n);
                 if (notifList) {
@@ -367,7 +344,6 @@
                         notifList.insertAdjacentHTML('afterbegin', `<div class="notif-group"><div class="notif-group-title">Today</div></div>`);
                         todayGroup = notifList.querySelector('.notif-group');
                     }
-
                     todayGroup.insertAdjacentHTML('beforeend', html);
                     const added = todayGroup.lastElementChild;
                     if (added) added.classList.add('notif-enter');
@@ -377,7 +353,6 @@
 
         try{
             if(LARAVEL_ECHO_KEY && (LARAVEL_BROADCAST_DRIVER === 'pusher' || LARAVEL_BROADCAST_DRIVER === 'redis')){
-                // Initialize Echo using Pusher
                 window.Pusher = window.Pusher || Pusher;
                 window.Echo = new Echo({
                     broadcaster: 'pusher',
@@ -390,7 +365,6 @@
                         }
                     }
                 });
-
                 if(window.Echo && currentUserId){
                     window.Echo.private(`App.Models.User.${currentUserId}`).notification(function(notification){
                         handleIncomingNotification(notification);
@@ -409,7 +383,6 @@
                 const json = await res.json();
                 const unread = json.unread || 0;
                 if(unread>0){ notifBadge.style.display='inline-block'; notifBadge.textContent = unread; } else { notifBadge.style.display='none'; }
-                // prepare dropdown list
                 const notifList = document.getElementById('notifList');
                 if (notifList) {
                     const items = renderGroupedNotifications(json.notifications || []);
@@ -430,7 +403,6 @@
                     },
                     body: JSON.stringify({ ids: [id] })
                 });
-
                 const card = document.querySelector(`.notif-item[data-id="${id}"]`);
                 if (card) {
                     card.classList.remove('notif-unread');
@@ -438,7 +410,6 @@
                     const btn = card.querySelector('.notif-dismiss-btn');
                     if (btn) btn.remove();
                 }
-
                 const current = parseInt(notifBadge.textContent || '0') || 0;
                 const next = Math.max(0, current - 1);
                 notifBadge.textContent = String(next);
@@ -468,7 +439,7 @@
             }
         }
 
-        notifBtn && notifBtn.addEventListener('click', function(e){
+        notifBtn && notifBtn.addEventListener('click', function(){
             if(notifDropdown.style.display === 'block'){
                 notifDropdown.style.display='none';
                 notifBtn.setAttribute('aria-expanded', 'false');
@@ -484,31 +455,27 @@
 
         const notifList = document.getElementById('notifList');
         notifList && notifList.addEventListener('click', function(e){
-            const target = e.target;
-            const dismissBtn = target.closest('[data-dismiss-id]');
+            const dismissBtn = e.target.closest('[data-dismiss-id]');
             if (dismissBtn) {
                 e.preventDefault();
                 markOneAsRead(dismissBtn.getAttribute('data-dismiss-id'));
             }
         });
 
-        // Avatar dropdown
         const avatarBtn = document.getElementById('avatarButton');
         const avatarDropdown = document.getElementById('avatarDropdown');
         avatarBtn && avatarBtn.addEventListener('click', function(){ avatarDropdown.style.display = avatarDropdown.style.display === 'block' ? 'none' : 'block'; });
 
-        // Close dropdowns on outside click
         document.addEventListener('click', function(e){
             const target = e.target;
             if(!document.getElementById('globalSearch')?.contains(target)) resultsBox.style.display='none';
-            if(!notifBtn.contains(target) && !notifDropdown.contains(target)) {
+            if(notifBtn && notifDropdown && !notifBtn.contains(target) && !notifDropdown.contains(target)) {
                 notifDropdown.style.display='none';
                 notifBtn.setAttribute('aria-expanded', 'false');
             }
-            if(!avatarBtn.contains(target) && !avatarDropdown.contains(target)) avatarDropdown.style.display='none';
+            if(avatarBtn && avatarDropdown && !avatarBtn.contains(target) && !avatarDropdown.contains(target)) avatarDropdown.style.display='none';
         });
 
-        // Initial notifications poll. If Echo is available we'll still do an initial fetch
         refreshNotifs();
         if (!echoEnabled) {
             setInterval(refreshNotifs, 30000);
