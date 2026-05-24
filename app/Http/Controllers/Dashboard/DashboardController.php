@@ -27,6 +27,7 @@ class DashboardController extends Controller
         $branchIds = $merchantScope['branch_ids'];
         $safeIds = $merchantScope['safe_ids'];
         $storageIds = $merchantScope['storage_ids'];
+        $isMerchantUser = $this->isMerchantUser();
 
         $totalProducts = Product::count();
         $totalEmployees = Employee::count();
@@ -34,9 +35,7 @@ class DashboardController extends Controller
         $lowStockProducts = Product::orderBy('current_stock')->limit(5)->get();
 
         $journalSalesQuery = JournalEntry::query()->where('reference_type', 'invoice');
-        if (!empty($branchIds)) {
-            $journalSalesQuery->whereIn('branch_id', $branchIds);
-        }
+        $this->applyTenantIds($journalSalesQuery, $branchIds, 'branch_id', $isMerchantUser);
 
         $totalSales = (float) $journalSalesQuery->sum('total_credit');
         $salesCount = (clone $journalSalesQuery)->count();
@@ -46,33 +45,23 @@ class DashboardController extends Controller
         $commissionAmount = (float) Commission::sum('commission_amount');
 
         $storageQuery = Storage::query();
-        if (!empty($storageIds)) {
-            $storageQuery->whereIn('id', $storageIds);
-        }
+        $this->applyTenantIds($storageQuery, $storageIds, 'id', $isMerchantUser);
 
         $storageItemQuery = StorageItem::query();
-        if (!empty($storageIds)) {
-            $storageItemQuery->whereIn('storage_id', $storageIds);
-        }
+        $this->applyTenantIds($storageItemQuery, $storageIds, 'storage_id', $isMerchantUser);
 
         $totalStorageCapacity = (float) $storageQuery->sum('capacity');
         $totalStorageUsage = (float) $storageItemQuery->sum('quantity');
         $storageUsage = $totalStorageCapacity > 0 ? round(($totalStorageUsage / $totalStorageCapacity) * 100, 2) : 0;
 
         $safeQuery = Safe::query();
-        if (!empty($safeIds)) {
-            $safeQuery->whereIn('id', $safeIds);
-        }
+        $this->applyTenantIds($safeQuery, $safeIds, 'id', $isMerchantUser);
 
         $safeIncomeQuery = SafeIncome::query();
-        if (!empty($safeIds)) {
-            $safeIncomeQuery->whereIn('safe_id', $safeIds);
-        }
+        $this->applyTenantIds($safeIncomeQuery, $safeIds, 'safe_id', $isMerchantUser);
 
         $safeOutcomeQuery = SafeOutcome::query();
-        if (!empty($safeIds)) {
-            $safeOutcomeQuery->whereIn('safe_id', $safeIds);
-        }
+        $this->applyTenantIds($safeOutcomeQuery, $safeIds, 'safe_id', $isMerchantUser);
 
         $safeBalance = (float) $safeQuery->sum('balance');
         $safeIncomeTotal = (float) $safeIncomeQuery->sum('amount');
@@ -81,33 +70,23 @@ class DashboardController extends Controller
 
         $safeCount = $safeQuery->count();
         $transactionsTodayQuery = SafeTransaction::query()->whereDate('created_at', today());
-        if (!empty($safeIds)) {
-            $transactionsTodayQuery->whereIn('safe_id', $safeIds);
-        }
+        $this->applyTenantIds($transactionsTodayQuery, $safeIds, 'safe_id', $isMerchantUser);
         $transactionsToday = $transactionsTodayQuery->count();
 
         $recentTransactionsQuery = JournalEntry::query();
-        if (!empty($branchIds)) {
-            $recentTransactionsQuery->whereIn('branch_id', $branchIds);
-        }
+        $this->applyTenantIds($recentTransactionsQuery, $branchIds, 'branch_id', $isMerchantUser);
         $recentTransactions = $recentTransactionsQuery->latest()->take(6)->get();
 
         $recentSalesQuery = EmployeeSale::with(['employee:id,name', 'product:id,name']);
-        if (!empty($branchIds)) {
-            $recentSalesQuery->whereIn('branch_id', $branchIds);
-        }
+        $this->applyTenantIds($recentSalesQuery, $branchIds, 'branch_id', $isMerchantUser);
         $recentSales = $recentSalesQuery->latest('sale_date')->take(6)->get();
 
         $recentIncomeQuery = SafeIncome::query()->with(['safe:id,name', 'currency:id,code,name']);
-        if (!empty($safeIds)) {
-            $recentIncomeQuery->whereIn('safe_id', $safeIds);
-        }
+        $this->applyTenantIds($recentIncomeQuery, $safeIds, 'safe_id', $isMerchantUser);
         $recentIncomeEntries = $recentIncomeQuery->latest()->take(6)->get();
 
         $recentOutcomeQuery = SafeOutcome::query()->with(['safe:id,name', 'currency:id,code,name', 'supplier:id,name']);
-        if (!empty($safeIds)) {
-            $recentOutcomeQuery->whereIn('safe_id', $safeIds);
-        }
+        $this->applyTenantIds($recentOutcomeQuery, $safeIds, 'safe_id', $isMerchantUser);
         $recentOutcomeEntries = $recentOutcomeQuery->latest()->take(6)->get();
 
         $topProducts = Product::orderByDesc('current_stock')->limit(6)->get();
@@ -126,27 +105,21 @@ class DashboardController extends Controller
             $monthSalesQuery = JournalEntry::query()->where('reference_type', 'invoice')
                 ->whereYear('date', $month->year)
                 ->whereMonth('date', $month->month);
-            if (!empty($branchIds)) {
-                $monthSalesQuery->whereIn('branch_id', $branchIds);
-            }
+            $this->applyTenantIds($monthSalesQuery, $branchIds, 'branch_id', $isMerchantUser);
             $salesData[] = (float) $monthSalesQuery->sum('total_credit');
 
             $monthIncomeQuery = SafeIncome::query()
                 ->whereYear('created_at', $month->year)
                 ->whereMonth('created_at', $month->month)
                 ;
-            if (!empty($safeIds)) {
-                $monthIncomeQuery->whereIn('safe_id', $safeIds);
-            }
+            $this->applyTenantIds($monthIncomeQuery, $safeIds, 'safe_id', $isMerchantUser);
             $incomeData[] = (float) $monthIncomeQuery->sum('amount');
 
             $monthOutcomeQuery = SafeOutcome::query()
                 ->whereYear('created_at', $month->year)
                 ->whereMonth('created_at', $month->month)
                 ;
-            if (!empty($safeIds)) {
-                $monthOutcomeQuery->whereIn('safe_id', $safeIds);
-            }
+            $this->applyTenantIds($monthOutcomeQuery, $safeIds, 'safe_id', $isMerchantUser);
             $outcomeData[] = (float) $monthOutcomeQuery->sum('amount');
         }
 
@@ -210,11 +183,31 @@ class DashboardController extends Controller
         ];
     }
 
+    private function isMerchantUser(): bool
+    {
+        $user = auth()->user();
+
+        return (bool) ($user && !$user->isSuperAdmin() && !empty($user->merchant_id));
+    }
+
+    private function applyTenantIds($query, array $ids, string $column, bool $isMerchantUser): void
+    {
+        if (!empty($ids)) {
+            $query->whereIn($column, $ids);
+            return;
+        }
+
+        if ($isMerchantUser) {
+            $query->whereRaw('1 = 0');
+        }
+    }
+
     public function analytics(): JsonResponse
     {
         $merchantScope = $this->merchantScope();
         $branchIds = $merchantScope['branch_ids'];
         $safeIds = $merchantScope['safe_ids'];
+        $isMerchantUser = $this->isMerchantUser();
 
         $months = [];
         $salesData = [];
@@ -228,51 +221,38 @@ class DashboardController extends Controller
             $salesQuery = JournalEntry::where('reference_type', 'invoice')
                 ->whereYear('date', $month->year)
                 ->whereMonth('date', $month->month);
-            if (!empty($branchIds)) {
-                $salesQuery->whereIn('branch_id', $branchIds);
-            }
+            $this->applyTenantIds($salesQuery, $branchIds, 'branch_id', $isMerchantUser);
             $salesData[] = (float) $salesQuery->sum('total_credit');
 
             $incomeQuery = SafeIncome::whereYear('created_at', $month->year)
                 ->whereMonth('created_at', $month->month)
                 ;
-            if (!empty($safeIds)) {
-                $incomeQuery->whereIn('safe_id', $safeIds);
-            }
+            $this->applyTenantIds($incomeQuery, $safeIds, 'safe_id', $isMerchantUser);
             $incomeData[] = (float) $incomeQuery->sum('amount');
 
             $outcomeQuery = SafeOutcome::whereYear('created_at', $month->year)
                 ->whereMonth('created_at', $month->month)
                 ;
-            if (!empty($safeIds)) {
-                $outcomeQuery->whereIn('safe_id', $safeIds);
-            }
+            $this->applyTenantIds($outcomeQuery, $safeIds, 'safe_id', $isMerchantUser);
             $outcomeData[] = (float) $outcomeQuery->sum('amount');
         }
 
         $journalSalesQuery = JournalEntry::query()->where('reference_type', 'invoice');
-        if (!empty($branchIds)) {
-            $journalSalesQuery->whereIn('branch_id', $branchIds);
-        }
+        $this->applyTenantIds($journalSalesQuery, $branchIds, 'branch_id', $isMerchantUser);
 
         $storageQuery = Storage::query();
         $storageItemQuery = StorageItem::query();
-        if (!empty($merchantScope['storage_ids'])) {
-            $storageQuery->whereIn('id', $merchantScope['storage_ids']);
-            $storageItemQuery->whereIn('storage_id', $merchantScope['storage_ids']);
-        }
+        $this->applyTenantIds($storageQuery, $merchantScope['storage_ids'], 'id', $isMerchantUser);
+        $this->applyTenantIds($storageItemQuery, $merchantScope['storage_ids'], 'storage_id', $isMerchantUser);
 
         $safeQuery = Safe::query();
         $safeIncomeQuery = SafeIncome::query();
         $safeOutcomeQuery = SafeOutcome::query();
         $transactionsTodayQuery = SafeTransaction::query()->whereDate('created_at', today());
-
-        if (!empty($safeIds)) {
-            $safeQuery->whereIn('id', $safeIds);
-            $safeIncomeQuery->whereIn('safe_id', $safeIds);
-            $safeOutcomeQuery->whereIn('safe_id', $safeIds);
-            $transactionsTodayQuery->whereIn('safe_id', $safeIds);
-        }
+        $this->applyTenantIds($safeQuery, $safeIds, 'id', $isMerchantUser);
+        $this->applyTenantIds($safeIncomeQuery, $safeIds, 'safe_id', $isMerchantUser);
+        $this->applyTenantIds($safeOutcomeQuery, $safeIds, 'safe_id', $isMerchantUser);
+        $this->applyTenantIds($transactionsTodayQuery, $safeIds, 'safe_id', $isMerchantUser);
 
         return response()->json([
             'success' => true,
