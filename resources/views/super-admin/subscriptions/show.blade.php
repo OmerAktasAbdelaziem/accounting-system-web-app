@@ -176,12 +176,21 @@
                     </button>
                     @endif
 
-                    <form method="POST" action="{{ route('super-admin.subscriptions.destroy', $subscription) }}" style="display:inline-block; width:100%;">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm w-100" onclick="return confirm('Deactivate this subscription? Merchant admins, employees, and users will be locked until reactivated.')">
-                            <i class="bi bi-pause-circle"></i> Deactivate Subscription
-                        </button>
-                    </form>
+                    @if($subscription->is_active)
+                        <form method="POST" action="{{ route('super-admin.subscriptions.destroy', $subscription) }}" style="display:inline-block; width:100%;">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm w-100" onclick="return confirm('Deactivate this subscription? Merchant admins, employees, and users will be locked until reactivated.')">
+                                <i class="bi bi-pause-circle"></i> Deactivate Subscription
+                            </button>
+                        </form>
+                    @else
+                        <form method="POST" action="{{ route('super-admin.subscriptions.reactivate', $subscription) }}" style="display:inline-block; width:100%;">
+                            @csrf
+                            <button type="submit" class="btn btn-success btn-sm w-100" onclick="return confirm('Reactivate this subscription and restore merchant access?')">
+                                <i class="bi bi-play-circle"></i> Reactivate Subscription
+                            </button>
+                        </form>
+                    @endif
                 </div>
             </div>
 
