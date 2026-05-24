@@ -535,55 +535,7 @@
 <body>
     @auth
         <!-- Slim Top Navbar (brand + toggle) -->
-        <nav class="navbar navbar-expand-lg navbar-dark navbar-modern">
-            <div class="container-fluid">
-                <div class="d-flex align-items-center w-100">
-                    <a class="navbar-brand" href="{{ route('dashboard') }}">
-                        {{ \App\Models\Setting::getApplicationName() }}
-                    </a>
-                    <div class="ms-auto d-flex align-items-center gap-3">
-                        <button class="btn btn-outline-light d-lg-none" id="sidebarToggle"><i class="bi bi-list"></i></button>
-                        <div class="dropdown">
-                            <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                @php
-                                    $avatarPath = auth()->user()->profile_photo_path;
-                                    $navbarAvatar = null;
-                                    if ($avatarPath) {
-                                        if (\Illuminate\Support\Facades\File::exists(public_path($avatarPath))) {
-                                            $navbarAvatar = asset($avatarPath);
-                                        } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($avatarPath)) {
-                                            $navbarAvatar = asset('storage/' . ltrim($avatarPath, '/'));
-                                        } elseif (\Illuminate\Support\Facades\File::exists(public_path('storage/' . ltrim($avatarPath, '/')))) {
-                                            $navbarAvatar = asset('storage/' . ltrim($avatarPath, '/'));
-                                        } else {
-                                            $navbarAvatar = asset($avatarPath);
-                                        }
-                                    }
-                                    $navbarInitial = strtoupper(substr(auth()->user()->name ?? 'U', 0, 1));
-                                @endphp
-                                @if($navbarAvatar)
-                                    <img src="{{ $navbarAvatar }}" alt="{{ auth()->user()->name }}" class="nav-user-avatar me-2">
-                                @else
-                                    <span class="nav-user-avatar-fallback me-2">{{ $navbarInitial }}</span>
-                                @endif
-                                {{ auth()->user()->name }}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="bi bi-person"></i> {{ __('messages.profile') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ route('settings.index') }}"><i class="bi bi-gear"></i> {{ __('messages.settings') }}</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        <button type="submit" class="dropdown-item btn btn-link p-0 m-0" style="text-decoration:none; color:inherit;"><i class="bi bi-box-arrow-right"></i> {{ __('messages.logout') }}</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </nav>
+        @include('components.top-navbar')
 
         <!-- Sidebar + Content container -->
         <div class="modern-container">

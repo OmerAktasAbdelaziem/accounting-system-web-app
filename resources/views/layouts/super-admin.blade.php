@@ -535,55 +535,7 @@
 </head>
 <body>
     <!-- ============ TOP NAVBAR ============ -->
-    <nav class="super-admin-navbar">
-        <div class="d-flex align-items-center w-100">
-            <a href="{{ route('super-admin.dashboard') }}" class="navbar-brand">
-                <span>{{ \App\Models\Setting::getApplicationName() }}</span>
-            </a>
-            
-            <div class="navbar-end">
-                @if(session('inspecting_merchant'))
-                    <form action="{{ route('super-admin.exit-inspection') }}" method="POST" style="display: inline;">
-                        @csrf
-                        <button type="submit" class="btn btn-warning btn-sm me-3" title="Exit merchant inspection and return to super admin">
-                            <i class="bi bi-arrow-left"></i> Exit Inspection
-                        </button>
-                    </form>
-                @endif
-                <div class="user-menu">
-                    @php
-                        $avatarPath = auth()->user()->profile_photo_path;
-                        $superAdminAvatar = null;
-                        if ($avatarPath) {
-                            if (\Illuminate\Support\Facades\File::exists(public_path($avatarPath))) {
-                                $superAdminAvatar = asset($avatarPath);
-                            } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($avatarPath)) {
-                                $superAdminAvatar = asset('storage/' . ltrim($avatarPath, '/'));
-                            } elseif (\Illuminate\Support\Facades\File::exists(public_path('storage/' . ltrim($avatarPath, '/')))) {
-                                $superAdminAvatar = asset('storage/' . ltrim($avatarPath, '/'));
-                            } else {
-                                $superAdminAvatar = asset($avatarPath);
-                            }
-                        }
-                        $superAdminInitial = strtoupper(substr(auth()->user()->name ?? 'U', 0, 1));
-                    @endphp
-                    @if($superAdminAvatar)
-                        <img src="{{ $superAdminAvatar }}" alt="{{ auth()->user()->name }}" class="user-avatar-image">
-                    @else
-                        <div class="user-avatar">{{ $superAdminInitial }}</div>
-                    @endif
-                    <div>
-                        <small class="d-block" style="color: rgba(255,255,255,0.7);">{{ auth()->user()->name }}</small>
-                        <small style="color: var(--primary-orange); font-weight: 600;">Super Admin</small>
-                    </div>
-                    <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-                        @csrf
-                        <button type="submit" class="nav-link btn btn-link p-0 m-0" style="text-decoration:none; color:inherit;"><i class="bi bi-box-arrow-right"></i></button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </nav>
+    @include('components.top-navbar')
 
     <!-- ============ MAIN CONTAINER ============ -->
     <div class="super-admin-container">

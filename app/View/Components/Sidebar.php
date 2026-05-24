@@ -21,7 +21,7 @@ class Sidebar extends Component
         if ($this->isSuperAdmin) {
             $this->menu = [
                 'main' => [
-                    ['route' => 'dashboard', 'icon' => 'bi-speedometer2', 'label' => 'Live Dashboard'],
+                    ['route' => 'super-admin.dashboard', 'icon' => 'bi-speedometer2', 'label' => 'Live Dashboard'],
                 ],
                 'reports' => [],
                 'systems' => [],
