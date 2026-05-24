@@ -49,4 +49,16 @@ class FeatureAccessOverride extends Model
             ->pluck('feature_key')
             ->toArray();
     }
+
+    /**
+     * Get features explicitly denied for a user.
+     */
+    public static function deniedFeaturesForUser(int $merchantId, int $userId): array
+    {
+        return static::where('merchant_id', $merchantId)
+            ->where('user_id', $userId)
+            ->where('is_enabled', false)
+            ->pluck('feature_key')
+            ->toArray();
+    }
 }

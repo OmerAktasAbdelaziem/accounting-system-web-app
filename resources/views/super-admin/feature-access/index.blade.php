@@ -155,17 +155,21 @@
                 <tbody>
                     @forelse($employees as $employee)
                         @php
-                            $employeeFeatureKeys = ($employeeOverrides[$employee->id] ?? collect())->where('is_enabled', true)->pluck('feature_key')->toArray();
+                            $employeeGrantedFeatureKeys = ($employeeOverrides[$employee->id] ?? collect())->where('is_enabled', true)->pluck('feature_key')->toArray();
+                            $employeeDeniedFeatureKeys = ($employeeOverrides[$employee->id] ?? collect())->where('is_enabled', false)->pluck('feature_key')->toArray();
                         @endphp
                         <tr>
                             <td>{{ $employee->name }}</td>
                             <td>{{ $employee->email }}</td>
                             <td>{{ $employee->role?->name ?? ucfirst($employee->user_type) }}</td>
                             <td>
-                                @if(!empty($employeeFeatureKeys))
+                                @if(!empty($employeeGrantedFeatureKeys) || !empty($employeeDeniedFeatureKeys))
                                     <div class="d-flex flex-wrap gap-1">
-                                        @foreach($employeeFeatureKeys as $featureKey)
+                                        @foreach($employeeGrantedFeatureKeys as $featureKey)
                                             <span class="badge bg-info text-dark">{{ ucfirst(str_replace('_', ' ', $featureKey)) }}</span>
+                                        @endforeach
+                                        @foreach($employeeDeniedFeatureKeys as $featureKey)
+                                            <span class="badge bg-danger">Denied: {{ ucfirst(str_replace('_', ' ', $featureKey)) }}</span>
                                         @endforeach
                                     </div>
                                 @else
@@ -179,7 +183,8 @@
                                         data-bs-target="#employeeAccessModal"
                                         data-employee-id="{{ $employee->id }}"
                                         data-employee-name="{{ $employee->name }}"
-                                        data-feature-keys='@json($employeeFeatureKeys)'>
+                                        data-granted-feature-keys='@json($employeeGrantedFeatureKeys)'
+                                        data-denied-feature-keys='@json($employeeDeniedFeatureKeys)'>
                                     Manage Access
                                 </button>
                             </td>
@@ -197,6 +202,9 @@
     <div class="card mt-3">
         <div class="card-header bg-light"><h5 class="mb-0">Feature Definitions</h5></div>
         <div class="card-body">
+            <div class="alert alert-warning py-2">
+                <strong>Note:</strong> employee-specific denies override role access for the selected pages.
+            </div>
             <div class="row">
                 <div class="col-md-6">
                     <ul class="mb-0">
@@ -242,6 +250,14 @@
                     <div class="mb-3">
                         <strong id="employeeAccessName">Employee</strong>
                         <div class="text-muted small">Select the pages this employee should access in addition to their role access.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Action</label>
+                        <select name="decision" id="employeeAccessDecision" class="form-select" required>
+                            <option value="grant">Grant selected pages</option>
+                            <option value="deny">Deny selected pages</option>
+                        </select>
                     </div>
 
                     <div class="row">
@@ -312,14 +328,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const employeeId = button.getAttribute('data-employee-id');
             const employeeName = button.getAttribute('data-employee-name');
-            const featureKeys = JSON.parse(button.getAttribute('data-feature-keys') || '[]');
+            const grantedFeatureKeys = JSON.parse(button.getAttribute('data-granted-feature-keys') || '[]');
+            const deniedFeatureKeys = JSON.parse(button.getAttribute('data-denied-feature-keys') || '[]');
 
             document.getElementById('employeeAccessUserId').value = employeeId;
             document.getElementById('employeeAccessName').textContent = employeeName;
 
+            const decisionSelect = document.getElementById('employeeAccessDecision');
+            decisionSelect.value = deniedFeatureKeys.length > 0 && grantedFeatureKeys.length === 0 ? 'deny' : 'grant';
+
             document.querySelectorAll('.employee-feature-checkbox').forEach(function (checkbox) {
-                checkbox.checked = featureKeys.includes(checkbox.value);
+                checkbox.checked = (decisionSelect.value === 'grant' ? grantedFeatureKeys : deniedFeatureKeys).includes(checkbox.value);
             });
+
+            decisionSelect.addEventListener('change', function () {
+                const activeKeys = this.value === 'grant' ? grantedFeatureKeys : deniedFeatureKeys;
+                document.querySelectorAll('.employee-feature-checkbox').forEach(function (checkbox) {
+                    checkbox.checked = activeKeys.includes(checkbox.value);
+                });
+            }, { once: true });
         });
     }
 });

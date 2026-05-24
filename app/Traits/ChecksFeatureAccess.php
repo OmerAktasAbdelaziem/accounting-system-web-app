@@ -89,20 +89,20 @@ trait ChecksFeatureAccess
         }
 
         $overrideFeatures = FeatureAccessOverride::enabledFeaturesForUser((int) $user->merchant_id, (int) $user->id);
+        $deniedFeatures = FeatureAccessOverride::deniedFeaturesForUser((int) $user->merchant_id, (int) $user->id);
 
         $roleId = $user->role_id ?? null;
         if (!$roleId) {
-            return $overrideFeatures;
+            return array_values(array_diff($overrideFeatures, $deniedFeatures));
         }
 
-        return array_values(array_unique(array_merge(
-            $overrideFeatures,
-            FeatureAccess::where('merchant_id', $user->merchant_id)
+        $roleFeatures = FeatureAccess::where('merchant_id', $user->merchant_id)
             ->where('role_id', $roleId)
             ->where('is_enabled', true)
             ->pluck('feature_key')
-            ->toArray()
-        )));
+            ->toArray();
+
+        return array_values(array_diff(array_unique(array_merge($overrideFeatures, $roleFeatures)), $deniedFeatures));
     }
 
     /**

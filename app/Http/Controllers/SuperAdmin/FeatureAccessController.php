@@ -168,6 +168,7 @@ class FeatureAccessController extends Controller
             'user_id' => 'required|exists:users,id',
             'features' => 'nullable|array',
             'features.*' => 'string',
+            'decision' => 'required|in:grant,deny',
         ]);
 
         $user = User::where('merchant_id', $validated['merchant_id'])
@@ -184,11 +185,15 @@ class FeatureAccessController extends Controller
                 'merchant_id' => $validated['merchant_id'],
                 'user_id' => $user->id,
                 'feature_key' => $featureKey,
-                'is_enabled' => true,
+                'is_enabled' => $validated['decision'] === 'grant',
             ]);
         }
 
-        return redirect()->back()->with('success', "Special access updated for {$user->name}");
+        $message = $validated['decision'] === 'grant'
+            ? "Special access granted for {$user->name}"
+            : "Access denied for selected pages for {$user->name}";
+
+        return redirect()->back()->with('success', $message);
     }
 
     /**
