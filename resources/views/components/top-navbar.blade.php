@@ -71,13 +71,37 @@
     </div>
 </nav>
 @if(!empty($subscription_blocked))
-    <div id="subscription-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:20000;display:flex;align-items:center;justify-content:center">
-        <div style="background:#111;color:#fff;padding:28px;border-radius:12px;min-width:360px;max-width:720px;text-align:left;box-shadow:0 8px 32px rgba(0,0,0,0.6)">
-            <h3 style="margin-top:0">Subscription Ended</h3>
-            <p>Your subscription for <strong>{{ $subscription_block_details['merchant'] ?? '' }}</strong> has ended on <strong>{{ $subscription_block_details['expires_at'] ?? '' }}</strong>.</p>
-            <p>Please contact support to reactivate your subscription and restore access.</p>
-            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-                <a href="{{ url('/contact') }}" class="btn btn-primary">Contact Support</a>
+    <div id="subscription-overlay" class="sub-lock-overlay" role="dialog" aria-modal="true" aria-labelledby="subLockTitle">
+        <div class="sub-lock-modal">
+            <div class="sub-lock-head">
+                <div class="sub-lock-icon"><i class="bi bi-shield-exclamation"></i></div>
+                <div>
+                    <h3 id="subLockTitle" class="sub-lock-title">Subscription Ended</h3>
+                    <p class="sub-lock-subtitle">Access is temporarily locked until reactivation.</p>
+                </div>
+            </div>
+
+            <div class="sub-lock-meta">
+                <div class="sub-lock-chip">
+                    <span>Merchant</span>
+                    <strong>{{ $subscription_block_details['merchant'] ?? 'Unknown merchant' }}</strong>
+                </div>
+                <div class="sub-lock-chip">
+                    <span>Ended On</span>
+                    <strong>{{ $subscription_block_details['expires_at'] ?? 'N/A' }}</strong>
+                </div>
+                <div class="sub-lock-chip sub-lock-chip-alert">
+                    <span>Status</span>
+                    <strong>Deactivated</strong>
+                </div>
+            </div>
+
+            <p class="sub-lock-message">
+                Your workspace is protected and currently read-locked. Contact support to renew or reactivate the subscription and restore full access for merchant admins and employees.
+            </p>
+
+            <div class="sub-lock-actions">
+                <a href="{{ url('/contact') }}" class="sub-lock-btn">Contact Support</a>
             </div>
         </div>
     </div>
