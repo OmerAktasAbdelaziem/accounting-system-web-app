@@ -1,0 +1,25 @@
+/* Modern Top Navbar styles - glass + gradient + compact layout */
+:root{
+  --primary: #ff6b35;
+  --accent: #7c3aed;
+  --bg: rgba(255,255,255,0.06);
+  --glass: rgba(255,255,255,0.06);
+  --muted: rgba(255,255,255,0.75);
+}
+.modern-top-navbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:linear-gradient(90deg, rgba(20,20,20,0.98), rgba(34,34,34,0.98));border-bottom:1px solid rgba(255,255,255,0.04);backdrop-filter:blur(6px);}
+.modern-top-navbar .brand{display:flex;align-items:center;gap:12px;font-weight:800;color:#fff;text-decoration:none}
+.modern-top-navbar .brand .logo-mark{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:18px}
+.modern-top-navbar .brand .app-name{font-size:18px;color:#fff}
+.modern-top-navbar .center{flex:1;display:flex;align-items:center;justify-content:center;padding:0 20px}
+.modern-top-navbar .search{width:480px;max-width:60%;display:flex;align-items:center;background:rgba(255,255,255,0.03);border-radius:999px;padding:6px 10px;border:1px solid rgba(255,255,255,0.03)}
+.modern-top-navbar .search input{flex:1;background:transparent;border:0;color:#fff;padding:8px 10px;outline:none}
+.modern-top-navbar .actions{display:flex;align-items:center;gap:12px}
+.modern-top-navbar .btn-quick{background:linear-gradient(135deg,var(--primary),var(--accent));border:none;color:#fff;padding:8px 12px;border-radius:8px;font-weight:700;display:flex;gap:8px;align-items:center}
+.modern-top-navbar .icon-btn{background:transparent;border:0;color:#fff;padding:8px;border-radius:8px;cursor:pointer}
+.modern-top-navbar .icon-badge{position:relative}
+.modern-top-navbar .icon-badge .badge{position:absolute;top:4px;right:4px;background:#ff3b3b;color:#fff;border-radius:50%;font-size:10px;padding:2px 6px}
+.modern-top-navbar .user{display:flex;align-items:center;gap:10px}
+.modern-top-navbar .user .avatar{width:40px;height:40px;border-radius:10px;overflow:hidden;border:2px solid rgba(255,255,255,0.08)}
+.modern-top-navbar .user .avatar img{width:100%;height:100%;object-fit:cover}
+.modern-top-navbar .user .name{color:#fff;font-weight:700;font-size:14px}
+@media (max-width: 900px){.modern-top-navbar .center{display:none}.modern-top-navbar .brand .app-name{display:none}}
