@@ -538,7 +538,6 @@
     <nav class="super-admin-navbar">
         <div class="d-flex align-items-center w-100">
             <a href="{{ route('super-admin.dashboard') }}" class="navbar-brand">
-                <i class="bi bi-gem"></i>
                 <span>{{ \App\Models\Setting::getApplicationName() }}</span>
             </a>
             

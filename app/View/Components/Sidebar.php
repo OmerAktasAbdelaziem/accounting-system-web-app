@@ -32,8 +32,7 @@ class Sidebar extends Component
                     ['route' => 'super-admin.packages.index', 'icon' => 'bi-box-seam', 'label' => 'Packages'],
                     ['route' => 'super-admin.subscriptions.index', 'icon' => 'bi-bookmark-check', 'label' => 'Subscriptions'],
                     ['route' => 'super-admin.vat-rates.index', 'icon' => 'bi-percent', 'label' => 'VAT Rates'],
-                    ['route' => 'profile', 'icon' => 'bi-person', 'label' => 'Profile'],
-                    ['route' => 'settings.index', 'icon' => 'bi-gear', 'label' => 'System Settings'],
+                    
                     ['route' => 'audit-logs.index', 'icon' => 'bi-journal-text', 'label' => 'Audit Logs'],
                 ],
             ];
@@ -72,8 +71,6 @@ class Sidebar extends Component
         $admin = [];
         if ($this->isAdmin) {
             $admin = [
-                ['route' => 'profile', 'icon' => 'bi-person', 'label' => 'Profile'],
-                ['route' => 'settings.index', 'icon' => 'bi-gear', 'label' => 'Settings'],
                 ['route' => 'audit-logs.index', 'icon' => 'bi-journal-text', 'label' => 'Audit Logs', 'feature' => 'audit_logs'],
             ];
         }
