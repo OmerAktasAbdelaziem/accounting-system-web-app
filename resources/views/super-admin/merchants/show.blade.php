@@ -4,10 +4,16 @@
 <div class="container-fluid">
     <div class="page-header d-flex align-items-center justify-content-between mb-4">
         <h1 class="page-title">{{ $merchant->business_name }}</h1>
-        <div>
+        <div class="d-flex gap-2">
             <a href="{{ route('super-admin.merchants.edit', $merchant) }}" class="btn btn-secondary">
                 <i class="bi bi-pencil"></i> Edit
             </a>
+            <form action="{{ route('super-admin.merchants.inspect', $merchant) }}" method="POST" style="display:inline;">
+                @csrf
+                <button type="submit" class="btn btn-outline-info" onclick="return confirm('Inspect this merchant (login as merchant admin)?')">
+                    <i class="bi bi-box-arrow-in-right"></i> Inspect
+                </button>
+            </form>
         </div>
     </div>
 

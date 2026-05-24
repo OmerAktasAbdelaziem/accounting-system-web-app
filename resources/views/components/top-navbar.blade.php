@@ -25,7 +25,12 @@
         <button id="notifButton" class="icon-btn icon-badge" title="Notifications" aria-expanded="false" aria-controls="notifDropdown">
             <i class="bi bi-bell" style="font-size:18px"></i>
             <span id="notifBadge" class="badge" style="display:none">0</span>
-        </button>
+                @if(session()->has('original_admin_id'))
+                    <form action="{{ route('super-admin.exit-inspection') }}" method="POST" style="display:inline;margin-right:10px;">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-warning" title="Exit inspection">Exit Inspection</button>
+                    </form>
+                @endif
         <div id="notifDropdown" class="notif-dropdown" style="display:none" role="menu" aria-label="Notifications">
             <div class="notif-dropdown-head">
                 <div>

@@ -23,6 +23,11 @@ class DashboardController extends Controller
     public function index()
     {
         $currencySymbol = $this->currencySymbol();
+        // If the authenticated user is a super admin, send them to the super-admin dashboard
+        $user = auth()->user();
+        if ($user && method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) {
+            return redirect()->route('super-admin.dashboard');
+        }
         $merchantScope = $this->merchantScope();
         $branchIds = $merchantScope['branch_ids'];
         $safeIds = $merchantScope['safe_ids'];
@@ -205,6 +210,10 @@ class DashboardController extends Controller
     public function analytics(): JsonResponse
     {
         $merchantScope = $this->merchantScope();
+        $user = auth()->user();
+        if ($user && method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) {
+            return response()->json(['success' => false, 'message' => 'Use super-admin analytics route'], 403);
+        }
         $branchIds = $merchantScope['branch_ids'];
         $safeIds = $merchantScope['safe_ids'];
         $isMerchantUser = $this->isMerchantUser();
