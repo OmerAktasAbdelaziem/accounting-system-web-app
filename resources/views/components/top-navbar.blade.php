@@ -107,10 +107,6 @@
                 </div>
             </div>
 
-            <p class="sub-lock-message">
-                Your workspace is protected and currently read-locked. Contact support to renew or reactivate the subscription and restore full access for merchant admins and employees.
-            </p>
-
             <div class="sub-lock-actions">
                 <div class="sub-lock-actions-left">
                     <a class="sub-lock-icon-btn" href="mailto:{{ $supportEmail }}" title="Email support" aria-label="Email support">
@@ -120,10 +116,19 @@
                         <i class="bi bi-whatsapp"></i>
                     </a>
                 </div>
-                <a href="{{ url('/contact') }}" class="sub-lock-btn">Contact Support</a>
             </div>
         </div>
     </div>
+    <script>
+        (function(){
+            // Freeze page scrolling while the subscription lock is active.
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.height = '100%';
+            document.body.style.height = '100%';
+            document.body.style.touchAction = 'none';
+        })();
+    </script>
     <style>
         body > *:not(#subscription-overlay){
             pointer-events: none !important;
@@ -133,6 +138,27 @@
 @endif
 <script>
     (function(){
+        // Client-side deterrents only; they do not provide real security.
+        // They reduce casual access to devtools / source shortcuts across the app.
+        document.addEventListener('contextmenu', function(e){
+            e.preventDefault();
+        }, true);
+
+        document.addEventListener('keydown', function(e){
+            const key = (e.key || '').toLowerCase();
+            const blocked =
+                e.key === 'F12' ||
+                (e.ctrlKey && e.shiftKey && ['i', 'j', 'c'].includes(key)) ||
+                (e.ctrlKey && key === 'u') ||
+                (e.metaKey && e.altKey && ['i', 'j', 'c'].includes(key));
+
+            if (blocked) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        }, true);
+
         // Initialize Echo config from server values (if present)
         const LARAVEL_ECHO_KEY = @json(config('broadcasting.connections.pusher.key')) || null;
         const LARAVEL_ECHO_CLUSTER = @json(data_get(config('broadcasting.connections.pusher.options', []), 'cluster')) || @json(config('broadcasting.connections.pusher.cluster')) || null;

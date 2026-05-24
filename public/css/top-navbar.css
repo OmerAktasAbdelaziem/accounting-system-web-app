@@ -64,7 +64,7 @@
 .notif-tone-subscription .notif-icon-wrap{background:#e8fbf7;color:#1f8b78}
 
 /* Subscription lock popup (light, modern, dynamic) */
-.sub-lock-overlay{position:fixed;inset:0;z-index:20000;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 10% 10%,rgba(117,145,255,0.22),transparent 42%),radial-gradient(circle at 90% 85%,rgba(255,166,99,0.22),transparent 46%),rgba(245,248,255,0.58);backdrop-filter:blur(8px)}
+.sub-lock-overlay{position:fixed;inset:0;z-index:20000;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 10% 10%,rgba(117,145,255,0.22),transparent 42%),radial-gradient(circle at 90% 85%,rgba(255,166,99,0.22),transparent 46%),rgba(245,248,255,0.58);backdrop-filter:blur(8px);touch-action:none;overscroll-behavior:none}
 .sub-lock-modal{width:min(760px,96vw);background:linear-gradient(145deg,#ffffff,#f7faff);border:1px solid #dfe8fb;border-radius:22px;padding:24px;box-shadow:0 26px 60px rgba(38,59,99,.24);animation:sub-lock-pop .28s ease}
 .sub-lock-head{display:flex;align-items:center;gap:14px}
 .sub-lock-icon{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#2563eb;background:linear-gradient(145deg,#e5efff,#d7e7ff)}
@@ -77,16 +77,13 @@
 .sub-lock-chip strong{font-size:13px;color:#1b2f4f;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sub-lock-chip-alert{background:#fff4ea;border-color:#ffdcb9}
 .sub-lock-chip-alert strong{color:#ad5a12}
-.sub-lock-message{margin:16px 0 0;color:#425978;font-size:14px;line-height:1.5}
-.sub-lock-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px}
+.sub-lock-actions{display:flex;justify-content:flex-start;align-items:center;gap:12px;margin-top:18px}
 .sub-lock-actions-left{display:flex;align-items:center;gap:10px}
 .sub-lock-icon-btn{width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;border-radius:12px;text-decoration:none;background:#f3f7ff;border:1px solid #dbe7fb;color:#2957c7;box-shadow:0 8px 16px rgba(37,67,122,.08);transition:transform .18s ease, box-shadow .18s ease, background .18s ease,color .18s ease}
 .sub-lock-icon-btn:hover{transform:translateY(-1px);background:#e8f1ff;color:#1746b4;box-shadow:0 12px 22px rgba(37,67,122,.14)}
 .sub-lock-icon-btn .bi{font-size:18px}
 .sub-lock-icon-btn .bi-whatsapp{color:#1fa463}
 .sub-lock-icon-btn:hover .bi-whatsapp{color:#148c52}
-.sub-lock-btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;border-radius:10px;text-decoration:none;background:linear-gradient(135deg,#2a69ee,#5f86ff);color:#fff;font-weight:800;box-shadow:0 10px 22px rgba(42,105,238,.3)}
-.sub-lock-btn:hover{color:#fff;filter:brightness(1.04)}
 @keyframes sub-lock-pop{0%{opacity:0;transform:translateY(10px) scale(.98)}100%{opacity:1;transform:translateY(0) scale(1)}}
 @media (max-width: 900px){.modern-top-navbar .center{display:none}.modern-top-navbar .brand .app-name{display:none}}
 @media (max-width: 900px){.sub-lock-meta{grid-template-columns:1fr}.sub-lock-title{font-size:21px}.sub-lock-modal{padding:18px}.sub-lock-actions{flex-direction:column;align-items:stretch}.sub-lock-actions-left{justify-content:center}}
