@@ -3,15 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 class Branch extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'merchant_id',
         'name',
         'code',
         'address',
@@ -24,6 +28,34 @@ class Branch extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Branch $branch) {
+            $user = Auth::user();
+            if ($user && !$user->isSuperAdmin() && empty($branch->merchant_id)) {
+                $branch->merchant_id = $user->merchant_id;
+            }
+        });
+
+        static::addGlobalScope('merchant_scope', function (Builder $builder) {
+            if (!Auth::check()) {
+                return;
+            }
+
+            $user = Auth::user();
+            if (!$user || $user->isSuperAdmin() || empty($user->merchant_id)) {
+                return;
+            }
+
+            $builder->where('merchant_id', $user->merchant_id);
+        });
+    }
+
+    public function merchant(): BelongsTo
+    {
+        return $this->belongsTo(Merchant::class);
+    }
 
     public function employees(): MorphToMany
     {

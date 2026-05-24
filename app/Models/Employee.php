@@ -19,6 +19,7 @@ class Employee extends Model
         'name_ar',
         'email',
         'phone',
+        'merchant_id',
         'position',
         'position_ar',
         'address',

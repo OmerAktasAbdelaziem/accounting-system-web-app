@@ -25,6 +25,7 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\SuperAdmin\SuperAdminDashboardController;
 use App\Http\Controllers\SuperAdmin\MerchantController;
+use App\Http\Controllers\SuperAdmin\DataRecoveryController;
 use App\Http\Controllers\SuperAdmin\PackageController;
 use App\Http\Controllers\SuperAdmin\SubscriptionController;
 use App\Http\Controllers\SuperAdmin\FeatureAccessController;
@@ -304,6 +305,10 @@ Route::middleware('auth')->group(function () {
         // Packages Management
         Route::resource('packages', PackageController::class);
         Route::get('packages/{package}/features', [PackageController::class, 'features'])->name('packages.features');
+
+        // Data Recovery
+        Route::get('data-recovery', [DataRecoveryController::class, 'index'])->name('data-recovery.index');
+        Route::post('data-recovery/transfer', [DataRecoveryController::class, 'transfer'])->name('data-recovery.transfer');
 
         // Subscriptions Management
         Route::resource('subscriptions', SubscriptionController::class);

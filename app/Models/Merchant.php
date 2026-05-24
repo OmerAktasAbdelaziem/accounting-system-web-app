@@ -69,6 +69,14 @@ class Merchant extends Model
     }
 
     /**
+     * Get all branches belonging to this merchant
+     */
+    public function branches(): HasMany
+    {
+        return $this->hasMany(Branch::class);
+    }
+
+    /**
      * Get all employees
      */
     public function employees(): HasMany

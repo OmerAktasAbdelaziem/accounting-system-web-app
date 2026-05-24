@@ -117,6 +117,14 @@
                     </a>
                 </li>
                 @endif
+                @if (\Illuminate\Support\Facades\Route::has('super-admin.data-recovery.index'))
+                <li>
+                    <a href="{{ route('super-admin.data-recovery.index') }}" class="{{ request()->routeIs('super-admin.data-recovery.*') ? 'active' : '' }}">
+                        <i class="bi bi-arrow-repeat"></i>
+                        <span>Data Recovery</span>
+                    </a>
+                </li>
+                @endif
             </ul>
         </div>
     @endif
