@@ -99,8 +99,8 @@
                         @endif
                         <form method="POST" action="{{ route('super-admin.subscriptions.destroy', $subscription) }}" style="display:inline;">
                             @csrf @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-outline-orange" title="Cancel" onclick="return confirm('Cancel this subscription?')">
-                                <i class="bi bi-trash"></i>
+                            <button type="submit" class="btn btn-sm btn-outline-orange" title="Deactivate" onclick="return confirm('Deactivate this subscription? Merchant users will be locked until reactivated.')">
+                                <i class="bi bi-pause-circle"></i>
                             </button>
                         </form>
                     </div>

@@ -3,18 +3,18 @@
 @section('content')
 <div class="container-fluid">
     <div class="page-header mb-4">
-        <h1 class="page-title">Cancel Subscription</h1>
+        <h1 class="page-title">Deactivate Subscription</h1>
     </div>
 
     <div class="row">
         <div class="col-lg-8 offset-lg-2">
             <div class="card border-danger">
                 <div class="card-header bg-danger text-white">
-                    <h5 class="mb-0">⚠️ Confirm Subscription Cancellation</h5>
+                    <h5 class="mb-0">⚠️ Confirm Subscription Deactivation</h5>
                 </div>
                 <div class="card-body">
                     <div class="alert alert-warning mb-4">
-                        <strong>Warning:</strong> This action will cancel the subscription and may impact the merchant's access to the system.
+                        <strong>Warning:</strong> This action will deactivate the subscription and lock merchant access until reactivation.
                     </div>
 
                     <div class="card bg-light mb-4">
@@ -56,7 +56,7 @@
                         </div>
                     </div>
 
-                    <h6>Impact of Cancellation:</h6>
+                    <h6>Impact of Deactivation:</h6>
                     <ul class="mb-4">
                         <li>All features included in this package will be disabled</li>
                         <li>The merchant will lose access to advanced features</li>
@@ -68,19 +68,19 @@
                         @csrf @method('DELETE')
 
                         <div class="mb-3">
-                            <label class="form-label">Cancellation Reason (optional)</label>
-                            <textarea name="cancellation_reason" class="form-control" rows="3" placeholder="Document why this subscription is being cancelled..."></textarea>
+                            <label class="form-label">Deactivation Reason (optional)</label>
+                            <textarea name="cancellation_reason" class="form-control" rows="3" placeholder="Document why this subscription is being deactivated..."></textarea>
                         </div>
 
                         <div class="form-check mb-4">
                             <input type="checkbox" name="send_notification" class="form-check-input" id="sendNotif" value="1" checked>
-                            <label class="form-check-label" for="sendNotif">Send cancellation notification email to merchant admin</label>
+                            <label class="form-check-label" for="sendNotif">Send deactivation notification email to merchant admin</label>
                         </div>
 
                         <div class="d-flex gap-2">
                             <a href="{{ route('super-admin.subscriptions.show', $subscription) }}" class="btn btn-outline-secondary">Back</a>
                             <button type="submit" class="btn btn-danger ms-auto">
-                                <i class="icon icon-trash"></i> Confirm Cancellation
+                                <i class="bi bi-pause-circle"></i> Confirm Deactivation
                             </button>
                         </div>
                     </form>

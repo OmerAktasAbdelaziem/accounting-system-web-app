@@ -178,8 +178,8 @@
 
                     <form method="POST" action="{{ route('super-admin.subscriptions.destroy', $subscription) }}" style="display:inline-block; width:100%;">
                         @csrf @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm w-100" onclick="return confirm('Cancel this subscription? This action cannot be undone.')">
-                            <i class="icon icon-trash"></i> Cancel Subscription
+                        <button type="submit" class="btn btn-danger btn-sm w-100" onclick="return confirm('Deactivate this subscription? Merchant admins, employees, and users will be locked until reactivated.')">
+                            <i class="bi bi-pause-circle"></i> Deactivate Subscription
                         </button>
                     </form>
                 </div>

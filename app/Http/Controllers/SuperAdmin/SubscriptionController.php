@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Merchant;
 use App\Models\Package;
 use App\Models\Subscription;
+use App\Notifications\SubscriptionEndedNotification;
 use App\Services\MerchantService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class SubscriptionController extends Controller
 {
@@ -167,11 +169,30 @@ class SubscriptionController extends Controller
         $this->authorize('delete', $subscription);
 
         $merchant = $subscription->merchant;
-        $subscription->update(['is_active' => false]);
-        $subscription->delete();
+
+        // Deactivate instead of deleting to preserve history
+        $subscription->update([
+            'is_active' => false,
+            'ended_notified_at' => now(),
+        ]);
+
+        // Keep merchant expiry in sync for UI/analytics
+        $merchant->update([
+            'subscription_expires_at' => $subscription->expires_at,
+        ]);
+
+        // Notify only merchant admins about deactivation
+        try {
+            $admins = $merchant->users()->whereHas('role', function ($q) {
+                $q->where('name', 'merchant_admin');
+            })->get();
+            Notification::send($admins, new SubscriptionEndedNotification($subscription));
+        } catch (\Throwable $e) {
+            // Do not block deactivation if notification fails
+        }
 
         return redirect()->route('super-admin.subscriptions.index')
-            ->with('success', "Subscription for {$merchant->name} has been cancelled.");
+            ->with('success', "Subscription for {$merchant->name} has been deactivated.");
     }
 
     /**

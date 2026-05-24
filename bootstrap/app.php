@@ -26,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Apply locale middleware to web requests after session starts
         $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,
+            \App\Http\Middleware\CheckSubscription::class,
         ]);
 
         // Apply global middleware
