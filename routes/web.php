@@ -319,6 +319,9 @@ Route::middleware('auth')->group(function () {
         Route::get('subscriptions/{subscription}/renew', [SubscriptionController::class, 'renewForm'])->name('subscriptions.renew');
         Route::post('subscriptions/{subscription}/renew', [SubscriptionController::class, 'renewStore'])->name('subscriptions.renew.store');
         Route::get('subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
+        // Preview recipients and send test notification
+        Route::get('subscriptions/{merchant}/recipients-preview', [\App\Http\Controllers\SuperAdmin\SubscriptionNotificationPreviewController::class, 'index'])->name('subscriptions.recipients_preview');
+        Route::post('subscriptions/{merchant}/recipients-preview/send', [\App\Http\Controllers\SuperAdmin\SubscriptionNotificationPreviewController::class, 'send'])->name('subscriptions.recipients_preview.send');
 
         // VAT Rate Management
         Route::resource('vat-rates', VatRateController::class, ['except' => ['create', 'edit', 'show']]);

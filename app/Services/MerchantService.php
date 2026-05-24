@@ -10,6 +10,8 @@ use App\Models\User;
 use App\Models\VatRate;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\SubscriptionExtendedNotification;
 
 class MerchantService
 {
@@ -105,6 +107,14 @@ class MerchantService
         // Update merchant subscription expiry
         $merchant->update(['subscription_expires_at' => $expiresAt]);
 
+        // Notify merchant users about the new subscription
+        try {
+            $admins = $merchant->users()->where('user_type', 'merchant_admin')->get();
+            Notification::send($admins, new SubscriptionExtendedNotification($subscription));
+        } catch (\Exception $e) {
+            // silently fail to avoid breaking subscription creation if notifications miss
+        }
+
         return $subscription;
     }
 
@@ -121,6 +131,14 @@ class MerchantService
         ]);
 
         $subscription->merchant->update(['subscription_expires_at' => $expiresAt]);
+
+        // Notify merchant users about renewal/extension
+        try {
+            $admins = $subscription->merchant->users()->where('user_type', 'merchant_admin')->get();
+            Notification::send($admins, new SubscriptionExtendedNotification($subscription));
+        } catch (\Exception $e) {
+            // ignore notification failures
+        }
 
         return $subscription;
     }

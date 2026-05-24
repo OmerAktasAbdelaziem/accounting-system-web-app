@@ -61,6 +61,24 @@
         </div>
     </div>
 </nav>
+@if(!empty($subscription_blocked))
+    <div id="subscription-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:20000;display:flex;align-items:center;justify-content:center">
+        <div style="background:#111;color:#fff;padding:28px;border-radius:12px;min-width:360px;max-width:720px;text-align:left;box-shadow:0 8px 32px rgba(0,0,0,0.6)">
+            <h3 style="margin-top:0">Subscription Ended</h3>
+            <p>Your subscription for <strong>{{ $subscription_block_details['merchant'] ?? '' }}</strong> has ended on <strong>{{ $subscription_block_details['expires_at'] ?? '' }}</strong>.</p>
+            <p>Please contact support to reactivate your subscription and restore access.</p>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+                <a href="{{ url('/contact') }}" class="btn btn-primary">Contact Support</a>
+            </div>
+        </div>
+    </div>
+    <style>
+        body > *:not(#subscription-overlay){
+            pointer-events: none !important;
+            user-select: none !important;
+        }
+    </style>
+@endif
 <script>
     (function(){
         // Initialize Echo config from server values (if present)

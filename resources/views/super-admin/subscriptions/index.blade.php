@@ -88,6 +88,10 @@
                         <a href="{{ route('super-admin.subscriptions.show', $subscription) }}" class="btn btn-sm btn-outline-orange" title="View">
                             <i class="bi bi-eye"></i>
                         </a>
+                        
+                        <a href="{{ route('super-admin.subscriptions.recipients_preview', $subscription->merchant->id) }}" class="btn btn-sm btn-outline-secondary" title="Preview Recipients">
+                            <i class="bi bi-people"></i>
+                        </a>
                         @if($subscription->is_active && $subscription->expires_at < now()->addDays(30))
                         <a href="{{ route('super-admin.subscriptions.show', $subscription) }}" class="btn btn-sm btn-outline-orange" title="Renew">
                             <i class="bi bi-arrow-clockwise"></i>

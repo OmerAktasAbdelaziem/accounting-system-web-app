@@ -162,6 +162,10 @@
                     </a>
                     @endif
 
+                    <a href="{{ route('super-admin.subscriptions.recipients_preview', $subscription->merchant->id) }}" class="btn btn-outline-secondary btn-sm w-100 mb-2">
+                        <i class="bi bi-people"></i> Preview Recipients
+                    </a>
+
                     <a href="{{ route('super-admin.merchants.show', $subscription->merchant) }}" class="btn btn-info btn-sm w-100 mb-2">
                         <i class="icon icon-user"></i> View Merchant
                     </a>
