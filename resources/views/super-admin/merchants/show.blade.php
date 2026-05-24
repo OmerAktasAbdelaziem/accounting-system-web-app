@@ -160,12 +160,19 @@
                         @csrf @method('PUT')
                         <div class="mb-3">
                             <label class="form-label">VAT Rate (%)</label>
-                            <input type="number" name="rate" class="form-control" value="{{ $vatRate?->rate ?? 0 }}" min="0" max="100" step="0.01">
+                            <input type="number" name="rate_percentage" class="form-control" value="{{ $vatRate?->rate_percentage ?? $vatRate?->rate ?? 0 }}" min="0" max="100" step="0.01">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Applies To</label>
+                            <select name="applies_to" class="form-select">
+                                <option value="invoices" {{ ($vatRate?->applies_to ?? 'invoices') === 'invoices' ? 'selected' : '' }}>Invoices Only</option>
+                                <option value="all" {{ ($vatRate?->applies_to ?? 'invoices') === 'all' ? 'selected' : '' }}>All Financial Transactions</option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <div class="form-check">
-                                <input type="checkbox" name="is_enabled" class="form-check-input" id="vat_enabled" 
-                                       value="1" {{ $vatRate?->is_enabled ? 'checked' : '' }}>
+                                <input type="checkbox" name="is_active" class="form-check-input" id="vat_enabled" 
+                                       value="1" {{ $vatRate?->is_active ?? $vatRate?->is_enabled ? 'checked' : '' }}>
                                 <label class="form-check-label" for="vat_enabled">Enable VAT</label>
                             </div>
                         </div>

@@ -136,22 +136,24 @@ class MerchantService
     /**
      * Set VAT rate for merchant
      */
-    public function setVatRate(Merchant $merchant, float $rate, bool $isEnabled = true): VatRate
+    public function setVatRate(Merchant $merchant, float $ratePercentage, string $appliesTo = 'invoices', bool $isActive = true): VatRate
     {
         $existing = VatRate::where('merchant_id', $merchant->id)->first();
 
         if ($existing) {
             $existing->update([
-                'rate' => $rate,
-                'is_enabled' => $isEnabled,
+                'rate_percentage' => $ratePercentage,
+                'is_active' => $isActive,
+                'applies_to' => $appliesTo,
             ]);
             return $existing;
         }
 
         return VatRate::create([
             'merchant_id' => $merchant->id,
-            'rate' => $rate,
-            'is_enabled' => $isEnabled,
+            'rate_percentage' => $ratePercentage,
+            'is_active' => $isActive,
+            'applies_to' => $appliesTo,
         ]);
     }
 

@@ -276,11 +276,17 @@ class MerchantController extends Controller
         $this->authorize('update', $merchant);
 
         $validated = $request->validate([
-            'rate' => 'required|numeric|min:0|max:100',
-            'is_enabled' => 'boolean',
+            'rate_percentage' => 'required|numeric|min:0|max:100',
+            'applies_to' => 'required|in:invoices,all',
+            'is_active' => 'boolean',
         ]);
 
-        $this->merchantService->setVatRate($merchant, $validated['rate'], $validated['is_enabled'] ?? true);
+        $this->merchantService->setVatRate(
+            $merchant,
+            (float) $validated['rate_percentage'],
+            $validated['applies_to'],
+            $request->boolean('is_active', true)
+        );
 
         return redirect()->back()->with('success', 'VAT rate updated successfully');
     }
