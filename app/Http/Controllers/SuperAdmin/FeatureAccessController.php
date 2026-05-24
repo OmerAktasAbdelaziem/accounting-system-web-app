@@ -10,8 +10,8 @@ use App\Models\Merchant;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class FeatureAccessController extends Controller
 {
@@ -75,6 +75,7 @@ class FeatureAccessController extends Controller
 
         $merchants = Merchant::where('is_active', true)->get();
         $availableFeatures = self::AVAILABLE_FEATURES;
+        $existingEmails = User::whereNotNull('email')->pluck('email')->values();
         $selectedMerchant = null;
         $rows = [];
         $columns = [];
@@ -119,7 +120,8 @@ class FeatureAccessController extends Controller
             'employees',
             'employeeOverrides',
             'employeeUserMap',
-            'availableFeatures'
+            'availableFeatures',
+            'existingEmails'
         ));
     }
 
@@ -214,46 +216,36 @@ class FeatureAccessController extends Controller
         $validated = $request->validate([
             'merchant_id' => 'required|exists:merchants,id',
             'employee_id' => 'required|exists:employees,id',
-            'password' => 'nullable|string|min:8',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         $employee = Employee::where('merchant_id', $validated['merchant_id'])
             ->whereKey($validated['employee_id'])
             ->firstOrFail();
 
-        if (empty($employee->email)) {
-            return redirect()->back()->withErrors(['employee' => 'Employee must have an email address to create a login user.']);
-        }
-
-        if (User::where('email', $employee->email)->exists()) {
-            return redirect()->back()->withErrors(['employee' => 'A login user already exists for this employee email.']);
-        }
-
         $employeeRole = Role::firstOrCreate(
             ['name' => 'employee'],
             ['description' => 'Merchant employee user']
         );
 
-        $plainPassword = $validated['password'] ?? Str::random(12);
+        DB::transaction(function () use ($employee, $validated, $employeeRole) {
+            $employee->update(['email' => $validated['email']]);
 
-        $user = User::create([
-            'name' => $employee->name,
-            'email' => $employee->email,
-            'password' => Hash::make($plainPassword),
-            'merchant_id' => $employee->merchant_id,
-            'user_type' => 'employee',
-            'role_id' => $employeeRole->id,
-            'is_active' => true,
-            'phone' => $employee->phone,
-            'address' => $employee->address,
-        ]);
+            User::create([
+                'name' => $employee->name,
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'merchant_id' => $employee->merchant_id,
+                'user_type' => 'employee',
+                'role_id' => $employeeRole->id,
+                'is_active' => true,
+                'phone' => $employee->phone,
+                'address' => $employee->address,
+            ]);
+        });
 
         $message = "Login user created for {$employee->name}";
-        if ($request->filled('password')) {
-            $message .= ". Temporary password was saved from your input.";
-        } else {
-            $message .= ". Temporary password: {$plainPassword}";
-        }
 
         return redirect()->back()->with('success', $message);
     }

@@ -314,12 +314,24 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Email</label>
-                        <input type="email" class="form-control" id="employeeLoginEmail" disabled>
+                        <input type="email" name="email" class="form-control" id="employeeLoginEmail" required>
+                        <small class="text-muted">This email will also be saved on the employee record so the account can be linked later.</small>
+                        <div id="employeeEmailWarning" class="small text-danger mt-1 d-none">This email already exists in the system.</div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Temporary Password</label>
-                        <input type="text" name="password" class="form-control" placeholder="Leave empty to auto-generate">
-                        <small class="text-muted">If left empty, the system will generate a secure temporary password.</small>
+                        <label class="form-label">Password</label>
+                        <div class="input-group">
+                            <input type="password" name="password" class="form-control" id="employeeLoginPassword" required>
+                            <button type="button" class="btn btn-outline-secondary" id="toggleEmployeePassword">Show</button>
+                        </div>
+                        <small class="text-muted">Enter the password manually for the new login account.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirm Password</label>
+                        <div class="input-group">
+                            <input type="password" name="password_confirmation" class="form-control" id="employeeLoginPasswordConfirmation" required>
+                            <button type="button" class="btn btn-outline-secondary" id="toggleEmployeePasswordConfirmation">Show</button>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -409,6 +421,48 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('employeeLoginEmployeeId').value = button.getAttribute('data-employee-id');
             document.getElementById('employeeLoginName').textContent = button.getAttribute('data-employee-name');
             document.getElementById('employeeLoginEmail').value = button.getAttribute('data-employee-email') || '';
+            document.getElementById('employeeEmailWarning').classList.add('d-none');
+            document.getElementById('employeeLoginPassword').value = '';
+            document.getElementById('employeeLoginPasswordConfirmation').value = '';
+        });
+    }
+
+    const passwordInput = document.getElementById('employeeLoginPassword');
+    const passwordConfirmationInput = document.getElementById('employeeLoginPasswordConfirmation');
+    const emailInput = document.getElementById('employeeLoginEmail');
+    const emailWarning = document.getElementById('employeeEmailWarning');
+    const togglePassword = document.getElementById('toggleEmployeePassword');
+    const togglePasswordConfirmation = document.getElementById('toggleEmployeePasswordConfirmation');
+    const existingEmails = @json($existingEmails ?? []);
+
+    function updateEmailWarning() {
+        if (!emailInput || !emailWarning) return;
+        const current = (emailInput.value || '').trim().toLowerCase();
+        const exists = existingEmails.map(email => String(email).toLowerCase()).includes(current);
+        emailWarning.classList.toggle('d-none', !exists || !current);
+    }
+
+    if (emailInput) {
+        emailInput.addEventListener('input', updateEmailWarning);
+        emailInput.addEventListener('blur', updateEmailWarning);
+    }
+
+    function toggleVisibility(input) {
+        if (!input) return;
+        input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function () {
+            toggleVisibility(passwordInput);
+            this.textContent = passwordInput.type === 'password' ? 'Show' : 'Hide';
+        });
+    }
+
+    if (togglePasswordConfirmation && passwordConfirmationInput) {
+        togglePasswordConfirmation.addEventListener('click', function () {
+            toggleVisibility(passwordConfirmationInput);
+            this.textContent = passwordConfirmationInput.type === 'password' ? 'Show' : 'Hide';
         });
     }
 });
