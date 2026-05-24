@@ -46,23 +46,23 @@ class Sidebar extends Component
         // Build a clear, predictable menu structure covering requested sections
         $main = [
             ['route' => 'system.dashboard', 'icon' => 'bi-speedometer2', 'label' => 'Dashboard'],
-            ['route' => 'products.index', 'icon' => 'bi-box-seam', 'label' => 'Products', 'feature' => 'products'],
-            ['route' => 'categories.index', 'icon' => 'bi-tags', 'label' => 'Categories', 'feature' => 'categories'],
-            ['route' => 'employees.index', 'icon' => 'bi-people', 'label' => 'Employees', 'feature' => 'employees'],
-            ['route' => 'sales.index', 'icon' => 'bi-cash-coin', 'label' => 'Sales'],
+            ['route' => 'products.index', 'icon' => 'bi-box-seam', 'label' => 'Products', 'feature' => 'products', 'permission' => 'view_product'],
+            ['route' => 'categories.index', 'icon' => 'bi-tags', 'label' => 'Categories', 'feature' => 'categories', 'permission' => 'view_category'],
+            ['route' => 'employees.index', 'icon' => 'bi-people', 'label' => 'Employees', 'feature' => 'employees', 'permission' => 'view_user'],
+            ['route' => 'sales.index', 'icon' => 'bi-cash-coin', 'label' => 'Sales', 'feature' => 'sales_report', 'permission' => 'view_reports'],
         ];
 
         $suppliers = [
-            ['route' => 'suppliers.index', 'icon' => 'bi-truck', 'label' => 'Suppliers', 'feature' => 'suppliers'],
-            ['route' => 'invoices.index', 'icon' => 'bi-receipt', 'label' => 'Invoices', 'feature' => 'invoicing'],
-            ['route' => 'payroll.index', 'icon' => 'bi-wallet2', 'label' => 'Payroll', 'feature' => 'payroll'],
-            ['route' => 'branches.index', 'icon' => 'bi-diagram-3', 'label' => 'Branches', 'feature' => 'branches'],
+            ['route' => 'suppliers.index', 'icon' => 'bi-truck', 'label' => 'Suppliers', 'feature' => 'suppliers', 'permission' => 'view_supplier'],
+            ['route' => 'invoices.index', 'icon' => 'bi-receipt', 'label' => 'Invoices', 'feature' => 'invoicing', 'permission' => 'view_invoice'],
+            ['route' => 'payroll.index', 'icon' => 'bi-wallet2', 'label' => 'Payroll', 'feature' => 'payroll', 'permission' => 'view_payroll'],
+            ['route' => 'branches.index', 'icon' => 'bi-diagram-3', 'label' => 'Branches', 'feature' => 'branches', 'permission' => 'view_branch'],
         ];
 
         $reports = [
-            ['route' => 'reports.sales', 'icon' => 'bi-graph-up', 'label' => 'Sales Report', 'feature' => 'sales_report'],
-            ['route' => 'reports.inventory', 'icon' => 'bi-boxes', 'label' => 'Inventory Report', 'feature' => 'inventory_report'],
-            ['route' => 'reports.financial', 'icon' => 'bi-currency-dollar', 'label' => 'Financial Report', 'feature' => 'financial_report'],
+            ['route' => 'reports.sales', 'icon' => 'bi-graph-up', 'label' => 'Sales Report', 'feature' => 'sales_report', 'permission' => 'view_reports'],
+            ['route' => 'reports.inventory', 'icon' => 'bi-boxes', 'label' => 'Inventory Report', 'feature' => 'inventory_report', 'permission' => 'view_inventory'],
+            ['route' => 'reports.financial', 'icon' => 'bi-currency-dollar', 'label' => 'Financial Report', 'feature' => 'financial_report', 'permission' => 'view_reports'],
         ];
 
         $systems = [
@@ -76,21 +76,24 @@ class Sidebar extends Component
             $admin = [
                 ['route' => 'profile', 'icon' => 'bi-person', 'label' => 'Profile'],
                 ['route' => 'settings.index', 'icon' => 'bi-gear', 'label' => 'Settings'],
-                ['route' => 'audit-logs.index', 'icon' => 'bi-journal-text', 'label' => 'Audit Logs'],
+                ['route' => 'audit-logs.index', 'icon' => 'bi-journal-text', 'label' => 'Audit Logs', 'feature' => 'audit_logs'],
             ];
         }
 
         // Filter items by feature availability (helper-based), but allow local overrides
-        $filter = function ($items) {
+        $filter = function ($items) use ($user) {
             return array_values(array_filter($items, function ($it) {
                 if (app()->isLocal() && request()->has('debug_menu_all')) {
                     return true;
                 }
-                if (! isset($it['feature'])) return true;
-                if (function_exists('hasFeature')) {
-                    return hasFeature($it['feature']);
+                $feature = $it['feature'] ?? null;
+                $permission = $it['permission'] ?? null;
+
+                if (!$feature && !$permission) {
+                    return true;
                 }
-                return true;
+
+                return auth()->user()?->canViewMenuItem($feature, $permission) ?? false;
             }));
         };
 
@@ -99,7 +102,7 @@ class Sidebar extends Component
             'customers' => $filter($suppliers),
             'systems' => $filter($systems),
             'reports' => $filter($reports),
-            'admin' => $admin,
+            'admin' => $filter($admin),
         ];
 
         // Ensure labels are strings to prevent Blade escaping errors

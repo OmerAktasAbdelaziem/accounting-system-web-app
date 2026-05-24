@@ -153,6 +153,26 @@ class User extends Authenticatable
     }
 
     /**
+     * Check whether the user can see a sidebar item controlled by feature access and/or permissions.
+     */
+    public function canViewMenuItem(?string $featureKey = null, ?string $permissionName = null): bool
+    {
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        if ($featureKey) {
+            return \App\Traits\ChecksFeatureAccess::hasFeatureAccess($featureKey);
+        }
+
+        if ($permissionName && !$this->hasPermission($permissionName)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Update last login timestamp
      */
     public function recordLogin(): void
