@@ -551,6 +551,8 @@
                                     if ($avatarPath) {
                                         if (\Illuminate\Support\Facades\File::exists(public_path($avatarPath))) {
                                             $navbarAvatar = asset($avatarPath);
+                                        } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($avatarPath)) {
+                                            $navbarAvatar = asset('storage/' . ltrim($avatarPath, '/'));
                                         } elseif (\Illuminate\Support\Facades\File::exists(public_path('storage/' . ltrim($avatarPath, '/')))) {
                                             $navbarAvatar = asset('storage/' . ltrim($avatarPath, '/'));
                                         } else {

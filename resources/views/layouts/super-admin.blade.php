@@ -557,6 +557,8 @@
                         if ($avatarPath) {
                             if (\Illuminate\Support\Facades\File::exists(public_path($avatarPath))) {
                                 $superAdminAvatar = asset($avatarPath);
+                            } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($avatarPath)) {
+                                $superAdminAvatar = asset('storage/' . ltrim($avatarPath, '/'));
                             } elseif (\Illuminate\Support\Facades\File::exists(public_path('storage/' . ltrim($avatarPath, '/')))) {
                                 $superAdminAvatar = asset('storage/' . ltrim($avatarPath, '/'));
                             } else {
