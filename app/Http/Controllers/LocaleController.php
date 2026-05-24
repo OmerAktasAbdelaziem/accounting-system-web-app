@@ -11,6 +11,8 @@ class LocaleController extends Controller
         if (in_array($locale, ['en', 'ar'], true)) {
             session(['locale' => $locale]);
             app()->setLocale($locale);
+        } else {
+            $locale = 'en';
         }
 
         $targetUrl = url()->previous();

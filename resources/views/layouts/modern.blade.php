@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="{{ session('locale', 'en') }}" dir="{{ session('locale') === 'ar' ? 'rtl' : 'ltr' }}">
+@php
+    $locale = session('locale');
+    if (!is_string($locale) || !in_array($locale, ['en', 'ar'], true)) {
+        $locale = config('app.locale', 'en');
+    }
+    $appCurrency = \App\Models\Currency::byCode((string) \App\Models\Setting::get('currency', 'AED'));
+    $currencySymbol = $appCurrency?->symbol ?? '$';
+@endphp
+<html lang="{{ $locale }}" dir="{{ $locale === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
-    @php
-        $appCurrency = \App\Models\Currency::byCode((string) \App\Models\Setting::get('currency', 'AED'));
-        $currencySymbol = $appCurrency?->symbol ?? '$';
-    @endphp
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -13,7 +17,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap RTL CSS -->
-    @if(session('locale') === 'ar')
+    @if($locale === 'ar')
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     @endif
     <!-- Bootstrap Icons -->

@@ -13,9 +13,13 @@ class SetLocale
         $supportedLocales = ['en', 'ar'];
 
         $locale = $request->query('lang');
+        if (! is_string($locale)) {
+            $locale = null;
+        }
 
         if (! in_array($locale, $supportedLocales, true)) {
-            $locale = session('locale', config('app.locale'));
+            $storedLocale = session('locale', config('app.locale'));
+            $locale = is_string($storedLocale) ? $storedLocale : config('app.locale');
         }
 
         if (! in_array($locale, $supportedLocales, true)) {
