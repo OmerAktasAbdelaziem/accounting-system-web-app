@@ -71,7 +71,7 @@
                 <li>
                     <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
                         <i class="bi bi-speedometer2"></i>
-                        <span>Merchant Dashboard</span>
+                        <span>Live Dashboard</span>
                     </a>
                 </li>
                 {{-- Removed Feature Access and New Merchant per admin request --}}
