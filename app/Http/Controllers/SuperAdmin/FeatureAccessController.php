@@ -163,7 +163,8 @@ class FeatureAccessController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', 'Feature access updated');
+        return redirect()->route('super-admin.feature-access.index', ['merchant_id' => $validated['merchant_id']])
+            ->with('success', 'Feature access updated');
     }
 
     /**
@@ -203,7 +204,8 @@ class FeatureAccessController extends Controller
             ? "Special access granted for {$user->name}"
             : "Access denied for selected pages for {$user->name}";
 
-        return redirect()->back()->with('success', $message);
+        return redirect()->route('super-admin.feature-access.index', ['merchant_id' => $validated['merchant_id']])
+            ->with('success', $message);
     }
 
     /**
@@ -247,7 +249,8 @@ class FeatureAccessController extends Controller
 
         $message = "Login user created for {$employee->name}";
 
-        return redirect()->back()->with('success', $message);
+        return redirect()->route('super-admin.feature-access.index', ['merchant_id' => $validated['merchant_id']])
+            ->with('success', $message);
     }
 
     /**
@@ -284,7 +287,8 @@ class FeatureAccessController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', 'Feature access reset to package defaults');
+        return redirect()->route('super-admin.feature-access.index', ['merchant_id' => $validated['merchant_id']])
+            ->with('success', 'Feature access reset to package defaults');
     }
 
     /**
