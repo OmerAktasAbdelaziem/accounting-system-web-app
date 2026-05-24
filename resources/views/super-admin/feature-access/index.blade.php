@@ -394,6 +394,10 @@ document.addEventListener('DOMContentLoaded', function() {
         return tokenInput ? tokenInput.value : '';
     }
 
+    function getFormActionUrl(form) {
+        return form.getAttribute('action') || '';
+    }
+
     function renderFeatureBadge(featureKey, type) {
         const label = featureLabels[featureKey] || featureKey.replace(/_/g, ' ');
         const safeLabel = label.charAt(0).toUpperCase() + label.slice(1);
@@ -475,6 +479,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             try {
                 const response = await fetch(form.action, {
+                const response = await fetch(getFormActionUrl(form), {
                     method: 'POST',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
@@ -519,7 +524,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             try {
-                const response = await fetch(form.action, {
+                const response = await fetch(getFormActionUrl(form), {
                     method: 'POST',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
