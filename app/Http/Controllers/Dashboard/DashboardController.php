@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Commission;
 use App\Models\EmployeeSale;
 use App\Models\JournalEntry;
+use App\Models\Branch;
 use App\Models\Product;
 use App\Models\Employee;
 use App\Models\Safe;
@@ -22,38 +23,96 @@ class DashboardController extends Controller
     public function index()
     {
         $currencySymbol = $this->currencySymbol();
+        $merchantScope = $this->merchantScope();
+        $branchIds = $merchantScope['branch_ids'];
+        $safeIds = $merchantScope['safe_ids'];
+        $storageIds = $merchantScope['storage_ids'];
 
         $totalProducts = Product::count();
         $totalEmployees = Employee::count();
         $lowStockCount = Product::where('current_stock', '<=', 0)->count();
         $lowStockProducts = Product::orderBy('current_stock')->limit(5)->get();
 
-        $totalSales = (float) JournalEntry::where('reference_type', 'invoice')->sum('total_credit');
-        $salesCount = JournalEntry::where('reference_type', 'invoice')->count();
+        $journalSalesQuery = JournalEntry::query()->where('reference_type', 'invoice');
+        if (!empty($branchIds)) {
+            $journalSalesQuery->whereIn('branch_id', $branchIds);
+        }
+
+        $totalSales = (float) $journalSalesQuery->sum('total_credit');
+        $salesCount = (clone $journalSalesQuery)->count();
 
         // The `status` column was removed from `commissions` table; fall back to total counts/sums
         $pendingCommissions = Commission::count();
         $commissionAmount = (float) Commission::sum('commission_amount');
 
-        $totalStorageCapacity = (float) Storage::sum('capacity');
-        $totalStorageUsage = (float) StorageItem::sum('quantity');
+        $storageQuery = Storage::query();
+        if (!empty($storageIds)) {
+            $storageQuery->whereIn('id', $storageIds);
+        }
+
+        $storageItemQuery = StorageItem::query();
+        if (!empty($storageIds)) {
+            $storageItemQuery->whereIn('storage_id', $storageIds);
+        }
+
+        $totalStorageCapacity = (float) $storageQuery->sum('capacity');
+        $totalStorageUsage = (float) $storageItemQuery->sum('quantity');
         $storageUsage = $totalStorageCapacity > 0 ? round(($totalStorageUsage / $totalStorageCapacity) * 100, 2) : 0;
 
-        $safeBalance = (float) Safe::sum('balance');
-        $safeIncomeTotal = (float) SafeIncome::sum('amount');
-        $safeOutcomeTotal = (float) SafeOutcome::sum('amount');
+        $safeQuery = Safe::query();
+        if (!empty($safeIds)) {
+            $safeQuery->whereIn('id', $safeIds);
+        }
+
+        $safeIncomeQuery = SafeIncome::query();
+        if (!empty($safeIds)) {
+            $safeIncomeQuery->whereIn('safe_id', $safeIds);
+        }
+
+        $safeOutcomeQuery = SafeOutcome::query();
+        if (!empty($safeIds)) {
+            $safeOutcomeQuery->whereIn('safe_id', $safeIds);
+        }
+
+        $safeBalance = (float) $safeQuery->sum('balance');
+        $safeIncomeTotal = (float) $safeIncomeQuery->sum('amount');
+        $safeOutcomeTotal = (float) $safeOutcomeQuery->sum('amount');
         $netCashFlow = $safeIncomeTotal + $totalSales - $safeOutcomeTotal;
 
-        $safeCount = Safe::count();
-        $transactionsToday = SafeTransaction::whereDate('created_at', today())->count();
+        $safeCount = $safeQuery->count();
+        $transactionsTodayQuery = SafeTransaction::query()->whereDate('created_at', today());
+        if (!empty($safeIds)) {
+            $transactionsTodayQuery->whereIn('safe_id', $safeIds);
+        }
+        $transactionsToday = $transactionsTodayQuery->count();
 
-        $recentTransactions = JournalEntry::latest()->take(6)->get();
-        $recentSales = EmployeeSale::with(['employee:id,name', 'product:id,name'])->latest('sale_date')->take(6)->get();
-        $recentIncomeEntries = SafeIncome::with(['safe:id,name', 'currency:id,code,name'])->latest()->take(6)->get();
-        $recentOutcomeEntries = SafeOutcome::with(['safe:id,name', 'currency:id,code,name', 'supplier:id,name'])->latest()->take(6)->get();
+        $recentTransactionsQuery = JournalEntry::query();
+        if (!empty($branchIds)) {
+            $recentTransactionsQuery->whereIn('branch_id', $branchIds);
+        }
+        $recentTransactions = $recentTransactionsQuery->latest()->take(6)->get();
+
+        $recentSalesQuery = EmployeeSale::with(['employee:id,name', 'product:id,name']);
+        if (!empty($branchIds)) {
+            $recentSalesQuery->whereIn('branch_id', $branchIds);
+        }
+        $recentSales = $recentSalesQuery->latest('sale_date')->take(6)->get();
+
+        $recentIncomeQuery = SafeIncome::query()->with(['safe:id,name', 'currency:id,code,name']);
+        if (!empty($safeIds)) {
+            $recentIncomeQuery->whereIn('safe_id', $safeIds);
+        }
+        $recentIncomeEntries = $recentIncomeQuery->latest()->take(6)->get();
+
+        $recentOutcomeQuery = SafeOutcome::query()->with(['safe:id,name', 'currency:id,code,name', 'supplier:id,name']);
+        if (!empty($safeIds)) {
+            $recentOutcomeQuery->whereIn('safe_id', $safeIds);
+        }
+        $recentOutcomeEntries = $recentOutcomeQuery->latest()->take(6)->get();
+
         $topProducts = Product::orderByDesc('current_stock')->limit(6)->get();
 
-        $storageSnapshot = Storage::withCount('items')->orderByDesc('current_usage')->take(5)->get();
+        $storageSnapshot = $storageQuery->withCount('items')->orderByDesc('current_usage')->take(5)->get();
 
         $salesData = [];
         $incomeData = [];
@@ -64,18 +123,31 @@ class DashboardController extends Controller
             $month = Carbon::now()->startOfMonth()->subMonths($offset);
             $months[] = $month->format('M');
 
-            $salesData[] = (float) JournalEntry::where('reference_type', 'invoice')
+            $monthSalesQuery = JournalEntry::query()->where('reference_type', 'invoice')
                 ->whereYear('date', $month->year)
-                ->whereMonth('date', $month->month)
-                ->sum('total_credit');
+                ->whereMonth('date', $month->month);
+            if (!empty($branchIds)) {
+                $monthSalesQuery->whereIn('branch_id', $branchIds);
+            }
+            $salesData[] = (float) $monthSalesQuery->sum('total_credit');
 
-            $incomeData[] = (float) SafeIncome::whereYear('created_at', $month->year)
+            $monthIncomeQuery = SafeIncome::query()
+                ->whereYear('created_at', $month->year)
                 ->whereMonth('created_at', $month->month)
-                ->sum('amount');
+                ;
+            if (!empty($safeIds)) {
+                $monthIncomeQuery->whereIn('safe_id', $safeIds);
+            }
+            $incomeData[] = (float) $monthIncomeQuery->sum('amount');
 
-            $outcomeData[] = (float) SafeOutcome::whereYear('created_at', $month->year)
+            $monthOutcomeQuery = SafeOutcome::query()
+                ->whereYear('created_at', $month->year)
                 ->whereMonth('created_at', $month->month)
-                ->sum('amount');
+                ;
+            if (!empty($safeIds)) {
+                $monthOutcomeQuery->whereIn('safe_id', $safeIds);
+            }
+            $outcomeData[] = (float) $monthOutcomeQuery->sum('amount');
         }
 
         $inventoryData = [
@@ -115,9 +187,35 @@ class DashboardController extends Controller
             'currencySymbol'
         ));
     }
+    private function merchantScope(): array
+    {
+        $user = auth()->user();
+
+        if (!$user || $user->isSuperAdmin() || empty($user->merchant_id)) {
+            return [
+                'branch_ids' => [],
+                'safe_ids' => [],
+                'storage_ids' => [],
+            ];
+        }
+
+        $branchIds = Branch::query()->pluck('id')->all();
+        $safeIds = Safe::query()->pluck('id')->all();
+        $storageIds = Storage::query()->pluck('id')->all();
+
+        return [
+            'branch_ids' => $branchIds,
+            'safe_ids' => $safeIds,
+            'storage_ids' => $storageIds,
+        ];
+    }
 
     public function analytics(): JsonResponse
     {
+        $merchantScope = $this->merchantScope();
+        $branchIds = $merchantScope['branch_ids'];
+        $safeIds = $merchantScope['safe_ids'];
+
         $months = [];
         $salesData = [];
         $incomeData = [];
@@ -127,16 +225,53 @@ class DashboardController extends Controller
             $month = Carbon::now()->startOfMonth()->subMonths($offset);
 
             $months[] = $month->format('M Y');
-            $salesData[] = (float) JournalEntry::where('reference_type', 'invoice')
+            $salesQuery = JournalEntry::where('reference_type', 'invoice')
                 ->whereYear('date', $month->year)
-                ->whereMonth('date', $month->month)
-                ->sum('total_credit');
-            $incomeData[] = (float) SafeIncome::whereYear('created_at', $month->year)
+                ->whereMonth('date', $month->month);
+            if (!empty($branchIds)) {
+                $salesQuery->whereIn('branch_id', $branchIds);
+            }
+            $salesData[] = (float) $salesQuery->sum('total_credit');
+
+            $incomeQuery = SafeIncome::whereYear('created_at', $month->year)
                 ->whereMonth('created_at', $month->month)
-                ->sum('amount');
-            $outcomeData[] = (float) SafeOutcome::whereYear('created_at', $month->year)
+                ;
+            if (!empty($safeIds)) {
+                $incomeQuery->whereIn('safe_id', $safeIds);
+            }
+            $incomeData[] = (float) $incomeQuery->sum('amount');
+
+            $outcomeQuery = SafeOutcome::whereYear('created_at', $month->year)
                 ->whereMonth('created_at', $month->month)
-                ->sum('amount');
+                ;
+            if (!empty($safeIds)) {
+                $outcomeQuery->whereIn('safe_id', $safeIds);
+            }
+            $outcomeData[] = (float) $outcomeQuery->sum('amount');
+        }
+
+        $journalSalesQuery = JournalEntry::query()->where('reference_type', 'invoice');
+        if (!empty($branchIds)) {
+            $journalSalesQuery->whereIn('branch_id', $branchIds);
+        }
+
+        $storageQuery = Storage::query();
+        $storageItemQuery = StorageItem::query();
+        if (!empty($merchantScope['storage_ids'])) {
+            $storageQuery->whereIn('id', $merchantScope['storage_ids']);
+            $storageItemQuery->whereIn('storage_id', $merchantScope['storage_ids']);
+        }
+
+        $safeQuery = Safe::query();
+        $safeIncomeQuery = SafeIncome::query();
+        $safeOutcomeQuery = SafeOutcome::query();
+        $transactionsTodayQuery = SafeTransaction::query()->whereDate('created_at', today());
+
+        if (!empty($safeIds)) {
+            $safeQuery->whereIn('id', $safeIds);
+            $safeIncomeQuery->whereIn('safe_id', $safeIds);
+            $safeOutcomeQuery->whereIn('safe_id', $safeIds);
+            $transactionsTodayQuery->whereIn('safe_id', $safeIds);
         }
 
         return response()->json([
@@ -145,15 +280,15 @@ class DashboardController extends Controller
                 'total_products' => Product::count(),
                 'total_employees' => Employee::count(),
                 'low_stock_count' => Product::where('current_stock', '<=', 0)->count(),
-                'total_sales' => (float) JournalEntry::where('reference_type', 'invoice')->sum('total_credit'),
-                'sales_count' => JournalEntry::where('reference_type', 'invoice')->count(),
+                'total_sales' => (float) $journalSalesQuery->sum('total_credit'),
+                'sales_count' => (clone $journalSalesQuery)->count(),
                 // `status` was removed; show total commissions instead
                 'pending_commissions' => Commission::count(),
-                'storage_usage' => (float) (Storage::sum('capacity') > 0 ? round((StorageItem::sum('quantity') / Storage::sum('capacity')) * 100, 2) : 0),
-                'safe_balance' => (float) Safe::sum('balance'),
-                'safe_income_total' => (float) SafeIncome::sum('amount'),
-                'safe_outcome_total' => (float) SafeOutcome::sum('amount'),
-                'transactions_today' => SafeTransaction::whereDate('created_at', today())->count(),
+                'storage_usage' => (float) ($storageQuery->sum('capacity') > 0 ? round(($storageItemQuery->sum('quantity') / $storageQuery->sum('capacity')) * 100, 2) : 0),
+                'safe_balance' => (float) $safeQuery->sum('balance'),
+                'safe_income_total' => (float) $safeIncomeQuery->sum('amount'),
+                'safe_outcome_total' => (float) $safeOutcomeQuery->sum('amount'),
+                'transactions_today' => (clone $transactionsTodayQuery)->count(),
             ],
             'charts' => [
                 'months' => $months,
