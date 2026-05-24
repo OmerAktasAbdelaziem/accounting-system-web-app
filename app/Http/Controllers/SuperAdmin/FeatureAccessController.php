@@ -83,19 +83,20 @@ class FeatureAccessController extends Controller
         $employees = collect();
         $employeeOverrides = collect();
         $employeeUserMap = collect();
+        $roles = collect();
 
         if ($request->merchant_id) {
             $selectedMerchant = Merchant::findOrFail($request->merchant_id);
             
-            // Get all roles
-            $roleModels = Role::whereIn('name', ['merchant_admin', 'employee', 'viewer'])->get()->keyBy('name');
-            $columns = ['merchant_admin', 'employee', 'viewer'];
+            // Get all roles that exist in this app
+            $roles = Role::orderBy('name')->get();
+            $columns = $roles->pluck('name')->all();
             
             // Get features
             $rows = array_keys(self::AVAILABLE_FEATURES);
             
             // Build feature access matrix
-            $featureAccess = $this->buildFeatureAccessMatrix($selectedMerchant, $roleModels, $columns, $rows);
+            $featureAccess = $this->buildFeatureAccessMatrix($selectedMerchant, $roles, $rows);
 
             $employees = Employee::where('merchant_id', $selectedMerchant->id)
                 ->orderBy('name')
@@ -116,6 +117,7 @@ class FeatureAccessController extends Controller
             'selectedMerchant',
             'rows',
             'columns',
+            'roles',
             'featureAccess',
             'employees',
             'employeeOverrides',
@@ -134,12 +136,12 @@ class FeatureAccessController extends Controller
 
         $validated = $request->validate([
             'merchant_id' => 'required|exists:merchants,id',
-            'role' => 'required|string',
+            'role_id' => 'required|exists:roles,id',
             'feature' => 'required|string',
             'action' => 'required|in:enable,disable',
         ]);
 
-        $role = Role::where('name', $validated['role'])->firstOrFail();
+        $role = Role::findOrFail($validated['role_id']);
 
         $featureAccess = FeatureAccess::where('merchant_id', $validated['merchant_id'])
             ->where('role_id', $role->id)
@@ -294,7 +296,7 @@ class FeatureAccessController extends Controller
     /**
      * Build feature access matrix for a merchant
      */
-    private function buildFeatureAccessMatrix($merchant, $roleModels, $roles, $features): array
+    private function buildFeatureAccessMatrix($merchant, $roles, $features): array
     {
         $matrix = [];
 
@@ -302,16 +304,13 @@ class FeatureAccessController extends Controller
             $matrix[$feature] = [];
             
             foreach ($roles as $role) {
-                $roleId = $roleModels[$role]->id ?? null;
-                $access = $roleId
-                    ? FeatureAccess::where('merchant_id', $merchant->id)
-                        ->where('role_id', $roleId)
-                        ->where('feature_key', $feature)
-                        ->where('is_enabled', true)
-                        ->exists()
-                    : false;
-                    
-                $matrix[$feature][$role] = $access;
+                $access = FeatureAccess::where('merchant_id', $merchant->id)
+                    ->where('role_id', $role->id)
+                    ->where('feature_key', $feature)
+                    ->where('is_enabled', true)
+                    ->exists();
+
+                $matrix[$feature][$role->id] = $access;
             }
         }
 

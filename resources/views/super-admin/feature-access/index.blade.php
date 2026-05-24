@@ -77,9 +77,9 @@
                 <thead class="table-light sticky-top">
                     <tr>
                         <th style="width: 200px;">Role / Feature</th>
-                        @foreach($columns as $role)
+                        @foreach($roles as $role)
                         <th class="text-center" style="width: 120px;">
-                            <div class="text-truncate" title="{{ $role }}">{{ $role }}</div>
+                            <div class="text-truncate" title="{{ $role->name }}">{{ $role->name }}</div>
                         </th>
                         @endforeach
                     </tr>
@@ -90,16 +90,16 @@
                         <td class="fw-bold bg-light">
                             {{ ucfirst(str_replace('_', ' ', $feature)) }}
                         </td>
-                        @foreach($columns as $role)
+                        @foreach($roles as $role)
                         <td class="text-center">
                             @php
-                                $access = $featureAccess[$feature][$role] ?? false;
+                                $access = $featureAccess[$feature][$role->id] ?? false;
                                 $canEdit = true; // Check authorization if needed
                             @endphp
                             <form method="POST" action="{{ route('super-admin.feature-access.update') }}" style="display:inline;">
                                 @csrf
                                 <input type="hidden" name="merchant_id" value="{{ $selectedMerchant->id }}">
-                                <input type="hidden" name="role" value="{{ $role }}">
+                                <input type="hidden" name="role_id" value="{{ $role->id }}">
                                 <input type="hidden" name="feature" value="{{ $feature }}">
                                 <input type="hidden" name="action" value="{{ $access ? 'disable' : 'enable' }}">
 
