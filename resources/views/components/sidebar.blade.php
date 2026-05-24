@@ -80,21 +80,9 @@
             <div class="sidebar-title">Dashboard Tools</div>
             <ul class="sidebar-menu main-menu">
                 <li>
-                    <a href="{{ route('super-admin.dashboard') }}" class="{{ request()->routeIs('super-admin.dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
                         <i class="bi bi-speedometer2"></i>
-                        <span>Live Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('reports.sales') }}">
-                        <i class="bi bi-graph-up"></i>
-                        <span>Sales Report</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('reports.financial') }}">
-                        <i class="bi bi-journal-text"></i>
-                        <span>Financial Report</span>
+                        <span>Merchant Dashboard</span>
                     </a>
                 </li>
                 <li>
@@ -109,27 +97,11 @@
                         <span>New Merchant</span>
                     </a>
                 </li>
-                @if (\Illuminate\Support\Facades\Route::has('super-admin.merchants.unassigned'))
-                <li>
-                    <a href="{{ route('super-admin.merchants.unassigned') }}" class="{{ request()->routeIs('super-admin.merchants.unassigned') ? 'active' : '' }}">
-                        <i class="bi bi-people-fill"></i>
-                        <span>Unassigned Users</span>
-                    </a>
-                </li>
-                @endif
-                @if (\Illuminate\Support\Facades\Route::has('super-admin.data-recovery.index'))
-                <li>
-                    <a href="{{ route('super-admin.data-recovery.index') }}" class="{{ request()->routeIs('super-admin.data-recovery.*') ? 'active' : '' }}">
-                        <i class="bi bi-arrow-repeat"></i>
-                        <span>Data Recovery</span>
-                    </a>
-                </li>
-                @endif
             </ul>
         </div>
     @endif
 
-    @if(!empty($menu['main']))
+    @if(!empty($menu['main']) && !$isSuperAdmin)
         <ul class="sidebar-menu main-menu">
             @foreach($menu['main'] as $item)
                 @php
