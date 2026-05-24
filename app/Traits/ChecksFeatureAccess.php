@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\FeatureAccess;
+use App\Models\FeatureAccessOverride;
 use Illuminate\Support\Facades\Auth;
 
 trait ChecksFeatureAccess
@@ -25,6 +26,11 @@ trait ChecksFeatureAccess
         // Super admins have access to everything
         if ($user->user_type === 'super_admin') {
             return true;
+        }
+
+        $override = FeatureAccessOverride::hasAccess((int) $user->merchant_id, (int) $user->id, $featureKey);
+        if ($override !== null) {
+            return $override;
         }
 
         // Get user's role ID
@@ -82,16 +88,21 @@ trait ChecksFeatureAccess
             return array_keys(\App\Http\Controllers\SuperAdmin\FeatureAccessController::getAvailableFeatures());
         }
 
+        $overrideFeatures = FeatureAccessOverride::enabledFeaturesForUser((int) $user->merchant_id, (int) $user->id);
+
         $roleId = $user->role_id ?? null;
         if (!$roleId) {
-            return [];
+            return $overrideFeatures;
         }
 
-        return FeatureAccess::where('merchant_id', $user->merchant_id)
+        return array_values(array_unique(array_merge(
+            $overrideFeatures,
+            FeatureAccess::where('merchant_id', $user->merchant_id)
             ->where('role_id', $roleId)
             ->where('is_enabled', true)
             ->pluck('feature_key')
-            ->toArray();
+            ->toArray()
+        )));
     }
 
     /**

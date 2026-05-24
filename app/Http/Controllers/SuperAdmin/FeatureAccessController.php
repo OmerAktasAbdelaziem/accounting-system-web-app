@@ -4,8 +4,10 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\FeatureAccess;
+use App\Models\FeatureAccessOverride;
 use App\Models\Merchant;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class FeatureAccessController extends Controller
@@ -69,10 +71,13 @@ class FeatureAccessController extends Controller
         $this->authorize('viewAny', FeatureAccess::class);
 
         $merchants = Merchant::where('is_active', true)->get();
+        $availableFeatures = self::AVAILABLE_FEATURES;
         $selectedMerchant = null;
         $rows = [];
         $columns = [];
         $featureAccess = [];
+        $employees = collect();
+        $employeeOverrides = collect();
 
         if ($request->merchant_id) {
             $selectedMerchant = Merchant::findOrFail($request->merchant_id);
@@ -86,6 +91,16 @@ class FeatureAccessController extends Controller
             
             // Build feature access matrix
             $featureAccess = $this->buildFeatureAccessMatrix($selectedMerchant, $roleModels, $columns, $rows);
+
+            $employees = User::where('merchant_id', $selectedMerchant->id)
+                ->where('user_type', 'employee')
+                ->with('role')
+                ->orderBy('name')
+                ->get();
+
+            $employeeOverrides = FeatureAccessOverride::where('merchant_id', $selectedMerchant->id)
+                ->get()
+                ->groupBy('user_id');
         }
 
         return view('super-admin.feature-access.index', compact(
@@ -93,7 +108,10 @@ class FeatureAccessController extends Controller
             'selectedMerchant',
             'rows',
             'columns',
-            'featureAccess'
+            'featureAccess',
+            'employees',
+            'employeeOverrides',
+            'availableFeatures'
         ));
     }
 
@@ -136,6 +154,41 @@ class FeatureAccessController extends Controller
         }
 
         return redirect()->back()->with('success', 'Feature access updated');
+    }
+
+    /**
+     * Update special access for a specific employee.
+     */
+    public function updateEmployeeAccess(Request $request)
+    {
+        $this->authorize('update', FeatureAccess::class);
+
+        $validated = $request->validate([
+            'merchant_id' => 'required|exists:merchants,id',
+            'user_id' => 'required|exists:users,id',
+            'features' => 'nullable|array',
+            'features.*' => 'string',
+        ]);
+
+        $user = User::where('merchant_id', $validated['merchant_id'])
+            ->where('user_type', 'employee')
+            ->whereKey($validated['user_id'])
+            ->firstOrFail();
+
+        FeatureAccessOverride::where('merchant_id', $validated['merchant_id'])
+            ->where('user_id', $user->id)
+            ->delete();
+
+        foreach (($validated['features'] ?? []) as $featureKey) {
+            FeatureAccessOverride::create([
+                'merchant_id' => $validated['merchant_id'],
+                'user_id' => $user->id,
+                'feature_key' => $featureKey,
+                'is_enabled' => true,
+            ]);
+        }
+
+        return redirect()->back()->with('success', "Special access updated for {$user->name}");
     }
 
     /**

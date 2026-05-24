@@ -136,6 +136,64 @@
         </div>
     </div>
 
+    <div class="card mt-4">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Merchant Employees</h5>
+            <small class="text-muted">Special access overrides for individual employees</small>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Special Access</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($employees as $employee)
+                        @php
+                            $employeeFeatureKeys = ($employeeOverrides[$employee->id] ?? collect())->where('is_enabled', true)->pluck('feature_key')->toArray();
+                        @endphp
+                        <tr>
+                            <td>{{ $employee->name }}</td>
+                            <td>{{ $employee->email }}</td>
+                            <td>{{ $employee->role?->name ?? ucfirst($employee->user_type) }}</td>
+                            <td>
+                                @if(!empty($employeeFeatureKeys))
+                                    <div class="d-flex flex-wrap gap-1">
+                                        @foreach($employeeFeatureKeys as $featureKey)
+                                            <span class="badge bg-info text-dark">{{ ucfirst(str_replace('_', ' ', $featureKey)) }}</span>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <span class="text-muted">No special access</span>
+                                @endif
+                            </td>
+                            <td>
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-orange edit-employee-access-btn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#employeeAccessModal"
+                                        data-employee-id="{{ $employee->id }}"
+                                        data-employee-name="{{ $employee->name }}"
+                                        data-feature-keys='@json($employeeFeatureKeys)'>
+                                    Manage Access
+                                </button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">No employees found for this merchant</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div class="card mt-3">
         <div class="card-header bg-light"><h5 class="mb-0">Feature Definitions</h5></div>
         <div class="card-body">
@@ -167,6 +225,46 @@
         <strong>Select a merchant to view their feature access matrix</strong>
     </div>
     @endif
+</div>
+
+<div class="modal fade" id="employeeAccessModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <form method="POST" action="{{ route('super-admin.feature-access.employee.update') }}" id="employeeAccessForm">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">Manage Employee Special Access</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="merchant_id" value="{{ $selectedMerchant?->id }}">
+                    <input type="hidden" name="user_id" id="employeeAccessUserId">
+                    <div class="mb-3">
+                        <strong id="employeeAccessName">Employee</strong>
+                        <div class="text-muted small">Select the pages this employee should access in addition to their role access.</div>
+                    </div>
+
+                    <div class="row">
+                        @foreach($availableFeatures as $featureKey => $featureLabel)
+                            <div class="col-md-6 mb-2">
+                                <div class="form-check border rounded p-2">
+                                    <input class="form-check-input employee-feature-checkbox" type="checkbox" name="features[]" value="{{ $featureKey }}" id="employee_feature_{{ $featureKey }}">
+                                    <label class="form-check-label" for="employee_feature_{{ $featureKey }}">
+                                        <strong>{{ $featureLabel }}</strong>
+                                        <div class="small text-muted">{{ $featureKey }}</div>
+                                    </label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary-orange">Save Access</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <style>
@@ -203,6 +301,27 @@ document.addEventListener('DOMContentLoaded', function() {
             form.submit();
         });
     });
+
+    const employeeAccessModal = document.getElementById('employeeAccessModal');
+    if (employeeAccessModal) {
+        employeeAccessModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            if (!button) {
+                return;
+            }
+
+            const employeeId = button.getAttribute('data-employee-id');
+            const employeeName = button.getAttribute('data-employee-name');
+            const featureKeys = JSON.parse(button.getAttribute('data-feature-keys') || '[]');
+
+            document.getElementById('employeeAccessUserId').value = employeeId;
+            document.getElementById('employeeAccessName').textContent = employeeName;
+
+            document.querySelectorAll('.employee-feature-checkbox').forEach(function (checkbox) {
+                checkbox.checked = featureKeys.includes(checkbox.value);
+            });
+        });
+    }
 });
 </script>
 @endsection
