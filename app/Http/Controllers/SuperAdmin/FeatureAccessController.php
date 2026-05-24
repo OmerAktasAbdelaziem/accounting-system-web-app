@@ -78,13 +78,14 @@ class FeatureAccessController extends Controller
             $selectedMerchant = Merchant::findOrFail($request->merchant_id);
             
             // Get all roles
+            $roleModels = Role::whereIn('name', ['merchant_admin', 'employee', 'viewer'])->get()->keyBy('name');
             $columns = ['merchant_admin', 'employee', 'viewer'];
             
             // Get features
             $rows = array_keys(self::AVAILABLE_FEATURES);
             
             // Build feature access matrix
-            $featureAccess = $this->buildFeatureAccessMatrix($selectedMerchant, $columns, $rows);
+            $featureAccess = $this->buildFeatureAccessMatrix($selectedMerchant, $roleModels, $columns, $rows);
         }
 
         return view('super-admin.feature-access.index', compact(
@@ -110,19 +111,19 @@ class FeatureAccessController extends Controller
             'action' => 'required|in:enable,disable',
         ]);
 
-        $key = "{$validated['merchant_id']}-{$validated['role']}-{$validated['feature']}";
-        
+        $role = Role::where('name', $validated['role'])->firstOrFail();
+
         $featureAccess = FeatureAccess::where('merchant_id', $validated['merchant_id'])
-            ->where('role_name', $validated['role'])
-            ->where('feature_name', $validated['feature'])
+            ->where('role_id', $role->id)
+            ->where('feature_key', $validated['feature'])
             ->first();
 
         if ($validated['action'] === 'enable') {
             if (!$featureAccess) {
                 FeatureAccess::create([
                     'merchant_id' => $validated['merchant_id'],
-                    'role_name' => $validated['role'],
-                    'feature_name' => $validated['feature'],
+                    'role_id' => $role->id,
+                    'feature_key' => $validated['feature'],
                     'is_enabled' => true,
                 ]);
             } else {
@@ -157,13 +158,14 @@ class FeatureAccessController extends Controller
 
             // Set default access based on package features
             $packageFeatures = $subscription->package->features->pluck('feature_key')->toArray();
+            $roles = Role::whereIn('name', ['merchant_admin', 'employee', 'viewer'])->get()->keyBy('name');
             
-            foreach (['merchant_admin', 'employee', 'viewer'] as $role) {
+            foreach ($roles as $role) {
                 foreach ($packageFeatures as $feature) {
                     FeatureAccess::create([
                         'merchant_id' => $merchant->id,
-                        'role_name' => $role,
-                        'feature_name' => $feature,
+                        'role_id' => $role->id,
+                        'feature_key' => $feature,
                         'is_enabled' => true,
                     ]);
                 }
@@ -176,7 +178,7 @@ class FeatureAccessController extends Controller
     /**
      * Build feature access matrix for a merchant
      */
-    private function buildFeatureAccessMatrix($merchant, $roles, $features): array
+    private function buildFeatureAccessMatrix($merchant, $roleModels, $roles, $features): array
     {
         $matrix = [];
 
@@ -184,11 +186,14 @@ class FeatureAccessController extends Controller
             $matrix[$feature] = [];
             
             foreach ($roles as $role) {
-                $access = FeatureAccess::where('merchant_id', $merchant->id)
-                    ->where('role_name', $role)
-                    ->where('feature_name', $feature)
-                    ->where('is_enabled', true)
-                    ->exists();
+                $roleId = $roleModels[$role]->id ?? null;
+                $access = $roleId
+                    ? FeatureAccess::where('merchant_id', $merchant->id)
+                        ->where('role_id', $roleId)
+                        ->where('feature_key', $feature)
+                        ->where('is_enabled', true)
+                        ->exists()
+                    : false;
                     
                 $matrix[$feature][$role] = $access;
             }
