@@ -1,19 +1,22 @@
 @php
     $appName = \App\Models\Setting::getApplicationName();
     $dashboardRoute = auth()->user()?->isSuperAdmin() ? 'super-admin.dashboard' : 'dashboard';
-@endphp
-<link rel="stylesheet" href="{{ asset('css/top-navbar.css') }}">
-<!-- Laravel Echo / Pusher (optional). Will be initialized if broadcasting keys are configured -->
-<script src="https://js.pusher.com/7.2/pusher.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.11.3/dist/echo.iife.js"></script>
-<nav class="modern-top-navbar">
-    <div class="brand">
-        <a href="{{ route($dashboardRoute) }}" class="brand">
-            <div class="logo-mark">A</div>
-            <div class="app-name">{{ $appName }}</div>
-        </a>
-    </div>
-    <div class="center">
+        <div class="notif-shell">
+            <button id="notifButton" class="notif-trigger icon-badge" type="button" title="Notifications" aria-expanded="false" aria-controls="notifDropdown">
+                <i class="bi bi-bell-fill" aria-hidden="true"></i>
+                <span class="notif-trigger-label">Notifications</span>
+                <span id="notifBadge" class="badge" style="display:none">0</span>
+            </button>
+            <div id="notifDropdown" class="notif-dropdown" style="display:none" role="menu" aria-label="Notifications">
+                <div class="notif-dropdown-head">
+                    <div>
+                        <div class="notif-title">Notifications</div>
+                        <div class="notif-subtitle">Live updates from your workspace</div>
+                    </div>
+                    <button id="markAllReadBtn" class="notif-mark-read" type="button">Mark all read</button>
+                </div>
+                <div id="notifList" class="notif-list"></div>
+            </div>
         <div class="search" id="globalSearch">
             <i class="bi bi-search" style="color:rgba(255,255,255,0.6);margin-left:6px"></i>
             <input id="globalSearchInput" type="search" placeholder="Search... (press Enter)" aria-label="Search">
