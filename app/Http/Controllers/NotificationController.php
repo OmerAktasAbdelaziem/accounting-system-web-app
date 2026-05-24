@@ -20,12 +20,13 @@ class NotificationController extends Controller
         }
 
         $unread = $user->unreadNotifications()->count();
-        $notes = $user->unreadNotifications()->limit(10)->get()->map(function ($n) {
+        $notes = $user->notifications()->latest()->limit(20)->get()->map(function ($n) {
             return [
                 'id' => $n->id,
                 'type' => class_basename($n->type),
                 'data' => $n->data ?? [],
                 'created_at' => $n->created_at->toDateTimeString(),
+                'read_at' => optional($n->read_at)?->toDateTimeString(),
             ];
         });
 

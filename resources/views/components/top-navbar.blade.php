@@ -22,11 +22,20 @@
     </div>
     <div class="actions">
         {{-- Create button removed per request --}}
-        <button id="notifButton" class="icon-btn icon-badge" title="Notifications">
+        <button id="notifButton" class="icon-btn icon-badge" title="Notifications" aria-expanded="false" aria-controls="notifDropdown">
             <i class="bi bi-bell" style="font-size:18px"></i>
             <span id="notifBadge" class="badge" style="display:none">0</span>
         </button>
-        <div id="notifDropdown" style="position:absolute;right:20px;top:60px;background:#111;padding:10px;border-radius:8px;min-width:300px;display:none;z-index:2000;max-height:360px;overflow:auto"></div>
+        <div id="notifDropdown" class="notif-dropdown" style="display:none" role="menu" aria-label="Notifications">
+            <div class="notif-dropdown-head">
+                <div>
+                    <div class="notif-title">Notifications</div>
+                    <div class="notif-subtitle">Live updates from your workspace</div>
+                </div>
+                <button id="markAllReadBtn" class="notif-mark-read" type="button">Mark all read</button>
+            </div>
+            <div id="notifList" class="notif-list"></div>
+        </div>
         <div class="user">
             @php
                 $avatarPath = auth()->user()->profile_photo_path;
@@ -120,6 +129,152 @@
         const currentUserId = {{ auth()->id() ?? 'null' }};
         let echoEnabled = false;
 
+        function formatRelativeTime(dateInput) {
+            if (!dateInput) return 'Just now';
+            const date = new Date(dateInput);
+            if (Number.isNaN(date.getTime())) return 'Just now';
+            const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+            if (seconds < 60) return 'Just now';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            const days = Math.floor(hours / 24);
+            return `${days}d ago`;
+        }
+
+        function normalizeNotification(raw) {
+            const data = raw?.data || {};
+            const typeText = (raw?.type || 'Update').replace(/Notification$/i, '');
+            const title = data.title || data.subject || typeText || 'Notification';
+            const message = data.message || data.details || data.description || 'You have a new update.';
+            const ctaUrl = data.url || data.link || null;
+            const ctaText = data.action_text || 'Open';
+            const createdAt = raw?.created_at || raw?.createdAt || data.created_at || new Date().toISOString();
+            const readAt = raw?.read_at || raw?.readAt || null;
+
+            const lowerType = String(typeText).toLowerCase();
+            let icon = 'bi-bell';
+            let tone = 'info';
+
+            if (lowerType.includes('subscription') || String(message).toLowerCase().includes('subscription')) {
+                icon = 'bi-calendar-check';
+                tone = 'subscription';
+            } else if (lowerType.includes('payment') || String(message).toLowerCase().includes('pay')) {
+                icon = 'bi-credit-card-2-front';
+                tone = 'payment';
+            } else if (lowerType.includes('warning') || String(message).toLowerCase().includes('expire')) {
+                icon = 'bi-exclamation-triangle';
+                tone = 'warning';
+            } else if (lowerType.includes('success') || String(message).toLowerCase().includes('extended')) {
+                icon = 'bi-check-circle';
+                tone = 'success';
+            }
+
+            return {
+                id: raw?.id || `${Date.now()}-${Math.random()}`,
+                type: typeText,
+                title,
+                message,
+                ctaUrl,
+                ctaText,
+                createdAt,
+                readAt,
+                isUnread: typeof raw?.isUnread === 'boolean' ? raw.isUnread : !readAt,
+                icon,
+                tone,
+            };
+        }
+
+        function renderNotificationCard(raw) {
+            const n = normalizeNotification(raw);
+            return `
+                <article class="notif-item notif-tone-${n.tone} ${n.isUnread ? 'notif-unread' : 'notif-read'}" data-id="${n.id}">
+                    <div class="notif-icon-wrap">
+                        <i class="bi ${n.icon}"></i>
+                    </div>
+                    <div class="notif-content">
+                        <div class="notif-meta">
+                            <span class="notif-chip">${n.type}</span>
+                            <time class="notif-time">${formatRelativeTime(n.createdAt)}</time>
+                        </div>
+                        <h4 class="notif-item-title">${n.title}</h4>
+                        <p class="notif-item-message">${n.message}</p>
+                        <div class="notif-actions-row">
+                            ${n.ctaUrl ? `<a class="notif-link" href="${n.ctaUrl}">${n.ctaText} <i class="bi bi-arrow-up-right"></i></a>` : '<span></span>'}
+                            ${n.isUnread ? `<button class="notif-dismiss-btn" type="button" data-dismiss-id="${n.id}" title="Mark as read">Dismiss</button>` : ''}
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        function isToday(dateInput){
+            const d = new Date(dateInput);
+            if (Number.isNaN(d.getTime())) return false;
+            const now = new Date();
+            return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+        }
+
+        function isYesterday(dateInput){
+            const d = new Date(dateInput);
+            if (Number.isNaN(d.getTime())) return false;
+            const today = new Date();
+            const startToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const startYesterday = new Date(startToday);
+            startYesterday.setDate(startYesterday.getDate() - 1);
+            return d >= startYesterday && d < startToday;
+        }
+
+        function isThisWeek(dateInput){
+            const d = new Date(dateInput);
+            if (Number.isNaN(d.getTime())) return false;
+            const now = new Date();
+            const day = now.getDay();
+            // Week starts on Monday
+            const diffToMonday = (day === 0 ? -6 : 1 - day);
+            const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            startOfWeek.setDate(startOfWeek.getDate() + diffToMonday);
+            const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            return d >= startOfWeek && d < startOfToday;
+        }
+
+        function renderGroupedNotifications(list){
+            const today = [];
+            const yesterday = [];
+            const thisWeek = [];
+            const older = [];
+
+            const sorted = [...list].sort((a, b) => {
+                const ad = new Date(a?.created_at || a?.createdAt || 0).getTime();
+                const bd = new Date(b?.created_at || b?.createdAt || 0).getTime();
+                return bd - ad;
+            });
+
+            sorted.forEach(item => {
+                const dt = item?.created_at || item?.createdAt;
+                if (isToday(dt)) today.push(item);
+                else if (isYesterday(dt)) yesterday.push(item);
+                else if (isThisWeek(dt)) thisWeek.push(item);
+                else older.push(item);
+            });
+
+            const sections = [];
+            if (today.length) {
+                sections.push(`<div class="notif-group"><div class="notif-group-title">Today</div>${today.map(renderNotificationCard).join('')}</div>`);
+            }
+            if (yesterday.length) {
+                sections.push(`<div class="notif-group"><div class="notif-group-title">Yesterday</div>${yesterday.map(renderNotificationCard).join('')}</div>`);
+            }
+            if (thisWeek.length) {
+                sections.push(`<div class="notif-group"><div class="notif-group-title">This Week</div>${thisWeek.map(renderNotificationCard).join('')}</div>`);
+            }
+            if (older.length) {
+                sections.push(`<div class="notif-group"><div class="notif-group-title">Older</div>${older.map(renderNotificationCard).join('')}</div>`);
+            }
+            return sections.join('');
+        }
+
         function handleIncomingNotification(n){
             try{
                 // increment badge
@@ -127,8 +282,19 @@
                 notifBadge.textContent = current + 1;
                 notifBadge.style.display = 'inline-block';
                 // prepend to dropdown
-                const html = `<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.03)"><small style="color:#999">${n.type || ''}</small><div>${(n.data?.title||n.data?.message||n.message||'Notification')}</div></div>`;
-                notifDropdown.innerHTML = html + notifDropdown.innerHTML;
+                const notifList = document.getElementById('notifList');
+                const html = renderNotificationCard(n);
+                if (notifList) {
+                    let todayGroup = Array.from(notifList.querySelectorAll('.notif-group')).find(g => g.querySelector('.notif-group-title')?.textContent?.trim() === 'Today');
+                    if (!todayGroup) {
+                        notifList.insertAdjacentHTML('afterbegin', `<div class="notif-group"><div class="notif-group-title">Today</div></div>`);
+                        todayGroup = notifList.querySelector('.notif-group');
+                    }
+
+                    todayGroup.insertAdjacentHTML('beforeend', html);
+                    const added = todayGroup.lastElementChild;
+                    if (added) added.classList.add('notif-enter');
+                }
             }catch(e){ console.error(e); }
         }
 
@@ -167,12 +333,86 @@
                 const unread = json.unread || 0;
                 if(unread>0){ notifBadge.style.display='inline-block'; notifBadge.textContent = unread; } else { notifBadge.style.display='none'; }
                 // prepare dropdown list
-                notifDropdown.innerHTML = (json.notifications || []).map(n=>`<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.03)"><small style="color:#999">${n.type}</small><div>${(n.data.title||n.data.message||'Notification')}</div></div>`).join('') || '<div style="padding:8px;color:#ccc">No notifications</div>';
+                const notifList = document.getElementById('notifList');
+                if (notifList) {
+                    const items = renderGroupedNotifications(json.notifications || []);
+                    notifList.innerHTML = items || '<div class="notif-empty"><i class="bi bi-bell-slash"></i><span>No notifications yet</span></div>';
+                }
             }catch(e){ console.error(e); }
         }
 
+        async function markOneAsRead(id){
+            try{
+                await fetch(`{{ route('notifications.markRead') }}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ids: [id] })
+                });
+
+                const card = document.querySelector(`.notif-item[data-id="${id}"]`);
+                if (card) {
+                    card.classList.remove('notif-unread');
+                    card.classList.add('notif-read');
+                    const btn = card.querySelector('.notif-dismiss-btn');
+                    if (btn) btn.remove();
+                }
+
+                const current = parseInt(notifBadge.textContent || '0') || 0;
+                const next = Math.max(0, current - 1);
+                notifBadge.textContent = String(next);
+                notifBadge.style.display = next > 0 ? 'inline-block' : 'none';
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function markAllAsRead(){
+            try{
+                await fetch(`{{ route('notifications.markRead') }}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                });
+                notifBadge.style.display = 'none';
+                notifBadge.textContent = '0';
+                refreshNotifs();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
         notifBtn && notifBtn.addEventListener('click', function(e){
-            if(notifDropdown.style.display === 'block'){ notifDropdown.style.display='none'; } else { notifDropdown.style.display='block'; refreshNotifs(); }
+            if(notifDropdown.style.display === 'block'){
+                notifDropdown.style.display='none';
+                notifBtn.setAttribute('aria-expanded', 'false');
+            } else {
+                notifDropdown.style.display='block';
+                notifBtn.setAttribute('aria-expanded', 'true');
+                refreshNotifs();
+            }
+        });
+
+        const markAllReadBtn = document.getElementById('markAllReadBtn');
+        markAllReadBtn && markAllReadBtn.addEventListener('click', markAllAsRead);
+
+        const notifList = document.getElementById('notifList');
+        notifList && notifList.addEventListener('click', function(e){
+            const target = e.target;
+            const dismissBtn = target.closest('[data-dismiss-id]');
+            if (dismissBtn) {
+                e.preventDefault();
+                markOneAsRead(dismissBtn.getAttribute('data-dismiss-id'));
+            }
         });
 
         // Avatar dropdown
@@ -184,7 +424,10 @@
         document.addEventListener('click', function(e){
             const target = e.target;
             if(!document.getElementById('globalSearch')?.contains(target)) resultsBox.style.display='none';
-            if(!notifBtn.contains(target) && !notifDropdown.contains(target)) notifDropdown.style.display='none';
+            if(!notifBtn.contains(target) && !notifDropdown.contains(target)) {
+                notifDropdown.style.display='none';
+                notifBtn.setAttribute('aria-expanded', 'false');
+            }
             if(!avatarBtn.contains(target) && !avatarDropdown.contains(target)) avatarDropdown.style.display='none';
         });
 
