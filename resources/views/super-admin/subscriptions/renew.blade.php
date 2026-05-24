@@ -85,8 +85,9 @@
                                         <br>
                                         <small class="text-muted">
                                             @php
-                                                $totalDays = $packageDays * $option['months'];
-                                                $newExpiry = now()->copy()->addDays($totalDays);
+                                                $packageDays = (int) $packageDays;
+                                                $totalDays = (int) ($packageDays * $option['months']);
+                                                $newExpiry = now()->copy()->addDays((int) $totalDays);
                                             @endphp
                                             New Expiry: {{ $newExpiry->format('M d, Y') }} | Total Duration: {{ $totalDays }} days
                                         </small>
@@ -99,7 +100,7 @@
                         <div class="mb-3">
                             <label class="form-label">Custom Duration (optional)</label>
                             <div class="input-group">
-                                <input type="number" name="custom_days" class="form-control" placeholder="Enter number of days" min="1" value="{{ old('custom_days', $subscription->package->duration_days) }}">
+                                <input type="number" name="custom_days" class="form-control" placeholder="Enter number of days" min="1" value="{{ old('custom_days', (int) $subscription->package->duration_days) }}">
                                 <span class="input-group-text">days</span>
                             </div>
                             <small class="text-muted">Leave empty to use selected renewal option</small>
@@ -158,7 +159,7 @@
                             <div class="event-marker future"></div>
                             <div class="event-content">
                                 <small class="text-muted" id="futureLabel">New Expiry (1 month)</small><br>
-                                <strong id="futureDate">{{ now()->addDays($subscription->package->duration_days)->format('M d, Y') }}</strong>
+                                <strong id="futureDate">{{ now()->addDays((int) $subscription->package->duration_days)->format('M d, Y') }}</strong>
                             </div>
                         </div>
                     </div>
@@ -208,8 +209,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const futureLabel = document.getElementById('futureLabel');
     const futureDate = document.getElementById('futureDate');
 
-    const basePrice = {{ $subscription->package->price }};
-    const packageDays = {{ $subscription->package->duration_days }};
+    const basePrice = {{ json_encode($subscription->package->price) }};
+    const packageDays = {{ (int) $subscription->package->duration_days }};
 
     function updatePreview() {
         let days = parseInt(customDaysInput.value) || 0;

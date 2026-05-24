@@ -109,12 +109,14 @@
                         <span>New Merchant</span>
                     </a>
                 </li>
+                @if (\Illuminate\Support\Facades\Route::has('super-admin.merchants.unassigned'))
                 <li>
                     <a href="{{ route('super-admin.merchants.unassigned') }}" class="{{ request()->routeIs('super-admin.merchants.unassigned') ? 'active' : '' }}">
                         <i class="bi bi-people-fill"></i>
                         <span>Unassigned Users</span>
                     </a>
                 </li>
+                @endif
             </ul>
         </div>
     @endif
