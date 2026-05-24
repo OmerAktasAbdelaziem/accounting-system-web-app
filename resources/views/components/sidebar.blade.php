@@ -140,9 +140,6 @@
                     @endphp
                     <li>
                         <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ trim(($active ? 'active' : '') . ' ' . $extraClass) }}">
-                            @if($label === 'Roles Management')
-                                <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
-                            @endif
                             <i class="bi {{ $icon }}"></i>
                             <span>{{ is_array($label) ? json_encode($label) : $label }}</span>
                         </a>
@@ -167,9 +164,6 @@
                     @endphp
                     <li>
                         <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ trim(($active ? 'active' : '') . ' ' . $extraClass) }}">
-                            @if($label === 'Roles Management')
-                                <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
-                            @endif
                             <i class="bi {{ $icon }}"></i>
                             <span>{{ is_array($label) ? json_encode($label) : $label }}</span>
                         </a>
@@ -194,9 +188,6 @@
                     @endphp
                     <li>
                         <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ trim(($active ? 'active' : '') . ' ' . $extraClass) }}">
-                            @if($label === 'Roles Management')
-                                <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
-                            @endif
                             <i class="bi {{ $icon }}"></i>
                             <span>{{ is_array($label) ? json_encode($label) : $label }}</span>
                         </a>
@@ -221,9 +212,6 @@
                     @endphp
                     <li>
                         <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ trim(($active ? 'active' : '') . ' ' . $extraClass) }}">
-                            @if($label === 'Roles Management')
-                                <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
-                            @endif
                             <i class="bi {{ $icon }}"></i>
                             <span>{{ is_array($label) ? json_encode($label) : $label }}</span>
                         </a>
