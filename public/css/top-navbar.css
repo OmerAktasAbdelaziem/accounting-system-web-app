@@ -92,11 +92,24 @@
 .sub-lock-icon-btn .bi-whatsapp{color:#1fa463}
 .sub-lock-icon-btn:hover .bi-whatsapp{color:#148c52}
 @keyframes sub-lock-pop{0%{opacity:0;transform:translateY(10px) scale(.98)}100%{opacity:1;transform:translateY(0) scale(1)}}
-@media (max-width: 900px){.modern-top-navbar .center{display:none}.modern-top-navbar .brand .app-name{display:none}}
+@media (max-width: 900px){.modern-top-navbar .center{display:none}}
+/* Hide brand name and logo for mobile (<=767px) */
+@media (max-width: 767px){
+  .modern-top-navbar .brand .app-name{display:none}
+  .modern-top-navbar .brand .logo-mark{display:none}
+}
 /* Mobile menu button */
 .mobile-menu-btn{display:none}
-@media (max-width: 900px){
+@media (max-width: 767px){
   .mobile-menu-btn{display:inline-flex;align-items:center;justify-content:center;color:#fff;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;margin-right:8px}
+}
+
+/* Mobile sidebar/backdrop when body.sidebar-open is set */
+#mobileSidebarBackdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1055}
+@media (max-width: 991px){
+  body.sidebar-open #mobileSidebarBackdrop{display:block}
+  body.sidebar-open .modern-sidebar{display:block;position:fixed;left:0;top:0;height:100vh;width:260px;z-index:1060;box-shadow:0 20px 40px rgba(0,0,0,0.3);transform:translateX(0)}
+  body.sidebar-open .modern-content{pointer-events:none}
 }
 @media (max-width: 900px){.sub-lock-meta{grid-template-columns:1fr}.sub-lock-title{font-size:21px}.sub-lock-modal{padding:18px}.sub-lock-actions{flex-direction:column;align-items:stretch}.sub-lock-actions-left{justify-content:center}}
 @media (max-width: 640px){.notif-shell{width:100%}.notif-trigger{width:100%;justify-content:center}.notif-trigger-label{display:none}.notif-dropdown{right:10px;left:10px;width:auto;min-width:0;top:calc(100% + 10px)}}

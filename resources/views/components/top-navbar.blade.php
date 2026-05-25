@@ -489,10 +489,55 @@
         // mobile menu toggle: toggles `sidebar-open` on body and emits event
         (function(){
             const btn = document.getElementById('mobileMenuBtn');
+            const sidebar = document.getElementById('modernSidebar');
             if(!btn) return;
-            btn.addEventListener('click', function(){
-                document.body.classList.toggle('sidebar-open');
+
+            // ensure a backdrop exists
+            let backdrop = document.getElementById('mobileSidebarBackdrop');
+            if(!backdrop){
+                backdrop = document.createElement('div');
+                backdrop.id = 'mobileSidebarBackdrop';
+                document.body.appendChild(backdrop);
+            }
+
+            function showSidebar(){
+                document.body.classList.add('sidebar-open');
+                if(sidebar){
+                    sidebar.style.display = 'block';
+                    sidebar.style.position = 'fixed';
+                    sidebar.style.top = '0';
+                    sidebar.style.left = '0';
+                    sidebar.style.height = '100vh';
+                    sidebar.style.zIndex = '1060';
+                    sidebar.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
+                }
+                backdrop.style.display = 'block';
                 try{ window.dispatchEvent(new CustomEvent('toggleSidebar')); }catch(e){}
+            }
+
+            function hideSidebar(){
+                document.body.classList.remove('sidebar-open');
+                if(sidebar){
+                    sidebar.style.display = '';
+                    sidebar.style.position = '';
+                    sidebar.style.top = '';
+                    sidebar.style.left = '';
+                    sidebar.style.height = '';
+                    sidebar.style.zIndex = '';
+                    sidebar.style.boxShadow = '';
+                }
+                backdrop.style.display = 'none';
+                try{ window.dispatchEvent(new CustomEvent('toggleSidebarClose')); }catch(e){}
+            }
+
+            btn.addEventListener('click', function(){
+                if(document.body.classList.contains('sidebar-open')) hideSidebar(); else showSidebar();
             });
+
+            backdrop.addEventListener('click', hideSidebar);
+            document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && document.body.classList.contains('sidebar-open')) hideSidebar(); });
+
+            // ensure sidebar visibility on larger screens
+            if (!matchMedia('(max-width: 991px)').matches && sidebar){ sidebar.style.display = 'block'; backdrop.style.display = 'none'; }
         })();
     </script>
