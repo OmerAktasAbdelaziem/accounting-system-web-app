@@ -1023,7 +1023,7 @@
         const to = document.getElementById('incomeTo').value || '';
         const base = '{{ route("safes.export", ["safe" => $safe->id]) }}';
         const url = base + '?type=income&from_date=' + encodeURIComponent(from) + '&to_date=' + encodeURIComponent(to);
-        window.location.href = url;
+        window.open(url, '_blank');
     });
 
     // Outcome filters & export
@@ -1037,7 +1037,7 @@
         const to = document.getElementById('outcomeTo').value || '';
         const base = '{{ route("safes.export", ["safe" => $safe->id]) }}';
         const url = base + '?type=outcome&from_date=' + encodeURIComponent(from) + '&to_date=' + encodeURIComponent(to);
-        window.location.href = url;
+        window.open(url, '_blank');
     });
 })();
 </script>
