@@ -356,7 +356,7 @@
 
         <div class="row">
             <div class="col-lg-3">
-                <div class="sidebar">
+                <div id="modernSidebar" class="sidebar">
                     <x-sidebar />
                 </div>
             </div>

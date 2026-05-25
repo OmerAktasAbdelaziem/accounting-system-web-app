@@ -108,8 +108,14 @@
 #mobileSidebarBackdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1055}
 @media (max-width: 991px){
   body.sidebar-open #mobileSidebarBackdrop{display:block}
-  body.sidebar-open .modern-sidebar{display:block;position:fixed;left:0;top:0;height:100vh;width:260px;z-index:1060;box-shadow:0 20px 40px rgba(0,0,0,0.3);transform:translateX(0)}
-  body.sidebar-open .modern-content{pointer-events:none}
+  body.sidebar-open .modern-sidebar,
+  body.sidebar-open .super-admin-sidebar,
+  body.sidebar-open .sidebar {
+    display:block;position:fixed;left:0;top:0;height:100vh;width:260px;z-index:1060;box-shadow:0 20px 40px rgba(0,0,0,0.3);transform:translateX(0)
+  }
+  body.sidebar-open .modern-content,
+  body.sidebar-open .super-admin-content,
+  body.sidebar-open .content-area{pointer-events:none}
 }
 @media (max-width: 900px){.sub-lock-meta{grid-template-columns:1fr}.sub-lock-title{font-size:21px}.sub-lock-modal{padding:18px}.sub-lock-actions{flex-direction:column;align-items:stretch}.sub-lock-actions-left{justify-content:center}}
 @media (max-width: 640px){.notif-shell{width:100%}.notif-trigger{width:100%;justify-content:center}.notif-trigger-label{display:none}.notif-dropdown{right:10px;left:10px;width:auto;min-width:0;top:calc(100% + 10px)}}

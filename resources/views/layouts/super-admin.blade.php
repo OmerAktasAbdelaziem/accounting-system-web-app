@@ -544,7 +544,7 @@
     <!-- ============ MAIN CONTAINER ============ -->
     <div class="super-admin-container">
         <!-- SIDEBAR -->
-        <aside class="super-admin-sidebar">
+        <aside id="modernSidebar" class="super-admin-sidebar">
             <x-sidebar />
         </aside>
 
