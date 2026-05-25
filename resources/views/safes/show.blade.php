@@ -976,6 +976,14 @@
         container.appendChild(header);
         container.appendChild(clone);
 
+        // Place container off-screen so html2canvas can compute styles
+        container.style.position = 'fixed';
+        container.style.left = '-9999px';
+        container.style.top = '0';
+        container.style.width = '1000px';
+        container.style.background = '#fff';
+        document.body.appendChild(container);
+
         const opt = {
             margin:       10,
             filename:     filename,
@@ -986,7 +994,9 @@
 
         // Use html2pdf if available
         if (window.html2pdf) {
-            html2pdf().set(opt).from(container).save();
+            html2pdf().set(opt).from(container).save().then(() => {
+                try{ container.remove(); }catch(e){}
+            }).catch(() => { try{ container.remove(); }catch(e){} });
         } else if (window.jspdf) {
             // fallback: open print dialog
             const w = window.open();
@@ -995,7 +1005,9 @@
             w.focus();
             w.print();
             w.close();
+            try{ container.remove(); }catch(e){}
         } else {
+            try{ container.remove(); }catch(e){}
             alert('PDF export not available (missing html2pdf).');
         }
     }
