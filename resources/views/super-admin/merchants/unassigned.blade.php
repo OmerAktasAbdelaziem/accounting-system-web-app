@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="page-header">
-    <div class="d-flex align-items-center justify-content-between mb-4">
+    <div class="merchant-header-row d-flex align-items-center justify-content-between mb-4">
         <div>
             <h1 class="page-title">
                 <i class="bi bi-people"></i>
@@ -17,6 +17,72 @@
         </a>
     </div>
 </div>
+
+<style>
+    @media (max-width: 768px) {
+        .merchant-header-row {
+            flex-direction: column;
+            align-items: stretch !important;
+            gap: 12px;
+        }
+
+        .merchant-header-row .btn,
+        .merchant-header-row form,
+        .merchant-header-row input,
+        .merchant-header-row button {
+            width: 100%;
+        }
+
+        .merchant-header-row form {
+            display: grid !important;
+            gap: 8px;
+        }
+
+        .card-body .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .card-body .table {
+            min-width: 860px;
+        }
+
+        .card-body .d-flex[style*="gap:8px"] {
+            flex-direction: column;
+            align-items: stretch !important;
+        }
+
+        .card-body .d-flex[style*="gap:8px"] .form-select,
+        .card-body .d-flex[style*="gap:8px"] .btn {
+            width: 100%;
+        }
+
+        .d-flex.align-items-center.gap-2.mt-3 {
+            flex-direction: column;
+            align-items: stretch !important;
+        }
+
+        .d-flex.align-items-center.gap-2.mt-3 .form-select,
+        .d-flex.align-items-center.gap-2.mt-3 .btn {
+            width: 100%;
+            max-width: none !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .page-title {
+            font-size: 22px;
+        }
+
+        .page-title i {
+            font-size: 22px;
+        }
+
+        .page-subtitle {
+            font-size: 12px;
+        }
+    }
+</style>
 
 @if (session('success'))
     <div class="alert alert-orange alert-dismissible fade show" role="alert">

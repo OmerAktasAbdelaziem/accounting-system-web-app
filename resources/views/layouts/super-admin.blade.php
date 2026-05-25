@@ -498,8 +498,12 @@
 
         /* ============ RESPONSIVE ============ */
         @media (max-width: 768px) {
+            .super-admin-navbar .navbar-brand {
+                font-size: 18px;
+            }
+
             .super-admin-sidebar {
-                width: 200px;
+                width: 100%;
             }
 
             .page-title {
@@ -512,6 +516,99 @@
 
             .navbar-nav {
                 display: none;
+            }
+
+            .super-admin-container {
+                display: block;
+            }
+
+            .super-admin-sidebar {
+                display: none;
+            }
+
+            body.sidebar-open .super-admin-sidebar {
+                display: flex;
+                width: min(85vw, 320px);
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 1060;
+                box-shadow: 0 20px 40px rgba(0,0,0,.3);
+            }
+
+            .super-admin-content {
+                padding: 16px;
+                min-height: auto;
+            }
+
+            .page-header .d-flex {
+                flex-direction: column;
+                align-items: stretch !important;
+            }
+
+            .page-header .btn,
+            .page-header form,
+            .page-header .d-flex > a,
+            .page-header .d-flex > button {
+                width: 100%;
+            }
+
+            .card-body {
+                padding: 16px;
+            }
+
+            .table-responsive {
+                border-radius: 12px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table {
+                min-width: 680px;
+            }
+
+            .btn-group,
+            .d-flex.gap-2,
+            .d-flex[style*="gap:8px"] {
+                flex-wrap: wrap;
+            }
+
+            .navbar-end {
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .super-admin-navbar .navbar-brand span,
+            .super-admin-navbar .navbar-brand {
+                font-size: 16px;
+            }
+
+            .page-title {
+                font-size: 20px;
+            }
+
+            .page-title i {
+                font-size: 24px;
+            }
+
+            .stat-card {
+                padding: 18px;
+            }
+
+            .stat-value {
+                font-size: 22px;
+            }
+
+            .sidebar-title {
+                padding: 12px 15px;
+            }
+
+            .table thead th,
+            .table tbody td {
+                padding: 12px 10px;
+                font-size: 13px;
             }
         }
 

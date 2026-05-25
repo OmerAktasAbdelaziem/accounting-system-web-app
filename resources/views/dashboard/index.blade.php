@@ -343,6 +343,14 @@
             border-radius: 22px;
         }
 
+        .merchant-dashboard-shell {
+            padding: 16px 12px 28px;
+        }
+
+        .dashboard-hero-inner {
+            flex-direction: column;
+        }
+
         .hero-kpis {
             min-width: 100%;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -350,6 +358,76 @@
 
         .metric-value {
             font-size: 24px;
+        }
+
+        .quick-actions-grid,
+        .metrics-grid,
+        .chart-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .chart-box {
+            height: 260px;
+        }
+
+        .section-heading {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .section-heading .btn {
+            width: 100%;
+        }
+
+        .panel-card,
+        .chart-card,
+        .metric-card {
+            padding: 16px;
+            border-radius: 18px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .panel-card .table,
+        .table {
+            min-width: 640px;
+        }
+
+        .list-group-item {
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .pill {
+            width: fit-content;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .dashboard-title {
+            font-size: 22px;
+        }
+
+        .hero-kpis {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard-hero,
+        .metric-card,
+        .chart-card,
+        .panel-card {
+            border-radius: 16px;
+        }
+
+        .quick-action {
+            padding: 14px;
+        }
+
+        .hero-kpi-value {
+            font-size: 16px;
         }
     }
 </style>

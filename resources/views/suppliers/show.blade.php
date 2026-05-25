@@ -1,6 +1,52 @@
 @extends('layouts.modern')
 
 @section('content')
+<style>
+    @media (max-width: 768px) {
+        .d-flex.flex-wrap.justify-content-between.align-items-center.gap-2.mb-4,
+        .card-body .row.g-3.align-items-end,
+        .d-flex.justify-content-between.align-items-center.mt-3,
+        .card-header.d-flex.justify-content-between.align-items-center {
+            flex-direction: column;
+            align-items: stretch !important;
+            gap: 12px;
+        }
+
+        .d-flex.flex-wrap.justify-content-between.align-items-center.gap-2.mb-4 .btn,
+        .card-body .row.g-3.align-items-end .btn,
+        .card-body .row.g-3.align-items-end input,
+        .card-body .row.g-3.align-items-end select,
+        .d-flex.justify-content-between.align-items-center.mt-3 .btn {
+            width: 100%;
+        }
+
+        .row > .col-lg-4,
+        .row > .col-lg-8,
+        .row > .col-md-4 {
+            width: 100%;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table {
+            min-width: 760px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        h3 {
+            font-size: 22px;
+        }
+
+        .table {
+            min-width: 640px;
+        }
+    }
+</style>
+
 @php
     $selectedBranch = $selectedBranchId ? $branches->firstWhere('id', $selectedBranchId) : null;
 @endphp

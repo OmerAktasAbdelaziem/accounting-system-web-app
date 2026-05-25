@@ -3,6 +3,38 @@
 @section('title', __('messages.sales_report'))
 
 @section('content')
+<style>
+    @media (max-width: 768px) {
+        .row.mb-4,
+        .row.mb-4 > [class*="col-md-"] {
+            width: 100%;
+        }
+
+        .row.mb-4 .text-end {
+            text-align: left !important;
+        }
+
+        .card-body .row.g-3 > [class*="col-md-"] {
+            width: 100%;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table {
+            min-width: 640px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        h2 {
+            font-size: 22px;
+        }
+    }
+</style>
+
 <div class="row mb-4">
     <div class="col-md-6">
         <h2>{{ __('messages.sales_report') }} - {{ __('messages.details') }}</h2>

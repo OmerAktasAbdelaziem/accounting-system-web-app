@@ -304,8 +304,26 @@
     }
 
     @media (max-width: 768px) {
+        body {
+            overflow: auto;
+        }
+
+        .merchant-login-shell {
+            position: relative;
+            min-height: 100vh;
+            height: auto;
+            padding: 12px 0;
+        }
+
+        .merchant-login-wrapper {
+            padding: 12px;
+            height: auto;
+            align-items: stretch;
+        }
+
         .merchant-login-container {
             grid-template-columns: 1fr;
+            max-width: 100%;
         }
 
         .merchant-login-hero {
@@ -331,13 +349,23 @@
             padding: 5px 10px;
             font-size: 11px;
         }
+
+        .merchant-login-footer {
+            justify-content: center;
+        }
+
+        .merchant-login-footer a {
+            width: 100%;
+            text-align: center;
+        }
+
+        .merchant-form-control,
+        .merchant-form-button {
+            min-height: 44px;
+        }
     }
 
     @media (max-width: 480px) {
-        .merchant-login-wrapper {
-            padding: 12px;
-        }
-
         .merchant-login-hero {
             padding: 24px;
             min-height: 280px;
@@ -371,6 +399,15 @@
 
         .merchant-login-feature-desc {
             font-size: 11px;
+        }
+
+        .merchant-login-container {
+            border-radius: 18px;
+        }
+
+        .merchant-login-hero,
+        .merchant-login-form-section {
+            padding: 20px;
         }
     }
 </style>

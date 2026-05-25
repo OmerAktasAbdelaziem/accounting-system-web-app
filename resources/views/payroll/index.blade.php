@@ -1,6 +1,54 @@
 @extends('layouts.modern')
 
 @section('content')
+<style>
+    @media (max-width: 768px) {
+        .d-flex.flex-wrap.justify-content-between.align-items-center.gap-3.mb-4 {
+            flex-direction: column;
+            align-items: stretch !important;
+        }
+
+        .d-flex.flex-wrap.justify-content-between.align-items-center.gap-3.mb-4 .btn {
+            width: 100%;
+        }
+
+        .row.g-3.mb-4 .col-md-4,
+        .row.g-4.mb-4 .col-12,
+        .row.g-4 .col-md-6,
+        .row.g-4 .col-md-12 {
+            width: 100%;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table {
+            min-width: 760px;
+        }
+
+        .btn-group {
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .btn-group .btn {
+            flex: 1 1 auto;
+        }
+    }
+
+    @media (max-width: 576px) {
+        h3 {
+            font-size: 22px;
+        }
+
+        .table {
+            min-width: 640px;
+        }
+    }
+</style>
+
 <div class="container-fluid">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div>

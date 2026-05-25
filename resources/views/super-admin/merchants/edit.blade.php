@@ -2,9 +2,47 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="page-header mb-4">
+    <div class="page-header merchant-edit-header mb-4">
         <h1 class="page-title">Edit Merchant</h1>
     </div>
+
+    <style>
+        @media (max-width: 768px) {
+            .merchant-edit-header {
+                margin-bottom: 16px !important;
+            }
+
+            .merchant-edit-header .page-title {
+                font-size: 22px;
+            }
+
+            .merchant-edit-header .page-title i {
+                font-size: 22px;
+            }
+
+            .merchant-edit-header + .row > .col-lg-8,
+            .merchant-edit-header + .row > .col-lg-4 {
+                width: 100%;
+            }
+
+            .card-body,
+            .card-footer {
+                padding: 16px;
+            }
+
+            .row .col-md-6,
+            .row .col-lg-8,
+            .row .col-lg-4 {
+                width: 100%;
+            }
+
+            .card-footer .btn,
+            .card-footer a {
+                width: 100%;
+                margin-bottom: 8px;
+            }
+        }
+    </style>
 
     @if ($errors->any())
     <div class="alert alert-danger alert-dismissible fade show" role="alert">

@@ -4,6 +4,40 @@
 
 @section('content')
 <div class="row mb-4">
+<style>
+    @media (max-width: 768px) {
+        .d-flex.justify-content-between.align-items-center.mb-4,
+        .row > .col-lg-8,
+        .row > .col-lg-4 {
+            width: 100%;
+        }
+
+        .d-flex.justify-content-between.align-items-center.mb-4 {
+            flex-direction: column;
+            align-items: stretch !important;
+            gap: 12px;
+        }
+
+        .d-flex.justify-content-between.align-items-center.mb-4 .btn,
+        .d-flex.justify-content-between.align-items-center.mb-4 form {
+            width: 100%;
+        }
+
+        .card,
+        .card-body {
+            border-radius: 16px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table {
+            min-width: 640px;
+        }
+    }
+</style>
     <div class="col-md-8">
         <h1><i class="bi bi-box-seam"></i> {{ $product->name }}</h1>
     </div>

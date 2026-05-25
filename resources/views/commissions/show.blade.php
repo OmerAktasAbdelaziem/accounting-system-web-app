@@ -7,6 +7,53 @@
     $selectedBranchIds = $commission->branches()->pluck('branches.id')->all();
 @endphp
 
+<style>
+    @media (max-width: 768px) {
+        .mb-4.d-flex.justify-content-between.align-items-start.flex-wrap.gap-3 {
+            flex-direction: column;
+            align-items: stretch !important;
+        }
+
+        .mb-4.d-flex.justify-content-between.align-items-start.flex-wrap.gap-3 .d-flex.gap-2 {
+            width: 100%;
+        }
+
+        .mb-4.d-flex.justify-content-between.align-items-start.flex-wrap.gap-3 .btn,
+        .mb-4.d-flex.justify-content-between.align-items-start.flex-wrap.gap-3 form {
+            width: 100%;
+        }
+
+        .row.mb-4 .col-md-3,
+        .row.g-4 .col-lg-4,
+        .row.g-4 .col-lg-8 {
+            width: 100%;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table {
+            min-width: 760px;
+        }
+
+        .btn-group {
+            flex-wrap: wrap;
+        }
+    }
+
+    @media (max-width: 576px) {
+        h1 {
+            font-size: 22px;
+        }
+
+        .table {
+            min-width: 640px;
+        }
+    }
+</style>
+
 <div class="mb-4 d-flex justify-content-between align-items-start flex-wrap gap-3">
     <div>
         <h1 class="mb-2" style="font-weight: 900; color: #1a1a1a;">

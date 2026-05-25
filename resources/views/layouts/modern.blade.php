@@ -51,6 +51,7 @@
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--primary-black);
+            overflow-x: hidden;
         }
 
         /* Navbar Styling */
@@ -423,6 +424,14 @@
                 padding: 15px;
             }
 
+            .dashboard-container .container-fluid,
+            .dashboard-container .container,
+            .dashboard-container .row {
+                max-width: 100%;
+                margin-left: 0;
+                margin-right: 0;
+            }
+
             .navbar-modern {
                 padding: 10px 15px;
             }
@@ -438,6 +447,81 @@
 
             .stat-card .value {
                 font-size: 24px;
+            }
+
+            .modern-container {
+                flex-direction: column;
+                gap: 12px;
+                padding: 12px;
+            }
+
+            .modern-content {
+                margin-left: 0 !important;
+            }
+
+            .modern-sidebar {
+                width: 100%;
+                min-height: auto;
+                position: relative;
+                top: 0;
+                left: 0;
+                border-right: 0;
+                border-radius: 12px;
+                box-shadow: 0 6px 18px rgba(0,0,0,.08);
+            }
+
+            body.sidebar-open .modern-sidebar {
+                width: min(86vw, 320px);
+                min-height: 100vh;
+                border-radius: 0;
+            }
+
+            .card-body {
+                padding: 18px;
+            }
+
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table {
+                min-width: 640px;
+            }
+
+            .modal-dialog {
+                margin: 0.75rem;
+            }
+
+            .modal-content {
+                border-radius: 16px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .dashboard-container {
+                padding: 10px;
+            }
+
+            .card-body {
+                padding: 14px;
+            }
+
+            .table {
+                min-width: 560px;
+            }
+
+            .btn,
+            .btn-sm {
+                white-space: normal;
+            }
+
+            .navbar-modern {
+                padding: 10px 12px;
+            }
+
+            .navbar-modern .navbar-brand {
+                font-size: 16px;
             }
         }
 

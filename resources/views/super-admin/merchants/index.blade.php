@@ -4,9 +4,67 @@
 
 @section('content')
 <div class="page-header">
-    <div class="d-flex align-items-center justify-content-between mb-4">
+    <div class="merchant-header-row d-flex align-items-center justify-content-between mb-4">
         <div>
             <h1 class="page-title">
+        <style>
+            @media (max-width: 768px) {
+                .merchant-header-row {
+                    flex-direction: column;
+                    align-items: stretch !important;
+                    gap: 12px;
+                }
+
+                .merchant-header-row .btn {
+                    width: 100%;
+                }
+
+                .form-section form .col-md-4,
+                .form-section form .col-md-3,
+                .form-section form .col-md-2 {
+                    width: 100%;
+                }
+
+                .data-table {
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
+                }
+
+                .data-table .table {
+                    min-width: 860px;
+                }
+
+                .btn-group {
+                    flex-wrap: wrap;
+                    gap: 6px;
+                }
+
+                .btn-group .btn,
+                .btn-group form {
+                    flex: 1 1 auto;
+                }
+            }
+
+            @media (max-width: 576px) {
+                .page-title {
+                    font-size: 22px;
+                }
+
+                .page-title i {
+                    font-size: 22px;
+                }
+
+                .page-subtitle {
+                    font-size: 12px;
+                }
+
+                .form-section,
+                .data-table {
+                    border-radius: 14px;
+                }
+            }
+        </style>
+
                 <i class="bi bi-building"></i>
                 Merchants Management
             </h1>

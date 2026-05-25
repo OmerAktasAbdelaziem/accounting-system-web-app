@@ -177,6 +177,56 @@
 <style>
     .admin-user-slot { transition: background-color 0.2s; }
     .admin-user-slot:hover { background-color: rgba(255,255,255,.72); }
+
+    @media (max-width: 768px) {
+        .create-hero {
+            padding: 20px !important;
+            flex-direction: column;
+            align-items: stretch !important;
+        }
+
+        .create-hero .btn {
+            width: 100%;
+        }
+
+        .create-card .card-body,
+        .create-aside .card-body {
+            padding: 18px !important;
+        }
+
+        .create-card .row.g-3 > [class*="col-md-"],
+        .create-card .row.g-3 > [class*="col-xl-"] {
+            width: 100%;
+        }
+
+        .create-field,
+        .form-select,
+        .form-control {
+            min-height: 44px;
+        }
+
+        .merchant-slot .row.g-3 > [class*="col-md-"] {
+            width: 100%;
+        }
+
+        .merchant-slot .btn {
+            width: 100%;
+        }
+
+        .create-aside {
+            margin-top: 0;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .create-hero h1 {
+            font-size: 24px;
+        }
+
+        .create-hero p {
+            font-size: 13px;
+        }
+    }
 </style>
 
 <script>

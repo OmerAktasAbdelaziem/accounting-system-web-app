@@ -3,6 +3,62 @@
 @section('title', __('messages.sales_report'))
 
 @section('content')
+<style>
+    @media (max-width: 768px) {
+        .row.mb-4,
+        .row.mb-4 > [class*="col-md-"] {
+            width: 100%;
+        }
+
+        .row.mb-4 > .col-md-6,
+        .row.mb-4 > .col-md-4,
+        .row.mb-4 > .col-md-8 {
+            width: 100%;
+        }
+
+        .row.mb-4 .text-end {
+            text-align: left !important;
+        }
+
+        .row.mb-4 .btn,
+        .row.mb-4 form,
+        .row.mb-4 input,
+        .row.mb-4 select {
+            width: 100%;
+        }
+
+        .card-body .row.g-3 .col-md-4,
+        .card-body .row.g-3 .col-md-6,
+        .card-body .row.g-3 .col-md-12,
+        .card-body .row.g-3 .col-md-8 {
+            width: 100%;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table {
+            min-width: 760px;
+        }
+
+        .d-flex.gap-2 {
+            flex-wrap: wrap;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .table {
+            min-width: 640px;
+        }
+
+        h2 {
+            font-size: 22px;
+        }
+    }
+</style>
+
 <div class="row mb-4">
     <div class="col-md-6">
         <h2>{{ __('messages.sales_report') }}</h2>

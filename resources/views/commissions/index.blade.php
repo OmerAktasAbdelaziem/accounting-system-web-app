@@ -3,6 +3,54 @@
 @section('title', __('messages.commission_management'))
 
 @section('content')
+<style>
+    @media (max-width: 768px) {
+        .d-flex.justify-content-between.align-items-center {
+            flex-direction: column;
+            align-items: stretch !important;
+            gap: 12px;
+        }
+
+        .d-flex.justify-content-between.align-items-center .btn {
+            width: 100%;
+        }
+
+        .row.mb-4 .col-md-3,
+        .row.g-3 .col-md-6,
+        .row.g-3 .col-xl-4 {
+            width: 100%;
+        }
+
+        .card,
+        .card-body {
+            border-radius: 16px;
+        }
+
+        .quick-action,
+        .card-header,
+        .card-body {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        .d-grid.gap-2 .btn,
+        .d-grid.gap-2 form,
+        .d-grid.gap-2 span {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 576px) {
+        h1 {
+            font-size: 22px;
+        }
+
+        .card-body h3 {
+            font-size: 24px;
+        }
+    }
+</style>
+
 <div class="mb-4">
     <div class="d-flex justify-content-between align-items-center">
         <h1 style="font-weight: 900; color: #1a1a1a;">

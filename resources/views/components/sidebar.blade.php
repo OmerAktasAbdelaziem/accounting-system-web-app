@@ -7,6 +7,35 @@
         .component-sidebar .sidebar-logout { margin-top:auto; padding-top:10px; }
         .component-sidebar .sidebar-logout-link { display:flex; align-items:center; gap:8px; padding:10px; color:#c33; text-decoration:none; background:transparent; border-radius:6px; }
         .component-sidebar .sidebar-menu li { list-style:none; }
+
+        @media (max-width: 768px) {
+            .component-sidebar {
+                max-height: none;
+                padding: 8px 4px 18px;
+                gap: 6px;
+            }
+
+            .component-sidebar .sidebar-menu a {
+                padding: 12px 10px;
+                font-size: 14px;
+            }
+
+            .component-sidebar .sidebar-menu a span {
+                max-width: calc(100vw - 110px);
+            }
+
+            .component-sidebar .sidebar-section {
+                margin-top: 4px;
+            }
+
+            .component-sidebar .sidebar-title {
+                padding: 4px 0 2px;
+            }
+
+            .component-sidebar .sidebar-logout {
+                padding-top: 8px;
+            }
+        }
     </style>
 
     @php

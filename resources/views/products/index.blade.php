@@ -4,6 +4,61 @@
 
 @section('content')
 <div class="mb-4">
+    <style>
+        @media (max-width: 768px) {
+            .page-header > .d-flex,
+            .d-flex.justify-content-between.align-items-center.mb-4 {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 12px;
+            }
+
+            .page-header .btn,
+            .page-header a,
+            .page-header button,
+            .page-header input,
+            .page-header select {
+                width: 100%;
+            }
+
+            .card {
+                border-radius: 16px;
+            }
+
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table {
+                min-width: 760px;
+            }
+
+            .btn-group {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .btn-group .btn {
+                flex: 1 1 auto;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .page-title {
+                font-size: 22px;
+            }
+
+            .page-title i {
+                font-size: 22px;
+            }
+
+            .table {
+                min-width: 640px;
+            }
+        }
+    </style>
+
     <div class="d-flex justify-content-between align-items-center">
         <h1 style="font-weight: 900; color: #1a1a1a;">
             <i class="bi bi-box-seam" style="color: #ff8c00;"></i> {{ __('messages.products_management') }}

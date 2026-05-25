@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="page-header d-flex align-items-center justify-content-between mb-4">
+    <div class="page-header merchant-show-header d-flex align-items-center justify-content-between mb-4">
         <h1 class="page-title">{{ $merchant->business_name }}</h1>
         <div class="d-flex gap-2">
             <a href="{{ route('super-admin.merchants.edit', $merchant) }}" class="btn btn-secondary">
@@ -16,6 +16,58 @@
             </form>
         </div>
     </div>
+
+    <style>
+        @media (max-width: 768px) {
+            .merchant-show-header {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 12px;
+            }
+
+            .merchant-show-header .d-flex.gap-2 {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .merchant-show-header .btn,
+            .merchant-show-header form,
+            .merchant-show-header button {
+                width: 100%;
+            }
+
+            .row > [class*="col-lg-"],
+            .row > [class*="col-md-"] {
+                width: 100%;
+            }
+
+            .card-body {
+                padding: 16px;
+            }
+
+            .list-group-item {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 12px;
+            }
+
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .page-title {
+                font-size: 22px;
+                word-break: break-word;
+            }
+
+            .page-title i {
+                font-size: 22px;
+            }
+        }
+    </style>
 
     @if (session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
