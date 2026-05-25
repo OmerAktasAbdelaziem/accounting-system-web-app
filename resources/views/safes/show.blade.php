@@ -225,24 +225,13 @@
 
                 @if(count($recentIncomes) > 0)
                     <div class="d-flex mb-2 gap-2">
-                        <div class="input-group input-group-sm" style="max-width: 240px;">
-                            <span class="input-group-text">From</span>
-                            <input type="date" id="incomeFrom" class="form-control form-control-sm">
-                        </div>
-                        <div class="input-group input-group-sm" style="max-width: 240px;">
-                            <span class="input-group-text">To</span>
-                            <input type="date" id="incomeTo" class="form-control form-control-sm">
-                        </div>
-                        <button class="btn btn-outline-success btn-sm" id="incomeFilterBtn">Filter</button>
                         <button class="btn btn-success btn-sm"
                             id="incomeExportBtn"
                             type="button"
                             data-bs-toggle="modal"
                             data-bs-target="#exportPdfModal"
                             data-export-type="income"
-                            data-export-title="Income PDF Export"
-                            data-from-input="#incomeFrom"
-                            data-to-input="#incomeTo">Export PDF</button>
+                            data-export-title="Income PDF Export">Export PDF</button>
                     </div>
                     <div class="table-responsive" id="incomeTableWrapper" style="max-height: 320px; overflow-y: auto;">
                         <table class="table table-sm align-middle mb-0">
@@ -310,24 +299,13 @@
 
                 @if(count($recentOutcomes) > 0)
                     <div class="d-flex mb-2 gap-2">
-                        <div class="input-group input-group-sm" style="max-width: 240px;">
-                            <span class="input-group-text">From</span>
-                            <input type="date" id="outcomeFrom" class="form-control form-control-sm">
-                        </div>
-                        <div class="input-group input-group-sm" style="max-width: 240px;">
-                            <span class="input-group-text">To</span>
-                            <input type="date" id="outcomeTo" class="form-control form-control-sm">
-                        </div>
-                        <button class="btn btn-outline-danger btn-sm" id="outcomeFilterBtn">Filter</button>
                         <button class="btn btn-danger btn-sm"
                             id="outcomeExportBtn"
                             type="button"
                             data-bs-toggle="modal"
                             data-bs-target="#exportPdfModal"
                             data-export-type="outcome"
-                            data-export-title="Outcome PDF Export"
-                            data-from-input="#outcomeFrom"
-                            data-to-input="#outcomeTo">Export PDF</button>
+                            data-export-title="Outcome PDF Export">Export PDF</button>
                     </div>
                     <div class="table-responsive" id="outcomeTableWrapper" style="max-height: 320px; overflow-y: auto;">
                         <table class="table table-sm align-middle mb-0">
@@ -986,39 +964,9 @@
         if (outcomeDetailModal) outcomeDetailModal.show();
     });
 
-    // --- Filtering and PDF export helpers for Income/Outcome tables ---
-    function parseISODate(str) {
-        if (!str) return null;
-        const parts = str.split('-');
-        if (parts.length !== 3) return null;
-        return new Date(str + 'T00:00:00');
-    }
-
-    function filterTableRows(wrapperSelector, rowSelector, fromId, toId) {
-        const fromVal = document.getElementById(fromId).value;
-        const toVal = document.getElementById(toId).value;
-        const fromDate = fromVal ? parseISODate(fromVal) : null;
-        const toDate = toVal ? parseISODate(toVal) : null;
-        const wrapper = document.querySelector(wrapperSelector);
-        if (!wrapper) return;
-        const rows = wrapper.querySelectorAll(rowSelector);
-        rows.forEach(r => {
-            const iso = r.getAttribute('data-created_at_iso');
-            const d = iso ? parseISODate(iso) : null;
-            let show = true;
-            if (fromDate && d && d < fromDate) show = false;
-            if (toDate && d && d > toDate) show = false;
-            r.style.display = show ? '' : 'none';
-        });
-    }
-
     function syncExportModal(button) {
         const exportType = button.getAttribute('data-export-type') || 'income';
-        const fromInput = button.getAttribute('data-from-input');
-        const toInput = button.getAttribute('data-to-input');
         const title = button.getAttribute('data-export-title') || 'PDF Export';
-        const fromValue = fromInput ? (document.querySelector(fromInput)?.value || '') : '';
-        const toValue = toInput ? (document.querySelector(toInput)?.value || '') : '';
 
         const modalTitle = document.getElementById('exportPdfModalTitle');
         const modalType = document.getElementById('exportPdfType');
@@ -1027,26 +975,18 @@
 
         if (modalTitle) modalTitle.innerHTML = '<i class="bi bi-file-earmark-pdf"></i> ' + title;
         if (modalType) modalType.value = exportType;
-        if (modalFrom) modalFrom.value = fromValue;
-        if (modalTo) modalTo.value = toValue;
+        if (modalFrom) modalFrom.value = '';
+        if (modalTo) modalTo.value = '';
     }
 
     // Income filters & export
-    const incomeFilterBtn = document.getElementById('incomeFilterBtn');
     const incomeExportBtn = document.getElementById('incomeExportBtn');
-    if (incomeFilterBtn) incomeFilterBtn.addEventListener('click', function () {
-        filterTableRows('#incomeTableWrapper', '.income-row', 'incomeFrom', 'incomeTo');
-    });
     if (incomeExportBtn) incomeExportBtn.addEventListener('click', function () {
         syncExportModal(incomeExportBtn);
     });
 
     // Outcome filters & export
-    const outcomeFilterBtn = document.getElementById('outcomeFilterBtn');
     const outcomeExportBtn = document.getElementById('outcomeExportBtn');
-    if (outcomeFilterBtn) outcomeFilterBtn.addEventListener('click', function () {
-        filterTableRows('#outcomeTableWrapper', '.outcome-row', 'outcomeFrom', 'outcomeTo');
-    });
     if (outcomeExportBtn) outcomeExportBtn.addEventListener('click', function () {
         syncExportModal(outcomeExportBtn);
     });
