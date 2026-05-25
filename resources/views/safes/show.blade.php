@@ -224,7 +224,19 @@
                 </button>
 
                 @if(count($recentIncomes) > 0)
-                    <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
+                    <div class="d-flex mb-2 gap-2">
+                        <div class="input-group input-group-sm" style="max-width: 240px;">
+                            <span class="input-group-text">From</span>
+                            <input type="date" id="incomeFrom" class="form-control form-control-sm">
+                        </div>
+                        <div class="input-group input-group-sm" style="max-width: 240px;">
+                            <span class="input-group-text">To</span>
+                            <input type="date" id="incomeTo" class="form-control form-control-sm">
+                        </div>
+                        <button class="btn btn-outline-success btn-sm" id="incomeFilterBtn">Filter</button>
+                        <button class="btn btn-success btn-sm" id="incomeExportBtn">Export PDF</button>
+                    </div>
+                    <div class="table-responsive" id="incomeTableWrapper" style="max-height: 320px; overflow-y: auto;">
                         <table class="table table-sm align-middle mb-0">
                             <thead>
                                 <tr>
@@ -235,7 +247,7 @@
                             </thead>
                             <tbody>
                                 @foreach($recentIncomes as $income)
-                                    <tr class="income-row" style="cursor: pointer;" 
+                                    <tr class="income-row" style="cursor: pointer;"
                                         data-id="{{ $income->id }}"
                                         data-amount="{{ $income->amount }}"
                                         data-source="{{ $income->source }}"
@@ -245,6 +257,7 @@
                                         data-currency_name="{{ $income->currency?->name ?? '' }}"
                                         data-currency_code="{{ $income->currency?->code ?? $currencySymbol }}"
                                         data-created_at="{{ $income->created_at->format('M d, Y') }}"
+                                        data-created_at_iso="{{ $income->created_at->toDateString() }}"
                                         data-update_url="{{ route('safes.income.update', [$safe->id, $income->id]) }}"
                                         data-delete_url="{{ route('safes.income.delete', [$safe->id, $income->id]) }}">
                                         <td>
@@ -288,7 +301,19 @@
                 </button>
 
                 @if(count($recentOutcomes) > 0)
-                    <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
+                    <div class="d-flex mb-2 gap-2">
+                        <div class="input-group input-group-sm" style="max-width: 240px;">
+                            <span class="input-group-text">From</span>
+                            <input type="date" id="outcomeFrom" class="form-control form-control-sm">
+                        </div>
+                        <div class="input-group input-group-sm" style="max-width: 240px;">
+                            <span class="input-group-text">To</span>
+                            <input type="date" id="outcomeTo" class="form-control form-control-sm">
+                        </div>
+                        <button class="btn btn-outline-danger btn-sm" id="outcomeFilterBtn">Filter</button>
+                        <button class="btn btn-danger btn-sm" id="outcomeExportBtn">Export PDF</button>
+                    </div>
+                    <div class="table-responsive" id="outcomeTableWrapper" style="max-height: 320px; overflow-y: auto;">
                         <table class="table table-sm align-middle mb-0">
                             <thead>
                                 <tr>
@@ -299,7 +324,7 @@
                             </thead>
                             <tbody>
                                 @foreach($recentOutcomes as $outcome)
-                                    <tr class="outcome-row" style="cursor: pointer;" 
+                                    <tr class="outcome-row" style="cursor: pointer;"
                                         data-id="{{ $outcome->id }}"
                                         data-amount="{{ $outcome->amount }}"
                                         data-description="{{ $outcome->description }}"
@@ -308,6 +333,7 @@
                                         data-currency_name="{{ $outcome->currency?->name ?? '' }}"
                                         data-currency_code="{{ $outcome->currency?->code ?? $currencySymbol }}"
                                         data-created_at="{{ $outcome->created_at->format('M d, Y') }}"
+                                        data-created_at_iso="{{ $outcome->created_at->toDateString() }}"
                                         data-supplier_name="{{ $outcome->supplier?->name ?? '' }}"
                                         data-reference_type="{{ $outcome->reference_type }}"
                                         data-update_url="{{ route('safes.outcome.update', [$safe->id, $outcome->id]) }}"
@@ -907,6 +933,97 @@
         };
 
         if (outcomeDetailModal) outcomeDetailModal.show();
+    });
+
+    // --- Filtering and PDF export helpers for Income/Outcome tables ---
+    function parseISODate(str) {
+        if (!str) return null;
+        const parts = str.split('-');
+        if (parts.length !== 3) return null;
+        return new Date(str + 'T00:00:00');
+    }
+
+    function filterTableRows(wrapperSelector, rowSelector, fromId, toId) {
+        const fromVal = document.getElementById(fromId).value;
+        const toVal = document.getElementById(toId).value;
+        const fromDate = fromVal ? parseISODate(fromVal) : null;
+        const toDate = toVal ? parseISODate(toVal) : null;
+        const wrapper = document.querySelector(wrapperSelector);
+        if (!wrapper) return;
+        const rows = wrapper.querySelectorAll(rowSelector);
+        rows.forEach(r => {
+            const iso = r.getAttribute('data-created_at_iso');
+            const d = iso ? parseISODate(iso) : null;
+            let show = true;
+            if (fromDate && d && d < fromDate) show = false;
+            if (toDate && d && d > toDate) show = false;
+            r.style.display = show ? '' : 'none';
+        });
+    }
+
+    function exportTableToPdf(wrapperSelector, titleText, filename) {
+        const wrapper = document.querySelector(wrapperSelector);
+        if (!wrapper) return alert('Table not found');
+        // Clone the wrapper to avoid modifying original DOM
+        const clone = wrapper.cloneNode(true);
+        // Remove any controls inside clone
+        clone.querySelectorAll('button,input').forEach(n => n.remove());
+        const container = document.createElement('div');
+        const header = document.createElement('h4');
+        header.textContent = titleText;
+        header.style.textAlign = 'center';
+        header.style.marginBottom = '8px';
+        container.appendChild(header);
+        container.appendChild(clone);
+
+        const opt = {
+            margin:       10,
+            filename:     filename,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // Use html2pdf if available
+        if (window.html2pdf) {
+            html2pdf().set(opt).from(container).save();
+        } else if (window.jspdf) {
+            // fallback: open print dialog
+            const w = window.open();
+            w.document.write(container.innerHTML);
+            w.document.close();
+            w.focus();
+            w.print();
+            w.close();
+        } else {
+            alert('PDF export not available (missing html2pdf).');
+        }
+    }
+
+    // Income filters & export
+    const incomeFilterBtn = document.getElementById('incomeFilterBtn');
+    const incomeExportBtn = document.getElementById('incomeExportBtn');
+    if (incomeFilterBtn) incomeFilterBtn.addEventListener('click', function () {
+        filterTableRows('#incomeTableWrapper', '.income-row', 'incomeFrom', 'incomeTo');
+    });
+    if (incomeExportBtn) incomeExportBtn.addEventListener('click', function () {
+        const from = document.getElementById('incomeFrom').value || '';
+        const to = document.getElementById('incomeTo').value || '';
+        const filename = `safe-{{ $safe->id }}-income-${from || 'all'}-${to || 'all'}.pdf`;
+        exportTableToPdf('#incomeTableWrapper table', 'Income - {{ $safe->name }}', filename);
+    });
+
+    // Outcome filters & export
+    const outcomeFilterBtn = document.getElementById('outcomeFilterBtn');
+    const outcomeExportBtn = document.getElementById('outcomeExportBtn');
+    if (outcomeFilterBtn) outcomeFilterBtn.addEventListener('click', function () {
+        filterTableRows('#outcomeTableWrapper', '.outcome-row', 'outcomeFrom', 'outcomeTo');
+    });
+    if (outcomeExportBtn) outcomeExportBtn.addEventListener('click', function () {
+        const from = document.getElementById('outcomeFrom').value || '';
+        const to = document.getElementById('outcomeTo').value || '';
+        const filename = `safe-{{ $safe->id }}-outcome-${from || 'all'}-${to || 'all'}.pdf`;
+        exportTableToPdf('#outcomeTableWrapper table', 'Outcome - {{ $safe->name }}', filename);
     });
 })();
 </script>
