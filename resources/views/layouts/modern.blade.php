@@ -460,20 +460,26 @@
             }
 
             .modern-sidebar {
-                width: 100%;
-                min-height: auto;
-                position: relative;
+                width: min(86vw, 320px);
+                min-height: 100vh;
+                position: fixed;
                 top: 0;
                 left: 0;
                 border-right: 0;
-                border-radius: 12px;
+                border-radius: 0;
                 box-shadow: 0 6px 18px rgba(0,0,0,.08);
+                transform: translateX(-105%);
+                transition: transform .25s ease, box-shadow .25s ease;
+                z-index: 1060;
             }
 
             body.sidebar-open .modern-sidebar {
-                width: min(86vw, 320px);
-                min-height: 100vh;
-                border-radius: 0;
+                transform: translateX(0);
+            }
+
+            body.sidebar-open .modern-sidebar,
+            .modern-sidebar {
+                display: block;
             }
 
             .card-body {
@@ -522,6 +528,10 @@
 
             .navbar-modern .navbar-brand {
                 font-size: 16px;
+            }
+
+            .modern-sidebar {
+                width: 88vw;
             }
         }
 
