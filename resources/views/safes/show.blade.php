@@ -234,7 +234,15 @@
                             <input type="date" id="incomeTo" class="form-control form-control-sm">
                         </div>
                         <button class="btn btn-outline-success btn-sm" id="incomeFilterBtn">Filter</button>
-                        <button class="btn btn-success btn-sm" id="incomeExportBtn">Export PDF</button>
+                        <button class="btn btn-success btn-sm"
+                            id="incomeExportBtn"
+                            type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#exportPdfModal"
+                            data-export-type="income"
+                            data-export-title="Income PDF Export"
+                            data-from-input="#incomeFrom"
+                            data-to-input="#incomeTo">Export PDF</button>
                     </div>
                     <div class="table-responsive" id="incomeTableWrapper" style="max-height: 320px; overflow-y: auto;">
                         <table class="table table-sm align-middle mb-0">
@@ -311,7 +319,15 @@
                             <input type="date" id="outcomeTo" class="form-control form-control-sm">
                         </div>
                         <button class="btn btn-outline-danger btn-sm" id="outcomeFilterBtn">Filter</button>
-                        <button class="btn btn-danger btn-sm" id="outcomeExportBtn">Export PDF</button>
+                        <button class="btn btn-danger btn-sm"
+                            id="outcomeExportBtn"
+                            type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#exportPdfModal"
+                            data-export-type="outcome"
+                            data-export-title="Outcome PDF Export"
+                            data-from-input="#outcomeFrom"
+                            data-to-input="#outcomeTo">Export PDF</button>
                     </div>
                     <div class="table-responsive" id="outcomeTableWrapper" style="max-height: 320px; overflow-y: auto;">
                         <table class="table table-sm align-middle mb-0">
@@ -730,6 +746,41 @@
     </div>
 </div>
 
+<div class="modal fade" id="exportPdfModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #1f2937, #111827); color: white;">
+                <h5 class="modal-title" id="exportPdfModalTitle"><i class="bi bi-file-earmark-pdf"></i> PDF Export</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="exportPdfForm" method="GET" action="{{ route('safes.export', $safe->id) }}" target="_blank">
+                <div class="modal-body">
+                    <input type="hidden" name="type" id="exportPdfType" value="income">
+                    <div class="alert alert-info">
+                        Select a date range to export only filtered records. Leave both dates empty to export all records.
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">From Date</label>
+                            <input type="date" name="from_date" id="exportPdfFromDate" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">To Date</label>
+                            <input type="date" name="to_date" id="exportPdfToDate" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-download"></i> Download PDF
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
 (function () {
     const referenceType = document.getElementById('outcomeReferenceType');
@@ -961,66 +1012,23 @@
         });
     }
 
-    function exportTableToPdf(wrapperSelector, titleText, filename) {
-        const wrapper = document.querySelector(wrapperSelector);
-        if (!wrapper) return alert('Table not found');
-        // Clone the wrapper to avoid modifying original DOM
-        const clone = wrapper.cloneNode(true);
-        // Remove any controls inside clone
-        clone.querySelectorAll('button,input').forEach(n => n.remove());
-        const container = document.createElement('div');
-        const header = document.createElement('h4');
-        header.textContent = titleText;
-        header.style.textAlign = 'center';
-        header.style.marginBottom = '8px';
-        container.appendChild(header);
-        container.appendChild(clone);
+    function syncExportModal(button) {
+        const exportType = button.getAttribute('data-export-type') || 'income';
+        const fromInput = button.getAttribute('data-from-input');
+        const toInput = button.getAttribute('data-to-input');
+        const title = button.getAttribute('data-export-title') || 'PDF Export';
+        const fromValue = fromInput ? (document.querySelector(fromInput)?.value || '') : '';
+        const toValue = toInput ? (document.querySelector(toInput)?.value || '') : '';
 
-        // Place container off-screen so html2canvas can compute styles
-        container.style.position = 'fixed';
-        container.style.left = '-9999px';
-        container.style.top = '0';
-        container.style.width = '1000px';
-        container.style.background = '#fff';
-        document.body.appendChild(container);
+        const modalTitle = document.getElementById('exportPdfModalTitle');
+        const modalType = document.getElementById('exportPdfType');
+        const modalFrom = document.getElementById('exportPdfFromDate');
+        const modalTo = document.getElementById('exportPdfToDate');
 
-        const opt = {
-            margin:       10,
-            filename:     filename,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        // Use html2pdf if available
-        if (window.html2pdf) {
-            html2pdf().set(opt).from(container).save().then(() => {
-                try{ container.remove(); }catch(e){}
-            }).catch(() => { try{ container.remove(); }catch(e){} });
-        } else if (window.jspdf) {
-            // fallback: open print dialog
-            const w = window.open();
-            w.document.write(container.innerHTML);
-            w.document.close();
-            w.focus();
-            w.print();
-            w.close();
-            try{ container.remove(); }catch(e){}
-        } else {
-            try{ container.remove(); }catch(e){}
-            alert('PDF export not available (missing html2pdf).');
-        }
-    }
-
-    // Browser-native download helper: uses a real link click instead of fetch
-    function triggerPdfDownload(url) {
-        const link = document.createElement('a');
-        link.href = url;
-        link.target = '_blank';
-        link.rel = 'noopener';
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
+        if (modalTitle) modalTitle.innerHTML = '<i class="bi bi-file-earmark-pdf"></i> ' + title;
+        if (modalType) modalType.value = exportType;
+        if (modalFrom) modalFrom.value = fromValue;
+        if (modalTo) modalTo.value = toValue;
     }
 
     // Income filters & export
@@ -1030,11 +1038,7 @@
         filterTableRows('#incomeTableWrapper', '.income-row', 'incomeFrom', 'incomeTo');
     });
     if (incomeExportBtn) incomeExportBtn.addEventListener('click', function () {
-        const from = document.getElementById('incomeFrom').value || '';
-        const to = document.getElementById('incomeTo').value || '';
-        const base = '{{ route("safes.export", ["safe" => $safe->id]) }}';
-        const url = base + '?type=income&from_date=' + encodeURIComponent(from) + '&to_date=' + encodeURIComponent(to);
-        triggerPdfDownload(url);
+        syncExportModal(incomeExportBtn);
     });
 
     // Outcome filters & export
@@ -1044,11 +1048,7 @@
         filterTableRows('#outcomeTableWrapper', '.outcome-row', 'outcomeFrom', 'outcomeTo');
     });
     if (outcomeExportBtn) outcomeExportBtn.addEventListener('click', function () {
-        const from = document.getElementById('outcomeFrom').value || '';
-        const to = document.getElementById('outcomeTo').value || '';
-        const base = '{{ route("safes.export", ["safe" => $safe->id]) }}';
-        const url = base + '?type=outcome&from_date=' + encodeURIComponent(from) + '&to_date=' + encodeURIComponent(to);
-        triggerPdfDownload(url);
+        syncExportModal(outcomeExportBtn);
     });
 })();
 </script>
