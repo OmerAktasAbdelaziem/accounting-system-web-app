@@ -6,6 +6,9 @@
 <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.11.3/dist/echo.iife.js"></script>
 <nav class="modern-top-navbar">
+    <button id="mobileMenuBtn" class="icon-btn mobile-menu-btn" aria-label="Toggle menu" title="Menu">
+        <i class="bi bi-list" aria-hidden="true"></i>
+    </button>
     <div class="brand">
         <a href="{{ route($dashboardRoute) }}" class="brand">
             <div class="logo-mark">A</div>
@@ -482,3 +485,14 @@
         }
     })();
 </script>
+    <script>
+        // mobile menu toggle: toggles `sidebar-open` on body and emits event
+        (function(){
+            const btn = document.getElementById('mobileMenuBtn');
+            if(!btn) return;
+            btn.addEventListener('click', function(){
+                document.body.classList.toggle('sidebar-open');
+                try{ window.dispatchEvent(new CustomEvent('toggleSidebar')); }catch(e){}
+            });
+        })();
+    </script>
