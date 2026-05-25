@@ -1012,33 +1012,15 @@
         }
     }
 
-    // Fetch-based PDF downloader: requests the export URL, reports errors, and forces a download
-    async function fetchAndDownloadPdf(url, fallbackName) {
-        try {
-            const resp = await fetch(url, { headers: { 'Accept': 'application/pdf' }, credentials: 'same-origin' });
-            if (!resp.ok) {
-                const txt = await resp.text();
-                const short = txt ? txt.substring(0, 1000) : '';
-                alert('Export failed: ' + resp.status + '\n' + short);
-                return;
-            }
-            const blob = await resp.blob();
-            const cd = resp.headers.get('Content-Disposition') || '';
-            let filename = fallbackName;
-            const m = cd.match(/filename\*?=([^;]+)/i);
-            if (m) {
-                filename = m[1].replace(/UTF-8''/i, '').replace(/"/g, '').trim();
-            }
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = filename || fallbackName || 'export.pdf';
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            setTimeout(() => URL.revokeObjectURL(link.href), 2000);
-        } catch (err) {
-            alert('Export error: ' + (err && err.message ? err.message : String(err)));
-        }
+    // Browser-native download helper: uses a real link click instead of fetch
+    function triggerPdfDownload(url) {
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
     }
 
     // Income filters & export
@@ -1052,8 +1034,7 @@
         const to = document.getElementById('incomeTo').value || '';
         const base = '{{ route("safes.export", ["safe" => $safe->id]) }}';
         const url = base + '?type=income&from_date=' + encodeURIComponent(from) + '&to_date=' + encodeURIComponent(to);
-        const fallback = `safe-{{ $safe->id }}-income-${from || 'all'}-${to || 'all'}.pdf`;
-        fetchAndDownloadPdf(url, fallback);
+        triggerPdfDownload(url);
     });
 
     // Outcome filters & export
@@ -1067,8 +1048,7 @@
         const to = document.getElementById('outcomeTo').value || '';
         const base = '{{ route("safes.export", ["safe" => $safe->id]) }}';
         const url = base + '?type=outcome&from_date=' + encodeURIComponent(from) + '&to_date=' + encodeURIComponent(to);
-        const fallback = `safe-{{ $safe->id }}-outcome-${from || 'all'}-${to || 'all'}.pdf`;
-        fetchAndDownloadPdf(url, fallback);
+        triggerPdfDownload(url);
     });
 })();
 </script>
