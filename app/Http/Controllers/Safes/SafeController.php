@@ -13,7 +13,9 @@ use App\Models\SafeOutcome;
 use App\Models\SafeCurrency;
 use App\Models\Supplier;
 use App\Models\SupplierPayment;
+use App\Services\TelegramService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Support\SimplePdf;
 
@@ -353,64 +355,106 @@ class SafeController extends Controller
 
     public function exportPdf(Request $request, Safe $safe)
     {
-        $type = $request->query('type', 'income');
-        $from = $request->query('from_date');
-        $to = $request->query('to_date');
+        try {
+            $type = $request->query('type', 'income');
+            $from = $request->query('from_date');
+            $to = $request->query('to_date');
 
-        if ($type === 'outcome') {
-            $items = SafeOutcome::with('currency', 'supplier')
-                ->where('safe_id', $safe->id)
-                ->when($from, fn ($q) => $q->whereDate('created_at', '>=', $from))
-                ->when($to, fn ($q) => $q->whereDate('created_at', '<=', $to))
-                ->latest()
-                ->get();
+            Log::info('Safe PDF export requested', [
+                'safe_id' => $safe->id,
+                'type' => $type,
+                'from_date' => $from,
+                'to_date' => $to,
+                'user_id' => auth()->id(),
+            ]);
 
-            $title = __('messages.safe_outcomes') . ' - ' . $safe->name;
-            $lines = [
-                $title,
-                'Generated: ' . now()->format('Y-m-d H:i'),
-                'Entries: ' . $items->count(),
-                '---',
-            ];
+            if ($type === 'outcome') {
+                $items = SafeOutcome::with('currency', 'supplier')
+                    ->where('safe_id', $safe->id)
+                    ->when($from, fn ($q) => $q->whereDate('created_at', '>=', $from))
+                    ->when($to, fn ($q) => $q->whereDate('created_at', '<=', $to))
+                    ->latest()
+                    ->get();
 
-            foreach ($items as $it) {
-                $date = optional($it->created_at)->format('Y-m-d') ?? '-';
-                $currency = $it->currency?->code ?? '';
-                $supplier = $it->supplier?->name ? ('Supplier: ' . $it->supplier->name) : '';
-                $lines[] = sprintf('%s | -%s %s | %s | %s %s', $date, number_format((float) $it->amount, 2), $currency, $it->description ?? '-', $it->reference ?? '-', $supplier);
+                $title = 'Safe Outcomes - ' . $safe->name;
+                $lines = [
+                    $title,
+                    'Generated: ' . now()->format('Y-m-d H:i'),
+                    'Entries: ' . $items->count(),
+                    '---',
+                ];
+
+                foreach ($items as $it) {
+                    $date = optional($it->created_at)->format('Y-m-d') ?? '-';
+                    $currency = $it->currency?->code ?? '';
+                    $supplier = $it->supplier?->name ? ('Supplier: ' . $it->supplier->name) : '';
+                    $lines[] = sprintf('%s | -%s %s | %s | %s %s', $date, number_format((float) $it->amount, 2), $currency, $it->description ?? '-', $it->reference ?? '-', $supplier);
+                }
+            } else {
+                $items = SafeIncome::with('currency')
+                    ->where('safe_id', $safe->id)
+                    ->when($from, fn ($q) => $q->whereDate('created_at', '>=', $from))
+                    ->when($to, fn ($q) => $q->whereDate('created_at', '<=', $to))
+                    ->latest()
+                    ->get();
+
+                $title = 'Safe Incomes - ' . $safe->name;
+                $lines = [
+                    $title,
+                    'Generated: ' . now()->format('Y-m-d H:i'),
+                    'Entries: ' . $items->count(),
+                    '---',
+                ];
+
+                foreach ($items as $it) {
+                    $date = optional($it->created_at)->format('Y-m-d') ?? '-';
+                    $currency = $it->currency?->code ?? '';
+                    $lines[] = sprintf('%s | %s %s | %s | %s', $date, number_format((float) $it->amount, 2), $currency, $it->source ?? '-', $it->reference ?? '');
+                }
             }
-        } else {
-            $items = SafeIncome::with('currency')
-                ->where('safe_id', $safe->id)
-                ->when($from, fn ($q) => $q->whereDate('created_at', '>=', $from))
-                ->when($to, fn ($q) => $q->whereDate('created_at', '<=', $to))
-                ->latest()
-                ->get();
 
-            $title = __('messages.safe_incomes') . ' - ' . $safe->name;
-            $lines = [
-                $title,
-                'Generated: ' . now()->format('Y-m-d H:i'),
-                'Entries: ' . $items->count(),
-                '---',
-            ];
+            $pdf = SimplePdf::textDocument($title, $lines);
 
-            foreach ($items as $it) {
-                $date = optional($it->created_at)->format('Y-m-d') ?? '-';
-                $currency = $it->currency?->code ?? '';
-                $lines[] = sprintf('%s | %s %s | %s | %s', $date, number_format((float) $it->amount, 2), $currency, $it->source ?? '-', $it->reference ?? '');
+            $fromPart = $from ?: 'all';
+            $toPart = $to ?: 'all';
+            $filename = sprintf('safe-%s-%s-%s-%s.pdf', $safe->id, $type, $fromPart, $toPart);
+
+            Log::info('Safe PDF export generated', [
+                'safe_id' => $safe->id,
+                'type' => $type,
+                'rows' => $items->count(),
+                'filename' => $filename,
+            ]);
+
+            return response($pdf, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Safe PDF export failed', [
+                'safe_id' => $safe->id,
+                'type' => $request->query('type', 'income'),
+                'from_date' => $request->query('from_date'),
+                'to_date' => $request->query('to_date'),
+                'error' => $e->getMessage(),
+            ]);
+
+            try {
+                app(TelegramService::class)->notifyException($e, [
+                    'area' => 'safe-pdf-export',
+                    'safe_id' => $safe->id,
+                    'type' => $request->query('type', 'income'),
+                    'from_date' => $request->query('from_date'),
+                    'to_date' => $request->query('to_date'),
+                    'url' => $request->fullUrl(),
+                ]);
+            } catch (\Throwable $telegramError) {
+                Log::error('Failed to send Telegram safe export notification', [
+                    'error' => $telegramError->getMessage(),
+                ]);
             }
+
+            throw $e;
         }
-
-        $pdf = SimplePdf::textDocument($title, $lines);
-
-        $fromPart = $from ?: 'all';
-        $toPart = $to ?: 'all';
-        $filename = sprintf('safe-%s-%s-%s-%s.pdf', $safe->id, $type, $fromPart, $toPart);
-
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-        ]);
     }
 }

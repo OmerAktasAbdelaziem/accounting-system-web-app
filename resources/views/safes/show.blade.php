@@ -753,7 +753,7 @@
                 <h5 class="modal-title" id="exportPdfModalTitle"><i class="bi bi-file-earmark-pdf"></i> PDF Export</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="exportPdfForm" method="GET" action="{{ route('safes.export', $safe->id) }}" target="_blank">
+            <form id="exportPdfForm" method="GET" action="{{ route('safes.export', $safe->id) }}">
                 <div class="modal-body">
                     <input type="hidden" name="type" id="exportPdfType" value="income">
                     <div class="alert alert-info">
