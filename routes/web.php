@@ -246,6 +246,7 @@ Route::middleware('auth')->group(function () {
         Route::put('{safe}/outcome/{outcome}', [SafeController::class, 'updateOutcome'])->name('outcome.update');
         Route::delete('{safe}/outcome/{outcome}', [SafeController::class, 'deleteOutcome'])->name('outcome.delete');
         Route::post('{safe}/add-currency', [SafeController::class, 'addCurrency'])->name('add-currency');
+        Route::get('{safe}/export', [SafeController::class, 'exportPdf'])->name('export');
     });
 
     // Profile & Settings

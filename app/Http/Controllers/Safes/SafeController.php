@@ -15,6 +15,7 @@ use App\Models\Supplier;
 use App\Models\SupplierPayment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Support\SimplePdf;
 
 class SafeController extends Controller
 {
@@ -348,5 +349,68 @@ class SafeController extends Controller
         });
 
         return back()->with('success', 'Outcome deleted successfully!');
+    }
+
+    public function exportPdf(Request $request, Safe $safe)
+    {
+        $type = $request->query('type', 'income');
+        $from = $request->query('from_date');
+        $to = $request->query('to_date');
+
+        if ($type === 'outcome') {
+            $items = SafeOutcome::with('currency', 'supplier')
+                ->where('safe_id', $safe->id)
+                ->when($from, fn ($q) => $q->whereDate('created_at', '>=', $from))
+                ->when($to, fn ($q) => $q->whereDate('created_at', '<=', $to))
+                ->latest()
+                ->get();
+
+            $title = __('messages.safe_outcomes') . ' - ' . $safe->name;
+            $lines = [
+                $title,
+                'Generated: ' . now()->format('Y-m-d H:i'),
+                'Entries: ' . $items->count(),
+                '---',
+            ];
+
+            foreach ($items as $it) {
+                $date = optional($it->created_at)->format('Y-m-d') ?? '-';
+                $currency = $it->currency?->code ?? '';
+                $supplier = $it->supplier?->name ? ('Supplier: ' . $it->supplier->name) : '';
+                $lines[] = sprintf('%s | -%s %s | %s | %s %s', $date, number_format((float) $it->amount, 2), $currency, $it->description ?? '-', $it->reference ?? '-', $supplier);
+            }
+        } else {
+            $items = SafeIncome::with('currency')
+                ->where('safe_id', $safe->id)
+                ->when($from, fn ($q) => $q->whereDate('created_at', '>=', $from))
+                ->when($to, fn ($q) => $q->whereDate('created_at', '<=', $to))
+                ->latest()
+                ->get();
+
+            $title = __('messages.safe_incomes') . ' - ' . $safe->name;
+            $lines = [
+                $title,
+                'Generated: ' . now()->format('Y-m-d H:i'),
+                'Entries: ' . $items->count(),
+                '---',
+            ];
+
+            foreach ($items as $it) {
+                $date = optional($it->created_at)->format('Y-m-d') ?? '-';
+                $currency = $it->currency?->code ?? '';
+                $lines[] = sprintf('%s | %s %s | %s | %s', $date, number_format((float) $it->amount, 2), $currency, $it->source ?? '-', $it->reference ?? '');
+            }
+        }
+
+        $pdf = SimplePdf::textDocument($title, $lines);
+
+        $fromPart = $from ?: 'all';
+        $toPart = $to ?: 'all';
+        $filename = sprintf('safe-%s-%s-%s-%s.pdf', $safe->id, $type, $fromPart, $toPart);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
     }
 }

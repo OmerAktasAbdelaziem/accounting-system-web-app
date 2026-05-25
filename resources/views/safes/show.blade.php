@@ -1021,8 +1021,9 @@
     if (incomeExportBtn) incomeExportBtn.addEventListener('click', function () {
         const from = document.getElementById('incomeFrom').value || '';
         const to = document.getElementById('incomeTo').value || '';
-        const filename = `safe-{{ $safe->id }}-income-${from || 'all'}-${to || 'all'}.pdf`;
-        exportTableToPdf('#incomeTableWrapper table', 'Income - {{ $safe->name }}', filename);
+        const base = '{{ route("safes.export", ["safe" => $safe->id]) }}';
+        const url = base + '?type=income&from_date=' + encodeURIComponent(from) + '&to_date=' + encodeURIComponent(to);
+        window.location.href = url;
     });
 
     // Outcome filters & export
@@ -1034,8 +1035,9 @@
     if (outcomeExportBtn) outcomeExportBtn.addEventListener('click', function () {
         const from = document.getElementById('outcomeFrom').value || '';
         const to = document.getElementById('outcomeTo').value || '';
-        const filename = `safe-{{ $safe->id }}-outcome-${from || 'all'}-${to || 'all'}.pdf`;
-        exportTableToPdf('#outcomeTableWrapper table', 'Outcome - {{ $safe->name }}', filename);
+        const base = '{{ route("safes.export", ["safe" => $safe->id]) }}';
+        const url = base + '?type=outcome&from_date=' + encodeURIComponent(from) + '&to_date=' + encodeURIComponent(to);
+        window.location.href = url;
     });
 })();
 </script>
