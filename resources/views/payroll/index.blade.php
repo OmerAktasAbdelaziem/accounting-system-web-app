@@ -335,7 +335,7 @@
                                             <div class="text-muted small">Code: {{ $payroll->employee?->employee_code ?? 'N/A' }}</div>
                                         </td>
                                         <td>
-                                            <span class="badge rounded-pill bg-light text-dark border">{{ \\Carbon\\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}</span>
+                                            <span class="badge rounded-pill bg-light text-dark border">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}</span>
                                         </td>
                                         <td class="fw-bold fs-6">{{ $currencySymbol }}{{ number_format($netAmount, 2) }}</td>
                                         <td>
@@ -428,7 +428,7 @@
                                         <td class="ps-4 fw-semibold">{{ $payroll->id }}</td>
                                         <td>
                                             <div class="fw-semibold">{{ $employeeName }}</div>
-                                            <div class="text-muted small">{{ \\Carbon\\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}</div>
+                                            <div class="text-muted small">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}</div>
                                         </td>
                                         <td>
                                             <span class="badge rounded-pill bg-light text-dark border">{{ $payroll->safe?->name ?? '-' }}</span>
