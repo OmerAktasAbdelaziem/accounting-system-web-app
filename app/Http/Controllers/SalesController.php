@@ -163,6 +163,7 @@ class SalesController extends Controller
 
     public function exportPdf(Request $request)
     {
+        $this->authorizeDownloads($request);
         abort_unless($request->user()?->hasPermission('view_sales') || $request->user()?->isSuperAdmin(), 403);
 
         $validated = $request->validate([

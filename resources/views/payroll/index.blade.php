@@ -460,7 +460,9 @@
                                         <td class="text-end pe-4">
                                             <div class="payroll-action">
                                                 <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-sm btn-outline-secondary">View</a>
-                                                <a href="{{ route('payroll.payslip', $payroll) }}" class="btn btn-sm btn-outline-danger">PDF</a>
+                                                @if(auth()->user()?->canViewMenuItem('downloads'))
+                                                    <a href="{{ route('payroll.payslip', $payroll) }}" class="btn btn-sm btn-outline-danger">PDF</a>
+                                                @endif
                                                 <form action="{{ route('payroll.destroy', $payroll) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this payroll? If it was paid, the linked payment will be reversed.');">
                                                     @csrf
                                                     @method('DELETE')

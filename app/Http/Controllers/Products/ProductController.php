@@ -101,8 +101,10 @@ class ProductController extends Controller
         return view('products._table', compact('products'));
     }
 
-    public function export()
+    public function export(Request $request)
     {
+        $this->authorizeDownloads($request);
+
         return Excel::download(new ProductsExport, 'products.xlsx');
     }
 

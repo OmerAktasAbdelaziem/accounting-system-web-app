@@ -42,6 +42,7 @@ class FeatureAccessController extends Controller
         'branches' => 'Branches Management',
         'sales' => 'Sales Page',
         'sales_report' => 'Sales Reports',
+        'downloads' => 'Download & Export Actions',
         'audit_logs' => 'Audit Logs',
         
         // Advanced Features

@@ -355,6 +355,8 @@ class SafeController extends Controller
 
     public function exportPdf(Request $request, Safe $safe)
     {
+        $this->authorizeDownloads($request);
+
         try {
             $type = $request->query('type', 'income');
             $from = $request->query('from_date');

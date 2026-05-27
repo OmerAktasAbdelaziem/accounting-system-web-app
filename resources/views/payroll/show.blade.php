@@ -16,9 +16,11 @@
                 <span class="badge {{ $payroll->status === 'paid' ? 'bg-success' : 'bg-warning text-dark' }}">{{ strtoupper($payroll->status ?? 'draft') }}</span>
             </div>
             <div class="d-flex gap-2">
-                <a href="{{ route('payroll.payslip', $payroll) }}" class="btn btn-outline-danger" title="Download Payslip">
-                    <i class="bi bi-file-pdf"></i> {{ __('messages.download_pdf') }}
-                </a>
+                @if(auth()->user()?->canViewMenuItem('downloads'))
+                    <a href="{{ route('payroll.payslip', $payroll) }}" class="btn btn-outline-danger" title="Download Payslip">
+                        <i class="bi bi-file-pdf"></i> {{ __('messages.download_pdf') }}
+                    </a>
+                @endif
                 <a href="{{ route('payroll.edit', $payroll) }}" class="btn btn-warning">
                     <i class="bi bi-pencil"></i>
                 </a>

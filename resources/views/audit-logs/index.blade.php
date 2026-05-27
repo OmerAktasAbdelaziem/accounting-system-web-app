@@ -12,10 +12,12 @@
             </h2>
             <div class="text-muted">Track user activity, model changes, and system events in one place.</div>
         </div>
-        <a href="{{ route('audit-logs.export', request()->query()) }}" class="btn btn-primary-modern btn-sm" title="{{ __('audit_logs.export') }}">
-            <i class="fas fa-download me-2"></i>
-            {{ __('audit_logs.export') }}
-        </a>
+        @if(auth()->user()?->canViewMenuItem('downloads'))
+            <a href="{{ route('audit-logs.export', request()->query()) }}" class="btn btn-primary-modern btn-sm" title="{{ __('audit_logs.export') }}">
+                <i class="fas fa-download me-2"></i>
+                {{ __('audit_logs.export') }}
+            </a>
+        @endif
     </div>
 
     <div class="row g-3 mb-4">

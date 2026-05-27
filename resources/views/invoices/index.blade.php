@@ -31,7 +31,9 @@
                         <td class="action-buttons">
                             <a href="{{ route('invoices.show', $invoice) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
                             <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-sm btn-outline-primary">{{ __('Edit') }}</a>
-                            <a href="{{ route('invoices.pdf', $invoice) }}" class="btn btn-sm btn-outline-success">{{ __('PDF') }}</a>
+                            @if(auth()->user()?->canViewMenuItem('downloads'))
+                                <a href="{{ route('invoices.pdf', $invoice) }}" class="btn btn-sm btn-outline-success">{{ __('PDF') }}</a>
+                            @endif
                             <form action="{{ route('invoices.destroy', $invoice) }}" method="POST" style="display:inline-block">
                                 @csrf
                                 @method('DELETE')

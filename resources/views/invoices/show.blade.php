@@ -6,7 +6,9 @@
         <h3>{{ $invoice->invoice_number }}</h3>
         <div>
             <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-primary">{{ __('Edit') }}</a>
-            <a href="{{ route('invoices.pdf', $invoice) }}" class="btn btn-outline-danger">{{ __('messages.download_pdf') }}</a>
+            @if(auth()->user()?->canViewMenuItem('downloads'))
+                <a href="{{ route('invoices.pdf', $invoice) }}" class="btn btn-outline-danger">{{ __('messages.download_pdf') }}</a>
+            @endif
         </div>
     </div>
 

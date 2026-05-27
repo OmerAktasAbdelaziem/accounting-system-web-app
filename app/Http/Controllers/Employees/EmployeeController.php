@@ -115,8 +115,10 @@ class EmployeeController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function export()
+    public function export(Request $request)
     {
+        $this->authorizeDownloads($request);
+
         $employees = Employee::all();
         // Generate Excel file
         return response()->json(['success' => true]);

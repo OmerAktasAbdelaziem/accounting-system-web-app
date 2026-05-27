@@ -424,10 +424,12 @@
                     <div class="field-hint">Filter by date range.</div>
                 </div>
                 <div class="d-flex align-items-center gap-2">
+                    @if(auth()->user()?->canViewMenuItem('downloads'))
                     <button type="button" id="open-sales-export-modal" class="btn btn-outline-danger btn-sm">
                         <i class="bi bi-file-earmark-pdf"></i>
                         Download PDF
                     </button>
+                    @endif
                     <span class="badge text-bg-light border">{{ $sales->total() }} results</span>
                 </div>
             </div>
@@ -544,6 +546,7 @@
             @endif
         </div>
 
+        @if(auth()->user()?->canViewMenuItem('downloads'))
         <div class="modal fade" id="salesExportModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
@@ -615,6 +618,7 @@
                 </div>
             </div>
         </div>
+        @endif
     </div>
 </div>
 

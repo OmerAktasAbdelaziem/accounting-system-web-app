@@ -295,6 +295,8 @@ class SupplierController extends Controller
 
     public function statementPdf(Request $request, Supplier $supplier)
     {
+        $this->authorizeDownloads($request);
+
         $branchId = $request->integer('branch_id') ?: null;
         if ($branchId && ! $supplier->branches()->whereKey($branchId)->exists()) {
             abort(404);

@@ -103,6 +103,8 @@ class ReportController extends Controller
 
     public function generatePdf(Request $request)
     {
+        $this->authorizeDownloads($request);
+
         $report = $request->input('report', 'sales');
         $format = strtolower((string) $request->input('format', 'pdf'));
 

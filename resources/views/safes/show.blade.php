@@ -225,6 +225,7 @@
 
                 @if(count($recentIncomes) > 0)
                     <div class="d-flex mb-2 gap-2">
+                        @if(auth()->user()?->canViewMenuItem('downloads'))
                         <button class="btn btn-success btn-sm"
                             id="incomeExportBtn"
                             type="button"
@@ -232,6 +233,7 @@
                             data-bs-target="#exportPdfModal"
                             data-export-type="income"
                             data-export-title="Income PDF Export">Export PDF</button>
+                        @endif
                     </div>
                     <div class="table-responsive" id="incomeTableWrapper" style="max-height: 320px; overflow-y: auto;">
                         <table class="table table-sm align-middle mb-0">
@@ -299,6 +301,7 @@
 
                 @if(count($recentOutcomes) > 0)
                     <div class="d-flex mb-2 gap-2">
+                        @if(auth()->user()?->canViewMenuItem('downloads'))
                         <button class="btn btn-danger btn-sm"
                             id="outcomeExportBtn"
                             type="button"
@@ -306,6 +309,7 @@
                             data-bs-target="#exportPdfModal"
                             data-export-type="outcome"
                             data-export-title="Outcome PDF Export">Export PDF</button>
+                        @endif
                     </div>
                     <div class="table-responsive" id="outcomeTableWrapper" style="max-height: 320px; overflow-y: auto;">
                         <table class="table table-sm align-middle mb-0">
@@ -724,6 +728,7 @@
     </div>
 </div>
 
+@if(auth()->user()?->canViewMenuItem('downloads'))
 <div class="modal fade" id="exportPdfModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -758,6 +763,7 @@
         </div>
     </div>
 </div>
+@endif
 
 <script>
 (function () {

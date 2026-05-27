@@ -125,8 +125,10 @@ class InvoiceController extends Controller
         return redirect()->route('invoices.index')->with('success', __('messages.deleted'));
     }
 
-    public function downloadPdf(Invoice $invoice)
+    public function downloadPdf(Request $request, Invoice $invoice)
     {
+        $this->authorizeDownloads($request);
+
         $invoice->load('items.product');
 
         $lines = [

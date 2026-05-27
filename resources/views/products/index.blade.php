@@ -67,9 +67,11 @@
             <a href="{{ route('products.create') }}" class="btn btn-primary-modern me-2">
                 <i class="bi bi-plus-circle"></i> {{ __('messages.add_product') }}
             </a>
+            @if(auth()->user()?->canViewMenuItem('downloads'))
             <button class="btn btn-success-modern" onclick="exportToExcel()">
                 <i class="bi bi-download"></i> {{ __('messages.export') }}
             </button>
+            @endif
         </div>
     </div>
 </div>
@@ -158,6 +160,8 @@
 
 @section('js')
 <script>
+    const canDownloadExports = @json(auth()->user()?->canViewMenuItem('downloads') ?? false);
+
     function filterProducts() {
         const search = document.getElementById('searchInput').value;
         const category = document.getElementById('categoryFilter').value;
@@ -172,6 +176,10 @@
     }
 
     function exportToExcel() {
+        if (!canDownloadExports) {
+            return;
+        }
+
         showLoading();
         fetch('{{ route('products.export') }}')
             .then(response => response.blob())

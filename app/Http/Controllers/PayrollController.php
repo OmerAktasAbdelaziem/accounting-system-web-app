@@ -374,8 +374,10 @@ class PayrollController extends Controller
         return redirect()->route('payroll.index')->with('success', __('messages.deleted'));
     }
 
-    public function downloadPayslip(Payroll $payroll)
+    public function downloadPayslip(Request $request, Payroll $payroll)
     {
+        $this->authorizeDownloads($request);
+
         $payroll->loadMissing('employee.branches');
         $commission = $payroll->employee
             ? $this->calculateCommissionForEmployeePeriod($payroll->employee, (int) $payroll->month, (int) $payroll->year)
