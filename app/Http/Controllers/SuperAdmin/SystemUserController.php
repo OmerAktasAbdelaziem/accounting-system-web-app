@@ -81,7 +81,7 @@ class SystemUserController extends Controller
         if ($validated['branch_access_mode'] === 'custom' && !empty($validated['branch_access_branch_ids']) && !empty($validated['merchant_id'])) {
             $validated['branch_access_branch_ids'] = Branch::query()
                 ->where('merchant_id', $validated['merchant_id'])
-                ->whereIn('id', $validated['branch_access_branch_ids'])
+                ->whereIn('branches.id', $validated['branch_access_branch_ids'])
                 ->pluck('id')
                 ->map(fn ($branchId) => (int) $branchId)
                 ->all();
@@ -129,7 +129,7 @@ class SystemUserController extends Controller
         if ($validated['branch_access_mode'] === 'custom' && !empty($validated['branch_access_branch_ids']) && !empty($validated['merchant_id'])) {
             $validated['branch_access_branch_ids'] = Branch::query()
                 ->where('merchant_id', $validated['merchant_id'])
-                ->whereIn('id', $validated['branch_access_branch_ids'])
+                ->whereIn('branches.id', $validated['branch_access_branch_ids'])
                 ->pluck('id')
                 ->map(fn ($branchId) => (int) $branchId)
                 ->all();

@@ -146,7 +146,7 @@ class DataRecoveryController extends Controller
         $affected = 0;
 
         if ($validated['group'] === 'branches') {
-            $affected = Branch::whereIn('id', $recordIds)
+            $affected = Branch::whereIn('branches.id', $recordIds)
                 ->whereNull('merchant_id')
                 ->update(['merchant_id' => $merchant->id]);
 

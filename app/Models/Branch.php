@@ -56,7 +56,7 @@ class Branch extends Model
                 return;
             }
 
-            $builder->whereIn('id', $allowedBranchIds);
+            $builder->whereIn('branches.id', $allowedBranchIds);
         });
     }
 

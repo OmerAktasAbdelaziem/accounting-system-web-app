@@ -68,7 +68,7 @@ class BranchAccess extends Model
         }
 
         $branches = Branch::query()
-            ->whereIn('id', $branchIds)
+            ->whereIn('branches.id', $branchIds)
             ->get(['id', 'merchant_id']);
 
         foreach ($branches as $branch) {
