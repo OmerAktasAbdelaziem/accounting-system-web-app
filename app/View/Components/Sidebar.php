@@ -46,7 +46,7 @@ class Sidebar extends Component
             ['route' => 'products.index', 'icon' => 'bi-box-seam', 'label' => 'Products', 'feature' => 'products', 'permission' => 'view_product'],
             ['route' => 'categories.index', 'icon' => 'bi-tags', 'label' => 'Categories', 'feature' => 'categories', 'permission' => 'view_category'],
             ['route' => 'employees.index', 'icon' => 'bi-people', 'label' => 'Employees', 'feature' => 'employees', 'permission' => 'view_user'],
-            ['route' => 'sales.index', 'icon' => 'bi-cash-coin', 'label' => 'Sales', 'feature' => 'sales_report', 'permission' => 'view_reports'],
+            ['route' => 'sales.index', 'icon' => 'bi-cash-coin', 'label' => 'Sales', 'feature' => 'sales_report', 'permission' => 'view_sales'],
         ];
 
         $suppliers = [

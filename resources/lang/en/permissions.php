@@ -15,8 +15,17 @@ return [
     'permission_created_successfully' => 'Permission created successfully',
     'permission_updated_successfully' => 'Permission updated successfully',
     'permission_deleted_successfully' => 'Permission deleted successfully',
+    'view_sales' => 'View Sales',
+    'view_safe' => 'View Safe',
+    'create_safe' => 'Create Safe',
+    'edit_safe' => 'Edit Safe',
+    'delete_safe' => 'Delete Safe',
+    'deposit_safe' => 'Deposit Safe',
+    'withdraw_safe' => 'Withdraw Safe',
     'categories' => [
         'general' => 'General',
+        'sales_management' => 'Sales Management',
+        'safe_management' => 'Safe Management',
         'other' => 'Other',
     ],
 ];

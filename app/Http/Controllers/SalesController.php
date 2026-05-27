@@ -14,6 +14,8 @@ class SalesController extends Controller
 {
     public function index(Request $request)
     {
+        abort_unless($request->user()?->hasPermission('view_sales') || $request->user()?->isSuperAdmin(), 403);
+
         $sales = EmployeeSale::with(['branch', 'employee', 'employeeSaleDetails.employee'])
             ->when($request->filled('branch_id'), function ($query) use ($request) {
                 $query->where('branch_id', $request->integer('branch_id'));
@@ -44,6 +46,8 @@ class SalesController extends Controller
 
     public function store(Request $request)
     {
+        abort_unless($request->user()?->hasPermission('view_sales') || $request->user()?->isSuperAdmin(), 403);
+
         $validated = $request->validate([
             'sale_date' => 'required|date|before_or_equal:today',
             'branch_id' => 'required|exists:branches,id',
@@ -98,6 +102,8 @@ class SalesController extends Controller
 
     public function edit(EmployeeSale $sale)
     {
+        abort_unless(request()->user()?->hasPermission('view_sales') || request()->user()?->isSuperAdmin(), 403);
+
         $branches = Branch::orderBy('name')->get();
         $employees = Employee::active()->orderBy('name')->get();
         return view('sales.edit', compact('sale', 'branches'));
@@ -105,6 +111,8 @@ class SalesController extends Controller
 
     public function update(Request $request, EmployeeSale $sale)
     {
+        abort_unless($request->user()?->hasPermission('view_sales') || $request->user()?->isSuperAdmin(), 403);
+
         $validated = $request->validate([
             'sale_date' => 'required|date|before_or_equal:today',
             'branch_id' => 'required|exists:branches,id',
@@ -155,6 +163,8 @@ class SalesController extends Controller
 
     public function exportPdf(Request $request)
     {
+        abort_unless($request->user()?->hasPermission('view_sales') || $request->user()?->isSuperAdmin(), 403);
+
         $validated = $request->validate([
             'export_mode' => 'required|in:selected,date',
             'sale_ids' => 'nullable|array',

@@ -77,6 +77,17 @@ class RolePermissionSeeder extends Seeder
             ['name' => 'view_reports', 'name_ar' => 'عرض التقارير', 'description' => 'Can view reports'],
             ['name' => 'export_reports', 'name_ar' => 'تصدير التقارير', 'description' => 'Can export reports'],
 
+            // Sales Management
+            ['name' => 'view_sales', 'name_ar' => 'عرض المبيعات', 'description' => 'Can view the sales page and records', 'category' => 'Sales Management'],
+
+            // Safe Management
+            ['name' => 'view_safe', 'name_ar' => 'عرض الخزنة', 'description' => 'Can view safes', 'category' => 'Safe Management'],
+            ['name' => 'create_safe', 'name_ar' => 'إنشاء خزنة', 'description' => 'Can create safes', 'category' => 'Safe Management'],
+            ['name' => 'edit_safe', 'name_ar' => 'تعديل خزنة', 'description' => 'Can edit safes', 'category' => 'Safe Management'],
+            ['name' => 'delete_safe', 'name_ar' => 'حذف خزنة', 'description' => 'Can delete safes', 'category' => 'Safe Management'],
+            ['name' => 'deposit_safe', 'name_ar' => 'إيداع الخزنة', 'description' => 'Can deposit into safes', 'category' => 'Safe Management'],
+            ['name' => 'withdraw_safe', 'name_ar' => 'سحب من الخزنة', 'description' => 'Can withdraw from safes', 'category' => 'Safe Management'],
+
             // Customer Management
             ['name' => 'create_customer', 'name_ar' => 'إنشاء عميل', 'description' => 'Can create customers'],
             ['name' => 'edit_customer', 'name_ar' => 'تعديل عميل', 'description' => 'Can edit customers'],
@@ -155,7 +166,14 @@ class RolePermissionSeeder extends Seeder
                 'view_supplier',
                 'view_invoice',
                 'view_payroll',
-                'view_user'
+                'view_user',
+                'view_sales',
+                'view_safe',
+                'create_safe',
+                'edit_safe',
+                'delete_safe',
+                'deposit_safe',
+                'withdraw_safe'
             ])
             ->pluck('id')
             ->toArray();
@@ -170,7 +188,9 @@ class RolePermissionSeeder extends Seeder
                 'record_inventory_movement',
                 'view_customer',
                 'view_supplier',
-                'view_invoice'
+                'view_invoice',
+                'view_sales',
+                'view_safe'
             ])
             ->pluck('id')
             ->toArray();
@@ -187,7 +207,9 @@ class RolePermissionSeeder extends Seeder
                 'view_supplier',
                 'view_invoice',
                 'view_payroll',
-                'view_user'
+                'view_user',
+                'view_sales',
+                'view_safe'
             ])
             ->pluck('id')
             ->toArray();
