@@ -149,7 +149,7 @@ class CommissionController extends Controller
                 ->whereDoesntHave('commissionTransactions', function ($subQuery) {
                     $subQuery->where('status', '!=', 'paid');
                 })
-                ->orWhere('id', $commission->employee_id);
+                ->orWhere('employees.id', $commission->employee_id);
         })->orderBy('name')->get();
         $branches = Branch::orderBy('name')->get();
         $selectedBranchIds = $commission->branches()->pluck('branches.id')->all();

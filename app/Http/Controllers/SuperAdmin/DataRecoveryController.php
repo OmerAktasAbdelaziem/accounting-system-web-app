@@ -180,7 +180,7 @@ class DataRecoveryController extends Controller
         }
 
         if (!$branch) {
-            $branch = $merchant->branches()->orderBy('id')->first();
+            $branch = $merchant->branches()->orderBy('branches.id')->first();
         }
 
         if (!$branch) {
