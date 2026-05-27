@@ -173,6 +173,35 @@ class User extends Authenticatable
     }
 
     /**
+     * Get branch IDs this user can access.
+     * Return null when the user is unrestricted.
+     */
+    public function accessibleBranchIds(): ?array
+    {
+        if ($this->isSuperAdmin() || $this->isMerchantAdmin() || !$this->merchant_id || !$this->role_id) {
+            return null;
+        }
+
+        $branchIds = BranchAccess::accessibleBranchIdsFor((int) $this->merchant_id, (int) $this->role_id);
+
+        return empty($branchIds) ? null : $branchIds;
+    }
+
+    /**
+     * Check whether the current user can access a specific branch.
+     */
+    public function canAccessBranch(int $branchId): bool
+    {
+        $branchIds = $this->accessibleBranchIds();
+
+        if ($branchIds === null) {
+            return true;
+        }
+
+        return in_array($branchId, $branchIds, true);
+    }
+
+    /**
      * Update last login timestamp
      */
     public function recordLogin(): void

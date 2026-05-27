@@ -2,6 +2,7 @@
 
 namespace App\Models\Concerns;
 
+use App\Models\BranchAccess;
 use App\Models\Branch;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -22,20 +23,28 @@ trait HasBranches
                 return;
             }
 
+            $allowedBranchIds = $user->accessibleBranchIds();
+            if ($allowedBranchIds === null) {
+                return;
+            }
+
+            if (empty($allowedBranchIds)) {
+                $builder->whereRaw('1 = 0');
+                return;
+            }
+
             $model = new static();
             $table = $model->getTable();
             $qualifiedBranchId = $table . '.branch_id';
             $hasBranchIdColumn = Schema::hasColumn($table, 'branch_id');
 
-            $builder->where(function (Builder $query) use ($user, $qualifiedBranchId, $hasBranchIdColumn) {
-                $query->whereHas('branches', function (Builder $branchQuery) use ($user) {
-                    $branchQuery->where('branches.merchant_id', $user->merchant_id);
+            $builder->where(function (Builder $query) use ($allowedBranchIds, $qualifiedBranchId, $hasBranchIdColumn) {
+                $query->whereHas('branches', function (Builder $branchQuery) use ($allowedBranchIds) {
+                    $branchQuery->whereIn('branches.id', $allowedBranchIds);
                 });
 
                 if ($hasBranchIdColumn) {
-                    $query->orWhereIn($qualifiedBranchId, Branch::query()
-                        ->select('id')
-                        ->where('merchant_id', $user->merchant_id));
+                    $query->orWhereIn($qualifiedBranchId, $allowedBranchIds);
                 }
             });
         });

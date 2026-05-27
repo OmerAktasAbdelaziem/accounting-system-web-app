@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class SupplierPayment extends Model
 {
+    use \App\Models\Concerns\HasBranches;
+
     protected $fillable = [
         'supplier_id',
         'branch_id',

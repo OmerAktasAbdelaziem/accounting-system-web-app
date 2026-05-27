@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class JournalEntry extends Model
 {
     use HasFactory, SoftDeletes;
+    use \App\Models\Concerns\HasBranches;
 
     protected $fillable = [
         'date',

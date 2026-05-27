@@ -91,6 +91,42 @@
                                 </div>
                             </div>
 
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Branch visibility</label>
+                                <div class="text-muted small mb-3">Select the branches this role can see inside the merchant. If nothing is selected, the role keeps full branch visibility.</div>
+
+                                <div class="accordion" id="branchAccessAccordion">
+                                    @foreach ($merchants as $merchant)
+                                        <div class="accordion-item border-0 shadow-sm mb-3 rounded-4 overflow-hidden">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#merchant-branches-{{ $merchant->id }}">
+                                                    {{ $merchant->name }}
+                                                </button>
+                                            </h2>
+                                            <div id="merchant-branches-{{ $merchant->id }}" class="accordion-collapse collapse" data-bs-parent="#branchAccessAccordion">
+                                                <div class="accordion-body bg-white">
+                                                    <div class="row g-2">
+                                                        @forelse ($merchant->branches as $branch)
+                                                            <div class="col-md-6">
+                                                                <div class="form-check p-3 border rounded-4 h-100">
+                                                                    <input class="form-check-input" type="checkbox" name="branch_ids[]" value="{{ $branch->id }}" id="branch_{{ $branch->id }}" {{ in_array($branch->id, old('branch_ids', [])) ? 'checked' : '' }}>
+                                                                    <label class="form-check-label ms-2" for="branch_{{ $branch->id }}">
+                                                                        <strong>{{ $branch->name }}</strong>
+                                                                        <small class="d-block text-muted">{{ $branch->city ?? $branch->address ?? 'Branch' }}</small>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        @empty
+                                                            <div class="col-12 text-muted">No branches found for this merchant.</div>
+                                                        @endforelse
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
                             <div class="col-12 d-flex gap-2 pt-2">
                                 <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save me-2"></i>{{ __('actions.save') }}</button>
                                 <a href="{{ route('roles.index') }}" class="btn btn-outline-secondary px-4">{{ __('actions.cancel') }}</a>

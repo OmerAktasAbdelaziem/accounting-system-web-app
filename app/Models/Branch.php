@@ -14,21 +14,6 @@ class Branch extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'merchant_id',
-        'name',
-        'code',
-        'address',
-        'city',
-        'phone',
-        'manager_name',
-        'is_active',
-    ];
-
-    protected $casts = [
-        'is_active' => 'boolean',
-    ];
-
     protected static function booted(): void
     {
         static::creating(function (Branch $branch) {
@@ -50,7 +35,45 @@ class Branch extends Model
 
             $builder->where('merchant_id', $user->merchant_id);
         });
+
+        static::addGlobalScope('role_branch_scope', function (Builder $builder) {
+            if (!Auth::check()) {
+                return;
+            }
+
+            $user = Auth::user();
+            if (!$user || $user->isSuperAdmin() || $user->isMerchantAdmin() || empty($user->merchant_id)) {
+                return;
+            }
+
+            $allowedBranchIds = $user->accessibleBranchIds();
+            if ($allowedBranchIds === null) {
+                return;
+            }
+
+            if (empty($allowedBranchIds)) {
+                $builder->whereRaw('1 = 0');
+                return;
+            }
+
+            $builder->whereIn('id', $allowedBranchIds);
+        });
     }
+
+    protected $fillable = [
+        'merchant_id',
+        'name',
+        'code',
+        'address',
+        'city',
+        'phone',
+        'manager_name',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
 
     public function merchant(): BelongsTo
     {

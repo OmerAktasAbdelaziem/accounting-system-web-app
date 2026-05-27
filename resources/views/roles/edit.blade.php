@@ -114,6 +114,42 @@
                             @endforeach
                         </div>
 
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Branch visibility</label>
+                            <div class="text-muted small mb-3">Choose which branches this role can access. Leave everything empty to keep full visibility.</div>
+
+                            <div class="accordion" id="branchAccessAccordionEdit">
+                                @foreach ($merchants as $merchant)
+                                    <div class="card mb-3 border-0 shadow-sm">
+                                        <div class="card-header bg-white">
+                                            <button class="btn btn-link text-decoration-none p-0 fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#edit-merchant-branches-{{ $merchant->id }}">
+                                                {{ $merchant->name }}
+                                            </button>
+                                        </div>
+                                        <div id="edit-merchant-branches-{{ $merchant->id }}" class="collapse" data-bs-parent="#branchAccessAccordionEdit">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    @forelse ($merchant->branches as $branch)
+                                                        <div class="col-md-6 mb-2">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" name="branch_ids[]" value="{{ $branch->id }}" id="edit_branch_{{ $branch->id }}" {{ in_array($branch->id, $selectedBranchIds ?? []) ? 'checked' : '' }} {{ in_array($role->name, ['Admin', 'System']) ? 'disabled' : '' }}>
+                                                                <label class="form-check-label" for="edit_branch_{{ $branch->id }}">
+                                                                    <strong>{{ $branch->name }}</strong>
+                                                                    <small class="d-block text-muted">{{ $branch->city ?? $branch->address ?? 'Branch' }}</small>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    @empty
+                                                        <div class="col-12 text-muted">No branches found for this merchant.</div>
+                                                    @endforelse
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
                         @if (!in_array($role->name, ['Admin', 'System']))
                             <div class="d-flex gap-2 pt-3">
                                 <button type="submit" class="btn btn-primary">

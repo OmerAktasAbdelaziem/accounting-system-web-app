@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
+use App\Models\BranchAccess;
+use App\Models\Branch;
+use App\Models\Merchant;
 use App\Models\Role;
 use App\Models\Permission;
 use Illuminate\Http\Request;
@@ -26,7 +29,10 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::with('permissions')->orderBy('created_at', 'desc')->paginate(25);
+        $roles = Role::with(['permissions', 'branchAccesses'])
+            ->withCount('users')
+            ->orderBy('created_at', 'desc')
+            ->paginate(25);
         return view('roles.index', compact('roles'));
     }
 
@@ -36,7 +42,11 @@ class RoleController extends Controller
     public function create()
     {
         $permissions = Permission::orderBy('name')->get();
-        return view('roles.create', compact('permissions'));
+        $merchants = Merchant::with(['branches' => fn ($query) => $query->orderBy('name')])
+            ->orderBy('name')
+            ->get();
+
+        return view('roles.create', compact('permissions', 'merchants'));
     }
 
     /**
@@ -55,6 +65,8 @@ class RoleController extends Controller
             $role->permissions()->attach($validated['permissions']);
         }
 
+        BranchAccess::syncForRole($role, $validated['branch_ids'] ?? []);
+
         return redirect()->route('roles.index')
             ->with('success', __('messages.role_created_successfully'));
     }
@@ -69,11 +81,15 @@ class RoleController extends Controller
                 ->with('error', __('messages.cannot_edit_system_roles'));
         }
 
-        $role->load('permissions');
+        $role->load(['permissions', 'branchAccesses.branch', 'branchAccesses.merchant']);
         $permissions = Permission::orderBy('name')->get();
         $selectedPermissions = $role->permissions->pluck('id')->toArray();
+        $selectedBranchIds = $role->branchAccesses->pluck('branch_id')->map(fn ($branchId) => (int) $branchId)->all();
+        $merchants = Merchant::with(['branches' => fn ($query) => $query->orderBy('name')])
+            ->orderBy('name')
+            ->get();
 
-        return view('roles.edit', compact('role', 'permissions', 'selectedPermissions'));
+        return view('roles.edit', compact('role', 'permissions', 'selectedPermissions', 'selectedBranchIds', 'merchants'));
     }
 
     /**
@@ -99,6 +115,8 @@ class RoleController extends Controller
         } else {
             $role->permissions()->detach();
         }
+
+        BranchAccess::syncForRole($role, $validated['branch_ids'] ?? []);
 
         return redirect()->route('roles.index')
             ->with('success', __('messages.role_updated_successfully'));

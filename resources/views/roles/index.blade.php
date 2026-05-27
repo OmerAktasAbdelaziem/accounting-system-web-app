@@ -28,6 +28,7 @@
                         <th>{{ __('roles.role_name') }}</th>
                         <th>{{ __('roles.description') }}</th>
                         <th>{{ __('roles.permissions') }}</th>
+                        <th>Branches</th>
                         <th>{{ __('roles.users_count') }}</th>
                         <th style="width: 150px;">{{ __('actions.action') }}</th>
                     </tr>
@@ -50,7 +51,13 @@
                                 </small>
                             </td>
                             <td>
-                                <span class="badge bg-info">{{ $role->users->count() }}</span>
+                                @php $branchCount = $role->branchAccesses->count(); @endphp
+                                <small class="text-muted">
+                                    {{ $branchCount > 0 ? $branchCount . ' branches allowed' : 'All branches' }}
+                                </small>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ $role->users_count ?? $role->users->count() }}</span>
                             </td>
                             <td>
                                 <div class="action-buttons btn-group" role="group" aria-label="{{ __('actions.action') }}">
@@ -74,7 +81,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center text-muted py-4">
+                            <td colspan="6" class="text-center text-muted py-4">
                                 <i class="fas fa-inbox fa-2x mb-2"></i>
                                 <p>{{ __('roles.no_roles_found') }}</p>
                             </td>
