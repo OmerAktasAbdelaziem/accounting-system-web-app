@@ -22,6 +22,13 @@
                 <a href="{{ route('payroll.edit', $payroll) }}" class="btn btn-warning">
                     <i class="bi bi-pencil"></i>
                 </a>
+                <form action="{{ route('payroll.destroy', $payroll) }}" method="POST" onsubmit="return confirm('Delete this payroll? This will also reverse the linked payment if it was already paid.');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
                 <a href="{{ route('payroll.index') }}" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i>
                 </a>

@@ -132,6 +132,11 @@
                                             <div class="btn-group btn-group-sm" role="group">
                                                 <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-outline-secondary">{{ __('View') }}</a>
                                                 <a href="{{ route('payroll.edit', $payroll) }}" class="btn btn-outline-primary">{{ __('Edit') }}</a>
+                                                <form action="{{ route('payroll.destroy', $payroll) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this payroll? If it was paid, the linked payment will be reversed.');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-outline-danger">{{ __('Delete') }}</button>
+                                                </form>
                                                 <button
                                                     type="button"
                                                     class="btn btn-success"
@@ -204,6 +209,11 @@
                                     <div class="btn-group btn-group-sm" role="group">
                                         <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-outline-secondary">{{ __('View') }}</a>
                                         <a href="{{ route('payroll.payslip', $payroll) }}" class="btn btn-outline-danger">{{ __('PDF') }}</a>
+                                        <form action="{{ route('payroll.destroy', $payroll) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this payroll? If it was paid, the linked payment will be reversed.');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-outline-danger">{{ __('Delete') }}</button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>

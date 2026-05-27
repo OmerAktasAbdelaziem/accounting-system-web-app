@@ -334,7 +334,43 @@ class PayrollController extends Controller
 
     public function destroy(Payroll $payroll)
     {
-        $payroll->delete();
+        DB::transaction(function () use ($payroll) {
+            $payroll->loadMissing('employee.branches', 'safe');
+
+            if ($payroll->isPaid() && $payroll->safe) {
+                $reverseAmount = (float) ($payroll->net_salary ?? $payroll->calculateNetSalary());
+
+                SafeOutcome::query()
+                    ->where('safe_id', $payroll->safe_id)
+                    ->where('reference', 'Payroll #' . $payroll->id)
+                    ->delete();
+
+                $payroll->safe->update([
+                    'balance' => (float) $payroll->safe->balance + $reverseAmount,
+                ]);
+
+                $employee = $payroll->employee;
+                if ($employee) {
+                    Commission::query()
+                        ->where('employee_id', $employee->id)
+                        ->whereMonth('commission_date', (int) $payroll->month)
+                        ->whereYear('commission_date', (int) $payroll->year)
+                        ->update(['status' => 'pending']);
+
+                    EmployeeCommission::query()
+                        ->where('employee_id', $employee->id)
+                        ->where('month', (int) $payroll->month)
+                        ->where('year', (int) $payroll->year)
+                        ->update([
+                            'status' => 'pending',
+                            'paid_at' => null,
+                        ]);
+                }
+            }
+
+            $payroll->delete();
+        });
+
         return redirect()->route('payroll.index')->with('success', __('messages.deleted'));
     }
 
