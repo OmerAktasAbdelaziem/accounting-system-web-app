@@ -400,7 +400,7 @@ class ChatController extends Controller
                 ->where('user_type', 'merchant_admin')
                 ->whereNotNull('merchant_id')
                 ->where('is_active', true)
-                ->where('id', '!=', $user->id)
+                ->where('users.id', '!=', $user->id)
                 ->orderBy('name')
                 ->get()
                 ->map(fn (User $contact) => $this->contactPayload($user, $contact));
