@@ -10,6 +10,8 @@ class BranchAccess extends Model
 {
     use HasFactory;
 
+    protected $table = 'role_branch_accesses';
+
     protected $fillable = [
         'merchant_id',
         'role_id',
