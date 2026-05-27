@@ -568,9 +568,10 @@ class ChatController extends Controller
         }
 
         return User::query()
+            ->select('users.*')
             ->where('user_type', 'super_admin')
             ->where('is_active', true)
-            ->orderBy('id')
+            ->orderBy('users.id')
             ->first();
     }
 
