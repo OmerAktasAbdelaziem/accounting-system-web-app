@@ -28,6 +28,7 @@ class Sidebar extends Component
                 'admin' => [
                     ['route' => 'super-admin.users.index', 'icon' => 'bi-people', 'label' => 'System Users'],
                     ['route' => 'roles.index', 'icon' => 'bi-shield-lock', 'label' => 'Roles Management'],
+                    ['route' => 'super-admin.feature-access.index', 'icon' => 'bi-sliders', 'label' => 'Feature Access'],
                     ['route' => 'super-admin.merchants.index', 'icon' => 'bi-building', 'label' => 'Merchants'],
                     ['route' => 'super-admin.packages.index', 'icon' => 'bi-box-seam', 'label' => 'Packages'],
                     ['route' => 'super-admin.subscriptions.index', 'icon' => 'bi-bookmark-check', 'label' => 'Subscriptions'],
