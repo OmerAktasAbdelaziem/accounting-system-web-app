@@ -149,6 +149,28 @@
         box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
     }
 
+    .snapshot-panel {
+        min-width: min(100%, 290px);
+        max-width: 320px;
+        padding: 1rem !important;
+    }
+
+    .snapshot-title {
+        font-size: .72rem;
+        letter-spacing: .06em;
+    }
+
+    .snapshot-value {
+        font-size: 1.35rem;
+        line-height: 1.05;
+        font-weight: 900;
+    }
+
+    .snapshot-chip {
+        padding: .28rem .65rem;
+        font-size: .72rem;
+    }
+
     .hero-note {
         color: rgba(255,255,255,.78);
         max-width: 54rem;
@@ -189,31 +211,31 @@
                     </div>
                 </div>
 
-                <div class="soft-panel p-3 p-lg-4" style="min-width: min(100%, 360px); background: rgba(255,255,255,.08); backdrop-filter: blur(18px); color: #fff;">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="soft-panel snapshot-panel" style="background: rgba(255,255,255,.08); backdrop-filter: blur(18px); color: #fff;">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
                         <div>
-                            <div class="text-uppercase small opacity-75 fw-semibold">Live snapshot</div>
-                            <div class="h5 mb-0">Payroll health</div>
+                            <div class="text-uppercase fw-semibold opacity-75 snapshot-title">Live snapshot</div>
+                            <div class="h6 mb-0">Payroll health</div>
                         </div>
-                        <span class="badge rounded-pill bg-success">Dynamic</span>
+                        <span class="badge rounded-pill bg-success snapshot-chip">Dynamic</span>
                     </div>
-                    <div class="row g-3">
+                    <div class="row g-2">
                         <div class="col-4">
-                            <div class="p-3 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10 h-100">
-                                <div class="small opacity-75">Unpaid</div>
-                                <div class="fs-3 fw-bold">{{ $unpaidPayrollCount ?? 0 }}</div>
+                            <div class="p-2 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10 h-100 text-center">
+                                <div class="small opacity-75 mb-1">Unpaid</div>
+                                <div class="snapshot-value">{{ $unpaidPayrollCount ?? 0 }}</div>
                             </div>
                         </div>
                         <div class="col-4">
-                            <div class="p-3 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10 h-100">
-                                <div class="small opacity-75">Need pay</div>
-                                <div class="fs-3 fw-bold">{{ $currencySymbol }}{{ number_format($unpaidNetSalaryTotal ?? 0, 2) }}</div>
+                            <div class="p-2 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10 h-100 text-center">
+                                <div class="small opacity-75 mb-1">Need pay</div>
+                                <div class="snapshot-value">{{ $currencySymbol }}{{ number_format($unpaidNetSalaryTotal ?? 0, 0) }}</div>
                             </div>
                         </div>
                         <div class="col-4">
-                            <div class="p-3 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10 h-100">
-                                <div class="small opacity-75">Paid</div>
-                                <div class="fs-3 fw-bold">{{ $paidPayrollCount ?? 0 }}</div>
+                            <div class="p-2 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10 h-100 text-center">
+                                <div class="small opacity-75 mb-1">Paid</div>
+                                <div class="snapshot-value">{{ $paidPayrollCount ?? 0 }}</div>
                             </div>
                         </div>
                     </div>
