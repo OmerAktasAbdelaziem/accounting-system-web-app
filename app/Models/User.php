@@ -28,6 +28,8 @@ class User extends Authenticatable
         'user_type',
         'subscription_id',
         'role_id',
+        'branch_access_mode',
+        'branch_access_branch_ids',
         'is_active',
         'phone',
         'address',
@@ -60,6 +62,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'branch_access_branch_ids' => 'array',
             'last_seen_at' => 'datetime',
             'last_login' => 'datetime',
             'api_token_expires_at' => 'datetime',
@@ -178,7 +181,22 @@ class User extends Authenticatable
      */
     public function accessibleBranchIds(): ?array
     {
-        if ($this->isSuperAdmin() || $this->isMerchantAdmin() || !$this->merchant_id || !$this->role_id) {
+        if ($this->isSuperAdmin() || $this->isMerchantAdmin() || !$this->merchant_id) {
+            return null;
+        }
+
+        if ($this->branch_access_mode === 'all') {
+            return null;
+        }
+
+        if ($this->branch_access_mode === 'custom') {
+            return array_values(array_unique(array_map(
+                'intval',
+                is_array($this->branch_access_branch_ids) ? $this->branch_access_branch_ids : []
+            )));
+        }
+
+        if (!$this->role_id) {
             return null;
         }
 
@@ -199,6 +217,19 @@ class User extends Authenticatable
         }
 
         return in_array($branchId, $branchIds, true);
+    }
+
+    public function branchAccessSummary(): array
+    {
+        $branchIds = $this->accessibleBranchIds();
+
+        if ($branchIds === null) {
+            return ['label' => 'All branches', 'tone' => 'success'];
+        }
+
+        $count = count($branchIds);
+
+        return ['label' => $count . ' branch' . ($count === 1 ? '' : 'es'), 'tone' => $count > 0 ? 'warning' : 'danger'];
     }
 
     /**

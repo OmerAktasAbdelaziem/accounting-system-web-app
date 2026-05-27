@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Branch;
 use App\Models\User;
 use App\Models\Merchant;
 use App\Models\Role;
@@ -49,7 +50,7 @@ class SystemUserController extends Controller
      */
     public function create()
     {
-        $merchants = Merchant::all();
+        $merchants = Merchant::with('branches')->get();
         $roles = Role::all();
         return view('super-admin.users.create', compact('merchants', 'roles'));
     }
@@ -66,12 +67,27 @@ class SystemUserController extends Controller
             'user_type' => 'required|in:super_admin,merchant_admin,employee,viewer',
             'merchant_id' => 'nullable|required_if:user_type,merchant_admin,employee,viewer|exists:merchants,id',
             'role_id' => 'nullable|exists:roles,id',
+            'branch_access_mode' => 'nullable|in:inherit,custom,all',
+            'branch_access_branch_ids' => 'nullable|array|required_if:branch_access_mode,custom',
+            'branch_access_branch_ids.*' => 'integer|exists:branches,id',
             'phone' => 'nullable|string|max:20',
             'is_active' => 'nullable|boolean',
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
         $validated['is_active'] = $request->boolean('is_active', true);
+        $validated['branch_access_mode'] = $validated['user_type'] === 'super_admin' ? 'inherit' : ($validated['branch_access_mode'] ?? 'inherit');
+
+        if ($validated['branch_access_mode'] === 'custom' && !empty($validated['branch_access_branch_ids']) && !empty($validated['merchant_id'])) {
+            $validated['branch_access_branch_ids'] = Branch::query()
+                ->where('merchant_id', $validated['merchant_id'])
+                ->whereIn('id', $validated['branch_access_branch_ids'])
+                ->pluck('id')
+                ->map(fn ($branchId) => (int) $branchId)
+                ->all();
+        } else {
+            $validated['branch_access_branch_ids'] = null;
+        }
 
         User::create($validated);
 
@@ -84,7 +100,7 @@ class SystemUserController extends Controller
      */
     public function edit(User $user)
     {
-        $merchants = Merchant::all();
+        $merchants = Merchant::with('branches')->get();
         $roles = Role::all();
         return view('super-admin.users.edit', compact('user', 'merchants', 'roles'));
     }
@@ -100,11 +116,26 @@ class SystemUserController extends Controller
             'user_type' => 'required|in:super_admin,merchant_admin,employee,viewer',
             'merchant_id' => 'nullable|required_if:user_type,merchant_admin,employee,viewer|exists:merchants,id',
             'role_id' => 'nullable|exists:roles,id',
+            'branch_access_mode' => 'nullable|in:inherit,custom,all',
+            'branch_access_branch_ids' => 'nullable|array|required_if:branch_access_mode,custom',
+            'branch_access_branch_ids.*' => 'integer|exists:branches,id',
             'phone' => 'nullable|string|max:20',
             'is_active' => 'nullable|boolean',
         ]);
 
         $validated['is_active'] = $request->boolean('is_active', $user->is_active);
+        $validated['branch_access_mode'] = $validated['user_type'] === 'super_admin' ? 'inherit' : ($validated['branch_access_mode'] ?? 'inherit');
+
+        if ($validated['branch_access_mode'] === 'custom' && !empty($validated['branch_access_branch_ids']) && !empty($validated['merchant_id'])) {
+            $validated['branch_access_branch_ids'] = Branch::query()
+                ->where('merchant_id', $validated['merchant_id'])
+                ->whereIn('id', $validated['branch_access_branch_ids'])
+                ->pluck('id')
+                ->map(fn ($branchId) => (int) $branchId)
+                ->all();
+        } else {
+            $validated['branch_access_branch_ids'] = null;
+        }
 
         $user->update($validated);
 

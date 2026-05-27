@@ -115,8 +115,15 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Branch visibility</label>
-                            <div class="text-muted small mb-3">Choose which branches this role can access. Leave everything empty to keep full visibility.</div>
+                            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                                <div>
+                                    <label class="form-label fw-semibold mb-1">Branch visibility</label>
+                                    <div class="text-muted small">Choose which branches this role can access. Leave everything empty to keep full visibility.</div>
+                                </div>
+                                <button type="button" class="btn btn-outline-primary btn-sm" id="selectAllRoleBranchesBtn" {{ in_array($role->name, ['Admin', 'System']) ? 'disabled' : '' }}>
+                                    <i class="fas fa-check-square me-1"></i>Select all branches
+                                </button>
+                            </div>
 
                             <div class="accordion" id="branchAccessAccordionEdit">
                                 @foreach ($merchants as $merchant)
@@ -173,4 +180,12 @@
         </div>
     </div>
 </div>
+
+<script>
+document.getElementById('selectAllRoleBranchesBtn').addEventListener('click', function () {
+    document.querySelectorAll('input[name="branch_ids[]"]:not(:disabled)').forEach(function (checkbox) {
+        checkbox.checked = true;
+    });
+});
+</script>
 @endsection

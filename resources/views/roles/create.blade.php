@@ -92,8 +92,15 @@
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label fw-semibold">Branch visibility</label>
-                                <div class="text-muted small mb-3">Select the branches this role can see inside the merchant. If nothing is selected, the role keeps full branch visibility.</div>
+                                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                                    <div>
+                                        <label class="form-label fw-semibold mb-1">Branch visibility</label>
+                                        <div class="text-muted small">Select the branches this role can see inside the merchant. If nothing is selected, the role keeps full branch visibility.</div>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" id="selectAllRoleBranchesBtn">
+                                        <i class="bi bi-check2-square me-1"></i>Select all branches
+                                    </button>
+                                </div>
 
                                 <div class="accordion" id="branchAccessAccordion">
                                     @foreach ($merchants as $merchant)
@@ -138,4 +145,12 @@
         </div>
     </div>
 </div>
+
+<script>
+document.getElementById('selectAllRoleBranchesBtn').addEventListener('click', function () {
+    document.querySelectorAll('input[name="branch_ids[]"]:not(:disabled)').forEach(function (checkbox) {
+        checkbox.checked = true;
+    });
+});
+</script>
 @endsection

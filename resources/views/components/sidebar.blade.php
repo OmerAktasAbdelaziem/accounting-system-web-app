@@ -93,6 +93,22 @@
             return $rawLabel;
         };
     @endphp
+
+    @php
+        $currentUser = auth()->user();
+        $branchScope = $currentUser ? $currentUser->branchAccessSummary() : null;
+    @endphp
+
+    @if($branchScope)
+        <div class="sidebar-section">
+            <div class="sidebar-title">Branch scope</div>
+            <div class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill text-white" style="background: linear-gradient(135deg, rgba(255,140,0,0.92), rgba(255,179,71,0.92)); box-shadow: 0 10px 22px rgba(255,140,0,0.18);">
+                <i class="bi bi-diagram-3-fill"></i>
+                <span class="fw-semibold">{{ $branchScope['label'] }}</span>
+            </div>
+        </div>
+    @endif
+
     @if($isSuperAdmin)
         <div class="sidebar-section">
             <div class="sidebar-title">Dashboard Tools</div>
