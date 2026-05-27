@@ -396,6 +396,7 @@ class ChatController extends Controller
     {
         if ($user->isSuperAdmin()) {
             $merchants = User::query()
+                ->select('users.*')
                 ->with('merchant')
                 ->where('user_type', 'merchant_admin')
                 ->whereNotNull('merchant_id')
