@@ -40,6 +40,7 @@ class FeatureAccessController extends Controller
         
         // Operations & Reporting
         'branches' => 'Branches Management',
+        'sales' => 'Sales Page',
         'sales_report' => 'Sales Reports',
         'audit_logs' => 'Audit Logs',
         
