@@ -554,6 +554,7 @@
         </div>
     </div>
 
+    @featureAny(['products', 'sales', 'employees', 'commissions', 'storages', 'safes'])
     <div class="dashboard-section">
         <div class="section-heading">
             <div>
@@ -562,6 +563,7 @@
             </div>
         </div>
         <div class="metrics-grid">
+            @feature('products')
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
@@ -572,7 +574,9 @@
                 </div>
                 <div class="metric-note"><i class="bi bi-exclamation-triangle"></i><span id="metric-low-stock-count">{{ $lowStockCount ?? 0 }}</span> low stock</div>
             </div>
+            @endfeature
 
+            @feature('sales')
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
@@ -583,7 +587,9 @@
                 </div>
                 <div class="metric-note"><i class="bi bi-receipt"></i><span id="metric-sales-count">{{ $salesCount ?? 0 }}</span> invoices</div>
             </div>
+            @endfeature
 
+            @feature('employees')
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
@@ -594,7 +600,9 @@
                 </div>
                 <div class="metric-note"><i class="bi bi-person-check"></i>Team coverage</div>
             </div>
+            @endfeature
 
+            @feature('commissions')
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
@@ -605,7 +613,9 @@
                 </div>
                 <div class="metric-note"><i class="bi bi-currency-dollar"></i>{{ $currencySymbol }}{{ number_format($commissionAmount ?? 0, 2) }} pending</div>
             </div>
+            @endfeature
 
+            @feature('storages')
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
@@ -617,7 +627,9 @@
                 <div class="progress-line"><span style="width: {{ min(100, $storageUsage ?? 0) }}%;"></span></div>
                 <div class="metric-note"><i class="bi bi-hdd-stack"></i>{{ number_format($totalStorageUsage ?? 0, 2) }} / {{ number_format($totalStorageCapacity ?? 0, 2) }}</div>
             </div>
+            @endfeature
 
+            @feature('safes')
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
@@ -628,7 +640,9 @@
                 </div>
                 <div class="metric-note"><i class="bi bi-arrow-left-right"></i>{{ $safeCount ?? 0 }} safes</div>
             </div>
+            @endfeature
 
+            @feature('safes')
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
@@ -650,8 +664,10 @@
                 </div>
                 <div class="metric-note"><i class="bi bi-lightning-charge"></i>Cash outflow</div>
             </div>
+            @endfeature
         </div>
     </div>
+    @endfeatureAny
 
     <div class="dashboard-section">
         <div class="section-heading">
