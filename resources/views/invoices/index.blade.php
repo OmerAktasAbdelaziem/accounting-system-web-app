@@ -34,9 +34,9 @@
                             @feature('invoicing')
                             <a href="{{ route('invoices.show', $invoice) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
                             <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-sm btn-outline-primary">{{ __('Edit') }}</a>
-                            @if(auth()->user()?->canViewMenuItem('downloads'))
+                            @feature('downloads')
                                 <a href="{{ route('invoices.pdf', $invoice) }}" class="btn btn-sm btn-outline-success">{{ __('PDF') }}</a>
-                            @endif
+                            @endfeature
                             <form action="{{ route('invoices.destroy', $invoice) }}" method="POST" style="display:inline-block">
                             @endfeature
                                 @csrf

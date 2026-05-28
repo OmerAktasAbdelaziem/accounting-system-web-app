@@ -13,6 +13,17 @@ use Illuminate\Support\Str;
 
 class InvoiceController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (!\App\Traits\ChecksFeatureAccess::hasFeatureAccess('invoicing')) {
+                abort(403);
+            }
+
+            return $next($request);
+        });
+    }
+
     public function index()
     {
         $invoices = Invoice::latest()->paginate(20);

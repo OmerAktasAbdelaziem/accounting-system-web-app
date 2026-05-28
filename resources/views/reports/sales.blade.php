@@ -59,6 +59,7 @@
     }
 </style>
 
+@feature('sales_report')
 <div class="row mb-4">
     <div class="col-md-6">
         <h2>{{ __('messages.sales_report') }}</h2>
@@ -136,6 +137,7 @@
                         <td><strong>{{ $currencySymbol }}{{ number_format($sale->total_credit, 2) }}</strong></td>
                         <td>
                             <div class="d-flex gap-2">
+                                @feature('sales_report')
                                 <a href="{{ route('reports.sales.show', $sale) }}" class="btn btn-sm btn-outline-primary">
                                     <i class="bi bi-eye"></i> {{ __('messages.view') }}
                                 </a>
@@ -146,6 +148,7 @@
                                         <i class="bi bi-trash"></i> {{ __('messages.delete') }}
                                     </button>
                                 </form>
+                                @endfeature
                             </div>
                         </td>
                     </tr>
@@ -159,3 +162,4 @@
     </div>
 </div>
 @endsection
+@endfeature

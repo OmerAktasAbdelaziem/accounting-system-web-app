@@ -367,13 +367,20 @@
                                         </td>
                                         <td class="text-end pe-4">
                                             <div class="payroll-action">
+                                                @feature('payroll')
                                                 <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-sm btn-outline-secondary">View</a>
+                                                @endfeature
+                                                @feature('payroll')
                                                 <a href="{{ route('payroll.edit', $payroll) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                                @endfeature
+                                                @feature('payroll')
                                                 <form action="{{ route('payroll.destroy', $payroll) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this payroll? If it was paid, the linked payment will be reversed.');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                                                 </form>
+                                                @endfeature
+                                                @feature('payroll')
                                                 <button
                                                     type="button"
                                                     class="btn btn-sm btn-success"
@@ -385,6 +392,7 @@
                                                 >
                                                     Paid
                                                 </button>
+                                                @endfeature
                                             </div>
                                         </td>
                                     </tr>
@@ -461,15 +469,19 @@
                                         <td>{{ optional($payroll->processed_at)->format('Y-m-d H:i') ?? '-' }}</td>
                                         <td class="text-end pe-4">
                                             <div class="payroll-action">
+                                                @feature('payroll')
                                                 <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-sm btn-outline-secondary">View</a>
-                                                @if(auth()->user()?->canViewMenuItem('downloads'))
+                                                @endfeature
+                                                @feature('downloads')
                                                     <a href="{{ route('payroll.payslip', $payroll) }}" class="btn btn-sm btn-outline-danger">PDF</a>
-                                                @endif
+                                                @endfeature
+                                                @feature('payroll')
                                                 <form action="{{ route('payroll.destroy', $payroll) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this payroll? If it was paid, the linked payment will be reversed.');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                                                 </form>
+                                                @endfeature
                                             </div>
                                         </td>
                                     </tr>

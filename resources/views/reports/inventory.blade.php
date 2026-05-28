@@ -3,12 +3,13 @@
 @section('title', __('messages.inventory_report'))
 
 @section('content')
+@feature('inventory_report')
 <div class="row mb-4">
     <div class="col-md-6">
         <h2>{{ __('messages.inventory_report') }}</h2>
     </div>
     <div class="col-md-6 text-end">
-        @if(auth()->user()?->canViewMenuItem('downloads'))
+        @feature('downloads')
         <form action="{{ route('reports.generate-pdf') }}" method="POST" class="d-inline">
             @csrf
             <input type="hidden" name="report" value="inventory">
@@ -18,7 +19,7 @@
                 <i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
             </button>
         </form>
-        @endif
+        @endfeature
     </div>
 </div>
 
@@ -70,3 +71,4 @@
     </div>
 </div>
 @endsection
+@endfeature

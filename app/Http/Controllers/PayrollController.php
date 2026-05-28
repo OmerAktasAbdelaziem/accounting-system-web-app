@@ -18,6 +18,17 @@ use Illuminate\Http\Request;
 
 class PayrollController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (!\App\Traits\ChecksFeatureAccess::hasFeatureAccess('payroll')) {
+                abort(403);
+            }
+
+            return $next($request);
+        });
+    }
+
     private function commissionQueryForEmployeePeriod(Employee $employee, int $month, int $year)
     {
         $query = Commission::query()

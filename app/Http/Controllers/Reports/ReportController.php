@@ -16,6 +16,10 @@ class ReportController extends Controller
 {
     public function sales(Request $request)
     {
+        if (!\App\Traits\ChecksFeatureAccess::hasFeatureAccess('sales_report')) {
+            abort(403);
+        }
+
         $branchId = $request->query('branch_id');
         $fromDate = $request->query('from_date');
         $toDate = $request->query('to_date');
@@ -30,6 +34,10 @@ class ReportController extends Controller
 
     public function showSale(JournalEntry $sale)
     {
+        if (!\App\Traits\ChecksFeatureAccess::hasFeatureAccess('sales_report')) {
+            abort(403);
+        }
+
         abort_unless($sale->reference_type === 'invoice', 404);
 
         $sale->load(['items.account', 'createdBy']);
@@ -39,6 +47,10 @@ class ReportController extends Controller
 
     public function destroySale(JournalEntry $sale)
     {
+        if (!\App\Traits\ChecksFeatureAccess::hasFeatureAccess('sales_report')) {
+            abort(403);
+        }
+
         abort_unless($sale->reference_type === 'invoice', 404);
 
         abort_unless(request()->user()?->hasPermission('delete_reports') || request()->user()?->isSuperAdmin(), 403);
@@ -50,6 +62,10 @@ class ReportController extends Controller
 
     public function inventory(Request $request)
     {
+        if (!\App\Traits\ChecksFeatureAccess::hasFeatureAccess('inventory_report')) {
+            abort(403);
+        }
+
         $branchId = $request->query('branch_id');
         $products = Product::with('category')
             ->when($branchId, fn ($query) => $query->where('branch_id', $branchId))
@@ -59,6 +75,10 @@ class ReportController extends Controller
 
     public function financial(Request $request)
     {
+        if (!\App\Traits\ChecksFeatureAccess::hasFeatureAccess('financial_report')) {
+            abort(403);
+        }
+
         $branchId = $request->query('branch_id');
         $fromDate = $request->query('from_date');
         $toDate = $request->query('to_date');
@@ -105,10 +125,18 @@ class ReportController extends Controller
 
     public function generatePdf(Request $request)
     {
-        $this->authorizeDownloads($request);
-
         $report = $request->input('report', 'sales');
         $format = strtolower((string) $request->input('format', 'pdf'));
+
+        $reportFeature = match ($report) {
+            'financial' => 'financial_report',
+            'inventory' => 'inventory_report',
+            default => 'sales_report',
+        };
+
+        if (!\App\Traits\ChecksFeatureAccess::hasFeatureAccess($reportFeature) || !\App\Traits\ChecksFeatureAccess::hasFeatureAccess('downloads')) {
+            abort(403);
+        }
 
         if ($report === 'financial') {
             $lines = $this->buildFinancialLines($request);

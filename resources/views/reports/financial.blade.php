@@ -3,12 +3,13 @@
 @section('title', __('messages.financial_report'))
 
 @section('content')
+@feature('financial_report')
 <div class="row mb-4">
     <div class="col-md-6">
         <h2>{{ __('messages.financial_report') }}</h2>
     </div>
     <div class="col-md-6 text-end">
-        @if(auth()->user()?->canViewMenuItem('downloads'))
+        @feature('downloads')
         <form action="{{ route('reports.generate-pdf') }}" method="POST" class="d-inline">
             @csrf
             <input type="hidden" name="report" value="financial">
@@ -20,7 +21,7 @@
                 <i class="bi bi-file-pdf"></i> PDF
             </button>
         </form>
-        @endif
+        @endfeature
     </div>
 </div>
 
@@ -197,3 +198,4 @@
     </div>
 </div>
 @endsection
+@endfeature
