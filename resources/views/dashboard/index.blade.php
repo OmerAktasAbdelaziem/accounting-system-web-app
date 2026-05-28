@@ -467,55 +467,90 @@
                 <p class="section-subtitle">Open the most important operational screens fast.</p>
             </div>
         </div>
-        <div class="quick-actions-grid">
+            <div class="quick-actions-grid">
+            @feature('products.create')
             <a href="{{ route('products.create') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-box-seam"></i></div>
                 <div class="quick-action-text"><strong>Add Product</strong><span>Create inventory item</span></div>
             </a>
+            @endfeature
+
+            @feature('sales')
             <a href="{{ route('sales.index') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-cart-check"></i></div>
                 <div class="quick-action-text"><strong>Sales</strong><span>Open sales list</span></div>
             </a>
+            @endfeature
+
+            @feature('invoicing')
             <a href="{{ route('invoices.create') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-receipt"></i></div>
                 <div class="quick-action-text"><strong>New Invoice</strong><span>Create invoice</span></div>
             </a>
+            @endfeature
+
+            @feature('employees')
             <a href="{{ route('employees.create') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-person-plus"></i></div>
                 <div class="quick-action-text"><strong>Add Employee</strong><span>Register staff</span></div>
             </a>
+            @endfeature
+
+            @feature('suppliers.create')
             <a href="{{ route('suppliers.create') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-truck"></i></div>
                 <div class="quick-action-text"><strong>Add Supplier</strong><span>Register supplier</span></div>
             </a>
+            @endfeature
+
+            @feature('payroll')
             <a href="{{ route('payroll.create') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-wallet2"></i></div>
                 <div class="quick-action-text"><strong>Payroll</strong><span>Payroll entry</span></div>
             </a>
+            @endfeature
+
+            @feature('safes')
             <a href="{{ route('safes.index') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-safe"></i></div>
                 <div class="quick-action-text"><strong>Safes</strong><span>Cash management</span></div>
             </a>
+            @endfeature
+
+            @feature('commissions')
             <a href="{{ route('commissions.index') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-percent"></i></div>
                 <div class="quick-action-text"><strong>Commissions</strong><span>Review payouts</span></div>
             </a>
+            @endfeature
+
+            @feature('storages')
             <a href="{{ route('storages.index') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-boxes"></i></div>
                 <div class="quick-action-text"><strong>Storages</strong><span>Warehouse overview</span></div>
             </a>
+            @endfeature
+
+            @feature('branches.create')
             <a href="{{ route('branches.create') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-diagram-3"></i></div>
                 <div class="quick-action-text"><strong>New Branch</strong><span>Expand locations</span></div>
             </a>
+            @endfeature
+
+            @feature('sales_report')
             <a href="{{ route('reports.sales') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-graph-up-arrow"></i></div>
                 <div class="quick-action-text"><strong>Sales Report</strong><span>View analytics</span></div>
             </a>
+            @endfeature
+
+            @feature('financial_report')
             <a href="{{ route('reports.financial') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-bar-chart-line"></i></div>
                 <div class="quick-action-text"><strong>Financial Report</strong><span>Review accounts</span></div>
             </a>
+            @endfeature
         </div>
     </div>
 
@@ -665,7 +700,9 @@
                             <h2 class="section-title mb-1"><i class="bi bi-bag-check text-warning"></i>Recent sales</h2>
                             <p class="section-subtitle">Latest invoice activity and product movement.</p>
                         </div>
+                        @feature('sales')
                         <a href="{{ route('sales.index') }}" class="btn btn-sm btn-outline-secondary">View all</a>
+                        @endfeature
                     </div>
                     <div class="table-responsive">
                         <table class="table align-middle">
@@ -708,7 +745,9 @@
                             <h2 class="section-title mb-1"><i class="bi bi-cash-stack text-warning"></i>Recent cash entries</h2>
                             <p class="section-subtitle">Income and outcome entries from safe modules.</p>
                         </div>
+                        @feature('safes')
                         <a href="{{ route('safes.index') }}" class="btn btn-sm btn-outline-secondary">Safes</a>
+                        @endfeature
                     </div>
                     <div class="list-group list-group-flush">
                         @forelse($recentIncomeEntries->take(3) as $income)
@@ -748,7 +787,9 @@
                             <h2 class="section-title mb-1"><i class="bi bi-exclamation-triangle text-warning"></i>Low stock products</h2>
                             <p class="section-subtitle">Items that need replenishing soon.</p>
                         </div>
+                        @feature('products')
                         <a href="{{ route('products.index') }}" class="btn btn-sm btn-outline-secondary">Inventory</a>
+                        @endfeature
                     </div>
                     <div class="table-responsive">
                         <table class="table align-middle">
@@ -797,7 +838,9 @@
                             <h2 class="section-title mb-1"><i class="bi bi-hdd-stack text-warning"></i>Storage snapshot</h2>
                             <p class="section-subtitle">Storage utilization and current load.</p>
                         </div>
+                        @feature('storages')
                         <a href="{{ route('storages.index') }}" class="btn btn-sm btn-outline-secondary">Storages</a>
+                        @endfeature
                     </div>
                     <div class="list-group list-group-flush">
                         @forelse($storageSnapshot as $storage)
