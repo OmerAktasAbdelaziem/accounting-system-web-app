@@ -246,6 +246,7 @@
                         <li><strong>custom_integration</strong> - Third-party integrations</li>
                         <li><strong>dedicated_support</strong> - Priority support</li>
                         <li><strong>backup_restore</strong> - Automated backups</li>
+                        <li><strong>live_chat_floating</strong> - Live chat floating launcher (show/hide floating chat widget)</li>
                     </ul>
                 </div>
             </div>
