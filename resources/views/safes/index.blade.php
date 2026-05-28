@@ -8,9 +8,11 @@
         <h1 style="font-weight: 900; color: #1a1a1a;">
             <i class="bi bi-safe" style="color: #ff8c00;"></i> {{ __('messages.safe_management') }}
         </h1>
+        @feature('safes.create')
         <a href="{{ route('safes.create') }}" class="btn btn-primary-modern">
             <i class="bi bi-plus-circle"></i> {{ __('messages.new_safe') }}
         </a>
+        @endfeature
     </div>
 </div>
 
@@ -87,18 +89,26 @@
                             </span>
                         </td>
                         <td>
+                            @feature('safes.view')
                             <a href="{{ route('safes.show', $safe->id) }}" class="btn btn-sm btn-info me-1" title="{{ __('messages.view_details') }}">
                                 <i class="bi bi-eye"></i>
                             </a>
                             <a href="{{ route('safes.transactions', $safe->id) }}" class="btn btn-sm btn-secondary me-1" title="{{ __('messages.view_transactions') }}">
                                 <i class="bi bi-arrow-left-right"></i>
                             </a>
+                            @endfeature
+
+                            @feature('safes.edit')
                             <a href="{{ route('safes.edit', $safe->id) }}" class="btn btn-sm btn-warning">
                                 <i class="bi bi-pencil"></i>
                             </a>
+                            @endfeature
+
+                            @feature('safes.delete')
                             <button onclick="deleteSafe({{ $safe->id }})" class="btn btn-sm btn-danger">
                                 <i class="bi bi-trash"></i>
                             </button>
+                            @endfeature
                         </td>
                     </tr>
                 @empty

@@ -4,7 +4,9 @@
 <div class="container">
     <div class="d-flex justify-content-between mb-3">
         <h3>{{ __('messages.branches') }}</h3>
+        @feature('branches.create')
         <a href="{{ route('branches.create') }}" class="btn btn-primary">{{ __('messages.add_branch') }}</a>
+        @endfeature
     </div>
 
     <div class="card">
@@ -35,13 +37,21 @@
                             </span>
                         </td>
                         <td class="action-buttons">
+                            @feature('branches.view')
                             <a href="{{ route('branches.show', $branch) }}" class="btn btn-sm btn-outline-secondary">{{ __('messages.view') }}</a>
+                            @endfeature
+
+                            @feature('branches.edit')
                             <a href="{{ route('branches.edit', $branch) }}" class="btn btn-sm btn-outline-primary">{{ __('messages.edit') }}</a>
+                            @endfeature
+
+                            @feature('branches.delete')
                             <form action="{{ route('branches.destroy', $branch) }}" method="POST" style="display:inline-block">
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn btn-sm btn-outline-danger" onclick="return confirm('{{ __('messages.confirm_delete') }}')">{{ __('messages.delete') }}</button>
                             </form>
+                            @endfeature
                         </td>
                     </tr>
                     @endforeach
