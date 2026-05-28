@@ -218,6 +218,10 @@ class DashboardController extends Controller
         $safeIds = $merchantScope['safe_ids'];
         $isMerchantUser = $this->isMerchantUser();
 
+        // Feature gating: hide series/data for features the user can't access
+        $canViewSales = \App\Traits\ChecksFeatureAccess::hasFeatureAccess('sales') || \App\Traits\ChecksFeatureAccess::hasFeatureAccess('sales_report');
+        $canViewSafes = \App\Traits\ChecksFeatureAccess::hasFeatureAccess('safes') || \App\Traits\ChecksFeatureAccess::hasFeatureAccess('financial_report');
+
         $months = [];
         $salesData = [];
         $incomeData = [];
@@ -227,23 +231,30 @@ class DashboardController extends Controller
             $month = Carbon::now()->startOfMonth()->subMonths($offset);
 
             $months[] = $month->format('M Y');
-            $salesQuery = JournalEntry::where('reference_type', 'invoice')
-                ->whereYear('date', $month->year)
-                ->whereMonth('date', $month->month);
-            $this->applyTenantIds($salesQuery, $branchIds, 'branch_id', $isMerchantUser);
-            $salesData[] = (float) $salesQuery->sum('total_credit');
+            if ($canViewSales) {
+                $salesQuery = JournalEntry::where('reference_type', 'invoice')
+                    ->whereYear('date', $month->year)
+                    ->whereMonth('date', $month->month);
+                $this->applyTenantIds($salesQuery, $branchIds, 'branch_id', $isMerchantUser);
+                $salesData[] = (float) $salesQuery->sum('total_credit');
+            } else {
+                $salesData[] = 0.0;
+            }
 
-            $incomeQuery = SafeIncome::whereYear('created_at', $month->year)
-                ->whereMonth('created_at', $month->month)
-                ;
-            $this->applyTenantIds($incomeQuery, $safeIds, 'safe_id', $isMerchantUser);
-            $incomeData[] = (float) $incomeQuery->sum('amount');
+            if ($canViewSafes) {
+                $incomeQuery = SafeIncome::whereYear('created_at', $month->year)
+                    ->whereMonth('created_at', $month->month);
+                $this->applyTenantIds($incomeQuery, $safeIds, 'safe_id', $isMerchantUser);
+                $incomeData[] = (float) $incomeQuery->sum('amount');
 
-            $outcomeQuery = SafeOutcome::whereYear('created_at', $month->year)
-                ->whereMonth('created_at', $month->month)
-                ;
-            $this->applyTenantIds($outcomeQuery, $safeIds, 'safe_id', $isMerchantUser);
-            $outcomeData[] = (float) $outcomeQuery->sum('amount');
+                $outcomeQuery = SafeOutcome::whereYear('created_at', $month->year)
+                    ->whereMonth('created_at', $month->month);
+                $this->applyTenantIds($outcomeQuery, $safeIds, 'safe_id', $isMerchantUser);
+                $outcomeData[] = (float) $outcomeQuery->sum('amount');
+            } else {
+                $incomeData[] = 0.0;
+                $outcomeData[] = 0.0;
+            }
         }
 
         $journalSalesQuery = JournalEntry::query()->where('reference_type', 'invoice');
@@ -263,22 +274,37 @@ class DashboardController extends Controller
         $this->applyTenantIds($safeOutcomeQuery, $safeIds, 'safe_id', $isMerchantUser);
         $this->applyTenantIds($transactionsTodayQuery, $safeIds, 'safe_id', $isMerchantUser);
 
+        // Build summary but hide/zero fields the user cannot view
+        $summary = [
+            'total_products' => Product::count(),
+            'total_employees' => Employee::count(),
+            'low_stock_count' => Product::where('current_stock', '<=', 0)->count(),
+            'total_sales' => (float) $journalSalesQuery->sum('total_credit'),
+            'sales_count' => (clone $journalSalesQuery)->count(),
+            // `status` was removed; show total commissions instead
+            'pending_commissions' => Commission::count(),
+            'storage_usage' => (float) ($storageQuery->sum('capacity') > 0 ? round(($storageItemQuery->sum('quantity') / $storageQuery->sum('capacity')) * 100, 2) : 0),
+            'safe_balance' => (float) $safeQuery->sum('balance'),
+            'safe_income_total' => (float) $safeIncomeQuery->sum('amount'),
+            'safe_outcome_total' => (float) $safeOutcomeQuery->sum('amount'),
+            'transactions_today' => (clone $transactionsTodayQuery)->count(),
+        ];
+
+        if (! $canViewSales) {
+            $summary['total_sales'] = 0.0;
+            $summary['sales_count'] = 0;
+        }
+
+        if (! $canViewSafes) {
+            $summary['safe_balance'] = 0.0;
+            $summary['safe_income_total'] = 0.0;
+            $summary['safe_outcome_total'] = 0.0;
+            $summary['transactions_today'] = 0;
+        }
+
         return response()->json([
             'success' => true,
-            'summary' => [
-                'total_products' => Product::count(),
-                'total_employees' => Employee::count(),
-                'low_stock_count' => Product::where('current_stock', '<=', 0)->count(),
-                'total_sales' => (float) $journalSalesQuery->sum('total_credit'),
-                'sales_count' => (clone $journalSalesQuery)->count(),
-                // `status` was removed; show total commissions instead
-                'pending_commissions' => Commission::count(),
-                'storage_usage' => (float) ($storageQuery->sum('capacity') > 0 ? round(($storageItemQuery->sum('quantity') / $storageQuery->sum('capacity')) * 100, 2) : 0),
-                'safe_balance' => (float) $safeQuery->sum('balance'),
-                'safe_income_total' => (float) $safeIncomeQuery->sum('amount'),
-                'safe_outcome_total' => (float) $safeOutcomeQuery->sum('amount'),
-                'transactions_today' => (clone $transactionsTodayQuery)->count(),
-            ],
+            'summary' => $summary,
             'charts' => [
                 'months' => $months,
                 'sales' => $salesData,
