@@ -8,9 +8,11 @@
         <h1 style="font-weight: 900; color: #1a1a1a;">
             <i class="bi bi-archive" style="color: #ff8c00;"></i> {{ __('messages.storage_management') }}
         </h1>
-        <a href="{{ route('storages.create') }}" class="btn btn-primary-modern">
-            <i class="bi bi-plus-circle"></i> {{ __('messages.new_storage') }}
-        </a>
+        @feature('storages.create')
+            <a href="{{ route('storages.create') }}" class="btn btn-primary-modern">
+                <i class="bi bi-plus-circle"></i> {{ __('messages.new_storage') }}
+            </a>
+        @endfeature
     </div>
 </div>
 
@@ -84,15 +86,23 @@
                             </span>
                         </td>
                         <td>
-                            <a href="{{ route('storages.items', $storage->id) }}" class="btn btn-sm btn-info" title="{{ __('messages.view_items') }}">
-                                <i class="bi bi-box"></i>
-                            </a>
-                            <a href="{{ route('storages.edit', $storage->id) }}" class="btn btn-sm btn-warning">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <button onclick="deleteStorage({{ $storage->id }})" class="btn btn-sm btn-danger">
-                                <i class="bi bi-trash"></i>
-                            </button>
+                            @feature('storages.view')
+                                <a href="{{ route('storages.items', $storage->id) }}" class="btn btn-sm btn-info" title="{{ __('messages.view_items') }}">
+                                    <i class="bi bi-box"></i>
+                                </a>
+                            @endfeature
+
+                            @feature('storages.edit')
+                                <a href="{{ route('storages.edit', $storage->id) }}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            @endfeature
+
+                            @feature('storages.delete')
+                                <button onclick="deleteStorage({{ $storage->id }})" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            @endfeature
                         </td>
                     </tr>
                 @empty

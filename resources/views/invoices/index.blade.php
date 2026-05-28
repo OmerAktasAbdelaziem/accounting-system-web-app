@@ -4,7 +4,9 @@
 <div class="container">
     <div class="d-flex justify-content-between mb-3">
         <h3>{{ __('messages.invoices') }}</h3>
+        @feature('invoicing')
         <a href="{{ route('invoices.create') }}" class="btn btn-primary">{{ __('Create') }}</a>
+        @endfeature
     </div>
 
     <div class="card">
@@ -29,12 +31,14 @@
                         <td>{{ $invoice->date }}</td>
                         <td>{{ $currencySymbol }}{{ number_format($invoice->total,2) }}</td>
                         <td class="action-buttons">
+                            @feature('invoicing')
                             <a href="{{ route('invoices.show', $invoice) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
                             <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-sm btn-outline-primary">{{ __('Edit') }}</a>
                             @if(auth()->user()?->canViewMenuItem('downloads'))
                                 <a href="{{ route('invoices.pdf', $invoice) }}" class="btn btn-sm btn-outline-success">{{ __('PDF') }}</a>
                             @endif
                             <form action="{{ route('invoices.destroy', $invoice) }}" method="POST" style="display:inline-block">
+                            @endfeature
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn btn-sm btn-outline-danger" onclick="return confirm('{{ __('Are you sure?') }}')">{{ __('Delete') }}</button>

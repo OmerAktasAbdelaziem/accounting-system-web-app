@@ -30,6 +30,7 @@ use App\Policies\WarehousePolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
@@ -103,5 +104,14 @@ class AppServiceProvider extends ServiceProvider
 
         // Render pagination links using Bootstrap 5 markup
         Paginator::useBootstrapFive();
+
+        // Blade helpers for feature checks
+        Blade::if('feature', function ($featureKey) {
+            return \App\Traits\ChecksFeatureAccess::hasFeatureAccess($featureKey);
+        });
+
+        Blade::if('featureAny', function ($keys) {
+            return \App\Traits\ChecksFeatureAccess::hasAnyFeatureAccess((array) $keys);
+        });
     }
 }

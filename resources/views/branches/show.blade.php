@@ -267,16 +267,32 @@
                             </div>
 
                             <div class="card panel-card">
-                                <div class="card-body p-4">
-                                    <div class="section-title mb-3">Quick actions</div>
-                                    <div class="d-grid gap-2">
-                                        @foreach($quickActions as $action)
-                                            <a class="btn {{ $action['class'] }} py-3" href="{{ route($action['route'], ['branch_ids' => [$branch->id]]) }}">
-                                                <i class="bi {{ $action['icon'] }} me-2"></i> New {{ $action['label'] }}
-                                            </a>
-                                        @endforeach
+                                @php
+                                    use Illuminate\Support\Str;
+                                    $showQuickActions = false;
+                                    foreach ($quickActions as $action) {
+                                        $routeParts = explode('.', $action['route']);
+                                        $page = $routeParts[0] ?? null;
+                                        $featureKey = $page ? $page . '.create' : null;
+                                        if ($featureKey && auth()->user()?->canViewMenuItem($featureKey)) { $showQuickActions = true; break; }
+                                    }
+                                @endphp
+
+                                @if($showQuickActions)
+                                    <div class="card-body p-4">
+                                        <div class="section-title mb-3">Quick actions</div>
+                                        <div class="d-grid gap-2">
+                                            @foreach($quickActions as $action)
+                                                @php $page = explode('.', $action['route'])[0] ?? null; @endphp
+                                                @feature($page . '.create')
+                                                    <a class="btn {{ $action['class'] }} py-3" href="{{ route($action['route'], ['branch_ids' => [$branch->id]]) }}">
+                                                        <i class="bi {{ $action['icon'] }} me-2"></i> New {{ $action['label'] }}
+                                                    </a>
+                                                @endfeature
+                                            @endforeach
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                             </div>
                         </div>
                     </div>

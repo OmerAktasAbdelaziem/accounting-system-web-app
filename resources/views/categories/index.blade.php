@@ -8,9 +8,11 @@
         <h1 style="font-weight: 900; color: #1a1a1a;">
             <i class="bi bi-tags" style="color: #ff8c00;"></i> {{ __('messages.categories_management') }}
         </h1>
-        <a href="{{ route('categories.create') }}" class="btn btn-primary-modern">
-            <i class="bi bi-plus-circle"></i> {{ __('messages.add_category') }}
-        </a>
+        @feature('categories.create')
+            <a href="{{ route('categories.create') }}" class="btn btn-primary-modern">
+                <i class="bi bi-plus-circle"></i> {{ __('messages.add_category') }}
+            </a>
+        @endfeature
     </div>
 </div>
 
@@ -93,15 +95,23 @@
                             {{ $currencySymbol }}{{ number_format($category->avg_price ?? 0, 2) }}
                         </td>
                         <td>
-                            <a href="{{ route('categories.show', $category->id) }}" class="btn btn-sm btn-info">
-                                <i class="bi bi-eye"></i> {{ __('messages.view_details') }}
-                            </a>
-                            <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-sm btn-warning">
-                                <i class="bi bi-pencil"></i> {{ __('messages.edit') }}
-                            </a>
-                            <button onclick="deleteCategory({{ $category->id }})" class="btn btn-sm btn-danger">
-                                <i class="bi bi-trash"></i> {{ __('messages.delete') }}
-                            </button>
+                            @feature('categories.view')
+                                <a href="{{ route('categories.show', $category->id) }}" class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i> {{ __('messages.view_details') }}
+                                </a>
+                            @endfeature
+
+                            @feature('categories.edit')
+                                <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i> {{ __('messages.edit') }}
+                                </a>
+                            @endfeature
+
+                            @feature('categories.delete')
+                                <button onclick="deleteCategory({{ $category->id }})" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i> {{ __('messages.delete') }}
+                                </button>
+                            @endfeature
                         </td>
                     </tr>
                 @empty

@@ -140,6 +140,8 @@ class StorageController extends Controller
 
     public function transfer(Request $request, Storage $storage)
     {
+        $this->authorize('create', \App\Models\StorageTransfer::class);
+
         $validated = $request->validate([
             'item_id' => 'required|exists:storage_items,id',
             'to_storage_id' => 'required|exists:storages,id|not_in:' . $storage->id,

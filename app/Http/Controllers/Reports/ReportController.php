@@ -41,6 +41,8 @@ class ReportController extends Controller
     {
         abort_unless($sale->reference_type === 'invoice', 404);
 
+        abort_unless(request()->user()?->hasPermission('delete_reports') || request()->user()?->isSuperAdmin(), 403);
+
         $sale->delete();
 
         return redirect()->back()->with('success', 'Sales report entry deleted successfully.');

@@ -16,15 +16,23 @@
             @endif
         </td>
         <td>
-            <a href="{{ route('products.show', $product->id) }}" class="btn btn-sm btn-info me-1" title="View Details">
-                <i class="bi bi-eye"></i>
-            </a>
-            <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-warning">
-                <i class="bi bi-pencil"></i>
-            </a>
-            <button onclick="deleteProduct({{ $product->id }})" class="btn btn-sm btn-danger">
-                <i class="bi bi-trash"></i>
-            </button>
+            @feature('products.view')
+                <a href="{{ route('products.show', $product->id) }}" class="btn btn-sm btn-info me-1" title="View Details">
+                    <i class="bi bi-eye"></i>
+                </a>
+            @endfeature
+
+            @feature('products.edit')
+                <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-warning">
+                    <i class="bi bi-pencil"></i>
+                </a>
+            @endfeature
+
+            @feature('products.delete')
+                <button onclick="deleteProduct({{ $product->id }})" class="btn btn-sm btn-danger">
+                    <i class="bi bi-trash"></i>
+                </button>
+            @endfeature
         </td>
     </tr>
 @empty

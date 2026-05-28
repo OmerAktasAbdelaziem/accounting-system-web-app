@@ -202,9 +202,11 @@
                         Track unsettled payrolls, settle payments from safes, and keep a clean history of every payroll movement in one place.
                     </p>
                     <div class="d-flex flex-wrap gap-2 hero-buttons">
+                        @feature('payroll')
                         <a href="{{ route('payroll.create') }}" class="btn btn-warning btn-lg">
                             <i class="bi bi-plus-circle"></i> Create payroll
                         </a>
+                        @endfeature
                         <a href="#activePayrollPanel" class="btn btn-outline-light btn-lg">
                             <i class="bi bi-grid-1x2"></i> Review active payrolls
                         </a>

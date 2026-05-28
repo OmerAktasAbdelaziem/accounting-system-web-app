@@ -75,6 +75,7 @@
                                 <td>{{ $currencySymbol ?? '$' }}{{ number_format((float) $item->total_price, 2) }}</td>
                                 <td>
                                     <div class="d-flex justify-content-end gap-2">
+                                        @feature('storages')
                                         <button
                                             type="button"
                                             class="btn btn-sm btn-outline-success transfer-btn"
@@ -86,6 +87,7 @@
                                             data-weight="{{ $item->weight }}"
                                             data-unit-price="{{ $item->unit_price }}"
                                         >Transfer</button>
+                                        @endfeature
                                         <button
                                             type="button"
                                             class="btn btn-sm btn-outline-secondary edit-btn"

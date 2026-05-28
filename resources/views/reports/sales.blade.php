@@ -64,7 +64,7 @@
         <h2>{{ __('messages.sales_report') }}</h2>
     </div>
     <div class="col-md-6 text-end">
-        @if(auth()->user()?->canViewMenuItem('downloads'))
+        @feature('downloads')
         <form action="{{ route('reports.generate-pdf') }}" method="POST" class="d-inline">
             @csrf
             <input type="hidden" name="report" value="sales">
@@ -87,7 +87,7 @@
                 <i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
             </button>
         </form>
-        @endif
+        @endfeature
     </div>
 </div>
 

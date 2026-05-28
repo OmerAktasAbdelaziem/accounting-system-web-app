@@ -53,29 +53,40 @@
 
                             <div class="col-12">
                                 <label class="form-label fw-semibold">{{ __('roles.assign_permissions') }}</label>
-                                @php $groupedPermissions = $permissions->groupBy('category'); @endphp
+                                @php
+                                    use Illuminate\Support\Str;
+
+                                    $groupedPermissions = $permissions->groupBy(function($permission) {
+                                        $name = $permission->name;
+                                        if (Str::contains($name, '.')) return Str::before($name, '.');
+                                        if (Str::contains($name, '_')) return Str::before($name, '_');
+                                        return $name;
+                                    });
+                                @endphp
+
                                 <div class="accordion" id="permissionsAccordion">
-                                    @foreach ($groupedPermissions as $category => $categoryPermissions)
+                                    @foreach ($groupedPermissions as $group => $groupPermissions)
                                         <div class="accordion-item border-0 shadow-sm mb-3 rounded-4 overflow-hidden">
                                             <h2 class="accordion-header">
-                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#perm-{{ \Illuminate\Support\Str::slug($category ?? 'Other', '-') }}">
-                                                    @php $catKey = 'permissions.categories.' . \Illuminate\Support\Str::slug($category ?? 'Other', '_'); @endphp
-                                                    @if(\Illuminate\Support\Facades\Lang::has($catKey)) {{ __($catKey) }} @else {{ ucfirst($category ?? 'Other') }} @endif
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#perm-{{ \Illuminate\Support\Str::slug($group ?? 'Other', '-') }}">
+                                                    {{ ucfirst(str_replace(['_', '.'], ' ', $group)) }}
                                                 </button>
                                             </h2>
-                                            <div id="perm-{{ \Illuminate\Support\Str::slug($category ?? 'Other', '-') }}" class="accordion-collapse collapse" data-bs-parent="#permissionsAccordion">
+                                            <div id="perm-{{ \Illuminate\Support\Str::slug($group ?? 'Other', '-') }}" class="accordion-collapse collapse" data-bs-parent="#permissionsAccordion">
                                                 <div class="accordion-body bg-white">
                                                     <div class="row g-2">
-                                                        @foreach ($categoryPermissions as $permission)
+                                                        @foreach ($groupPermissions as $permission)
                                                             <div class="col-md-6">
                                                                 <div class="form-check p-3 border rounded-4 h-100">
                                                                     <input class="form-check-input" type="checkbox" name="permissions[]" value="{{ $permission->id }}" id="permission_{{ $permission->id }}" {{ old('permissions') && in_array($permission->id, old('permissions')) ? 'checked' : '' }}>
                                                                     <label class="form-check-label ms-2" for="permission_{{ $permission->id }}">
-                                                                        @if (\Illuminate\Support\Facades\Lang::has('permissions.' . $permission->name))
-                                                                            {{ __('permissions.' . $permission->name) }}
-                                                                        @else
-                                                                            {{ $permission->name }}
-                                                                        @endif
+                                                                        @php
+                                                                            $label = $permission->name;
+                                                                            if (Str::contains($label, '.')) $label = Str::after($label, '.');
+                                                                            if (Str::contains($label, '_')) $label = Str::after($label, '_');
+                                                                            $label = ucfirst(str_replace(['_', '.'], ' ', $label));
+                                                                        @endphp
+                                                                        {{ $label }}
                                                                         @if ($permission->description && app()->getLocale() === 'en')
                                                                             <small class="d-block text-muted">{{ $permission->description }}</small>
                                                                         @endif
@@ -85,6 +96,26 @@
                                                         @endforeach
                                                     </div>
                                                 </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Feature Toggles</label>
+                                <div class="small text-muted mb-2">Enable system features for this role (applies to all merchants).</div>
+                                @php
+                                    $features = $availableFeatures ?? [];
+                                @endphp
+                                <div class="row g-2">
+                                    @foreach($features as $featureKey => $featureLabel)
+                                        <div class="col-md-4">
+                                            <div class="form-check p-3 border rounded-4 h-100">
+                                                <input class="form-check-input" type="checkbox" name="features[]" value="{{ $featureKey }}" id="feature_{{ $featureKey }}">
+                                                <label class="form-check-label ms-2" for="feature_{{ $featureKey }}">
+                                                    <strong>{{ $featureLabel }}</strong>
+                                                </label>
                                             </div>
                                         </div>
                                     @endforeach

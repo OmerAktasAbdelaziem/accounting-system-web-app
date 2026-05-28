@@ -50,9 +50,11 @@
         <h1 style="font-weight: 900; color: #1a1a1a;">
             <i class="bi bi-people" style="color: #ff8c00;"></i> {{ __('messages.employees_management') }}
         </h1>
-        <a href="{{ route('employees.create') }}" class="btn btn-primary-modern">
-            <i class="bi bi-plus-circle"></i> {{ __('messages.add_employee') }}
-        </a>
+        @feature('employees.create')
+            <a href="{{ route('employees.create') }}" class="btn btn-primary-modern">
+                <i class="bi bi-plus-circle"></i> {{ __('messages.add_employee') }}
+            </a>
+        @endfeature
     </div>
 </div>
 
@@ -74,15 +76,23 @@
                         <td>{{ $employee->position }}</td>
                         <td>{{ $currencySymbol }}{{ number_format($employee->base_salary, 2) }}</td>
                         <td>
-                            <a href="{{ route('employees.show', $employee->id) }}" class="btn btn-sm btn-info me-1" title="View Details">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            <a href="{{ route('employees.edit', $employee->id) }}" class="btn btn-sm btn-warning">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <button onclick="deleteEmployee({{ $employee->id }})" class="btn btn-sm btn-danger">
-                                <i class="bi bi-trash"></i>
-                            </button>
+                            @feature('employees.view')
+                                <a href="{{ route('employees.show', $employee->id) }}" class="btn btn-sm btn-info me-1" title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            @endfeature
+
+                            @feature('employees.edit')
+                                <a href="{{ route('employees.edit', $employee->id) }}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            @endfeature
+
+                            @feature('employees.delete')
+                                <button onclick="deleteEmployee({{ $employee->id }})" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            @endfeature
                         </td>
                     </tr>
                 @empty

@@ -45,9 +45,12 @@
         <a href="{{ route('products.index') }}" class="btn btn-outline-secondary me-2">
             <i class="bi bi-arrow-left"></i> {{ __('messages.back') }}
         </a>
-        <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning">
-            <i class="bi bi-pencil"></i> {{ __('messages.edit') }}
-        </a>
+
+        @feature('products.edit')
+            <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> {{ __('messages.edit') }}
+            </a>
+        @endfeature
     </div>
 </div>
 
@@ -229,9 +232,11 @@
                 <h5 class="mb-0"><i class="bi bi-lightning"></i> {{ __('messages.quick_actions') }}</h5>
             </div>
             <div class="card-body">
-                <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning w-100 mb-2">
-                    <i class="bi bi-pencil"></i> {{ __('messages.edit_product') }}
-                </a>
+                @feature('products.edit')
+                    <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning w-100 mb-2">
+                        <i class="bi bi-pencil"></i> {{ __('messages.edit_product') }}
+                    </a>
+                @endfeature
                 <button class="btn btn-info w-100 mb-2" data-bs-toggle="modal" data-bs-target="#adjustStockModal">
                     <i class="bi bi-arrow-left-right"></i> {{ __('messages.adjust_stock') }}
                 </button>

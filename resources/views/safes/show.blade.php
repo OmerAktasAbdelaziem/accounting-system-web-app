@@ -12,9 +12,11 @@
         <a href="{{ route('safes.index') }}" class="btn btn-outline-secondary me-2">
             <i class="bi bi-arrow-left"></i> {{ __('messages.back') }}
         </a>
+        @feature('safes')
         <a href="{{ route('safes.edit', $safe->id) }}" class="btn btn-warning">
             <i class="bi bi-pencil"></i> {{ __('messages.edit') }}
         </a>
+        @endfeature
     </div>
 </div>
 
@@ -219,9 +221,11 @@
                     <h6>Total Income: <span class="text-success fw-bold">{{ $currencySymbol }}{{ number_format($totalIncome, 2) }}</span></h6>
                 </div>
 
+                @feature('safes')
                 <button class="btn btn-success btn-sm w-100 mb-3" data-bs-toggle="modal" data-bs-target="#addIncomeModal">
                     <i class="bi bi-plus-circle"></i> Add Income
                 </button>
+                @endfeature
 
                 @if(count($recentIncomes) > 0)
                     <div class="d-flex mb-2 gap-2">
@@ -295,9 +299,11 @@
                     <h6>Total Outcome: <span class="text-danger fw-bold">{{ $currencySymbol }}{{ number_format($totalOutcome, 2) }}</span></h6>
                 </div>
 
+                @feature('safes')
                 <button class="btn btn-danger btn-sm w-100 mb-3" data-bs-toggle="modal" data-bs-target="#addOutcomeModal">
                     <i class="bi bi-plus-circle"></i> Add Outcome
                 </button>
+                @endfeature
 
                 @if(count($recentOutcomes) > 0)
                     <div class="d-flex mb-2 gap-2">

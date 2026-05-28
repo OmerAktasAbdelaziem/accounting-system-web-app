@@ -64,14 +64,17 @@
             <i class="bi bi-box-seam" style="color: #ff8c00;"></i> {{ __('messages.products_management') }}
         </h1>
         <div>
-            <a href="{{ route('products.create') }}" class="btn btn-primary-modern me-2">
-                <i class="bi bi-plus-circle"></i> {{ __('messages.add_product') }}
-            </a>
-            @if(auth()->user()?->canViewMenuItem('downloads'))
-            <button class="btn btn-success-modern" onclick="exportToExcel()">
-                <i class="bi bi-download"></i> {{ __('messages.export') }}
-            </button>
-            @endif
+            @feature('products.create')
+                <a href="{{ route('products.create') }}" class="btn btn-primary-modern me-2">
+                    <i class="bi bi-plus-circle"></i> {{ __('messages.add_product') }}
+                </a>
+            @endfeature
+
+            @feature('downloads')
+                <button class="btn btn-success-modern" onclick="exportToExcel()">
+                    <i class="bi bi-download"></i> {{ __('messages.export') }}
+                </button>
+            @endfeature
         </div>
     </div>
 </div>
@@ -129,15 +132,23 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('products.show', $product->id) }}" class="btn btn-sm btn-info me-1" title="View Details">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-warning">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <button onclick="deleteProduct({{ $product->id }})" class="btn btn-sm btn-danger">
-                                <i class="bi bi-trash"></i>
-                            </button>
+                            @feature('products.view')
+                                <a href="{{ route('products.show', $product->id) }}" class="btn btn-sm btn-info me-1" title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            @endfeature
+
+                            @feature('products.edit')
+                                <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            @endfeature
+
+                            @feature('products.delete')
+                                <button onclick="deleteProduct({{ $product->id }})" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            @endfeature
                         </td>
                     </tr>
                 @empty

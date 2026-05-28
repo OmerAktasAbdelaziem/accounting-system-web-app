@@ -56,9 +56,11 @@
         <h1 style="font-weight: 900; color: #1a1a1a;">
             <i class="bi bi-percent" style="color: #ff8c00;"></i> {{ __('messages.commissions_management') }}
         </h1>
-        <a href="{{ route('commissions.create') }}" class="btn btn-primary-modern">
-            <i class="bi bi-plus-circle"></i> Create First Commission Profile
-        </a>
+        @feature('commissions.create')
+            <a href="{{ route('commissions.create') }}" class="btn btn-primary-modern">
+                <i class="bi bi-plus-circle"></i> Create First Commission Profile
+            </a>
+        @endfeature
     </div>
 </div>
 
@@ -98,21 +100,26 @@
                                 </div>
                                 <div class="mb-2 text-muted small">Last commission: {{ $profile->last_commission_date?->format('M d, Y') ?? '-' }}</div>
                                 <div class="mb-3 fw-bold text-success">{{ $currencySymbol }}{{ number_format($profile->total_commission_amount ?? 0, 2) }}</div>
-                                <div class="d-grid gap-2">
-                                    <a href="{{ route('commissions.show', $profile->latest_commission) }}" class="btn btn-outline-primary">
-                                        <i class="bi bi-eye"></i> View Profile
-                                    </a>
-                                    @if($profile->latest_commission && $profile->latest_commission->status !== 'paid')
-                                        <form method="POST" action="{{ route('commissions.pay', $profile->latest_commission) }}">
-                                            @csrf
-                                            <button type="submit" class="btn btn-success w-100" onclick="return confirm('Mark this commission as paid? It will be hidden from the active list but stay in the database.')">
-                                                <i class="bi bi-cash-coin"></i> Pay Commission
-                                            </button>
-                                        </form>
-                                    @else
-                                        <span class="badge bg-success-subtle text-success border border-success-subtle py-2">Paid</span>
-                                    @endif
-                                </div>
+                                    <div class="d-grid gap-2">
+                                        @feature('commissions.view')
+                                            <a href="{{ route('commissions.show', $profile->latest_commission) }}" class="btn btn-outline-primary">
+                                                <i class="bi bi-eye"></i> View Profile
+                                            </a>
+                                        @endfeature
+
+                                        @if($profile->latest_commission && $profile->latest_commission->status !== 'paid')
+                                            @feature('commissions.edit')
+                                                <form method="POST" action="{{ route('commissions.pay', $profile->latest_commission) }}">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-success w-100" onclick="return confirm('Mark this commission as paid? It will be hidden from the active list but stay in the database.')">
+                                                        <i class="bi bi-cash-coin"></i> Pay Commission
+                                                    </button>
+                                                </form>
+                                            @endfeature
+                                        @else
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle py-2">Paid</span>
+                                        @endif
+                                    </div>
                             </div>
                         </div>
                     </div>

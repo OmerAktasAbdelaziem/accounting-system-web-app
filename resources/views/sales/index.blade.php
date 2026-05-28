@@ -269,6 +269,7 @@
 
     <div class="row g-4 mb-4">
         <div class="col-xl-7">
+            @feature('sales.create')
             <div class="card sales-panel h-100">
                 <div class="card-header px-4 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
                     <div>
@@ -371,6 +372,7 @@
                             <button type="submit" class="btn btn-primary btn-lg px-4">Save Sale</button>
                         </div>
                     </form>
+                @endfeature
                 </div>
             </div>
         </div>
@@ -482,6 +484,7 @@
                                 <td>{{ $sale->sale_date?->format('Y-m-d') }}</td>
                                 <td>{{ $sale->branch?->name ?? '-' }}</td>
                                 <td>
+                                    @feature('sales.view')
                                     <button
                                         type="button"
                                         class="btn btn-link p-0 align-baseline text-decoration-none fw-bold sale-details-btn"
@@ -496,6 +499,7 @@
                                     >
                                         {{ $currencySymbol ?? '$' }}{{ number_format((float) $sale->total_amount, 2) }}
                                     </button>
+                                    @endfeature
                                 </td>
                                 <td>{{ $currencySymbol ?? '$' }}{{ number_format((float) ($sale->spent_amount ?? 0), 2) }}</td>
                                 <td><strong>{{ $currencySymbol ?? '$' }}{{ number_format((float) $sale->net_income, 2) }}</strong></td>
@@ -508,6 +512,7 @@
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group">
+                                        @feature('sales.edit')
                                         <button type="button" 
                                             class="btn btn-sm btn-outline-primary edit-sale-btn"
                                             data-id="{{ $sale->id }}"
@@ -522,6 +527,7 @@
                                         >
                                             <i class="bi bi-pencil"></i>
                                         </button>
+                                        @endfeature
                                     </div>
                                 </td>
                             </tr>

@@ -4,7 +4,9 @@
 <div class="container">
     <div class="d-flex justify-content-between mb-3">
         <h3>{{ __('messages.suppliers') }}</h3>
-        <a href="{{ route('suppliers.create') }}" class="btn btn-primary">{{ __('Create') }}</a>
+        @feature('suppliers.create')
+            <a href="{{ route('suppliers.create') }}" class="btn btn-primary">{{ __('Create') }}</a>
+        @endfeature
     </div>
 
     <div class="card mb-3">
@@ -55,13 +57,21 @@
                             {{ $currencySymbol }}{{ number_format(((float)($supplier->opening_balance ?? 0) + (float)($supplier->total_purchased ?? 0) - (float)($supplier->total_paid ?? 0)), 2) }}
                         </td>
                         <td class="action-buttons">
-                            <a href="{{ route('suppliers.show', $supplier) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
-                            <a href="{{ route('suppliers.edit', $supplier) }}" class="btn btn-sm btn-outline-primary">{{ __('Edit') }}</a>
-                            <form action="{{ route('suppliers.destroy', $supplier) }}" method="POST" style="display:inline-block">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-sm btn-outline-danger" onclick="return confirm('{{ __('Are you sure?') }}')">{{ __('Delete') }}</button>
-                            </form>
+                            @feature('suppliers.view')
+                                <a href="{{ route('suppliers.show', $supplier) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
+                            @endfeature
+
+                            @feature('suppliers.edit')
+                                <a href="{{ route('suppliers.edit', $supplier) }}" class="btn btn-sm btn-outline-primary">{{ __('Edit') }}</a>
+                            @endfeature
+
+                            @feature('suppliers.delete')
+                                <form action="{{ route('suppliers.destroy', $supplier) }}" method="POST" style="display:inline-block">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-sm btn-outline-danger" onclick="return confirm('{{ __('Are you sure?') }}')">{{ __('Delete') }}</button>
+                                </form>
+                            @endfeature
                         </td>
                     </tr>
                     @endforeach

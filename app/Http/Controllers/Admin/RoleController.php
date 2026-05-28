@@ -10,6 +10,7 @@ use App\Models\Branch;
 use App\Models\Merchant;
 use App\Models\Role;
 use App\Models\Permission;
+use App\Models\FeatureAccess;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller
@@ -46,7 +47,9 @@ class RoleController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('roles.create', compact('permissions', 'merchants'));
+        $availableFeatures = \App\Http\Controllers\SuperAdmin\FeatureAccessController::getAvailableFeatures();
+
+        return view('roles.create', compact('permissions', 'merchants', 'availableFeatures'));
     }
 
     /**
@@ -66,6 +69,23 @@ class RoleController extends Controller
         }
 
         BranchAccess::syncForRole($role, $validated['branch_ids'] ?? []);
+
+        // Persist feature toggles for this role across all merchants if provided
+        if (!empty($validated['features']) && is_array($validated['features'])) {
+            $featureKeys = array_values($validated['features']);
+            $merchants = Merchant::all();
+            foreach ($merchants as $merchant) {
+                // disable all first
+                FeatureAccess::where('merchant_id', $merchant->id)->where('role_id', $role->id)->update(['is_enabled' => false]);
+                foreach ($featureKeys as $featureKey) {
+                    FeatureAccess::updateOrCreate([
+                        'merchant_id' => $merchant->id,
+                        'role_id' => $role->id,
+                        'feature_key' => $featureKey,
+                    ], ['is_enabled' => true]);
+                }
+            }
+        }
 
         return redirect()->route('roles.index')
             ->with('success', __('messages.role_created_successfully'));
@@ -89,7 +109,11 @@ class RoleController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('roles.edit', compact('role', 'permissions', 'selectedPermissions', 'selectedBranchIds', 'merchants'));
+        $availableFeatures = \App\Http\Controllers\SuperAdmin\FeatureAccessController::getAvailableFeatures();
+
+        $selectedFeatures = FeatureAccess::where('role_id', $role->id)->where('is_enabled', true)->pluck('feature_key')->unique()->values()->all();
+
+        return view('roles.edit', compact('role', 'permissions', 'selectedPermissions', 'selectedBranchIds', 'merchants', 'availableFeatures', 'selectedFeatures'));
     }
 
     /**
@@ -117,6 +141,25 @@ class RoleController extends Controller
         }
 
         BranchAccess::syncForRole($role, $validated['branch_ids'] ?? []);
+
+        // Sync feature toggles across all merchants
+        $availableFeatures = \App\Http\Controllers\SuperAdmin\FeatureAccessController::getAvailableFeatures();
+        $selectedFeatures = $validated['features'] ?? [];
+
+        $merchants = Merchant::all();
+        foreach ($merchants as $merchant) {
+            // disable all for this role/merchant
+            FeatureAccess::where('merchant_id', $merchant->id)->where('role_id', $role->id)->update(['is_enabled' => false]);
+
+            // enable selected ones
+            foreach ($selectedFeatures as $featureKey) {
+                FeatureAccess::updateOrCreate([
+                    'merchant_id' => $merchant->id,
+                    'role_id' => $role->id,
+                    'feature_key' => $featureKey,
+                ], ['is_enabled' => true]);
+            }
+        }
 
         return redirect()->route('roles.index')
             ->with('success', __('messages.role_updated_successfully'));

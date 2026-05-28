@@ -37,6 +37,7 @@ class FeatureAccessController extends Controller
         'inventory_report' => 'Inventory Reports',
         'storages' => 'Storage Management',
         'safes' => 'Safes Management',
+        'safes.transfer' => 'Safes Transfer (internal) ',
         
         // Operations & Reporting
         'branches' => 'Branches Management',
