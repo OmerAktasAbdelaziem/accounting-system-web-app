@@ -89,7 +89,7 @@
                             </span>
                         </td>
                         <td>
-                            @feature('safes.view')
+                            @feature('safes')
                             <a href="{{ route('safes.show', $safe->id) }}" class="btn btn-sm btn-info me-1" title="{{ __('messages.view_details') }}">
                                 <i class="bi bi-eye"></i>
                             </a>

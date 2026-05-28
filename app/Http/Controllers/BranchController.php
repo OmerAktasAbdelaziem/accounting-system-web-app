@@ -10,6 +10,17 @@ use Illuminate\Http\Request;
 
 class BranchController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (!\App\Traits\ChecksFeatureAccess::hasFeatureAccess('branches')) {
+                abort(403);
+            }
+
+            return $next($request);
+        })->only(['index', 'show']);
+    }
+
     public function index()
     {
         $branches = Branch::latest()->paginate(20);

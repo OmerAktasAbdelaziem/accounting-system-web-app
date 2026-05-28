@@ -37,7 +37,7 @@
                             </span>
                         </td>
                         <td class="action-buttons">
-                            @feature('branches.view')
+                            @feature('branches')
                             <a href="{{ route('branches.show', $branch) }}" class="btn btn-sm btn-outline-secondary">{{ __('messages.view') }}</a>
                             @endfeature
 

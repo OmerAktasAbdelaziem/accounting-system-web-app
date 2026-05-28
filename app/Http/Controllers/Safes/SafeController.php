@@ -21,6 +21,17 @@ use App\Support\SimplePdf;
 
 class SafeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (!\App\Traits\ChecksFeatureAccess::hasFeatureAccess('safes')) {
+                abort(403);
+            }
+
+            return $next($request);
+        })->only(['index', 'show', 'transactions']);
+    }
+
     public function index()
     {
         $safes = Safe::with('transactions')->paginate(20);
