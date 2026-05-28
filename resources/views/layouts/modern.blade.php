@@ -708,7 +708,9 @@
     @endauth
 
     @auth
-        @include('components.floating-chat')
+        @if(auth()->user()?->canViewMenuItem('live_chat_floating'))
+            @include('components.floating-chat')
+        @endif
     @endauth
 
     <!-- Scripts -->

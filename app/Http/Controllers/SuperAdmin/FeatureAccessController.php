@@ -44,6 +44,8 @@ class FeatureAccessController extends Controller
         'sales_report' => 'Sales Reports',
         'downloads' => 'Download & Export Actions',
         'audit_logs' => 'Audit Logs',
+        // UI Toggles
+        'live_chat_floating' => 'Live Chat Floating Launcher',
         
         // Advanced Features
         'basic_reporting' => 'Basic Reporting',
