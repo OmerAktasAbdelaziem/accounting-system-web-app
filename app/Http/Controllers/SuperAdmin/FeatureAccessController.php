@@ -139,6 +139,10 @@ class FeatureAccessController extends Controller
     {
         $this->authorize('update', FeatureAccess::class);
 
+        if (!auth()->user() || !auth()->user()->isSuperAdmin()) {
+            abort(403, 'Forbidden: feature updates may only be performed by super admins.');
+        }
+
         $validated = $request->validate([
             'merchant_id' => 'required|exists:merchants,id',
             'role_id' => 'required|exists:roles,id',
@@ -192,6 +196,10 @@ class FeatureAccessController extends Controller
     {
         $this->authorize('update', FeatureAccess::class);
 
+        if (!auth()->user() || !auth()->user()->isSuperAdmin()) {
+            abort(403, 'Forbidden: employee access updates may only be performed by super admins.');
+        }
+
         $validated = $request->validate([
             'merchant_id' => 'required|exists:merchants,id',
             'user_id' => 'required|exists:users,id',
@@ -244,6 +252,10 @@ class FeatureAccessController extends Controller
     {
         $this->authorize('update', FeatureAccess::class);
 
+        if (!auth()->user() || !auth()->user()->isSuperAdmin()) {
+            abort(403, 'Forbidden: creating employee logins from the feature matrix is restricted to super admins.');
+        }
+
         $validated = $request->validate([
             'merchant_id' => 'required|exists:merchants,id',
             'employee_id' => 'required|exists:employees,id',
@@ -288,6 +300,10 @@ class FeatureAccessController extends Controller
     public function reset(Request $request)
     {
         $this->authorize('update', FeatureAccess::class);
+
+        if (!auth()->user() || !auth()->user()->isSuperAdmin()) {
+            abort(403, 'Forbidden: resetting feature access is restricted to super admins.');
+        }
 
         $validated = $request->validate([
             'merchant_id' => 'required|exists:merchants,id',

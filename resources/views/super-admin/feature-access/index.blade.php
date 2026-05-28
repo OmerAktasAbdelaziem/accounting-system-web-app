@@ -97,32 +97,13 @@
                         </td>
                         @foreach($roles as $role)
                         <td class="text-center">
-                            @php
-                                $access = $featureAccess[$feature][$role->id] ?? false;
-                                $canEdit = true; // Check authorization if needed
-                            @endphp
-                            <form method="POST" action="{{ route('super-admin.feature-access.update') }}" class="feature-access-toggle-form" data-role-id="{{ $role->id }}" data-feature-key="{{ $feature }}" style="display:inline;">
-                                @csrf
-                                <input type="hidden" name="merchant_id" value="{{ $selectedMerchant->id }}">
-                                <input type="hidden" name="role_id" value="{{ $role->id }}">
-                                <input type="hidden" name="feature" value="{{ $feature }}">
-                                <input type="hidden" name="action" value="{{ $access ? 'disable' : 'enable' }}">
-
-                                <button type="submit"
-                                        class="btn btn-sm {{ $access ? 'btn-success' : 'btn-outline-secondary' }} toggle-btn"
-                                    data-enabled-label="Enabled"
-                                    data-disabled-label="Disabled"
-                                        data-enabled-class="btn btn-sm btn-success toggle-btn"
-                                        data-disabled-class="btn btn-sm btn-outline-secondary toggle-btn"
-                                        title="Click to toggle"
-                                        {{ !$canEdit ? 'disabled' : '' }}>
-                                    @if($access)
-                                    <i class="icon icon-check"></i> Enabled
-                                    @else
-                                    <i class="icon icon-x"></i> Disabled
-                                    @endif
-                                </button>
-                            </form>
+                            @php $access = $featureAccess[$feature][$role->id] ?? false; @endphp
+                            @if($access)
+                                <span class="badge bg-success">Enabled</span>
+                            @else
+                                <span class="badge bg-secondary">Disabled</span>
+                            @endif
+                            <div class="mt-1"><small><a href="{{ route('roles.index') }}">Manage in Roles</a></small></div>
                         </td>
                         @endforeach
                     </tr>
