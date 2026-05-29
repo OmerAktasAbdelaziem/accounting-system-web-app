@@ -1257,6 +1257,10 @@
         const currencySymbol = @json($currencySymbol);
         const serverMonths = @json($months);
         const serverSalesData = @json($salesData);
+        const serverIncomeData = @json($incomeData);
+        const serverOutcomeData = @json($outcomeData);
+        const serverInventoryData = @json($inventoryData);
+        const serverStorageUsage = @json($storageUsage ?? 0);
 
         const formatMoney = (value) => `${currencySymbol}${Number(value || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         const formatInt = (value) => Number(value || 0).toLocaleString();
@@ -1303,6 +1307,9 @@
         const storageCtx = document.getElementById('storageChart')?.getContext('2d');
 
         let salesTrendChart = null;
+        let cashFlowChart = null;
+        let inventoryChart = null;
+        let storageChart = null;
 
         if (salesTrendCtx) {
             salesTrendChart = new Chart(salesTrendCtx, {
@@ -1319,12 +1326,78 @@
                         pointRadius: 4
                     }]
                 },
+
+                if (cashFlowCtx) {
+                    cashFlowChart = new Chart(cashFlowCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: serverMonths,
+                            datasets: [
+                                { label: 'Income', data: serverIncomeData, backgroundColor: 'rgba(16, 185, 129, 0.8)', borderRadius: 10 },
+                                { label: 'Outcome', data: serverOutcomeData, backgroundColor: 'rgba(239, 68, 68, 0.8)', borderRadius: 10 }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { position: 'bottom' } },
+                            scales: { y: { beginAtZero: true } }
+                        }
+                    });
+                }
+
+                if (inventoryCtx) {
+                    inventoryChart = new Chart(inventoryCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['In Stock', 'Low/Out Stock'],
+                            datasets: [{
+                                data: serverInventoryData,
+                                backgroundColor: ['#10b981', '#ff8c00'],
+                                borderColor: '#fff',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { position: 'bottom' } }
+                        }
+                    });
+                }
+
+                if (storageCtx) {
+                    storageChart = new Chart(storageCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Usage', 'Free Space'],
+                            datasets: [{
+                                label: 'Storage %',
+                                data: [serverStorageUsage || 0, Math.max(0, 100 - (serverStorageUsage || 0))],
+                                backgroundColor: ['#3b82f6', '#e5e7eb'],
+                                borderRadius: 10
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: { y: { beginAtZero: true, max: 100 } }
+                        }
+                    });
+                }
                 options: {
-                    responsive: true,
+                if (!analyticsUrl) {
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: { y: { beginAtZero: true } }
                 }
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Analytics request failed with HTTP ${response.status}`);
+                        }
+                        return response.json();
+                    })
             });
         }
 
@@ -1363,62 +1436,26 @@
                     salesTrendChart.update();
                 }
 
-                new Chart(cashFlowCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: months,
-                        datasets: [
-                            { label: 'Income', data: charts.income || [], backgroundColor: 'rgba(16, 185, 129, 0.8)', borderRadius: 10 },
-                            { label: 'Outcome', data: charts.outcome || [], backgroundColor: 'rgba(239, 68, 68, 0.8)', borderRadius: 10 }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { position: 'bottom' } },
-                        scales: { y: { beginAtZero: true } }
-                    }
-                });
+                if (cashFlowChart && months.length) {
+                    cashFlowChart.data.labels = months;
+                    cashFlowChart.data.datasets[0].data = charts.income || [];
+                    cashFlowChart.data.datasets[1].data = charts.outcome || [];
+                    cashFlowChart.update();
+                }
 
-                new Chart(inventoryCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['In Stock', 'Low/Out Stock'],
-                        datasets: [{
-                            data: charts.inventory || [],
-                            backgroundColor: ['#10b981', '#ff8c00'],
-                            borderColor: '#fff',
-                            borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { position: 'bottom' } }
-                    }
-                });
+                if (inventoryChart && Array.isArray(charts.inventory) && charts.inventory.length) {
+                    inventoryChart.data.datasets[0].data = charts.inventory;
+                    inventoryChart.update();
+                }
 
-                new Chart(storageCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Usage', 'Free Space'],
-                        datasets: [{
-                            label: 'Storage %',
-                            data: [summary.storage_usage || 0, Math.max(0, 100 - (summary.storage_usage || 0))],
-                            backgroundColor: ['#3b82f6', '#e5e7eb'],
-                            borderRadius: 10
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: { y: { beginAtZero: true, max: 100 } }
-                    }
-                });
+                if (storageChart) {
+                    const storageUsage = Number(summary.storage_usage || 0);
+                    storageChart.data.datasets[0].data = [storageUsage, Math.max(0, 100 - storageUsage)];
+                    storageChart.update();
+                }
             })
-            .catch(() => {
-                // Keep the server-rendered metrics if analytics cannot be fetched.
+            .catch((error) => {
+                console.error('Dashboard analytics failed to load:', error);
             });
 
     });
