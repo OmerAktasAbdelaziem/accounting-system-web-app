@@ -24,7 +24,7 @@
         <a href="{{ route('safes.index') }}" class="btn btn-outline-secondary me-2">
             <i class="bi bi-arrow-left"></i> {{ __('messages.back') }}
         </a>
-        @feature('safes')
+        @feature('safes.edit')
         <a href="{{ route('safes.edit', $safe->id) }}" class="btn btn-warning">
             <i class="bi bi-pencil"></i> {{ __('messages.edit') }}
         </a>
@@ -233,7 +233,7 @@
                     <h6>Total Income: <span class="text-success fw-bold">{{ $currencySymbol }}{{ number_format($totalIncome, 2) }}</span></h6>
                 </div>
 
-                @feature('safes')
+                @feature('safes.create')
                 <button class="btn btn-success btn-sm w-100 mb-3" data-bs-toggle="modal" data-bs-target="#addIncomeModal">
                     <i class="bi bi-plus-circle"></i> Add Income
                 </button>
@@ -311,7 +311,7 @@
                     <h6>Total Outcome: <span class="text-danger fw-bold">{{ $currencySymbol }}{{ number_format($totalOutcome, 2) }}</span></h6>
                 </div>
 
-                @feature('safes')
+                @feature('safes.create')
                 <button class="btn btn-danger btn-sm w-100 mb-3" data-bs-toggle="modal" data-bs-target="#addOutcomeModal">
                     <i class="bi bi-plus-circle"></i> Add Outcome
                 </button>
@@ -388,9 +388,11 @@
             <div class="card-header" style="background: linear-gradient(135deg, #3498db, #5dade2); color: white;">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-currency-exchange"></i> Multi-Currency Management</h5>
+                    @feature('safes.create')
                     <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#addCurrencyModal">
                         <i class="bi bi-plus-circle"></i> Add Currency
                     </button>
+                    @endfeature
                 </div>
             </div>
             <div class="card-body">
@@ -461,12 +463,16 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    @feature('safes.edit')
                     <button type="button" class="btn btn-primary" id="incomeDetailEditBtn">
                         <i class="bi bi-pencil"></i> Edit
                     </button>
+                    @endfeature
+                    @feature('safes.delete')
                     <button type="button" class="btn btn-danger" id="incomeDetailDeleteBtn">
                         <i class="bi bi-trash"></i> Delete
                     </button>
+                    @endfeature
                 </div>
             </div>
 
@@ -559,12 +565,16 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    @feature('safes.edit')
                     <button type="button" class="btn btn-warning" id="outcomeDetailEditBtn">
                         <i class="bi bi-pencil"></i> Edit
                     </button>
+                    @endfeature
+                    @feature('safes.delete')
                     <button type="button" class="btn btn-danger" id="outcomeDetailDeleteBtn">
                         <i class="bi bi-trash"></i> Delete
                     </button>
+                    @endfeature
                 </div>
             </div>
 
