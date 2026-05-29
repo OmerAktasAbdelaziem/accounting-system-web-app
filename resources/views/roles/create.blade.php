@@ -184,4 +184,17 @@ document.getElementById('selectAllRoleBranchesBtn').addEventListener('click', fu
     });
 });
 </script>
+<script>
+// Prevent accidental saves with zero permissions & features
+document.querySelector('form[action="{{ route('roles.store') }}"]').addEventListener('submit', function (e) {
+    const anyPermission = document.querySelectorAll('input[name="permissions[]"]:checked').length > 0;
+    const anyFeature = document.querySelectorAll('input[name="features[]"]:checked').length > 0;
+    if (!anyPermission && !anyFeature) {
+        const ok = confirm('You are about to save this role without any permissions or features. Users assigned this role will have no access to pages. Do you want to continue?');
+        if (!ok) {
+            e.preventDefault();
+        }
+    }
+});
+</script>
 @endsection
