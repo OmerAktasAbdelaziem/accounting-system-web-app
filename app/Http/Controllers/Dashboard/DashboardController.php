@@ -17,6 +17,7 @@ use App\Models\StorageItem;
 use App\Models\SafeTransaction;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Schema;
 
 class DashboardController extends Controller
 {
@@ -183,10 +184,26 @@ class DashboardController extends Controller
             ];
         }
 
-        // For merchant users, return only the IDs that belong to their merchant.
-        $branchIds = Branch::where('merchant_id', $user->merchant_id)->pluck('id')->all();
-        $safeIds = Safe::where('merchant_id', $user->merchant_id)->pluck('id')->all();
-        $storageIds = Storage::where('merchant_id', $user->merchant_id)->pluck('id')->all();
+        // If the DB schema doesn't have merchant_id on these tables (older installs),
+        // fall back to returning all IDs to avoid throwing SQL errors. This prevents
+        // a 500 when the application is deployed against an older schema.
+        $branchTableHasMerchant = Schema::hasColumn((new Branch)->getTable(), 'merchant_id');
+        $safeTableHasMerchant = Schema::hasColumn((new Safe)->getTable(), 'merchant_id');
+        $storageTableHasMerchant = Schema::hasColumn((new Storage)->getTable(), 'merchant_id');
+
+        if (! $branchTableHasMerchant && ! $safeTableHasMerchant && ! $storageTableHasMerchant) {
+            // Older schema: return all IDs (no tenant filtering possible)
+            return [
+                'branch_ids' => Branch::pluck('id')->all(),
+                'safe_ids' => Safe::pluck('id')->all(),
+                'storage_ids' => Storage::pluck('id')->all(),
+            ];
+        }
+
+        // For merchants with merchant_id column present, scope by merchant_id where available.
+        $branchIds = $branchTableHasMerchant ? Branch::where('merchant_id', $user->merchant_id)->pluck('id')->all() : Branch::pluck('id')->all();
+        $safeIds = $safeTableHasMerchant ? Safe::where('merchant_id', $user->merchant_id)->pluck('id')->all() : Safe::pluck('id')->all();
+        $storageIds = $storageTableHasMerchant ? Storage::where('merchant_id', $user->merchant_id)->pluck('id')->all() : Storage::pluck('id')->all();
 
         return [
             'branch_ids' => $branchIds,
