@@ -1326,106 +1326,109 @@
                         pointRadius: 4
                     }]
                 },
-
-                if (cashFlowCtx) {
-                    cashFlowChart = new Chart(cashFlowCtx, {
-                        type: 'bar',
-                        data: {
-                            labels: serverMonths,
-                            datasets: [
-                                { label: 'Income', data: serverIncomeData, backgroundColor: 'rgba(16, 185, 129, 0.8)', borderRadius: 10 },
-                                { label: 'Outcome', data: serverOutcomeData, backgroundColor: 'rgba(239, 68, 68, 0.8)', borderRadius: 10 }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: { legend: { position: 'bottom' } },
-                            scales: { y: { beginAtZero: true } }
-                        }
-                    });
-                }
-
-                if (inventoryCtx) {
-                    inventoryChart = new Chart(inventoryCtx, {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['In Stock', 'Low/Out Stock'],
-                            datasets: [{
-                                data: serverInventoryData,
-                                backgroundColor: ['#10b981', '#ff8c00'],
-                                borderColor: '#fff',
-                                borderWidth: 2
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: { legend: { position: 'bottom' } }
-                        }
-                    });
-                }
-
-                if (storageCtx) {
-                    storageChart = new Chart(storageCtx, {
-                        type: 'bar',
-                        data: {
-                            labels: ['Usage', 'Free Space'],
-                            datasets: [{
-                                label: 'Storage %',
-                                data: [serverStorageUsage || 0, Math.max(0, 100 - (serverStorageUsage || 0))],
-                                backgroundColor: ['#3b82f6', '#e5e7eb'],
-                                borderRadius: 10
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: { legend: { display: false } },
-                            scales: { y: { beginAtZero: true, max: 100 } }
-                        }
-                    });
-                }
                 options: {
-                if (!analyticsUrl) {
+                    responsive: true,
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: { y: { beginAtZero: true } }
                 }
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`Analytics request failed with HTTP ${response.status}`);
-                        }
-                        return response.json();
-                    })
             });
         }
 
-        if (!analyticsUrl || !cashFlowCtx || !inventoryCtx || !storageCtx) {
+        if (cashFlowCtx) {
+            cashFlowChart = new Chart(cashFlowCtx, {
+                type: 'bar',
+                data: {
+                    labels: serverMonths,
+                    datasets: [
+                        { label: 'Income', data: serverIncomeData, backgroundColor: 'rgba(16, 185, 129, 0.8)', borderRadius: 10 },
+                        { label: 'Outcome', data: serverOutcomeData, backgroundColor: 'rgba(239, 68, 68, 0.8)', borderRadius: 10 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        if (inventoryCtx) {
+            inventoryChart = new Chart(inventoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['In Stock', 'Low/Out Stock'],
+                    datasets: [{
+                        data: serverInventoryData,
+                        backgroundColor: ['#10b981', '#ff8c00'],
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+
+        if (storageCtx) {
+            storageChart = new Chart(storageCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Usage', 'Free Space'],
+                    datasets: [{
+                        label: 'Storage %',
+                        data: [serverStorageUsage || 0, Math.max(0, 100 - (serverStorageUsage || 0))],
+                        backgroundColor: ['#3b82f6', '#e5e7eb'],
+                        borderRadius: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, max: 100 } }
+                }
+            });
+        }
+
+        if (!analyticsUrl) {
             return;
         }
 
         fetch(analyticsUrl, { headers: { Accept: 'application/json' } })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Analytics request failed with HTTP ${response.status}`);
+                }
+                return response.json();
+            })
             .then(payload => {
                 if (!payload.success) return;
 
                 const summary = payload.summary || {};
-                document.getElementById('hero-total-sales').textContent = formatMoney(summary.total_sales || 0);
-                document.getElementById('hero-safe-balance').textContent = formatMoney(summary.safe_balance || 0);
-                document.getElementById('hero-total-products').textContent = formatInt(summary.total_products || 0);
-                document.getElementById('hero-low-stock').textContent = formatInt(summary.low_stock_count || 0);
+                const setText = (id, value) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = value;
+                };
 
-                document.getElementById('metric-total-products').textContent = formatInt(summary.total_products || 0);
-                document.getElementById('metric-low-stock-count').textContent = formatInt(summary.low_stock_count || 0);
-                document.getElementById('metric-total-sales').textContent = formatMoney(summary.total_sales || 0);
-                document.getElementById('metric-sales-count').textContent = formatInt(summary.sales_count || 0);
-                document.getElementById('metric-total-employees').textContent = formatInt(summary.total_employees || 0);
-                document.getElementById('metric-pending-commissions').textContent = formatInt(summary.pending_commissions || 0);
-                document.getElementById('metric-storage-usage').textContent = `${Number(summary.storage_usage || 0).toFixed(2)}%`;
-                document.getElementById('metric-safe-balance').textContent = formatMoney(summary.safe_balance || 0);
-                document.getElementById('metric-safe-income').textContent = formatMoney(summary.safe_income_total || 0);
-                document.getElementById('metric-safe-outcome').textContent = formatMoney(summary.safe_outcome_total || 0);
+                setText('hero-total-sales', formatMoney(summary.total_sales || 0));
+                setText('hero-safe-balance', formatMoney(summary.safe_balance || 0));
+                setText('hero-total-products', formatInt(summary.total_products || 0));
+                setText('hero-low-stock', formatInt(summary.low_stock_count || 0));
+                setText('metric-total-products', formatInt(summary.total_products || 0));
+                setText('metric-low-stock-count', formatInt(summary.low_stock_count || 0));
+                setText('metric-total-sales', formatMoney(summary.total_sales || 0));
+                setText('metric-sales-count', formatInt(summary.sales_count || 0));
+                setText('metric-total-employees', formatInt(summary.total_employees || 0));
+                setText('metric-pending-commissions', formatInt(summary.pending_commissions || 0));
+                setText('metric-storage-usage', `${Number(summary.storage_usage || 0).toFixed(2)}%`);
+                setText('metric-safe-balance', formatMoney(summary.safe_balance || 0));
+                setText('metric-safe-income', formatMoney(summary.safe_income_total || 0));
+                setText('metric-safe-outcome', formatMoney(summary.safe_outcome_total || 0));
 
                 const charts = payload.charts || {};
                 const months = charts.months || [];
@@ -1457,7 +1460,6 @@
             .catch((error) => {
                 console.error('Dashboard analytics failed to load:', error);
             });
-
     });
 </script>
 @endsection
