@@ -21,6 +21,8 @@ class StoreRoleRequest extends FormRequest
             'description' => 'nullable|string|max:1000',
             'permissions' => 'nullable|array',
             'permissions.*' => 'exists:permissions,id',
+            'features' => 'nullable|array',
+            'features.*' => 'string',
             'branch_ids' => 'nullable|array',
             'branch_ids.*' => 'exists:branches,id',
         ];
