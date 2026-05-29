@@ -24,11 +24,11 @@
         <a href="{{ route('safes.index') }}" class="btn btn-outline-secondary me-2">
             <i class="bi bi-arrow-left"></i> {{ __('messages.back') }}
         </a>
-        @feature('safes.edit')
+        @if(auth()->user()?->canViewMenuItem('safes.edit', 'edit_safe'))
         <a href="{{ route('safes.edit', $safe->id) }}" class="btn btn-warning">
             <i class="bi bi-pencil"></i> {{ __('messages.edit') }}
         </a>
-        @endfeature
+        @endif
     </div>
 </div>
 
@@ -233,11 +233,11 @@
                     <h6>Total Income: <span class="text-success fw-bold">{{ $currencySymbol }}{{ number_format($totalIncome, 2) }}</span></h6>
                 </div>
 
-                @feature('safes.create')
+                @if(auth()->user()?->canViewMenuItem('safes.create', 'deposit_safe'))
                 <button class="btn btn-success btn-sm w-100 mb-3" data-bs-toggle="modal" data-bs-target="#addIncomeModal">
                     <i class="bi bi-plus-circle"></i> Add Income
                 </button>
-                @endfeature
+                @endif
 
                 @if(count($recentIncomes) > 0)
                     <div class="d-flex mb-2 gap-2">
@@ -311,11 +311,11 @@
                     <h6>Total Outcome: <span class="text-danger fw-bold">{{ $currencySymbol }}{{ number_format($totalOutcome, 2) }}</span></h6>
                 </div>
 
-                @feature('safes.create')
+                @if(auth()->user()?->canViewMenuItem('safes.create', 'withdraw_safe'))
                 <button class="btn btn-danger btn-sm w-100 mb-3" data-bs-toggle="modal" data-bs-target="#addOutcomeModal">
                     <i class="bi bi-plus-circle"></i> Add Outcome
                 </button>
-                @endfeature
+                @endif
 
                 @if(count($recentOutcomes) > 0)
                     <div class="d-flex mb-2 gap-2">
@@ -388,11 +388,11 @@
             <div class="card-header" style="background: linear-gradient(135deg, #3498db, #5dade2); color: white;">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-currency-exchange"></i> Multi-Currency Management</h5>
-                    @feature('safes.create')
+                    @if(auth()->user()?->canViewMenuItem('safes.create', 'create_safe'))
                     <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#addCurrencyModal">
                         <i class="bi bi-plus-circle"></i> Add Currency
                     </button>
-                    @endfeature
+                    @endif
                 </div>
             </div>
             <div class="card-body">
@@ -463,16 +463,16 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    @feature('safes.edit')
+                    @if(auth()->user()?->canViewMenuItem('safes.edit', 'edit_safe'))
                     <button type="button" class="btn btn-primary" id="incomeDetailEditBtn">
                         <i class="bi bi-pencil"></i> Edit
                     </button>
-                    @endfeature
-                    @feature('safes.delete')
+                    @endif
+                    @if(auth()->user()?->canViewMenuItem('safes.delete', 'delete_safe'))
                     <button type="button" class="btn btn-danger" id="incomeDetailDeleteBtn">
                         <i class="bi bi-trash"></i> Delete
                     </button>
-                    @endfeature
+                    @endif
                 </div>
             </div>
 
@@ -565,16 +565,16 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    @feature('safes.edit')
+                    @if(auth()->user()?->canViewMenuItem('safes.edit', 'edit_safe'))
                     <button type="button" class="btn btn-warning" id="outcomeDetailEditBtn">
                         <i class="bi bi-pencil"></i> Edit
                     </button>
-                    @endfeature
-                    @feature('safes.delete')
+                    @endif
+                    @if(auth()->user()?->canViewMenuItem('safes.delete', 'delete_safe'))
                     <button type="button" class="btn btn-danger" id="outcomeDetailDeleteBtn">
                         <i class="bi bi-trash"></i> Delete
                     </button>
-                    @endfeature
+                    @endif
                 </div>
             </div>
 

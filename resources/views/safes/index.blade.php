@@ -54,11 +54,11 @@
         <h1 style="font-weight: 900; color: #1a1a1a;">
             <i class="bi bi-safe" style="color: #ff8c00;"></i> {{ __('messages.safe_management') }}
         </h1>
-        @feature('safes.create')
+        @if(auth()->user()?->canViewMenuItem('safes.create', 'create_safe'))
         <a href="{{ route('safes.create') }}" class="btn btn-primary-modern">
             <i class="bi bi-plus-circle"></i> {{ __('messages.new_safe') }}
         </a>
-        @endfeature
+        @endif
     </div>
 </div>
 
@@ -120,10 +120,10 @@
                     <div class="bg-light rounded-4 p-2"><div class="text-muted small">{{ __('messages.usage') }}</div><strong>{{ round($usagePercent) }}%</strong></div>
                 </div>
                 <div class="d-grid gap-2">
-                        @feature('safes')
+                        @if(auth()->user()?->canViewMenuItem('safes', 'view_safe'))
                         <a href="{{ route('safes.show', $safe->id) }}" class="btn btn-sm btn-info">{{ __('messages.view_details') }}</a>
                         <a href="{{ route('safes.transactions', $safe->id) }}" class="btn btn-sm btn-secondary">{{ __('messages.view_transactions') }}</a>
-                        @endfeature
+                        @endif
                 </div>
             </div>
         @empty
@@ -174,26 +174,26 @@
                             </span>
                         </td>
                         <td>
-                            @feature('safes')
+                            @if(auth()->user()?->canViewMenuItem('safes', 'view_safe'))
                             <a href="{{ route('safes.show', $safe->id) }}" class="btn btn-sm btn-info me-1" title="{{ __('messages.view_details') }}">
                                 <i class="bi bi-eye"></i>
                             </a>
                             <a href="{{ route('safes.transactions', $safe->id) }}" class="btn btn-sm btn-secondary me-1" title="{{ __('messages.view_transactions') }}">
                                 <i class="bi bi-arrow-left-right"></i>
                             </a>
-                            @endfeature
+                            @endif
 
-                            @feature('safes.edit')
+                            @if(auth()->user()?->canViewMenuItem('safes.edit', 'edit_safe'))
                             <a href="{{ route('safes.edit', $safe->id) }}" class="btn btn-sm btn-warning">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            @endfeature
+                            @endif
 
-                            @feature('safes.delete')
+                            @if(auth()->user()?->canViewMenuItem('safes.delete', 'delete_safe'))
                             <button onclick="deleteSafe({{ $safe->id }})" class="btn btn-sm btn-danger">
                                 <i class="bi bi-trash"></i>
                             </button>
-                            @endfeature
+                            @endif
                         </td>
                     </tr>
                 @empty
