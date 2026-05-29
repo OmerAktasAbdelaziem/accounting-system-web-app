@@ -133,31 +133,33 @@ class RoleController extends Controller
             'description' => $validated['description'] ?? null,
         ]);
 
-        // Sync permissions
-        if (!empty($validated['permissions'])) {
-            $role->permissions()->sync($validated['permissions']);
-        } else {
-            $role->permissions()->detach();
+        // Sync permissions only if the request included the permissions input
+        if ($request->has('permissions')) {
+            $role->permissions()->sync($validated['permissions'] ?? []);
         }
 
-        BranchAccess::syncForRole($role, $validated['branch_ids'] ?? []);
+        // Sync branch access only if the request included branch_ids
+        if ($request->has('branch_ids')) {
+            BranchAccess::syncForRole($role, $validated['branch_ids'] ?? []);
+        }
 
-        // Sync feature toggles across all merchants
-        $availableFeatures = \App\Http\Controllers\SuperAdmin\FeatureAccessController::getAvailableFeatures();
-        $selectedFeatures = $validated['features'] ?? [];
+        // Sync feature toggles across all merchants only when features input is present
+        if ($request->has('features')) {
+            $selectedFeatures = $validated['features'] ?? [];
 
-        $merchants = Merchant::all();
-        foreach ($merchants as $merchant) {
-            // disable all for this role/merchant
-            FeatureAccess::where('merchant_id', $merchant->id)->where('role_id', $role->id)->update(['is_enabled' => false]);
+            $merchants = Merchant::all();
+            foreach ($merchants as $merchant) {
+                // disable all for this role/merchant
+                FeatureAccess::where('merchant_id', $merchant->id)->where('role_id', $role->id)->update(['is_enabled' => false]);
 
-            // enable selected ones
-            foreach ($selectedFeatures as $featureKey) {
-                FeatureAccess::updateOrCreate([
-                    'merchant_id' => $merchant->id,
-                    'role_id' => $role->id,
-                    'feature_key' => $featureKey,
-                ], ['is_enabled' => true]);
+                // enable selected ones
+                foreach ($selectedFeatures as $featureKey) {
+                    FeatureAccess::updateOrCreate([
+                        'merchant_id' => $merchant->id,
+                        'role_id' => $role->id,
+                        'feature_key' => $featureKey,
+                    ], ['is_enabled' => true]);
+                }
             }
         }
 

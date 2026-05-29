@@ -3,6 +3,18 @@
 @section('title', $safe->name)
 
 @section('content')
+<style>
+    .safe-mobile-orange-header {
+        background: linear-gradient(135deg, #1a1a1a, #333) !important;
+        color: #fff !important;
+    }
+
+    @media (max-width: 768px) {
+        .safe-mobile-orange-header {
+            background: linear-gradient(135deg, #ff8c00, #ffb347) !important;
+        }
+    }
+</style>
 <div class="row mb-4">
     <div class="col-md-8">
         <h1><i class="bi bi-safe"></i> {{ $safe->name }}</h1>
@@ -152,7 +164,7 @@
 
     <div class="col-lg-4">
         <div class="card mb-4">
-            <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
+            <div class="card-header safe-mobile-orange-header">
                 <h5 class="mb-0"><i class="bi bi-calendar-day"></i> {{ __('messages.today') }}</h5>
             </div>
             <div class="card-body">

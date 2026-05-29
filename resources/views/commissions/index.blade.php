@@ -4,6 +4,11 @@
 
 @section('content')
 <style>
+    .commissions-page-header {
+        background: linear-gradient(135deg, #1a1a1a, #333) !important;
+        color: #fff !important;
+    }
+
     @media (max-width: 768px) {
         .commissions-hero {
             flex-direction: column;
@@ -65,6 +70,10 @@
             padding-right: 16px;
         }
 
+        .commissions-page-header {
+            background: linear-gradient(135deg, #ff8c00, #ffb347) !important;
+        }
+
         .d-grid.gap-2 .btn,
         .d-grid.gap-2 form,
         .d-grid.gap-2 span {
@@ -110,7 +119,7 @@
 
 <!-- Commission Profiles -->
 <div class="card mb-4">
-    <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
+    <div class="card-header commissions-page-header">
         <div class="d-flex justify-content-between align-items-center">
             <h5 class="mb-0"><i class="bi bi-person-badge"></i> Commission Profiles</h5>
                 <small>Open an employee profile to pay active commissions or add more records</small>

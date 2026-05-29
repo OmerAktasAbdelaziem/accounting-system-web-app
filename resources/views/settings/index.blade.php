@@ -61,13 +61,12 @@
         opacity: .8;
     }
 
-    .settings-hero-title,
-    .settings-summary .summary-card h6 {
-        color: #fff !important;
-    }
-
-    .settings-summary .summary-card h6 {
-        opacity: 1;
+    @media (max-width: 768px) {
+        .settings-hero-title,
+        .settings-summary .summary-card h6 {
+            color: #fff !important;
+            opacity: 1;
+        }
     }
 
     .settings-summary .summary-card strong {

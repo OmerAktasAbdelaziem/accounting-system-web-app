@@ -4,7 +4,7 @@
         right: 22px;
         bottom: 22px;
         z-index: 3000;
-        font-family: 'Manrope', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Instrument Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         font-weight: 500;
     }
 

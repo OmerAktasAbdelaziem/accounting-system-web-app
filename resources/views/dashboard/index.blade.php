@@ -27,13 +27,11 @@
     }
 
     .dashboard-hero {
-        background: linear-gradient(135deg, #ff8c00 0%, #ff9e33 40%, #ffd089 100%);
-        background-size: 200% 200%;
-        animation: heroGradientShift 30s ease-in-out infinite;
+        background: linear-gradient(135deg, #111827 0%, #1f2937 68%, #ff8c00 180%);
         color: #fff;
         border-radius: 28px;
         padding: 28px;
-        box-shadow: 0 18px 50px rgba(255, 140, 0, 0.12);
+        box-shadow: 0 18px 50px rgba(17, 24, 39, 0.18);
         margin-bottom: 22px;
         overflow: hidden;
         position: relative;
@@ -96,6 +94,7 @@
         left: 0;
         right: 0;
         bottom: -1px;
+        display: none;
         opacity: 0.18;
         pointer-events: none;
     }
@@ -122,15 +121,6 @@
             transform: translateY(0);
         }
     }
-
-    .dashboard-hero,
-    .dashboard-section {
-        animation: dashboardFadeUp .9s cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
-
-    .dashboard-section:nth-of-type(1) { animation-delay: .08s; }
-    .dashboard-section:nth-of-type(2) { animation-delay: .16s; }
-    .dashboard-section:nth-of-type(3) { animation-delay: .24s; }
 
     @media (max-width: 900px) {
         .dashboard-hero .redesigned-hero { grid-template-columns: 1fr; }
@@ -435,9 +425,22 @@
 
     @media (max-width: 768px) {
         .dashboard-hero {
+            background: linear-gradient(135deg, #ff8c00 0%, #ff9e33 40%, #ffd089 100%);
+            background-size: 200% 200%;
+            animation: heroGradientShift 30s ease-in-out infinite;
             padding: 16px;
             border-radius: 18px;
+            box-shadow: 0 18px 50px rgba(255, 140, 0, 0.12);
         }
+
+        .dashboard-hero,
+        .dashboard-section {
+            animation: dashboardFadeUp .9s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .dashboard-section:nth-of-type(1) { animation-delay: .08s; }
+        .dashboard-section:nth-of-type(2) { animation-delay: .16s; }
+        .dashboard-section:nth-of-type(3) { animation-delay: .24s; }
 
         .dashboard-hero .redesigned-hero {
             grid-template-columns: 1fr;
@@ -576,6 +579,10 @@
 
         .hero-wave svg {
             height: 32px;
+        }
+
+        .hero-wave {
+            display: block;
         }
 
         .dashboard-title {

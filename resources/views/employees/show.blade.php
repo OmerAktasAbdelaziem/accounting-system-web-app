@@ -82,13 +82,15 @@
                         color: #fff !important;
                     }
 
-                    /* Force all card header text on this page to white */
                     .card-header {
+                        background: linear-gradient(135deg, #1a1a1a, #333) !important;
                         color: #fff !important;
                     }
 
-                    .card-header * {
-                        color: #fff !important;
+                    @media (max-width: 768px) {
+                        .card-header {
+                            background: linear-gradient(135deg, #ff8c00, #ffb347) !important;
+                        }
                     }
                 </style>
 

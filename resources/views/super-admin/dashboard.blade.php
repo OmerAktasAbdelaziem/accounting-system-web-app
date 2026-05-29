@@ -27,13 +27,11 @@
     }
 
     .dashboard-hero {
-        background: linear-gradient(135deg, #ff8c00 0%, #ffb347 100%);
-        background-size: 200% 200%;
-        animation: heroGradientShift 30s ease-in-out infinite;
+        background: linear-gradient(135deg, #111827 0%, #1f2937 65%, #ff8c00 180%);
         color: #fff;
         border-radius: 28px;
         padding: 28px;
-        box-shadow: 0 18px 50px rgba(255, 140, 0, 0.14);
+        box-shadow: 0 18px 50px rgba(17, 24, 39, 0.2);
         margin-bottom: 24px;
         overflow: hidden;
         position: relative;
@@ -76,6 +74,7 @@
         left: 0;
         right: 0;
         bottom: -1px;
+        display: none;
         opacity: 0.18;
         pointer-events: none;
     }
@@ -103,26 +102,30 @@
         }
     }
 
-    .dashboard-hero,
-    .quick-actions-section,
-    .metrics-section,
-    .charts-section,
-    .reports-section {
-        animation: dashboardFadeUp .9s cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
-
-    .quick-actions-section { animation-delay: .08s; }
-    .metrics-section { animation-delay: .16s; }
-    .charts-section { animation-delay: .24s; }
-    .reports-section { animation-delay: .32s; }
-
     @media (max-width:900px){ .dashboard-hero .redesigned-hero{ grid-template-columns:1fr } .hero-meta{ grid-template-columns:repeat(2,1fr) } }
 
     @media (max-width: 768px) {
         .dashboard-hero {
+            background: linear-gradient(135deg, #ff8c00 0%, #ffb347 100%);
+            background-size: 200% 200%;
+            animation: heroGradientShift 30s ease-in-out infinite;
             padding: 16px;
             border-radius: 18px;
+            box-shadow: 0 18px 50px rgba(255, 140, 0, 0.14);
         }
+
+        .dashboard-hero,
+        .quick-actions-section,
+        .metrics-section,
+        .charts-section,
+        .reports-section {
+            animation: dashboardFadeUp .9s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .quick-actions-section { animation-delay: .08s; }
+        .metrics-section { animation-delay: .16s; }
+        .charts-section { animation-delay: .24s; }
+        .reports-section { animation-delay: .32s; }
 
         .dashboard-hero .redesigned-hero {
             grid-template-columns: 1fr;
@@ -147,6 +150,14 @@
 
         .hero-wave svg {
             height: 40px;
+        }
+
+        .hero-wave {
+            display: block;
+        }
+
+        .hero-wave {
+            display: block;
         }
     }
 

@@ -6,12 +6,6 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
-}
-
-/* Ensure card headers are orange and text is white across the app as a fallback */
-.card-header {
-    background: linear-gradient(135deg, #ff8c00, #ffb347) !important;
-    color: #fff !important;
 }

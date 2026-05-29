@@ -3,6 +3,18 @@
 @section('title', __('messages.payroll') . ' - ' . $payroll->employee?->name)
 
 @section('content')
+<style>
+    .payroll-mobile-orange-header {
+        background: linear-gradient(135deg, #1a1a1a, #333) !important;
+        color: #fff !important;
+    }
+
+    @media (max-width: 768px) {
+        .payroll-mobile-orange-header {
+            background: linear-gradient(135deg, #ff8c00, #ffb347) !important;
+        }
+    }
+</style>
 <div class="container-fluid">
     <!-- Header -->
     <div class="mb-4">
@@ -158,7 +170,7 @@
         <div class="col-lg-4">
             <!-- Employee Card -->
             <div class="card mb-4">
-                <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
+                <div class="card-header payroll-mobile-orange-header">
                     <h5 class="mb-0">
                         <i class="bi bi-person-circle"></i> {{ __('messages.employee_information') }}
                     </h5>
