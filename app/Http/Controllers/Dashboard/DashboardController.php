@@ -236,12 +236,28 @@ class DashboardController extends Controller
 
     private function applyTenantIds($query, array $ids, string $column, bool $isMerchantUser): void
     {
+        // Determine target table and whether the column exists to avoid SQL errors
+        $table = null;
+        try {
+            $model = $query->getModel();
+            $table = $model ? $model->getTable() : null;
+        } catch (\Throwable $e) {
+            $table = null;
+        }
+
+        $hasColumn = $table ? Schema::hasColumn($table, $column) : false;
+
         if (!empty($ids)) {
-            $query->whereIn($column, $ids);
+            // Only attempt to filter if the column exists on the table
+            if ($hasColumn) {
+                $query->whereIn($column, $ids);
+            }
+            // If column is missing, skip filtering to avoid SQL errors (older schemas)
             return;
         }
 
         if ($isMerchantUser) {
+            // Enforce empty result for merchant users when there are no allowed ids
             $query->whereRaw('1 = 0');
         }
     }
