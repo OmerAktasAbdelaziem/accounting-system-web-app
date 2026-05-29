@@ -115,7 +115,6 @@
                                 </div>
                             @endforeach
                         </div>
-
                         <div class="mb-3">
                             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
                                 <div>
@@ -153,6 +152,27 @@
                                                     @endforelse
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Feature Toggles</label>
+                            <div class="small text-muted mb-2">Enable system features for this role (applies to all merchants).</div>
+                            @php
+                                $features = $availableFeatures ?? [];
+                                $selected = $selectedFeatures ?? [];
+                            @endphp
+                            <div class="row g-2">
+                                @foreach($features as $featureKey => $featureLabel)
+                                    <div class="col-md-4">
+                                        <div class="form-check p-3 border rounded-4 h-100">
+                                            <input class="form-check-input" type="checkbox" name="features[]" value="{{ $featureKey }}" id="feature_{{ $featureKey }}" {{ (old('features') && in_array($featureKey, old('features')) ) || in_array($featureKey, $selected) ? 'checked' : '' }} {{ in_array($role->name, ['Admin', 'System']) ? 'disabled' : '' }}>
+                                            <label class="form-check-label ms-2" for="feature_{{ $featureKey }}">
+                                                <strong>{{ $featureLabel }}</strong>
+                                            </label>
                                         </div>
                                     </div>
                                 @endforeach
