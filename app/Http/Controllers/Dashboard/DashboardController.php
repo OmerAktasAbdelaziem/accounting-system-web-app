@@ -282,6 +282,8 @@ class DashboardController extends Controller
         $incomeData = [];
         $outcomeData = [];
 
+        $todaySales = 0.0;
+
         for ($offset = 5; $offset >= 0; $offset--) {
             $month = Carbon::now()->startOfMonth()->subMonths($offset);
 
@@ -311,6 +313,12 @@ class DashboardController extends Controller
             }
         }
 
+        if ($canViewSales) {
+            $todaySalesQuery = EmployeeSale::query()->whereDate('sale_date', today());
+            $this->applyTenantIds($todaySalesQuery, $branchIds, 'branch_id', $isMerchantUser);
+            $todaySales = (float) $todaySalesQuery->sum('total_amount');
+        }
+
         $salesQuery = EmployeeSale::query();
         $this->applyTenantIds($salesQuery, $branchIds, 'branch_id', $isMerchantUser);
 
@@ -323,10 +331,16 @@ class DashboardController extends Controller
         $safeIncomeQuery = SafeIncome::query();
         $safeOutcomeQuery = SafeOutcome::query();
         $transactionsTodayQuery = SafeTransaction::query()->whereDate('created_at', today());
+        $commissionsQuery = Commission::query();
         $this->applyTenantIds($safeQuery, $safeIds, 'id', $isMerchantUser);
         $this->applyTenantIds($safeIncomeQuery, $safeIds, 'safe_id', $isMerchantUser);
         $this->applyTenantIds($safeOutcomeQuery, $safeIds, 'safe_id', $isMerchantUser);
         $this->applyTenantIds($transactionsTodayQuery, $safeIds, 'safe_id', $isMerchantUser);
+        $this->applyTenantIds($commissionsQuery, $branchIds, 'branch_id', $isMerchantUser);
+
+        if (Schema::hasColumn((new Commission)->getTable(), 'status')) {
+            $commissionsQuery->where('status', 'pending');
+        }
 
         // Build summary but hide/zero fields the user cannot view
         $summary = [
@@ -335,8 +349,7 @@ class DashboardController extends Controller
             'low_stock_count' => Product::where('current_stock', '<=', 0)->count(),
             'total_sales' => (float) $salesQuery->sum('total_amount'),
             'sales_count' => (clone $salesQuery)->count(),
-            // `status` was removed; show total commissions instead
-            'pending_commissions' => Commission::count(),
+            'pending_commissions' => (clone $commissionsQuery)->count(),
             'storage_usage' => (float) ($storageQuery->sum('capacity') > 0 ? round(($storageItemQuery->sum('quantity') / $storageQuery->sum('capacity')) * 100, 2) : 0),
             'safe_balance' => (float) $safeQuery->sum('balance'),
             'safe_income_total' => (float) $safeIncomeQuery->sum('amount'),
