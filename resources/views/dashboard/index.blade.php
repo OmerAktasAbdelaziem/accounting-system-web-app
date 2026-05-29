@@ -714,7 +714,7 @@
                 <div class="kpi-grid">
                     <div class="kpi-card">
                         <div class="kpi-label">Today Sales</div>
-                        <div class="kpi-value"><span class="kpi-value-num" data-currency="1" data-target="{{ $totalSales ?? 0 }}">0</span></div>
+                            <div class="kpi-value"><span class="kpi-value-num" data-currency="1" data-target="{{ $todaySales ?? 0 }}">0</span></div>
                     </div>
 
                     <div class="kpi-card">

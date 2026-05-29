@@ -18,6 +18,7 @@ use App\Models\SafeTransaction;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Carbon as SupportCarbon;
 
 class DashboardController extends Controller
 {
@@ -46,9 +47,23 @@ class DashboardController extends Controller
         $totalSales = (float) $salesQuery->sum('total_amount');
         $salesCount = (clone $salesQuery)->count();
 
-        // The `status` column was removed from `commissions` table; fall back to total counts/sums
-        $pendingCommissions = Commission::count();
-        $commissionAmount = (float) Commission::sum('commission_amount');
+        // Today's sales (for the "Today Sales" KPI)
+        $todaySalesQuery = EmployeeSale::query()->whereDate('sale_date', today());
+        $this->applyTenantIds($todaySalesQuery, $branchIds, 'branch_id', $isMerchantUser);
+        $todaySales = (float) $todaySalesQuery->sum('total_amount');
+        $todaySalesCount = (clone $todaySalesQuery)->count();
+
+        // Pending commissions: prefer to filter by `status = pending` if column exists,
+        // otherwise fall back to total count (older schemas).
+        $pendingCommissionsQuery = Commission::query();
+        $this->applyTenantIds($pendingCommissionsQuery, $branchIds, 'branch_id', $isMerchantUser);
+        $commissionsTableHasStatus = Schema::hasColumn((new Commission)->getTable(), 'status');
+        if ($commissionsTableHasStatus) {
+            $pendingCommissions = $pendingCommissionsQuery->where('status', 'pending')->count();
+        } else {
+            $pendingCommissions = $pendingCommissionsQuery->count();
+        }
+        $commissionAmount = (float) $pendingCommissionsQuery->sum('commission_amount');
 
         $storageQuery = Storage::query();
         $this->applyTenantIds($storageQuery, $storageIds, 'id', $isMerchantUser);
@@ -311,6 +326,7 @@ class DashboardController extends Controller
             'safe_income_total' => (float) $safeIncomeQuery->sum('amount'),
             'safe_outcome_total' => (float) $safeOutcomeQuery->sum('amount'),
             'transactions_today' => (clone $transactionsTodayQuery)->count(),
+            'today_sales' => $todaySales,
         ];
 
         if (! $canViewSales) {
