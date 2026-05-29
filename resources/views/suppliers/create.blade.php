@@ -7,6 +7,21 @@
     .create-card { border: 0; border-radius: 28px; box-shadow: 0 18px 50px rgba(12, 15, 20, 0.1); overflow: hidden; }
     .create-field { min-height: 52px; border-radius: 14px; border-color: #d9dde5; }
     .create-field:focus { border-color: #ff8c00; box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.1); }
+
+    @media (max-width: 768px) {
+        .create-shell { padding: 16px 0 28px; }
+        .create-hero { padding: 20px; border-radius: 22px; }
+        .create-card { border-radius: 22px; }
+        .create-card .card-body { padding: 18px !important; }
+        .create-field { min-height: 48px; border-radius: 12px; }
+        .col-12.d-flex.gap-2.pt-2 { flex-direction: column; }
+        .col-12.d-flex.gap-2.pt-2 .btn, .col-12.d-flex.gap-2.pt-2 a { width: 100%; }
+    }
+
+    @media (max-width: 576px) {
+        .create-hero h1 { font-size: 24px; }
+        .create-hero p { font-size: 13px; }
+    }
 </style>
 
 <div class="create-shell">

@@ -59,7 +59,7 @@
     <!-- Employee Details -->
     <div class="col-lg-8">
         <div class="card mb-4">
-            <div class="card-header" style="background: linear-gradient(135deg, #1a1a1a, #333); color: white;">
+            <div class="card-header employee-detail-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <h5 class="mb-0"><i class="bi bi-person-vcard"></i> {{ __('messages.personal_information') }}</h5>
             </div>
             <div class="card-body">
@@ -73,6 +73,24 @@
                         <p class="text-muted">{{ $employee->position }}</p>
                     </div>
                 </div>
+                <style>
+                    .employee-detail-header {
+                        color: #fff !important;
+                    }
+
+                    .employee-detail-header * {
+                        color: #fff !important;
+                    }
+
+                    /* Force all card header text on this page to white */
+                    .card-header {
+                        color: #fff !important;
+                    }
+
+                    .card-header * {
+                        color: #fff !important;
+                    }
+                </style>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
@@ -108,7 +126,7 @@
 
         <!-- Sales History -->
         <div class="card mb-4">
-            <div class="card-header" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white;">
+            <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <h5 class="mb-0"><i class="bi bi-graph-up"></i> {{ __('messages.recent_sales') }}</h5>
             </div>
             <div class="table-responsive">
@@ -141,7 +159,7 @@
 
         <!-- Commissions History -->
         <div class="card">
-            <div class="card-header" style="background: linear-gradient(135deg, #3498db, #5dade2); color: white;">
+            <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <h5 class="mb-0"><i class="bi bi-percent"></i> {{ __('messages.commissions') }}</h5>
             </div>
             <div class="table-responsive">
@@ -180,7 +198,7 @@
 
         <!-- Employee Advances -->
         <div class="card mb-4">
-            <div class="card-header" style="background: linear-gradient(135deg, #f39c12, #f8b739); color: white;">
+            <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-cash-coin"></i> {{ __('messages.advances') }}</h5>
                     <button class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#addAdvanceModal">
@@ -278,7 +296,7 @@
 
         <!-- Quick Stats -->
         <div class="card mb-4">
-            <div class="card-header" style="background: linear-gradient(135deg, #e74c3c, #ec7063); color: white;">
+            <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <h5 class="mb-0"><i class="bi bi-graph-up-arrow"></i> {{ __('messages.statistics') }}</h5>
             </div>
             <div class="card-body">
@@ -311,7 +329,7 @@
 
         <!-- Actions -->
         <div class="card">
-            <div class="card-header" style="background: linear-gradient(135deg, #1a1a1a, #333); color: white;">
+            <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <h5 class="mb-0"><i class="bi bi-lightning"></i> {{ __('messages.actions') }}</h5>
             </div>
             <div class="card-body">

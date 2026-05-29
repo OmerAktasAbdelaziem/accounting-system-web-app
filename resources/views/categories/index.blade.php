@@ -4,7 +4,52 @@
 
 @section('content')
 <div class="mb-4">
-    <div class="d-flex justify-content-between align-items-center">
+    <style>
+        @media (max-width: 768px) {
+            .categories-hero {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 12px;
+            }
+
+            .categories-hero .btn {
+                width: 100%;
+            }
+
+            .categories-desktop-table {
+                display: none;
+            }
+
+            .categories-mobile-list {
+                display: grid;
+                gap: 12px;
+            }
+
+            .category-mobile-card {
+                background: rgba(255,255,255,.96);
+                border: 1px solid rgba(226,232,240,.95);
+                border-radius: 20px;
+                padding: 14px;
+                box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+            }
+
+            .category-mobile-card .top {
+                display: flex;
+                justify-content: space-between;
+                gap: 10px;
+                align-items: flex-start;
+                margin-bottom: 10px;
+            }
+
+            .category-mobile-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+                margin-bottom: 12px;
+            }
+        }
+    </style>
+    <div class="d-flex justify-content-between align-items-center categories-hero">
         <h1 style="font-weight: 900; color: #1a1a1a;">
             <i class="bi bi-tags" style="color: #ff8c00;"></i> {{ __('messages.categories_management') }}
         </h1>
@@ -49,7 +94,38 @@
 </div>
 
 <!-- Categories Table -->
-<div class="card">
+<div class="categories-mobile-list d-md-none mb-3">
+    @forelse($categories ?? [] as $category)
+        <div class="category-mobile-card">
+            <div class="top">
+                <div>
+                    <strong>{{ $category->name }}</strong>
+                    <div class="small text-muted">{{ Str::limit($category->description ?? __('messages.not_available'), 50) }}</div>
+                </div>
+                <span class="badge bg-primary">{{ $category->total_products }} {{ __('messages.products') }}</span>
+            </div>
+            <div class="category-mobile-grid">
+                <div class="bg-light rounded-4 p-2"><div class="text-muted small">Stock Value</div><strong>{{ $currencySymbol }}{{ number_format($category->total_stock_value ?? 0, 2) }}</strong></div>
+                <div class="bg-light rounded-4 p-2"><div class="text-muted small">Avg Price</div><strong>{{ $currencySymbol }}{{ number_format($category->avg_price ?? 0, 2) }}</strong></div>
+            </div>
+            <div class="d-grid gap-2">
+                @feature('categories.view')
+                    <a href="{{ route('categories.show', $category->id) }}" class="btn btn-sm btn-outline-secondary">{{ __('messages.view_details') }}</a>
+                @endfeature
+                @feature('categories.edit')
+                    <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-sm btn-outline-primary">{{ __('messages.edit') }}</a>
+                @endfeature
+                @feature('categories.delete')
+                    <button onclick="deleteCategory({{ $category->id }})" class="btn btn-sm btn-outline-danger">{{ __('messages.delete') }}</button>
+                @endfeature
+            </div>
+        </div>
+    @empty
+        <div class="category-mobile-card text-center text-muted">{{ __('messages.no_data') }}</div>
+    @endforelse
+</div>
+
+<div class="card categories-desktop-table">
     <div class="card-header">
         <h5 class="mb-0">
             <i class="bi bi-list-ul"></i> {{ __('messages.all_categories') }}

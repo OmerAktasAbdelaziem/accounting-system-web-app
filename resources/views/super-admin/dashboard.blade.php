@@ -27,14 +27,159 @@
     }
 
     .dashboard-hero {
-        background: linear-gradient(135deg, #111827 0%, #1f2937 65%, #ff8c00 180%);
+        background: linear-gradient(135deg, #ff8c00 0%, #ffb347 100%);
+        background-size: 200% 200%;
+        animation: heroGradientShift 30s ease-in-out infinite;
         color: #fff;
         border-radius: 28px;
         padding: 28px;
-        box-shadow: 0 18px 50px rgba(17, 24, 39, 0.2);
+        box-shadow: 0 18px 50px rgba(255, 140, 0, 0.14);
         margin-bottom: 24px;
         overflow: hidden;
         position: relative;
+    }
+
+    /* Redesigned hero layout */
+    .dashboard-hero .redesigned-hero {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 22px;
+        align-items: center;
+    }
+
+    .hero-left .dashboard-title {
+        font-size: 40px;
+        line-height: 1.02;
+        font-weight: 900;
+        color: #fff;
+    }
+
+    .hero-left .dashboard-subtitle {
+        color: rgba(255,255,255,0.92);
+        font-size: 15px;
+        margin-top: 8px;
+    }
+
+    .hero-actions { margin-top: 16px; display:flex; gap:12px; flex-wrap:wrap; }
+
+    .hero-meta { display:grid; gap:12px; }
+
+    .hero-meta-item { padding:12px 14px; border-radius:14px; background: rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.12); }
+
+    .hero-meta-label { font-size:11px; color: rgba(255,255,255,0.82); text-transform:uppercase }
+    .hero-meta-value { font-size:20px; font-weight:800; color:#fff }
+
+    .hero-decor { position:absolute; right:-80px; bottom:-80px; width:320px; height:320px; border-radius:50%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), rgba(255,255,255,0) 40%); pointer-events:none; filter: blur(6px); }
+
+    .hero-wave {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -1px;
+        opacity: 0.18;
+        pointer-events: none;
+    }
+
+    .hero-wave svg {
+        display: block;
+        width: 100%;
+        height: 56px;
+    }
+
+    @keyframes heroGradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    @keyframes dashboardFadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .dashboard-hero,
+    .quick-actions-section,
+    .metrics-section,
+    .charts-section,
+    .reports-section {
+        animation: dashboardFadeUp .9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .quick-actions-section { animation-delay: .08s; }
+    .metrics-section { animation-delay: .16s; }
+    .charts-section { animation-delay: .24s; }
+    .reports-section { animation-delay: .32s; }
+
+    @media (max-width:900px){ .dashboard-hero .redesigned-hero{ grid-template-columns:1fr } .hero-meta{ grid-template-columns:repeat(2,1fr) } }
+
+    @media (max-width: 768px) {
+        .dashboard-hero {
+            padding: 16px;
+            border-radius: 18px;
+        }
+
+        .dashboard-hero .redesigned-hero {
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .hero-meta {
+            grid-template-columns: 1fr;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .hero-actions .btn {
+            flex: 1 1 100%;
+        }
+
+        .dashboard-subtitle {
+            font-size: 13px;
+            line-height: 1.55;
+            max-width: 100%;
+        }
+
+        .hero-wave svg {
+            height: 40px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .dashboard-hero {
+            padding: 14px;
+        }
+
+        .dashboard-title {
+            font-size: 22px;
+        }
+
+        .hero-wave svg {
+            height: 32px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .dashboard-hero,
+        .quick-actions-section,
+        .metrics-section,
+        .charts-section,
+        .reports-section,
+        .quick-action,
+        .metric-card,
+        .panel-card,
+        .chart-card {
+            animation: none !important;
+        }
+
+        .dashboard-hero {
+            animation: none !important;
+        }
     }
 
     .dashboard-hero::after {
@@ -411,36 +556,72 @@
 
 <div id="dashboardRoot" class="dashboard-shell" data-analytics-url="{{ route('super-admin.dashboard.analytics') }}">
     <div class="dashboard-hero">
-        <div class="dashboard-hero-inner">
-            <div>
+        <div class="dashboard-hero-inner redesigned-hero">
+            <div class="hero-left">
                 <h1 class="dashboard-title"><i class="bi bi-speedometer2 me-2"></i>Super Admin Dashboard</h1>
-                <p class="dashboard-subtitle">Welcome back, {{ auth()->user()->name }}. This view now tracks live sales, cash flow, subscriptions, and operational shortcuts in one place.</p>
-                <div class="small-links">
-                    <a href="{{ route('reports.sales') }}"><i class="bi bi-graph-up me-1"></i>Sales report</a>
-                    <a href="{{ route('reports.financial') }}"><i class="bi bi-journal-text me-1"></i>Financial report</a>
-                    <a href="{{ route('super-admin.feature-access.index') }}"><i class="bi bi-shield-lock me-1"></i>Feature matrix</a>
+                <p class="dashboard-subtitle">Welcome back, <strong>{{ auth()->user()->name }}</strong>. This view tracks live sales, cash flow, subscriptions and operational shortcuts.</p>
+                <div class="hero-actions small-links">
+                    <a href="{{ route('reports.sales') }}" class="btn btn-outline-light btn-sm"><i class="bi bi-graph-up me-1"></i>Sales</a>
+                    <a href="{{ route('reports.financial') }}" class="btn btn-outline-light btn-sm"><i class="bi bi-journal-text me-1"></i>Financial</a>
+                    <a href="{{ route('super-admin.feature-access.index') }}" class="btn btn-outline-light btn-sm"><i class="bi bi-shield-lock me-1"></i>Features</a>
                 </div>
             </div>
 
-            <div class="hero-meta">
-                <div class="hero-meta-item">
-                    <span class="hero-meta-label">Active Merchants</span>
-                    <div class="hero-meta-value" id="hero-active-merchants">{{ $activeMerchants }}</div>
-                </div>
-                <div class="hero-meta-item">
-                    <span class="hero-meta-label">Net Cash Flow</span>
-                    <div class="hero-meta-value" id="hero-net-cash-flow">{{ $currencySymbol }}{{ number_format($netCashFlow, 2) }}</div>
-                </div>
-                <div class="hero-meta-item">
-                    <span class="hero-meta-label">Sales Count</span>
-                    <div class="hero-meta-value" id="hero-sales-count">{{ $salesCount }}</div>
-                </div>
-                <div class="hero-meta-item">
-                    <span class="hero-meta-label">Active Safes</span>
-                    <div class="hero-meta-value" id="hero-active-safes">{{ $activeSafes }}</div>
+            <div class="hero-right">
+                <div class="hero-meta">
+                    <div class="hero-meta-item">
+                        <span class="hero-meta-label">Active Merchants</span>
+                        <div class="hero-meta-value"><span class="kpi-value-num" data-target="{{ $activeMerchants }}">0</span></div>
+                    </div>
+                    <div class="hero-meta-item">
+                        <span class="hero-meta-label">Net Cash Flow</span>
+                        <div class="hero-meta-value"><span class="kpi-value-num" data-currency="1" data-target="{{ $netCashFlow }}">0</span></div>
+                    </div>
+                    <div class="hero-meta-item">
+                        <span class="hero-meta-label">Sales Count</span>
+                        <div class="hero-meta-value"><span class="kpi-value-num" data-target="{{ $salesCount }}">0</span></div>
+                    </div>
+                    <div class="hero-meta-item">
+                        <span class="hero-meta-label">Active Safes</span>
+                        <div class="hero-meta-value"><span class="kpi-value-num" data-target="{{ $activeSafes }}">0</span></div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <div class="hero-decor"></div>
+        <div class="hero-wave" aria-hidden="true">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,40 C180,110 360,0 540,55 C720,110 900,10 1080,52 C1140,66 1170,76 1200,84 L1200,120 L0,120 Z" fill="rgba(255,255,255,0.65)"></path>
+            </svg>
+        </div>
+
+        <script>
+            (function(){
+                const currency = "{{ $currencySymbol }}";
+                function easeOutCubic(t){return 1-Math.pow(1-t,3)}
+                function formatNumber(n, isCurrency){
+                    if(isCurrency){
+                        return currency + Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+                    }
+                    return Number(n).toLocaleString();
+                }
+                document.querySelectorAll('.kpi-value-num').forEach(el=>{
+                    const raw = parseFloat(el.dataset.target) || 0;
+                    const isCurrency = el.dataset.currency === '1';
+                    const duration = 900;
+                    const start = 0;
+                    const t0 = performance.now();
+                    function step(t){
+                        const p = Math.min((t - t0)/duration,1);
+                        const v = start + (raw - start) * easeOutCubic(p);
+                        el.textContent = isCurrency ? formatNumber(v, true) : formatNumber(Math.round(v), false);
+                        if(p<1) requestAnimationFrame(step);
+                    }
+                    requestAnimationFrame(step);
+                });
+            })();
+        </script>
     </div>
 
     <div class="quick-actions-section">

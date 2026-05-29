@@ -49,13 +49,15 @@
     .form-footer .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
     @media (max-width: 1024px) { .form-grid { grid-template-columns: 1fr; gap: 24px; } .form-sidebar { position: static; } .form-header { padding: 32px; } .form-body { padding: 32px; } .form-footer { padding: 24px 32px; } }
     @media (max-width: 640px) {
-        .form-page { padding: 16px 10px; }
-        .form-header { padding: 20px; flex-direction: column; text-align: center; }
-        .form-header h1 { font-size: 22px; }
-        .form-row { grid-template-columns: 1fr; gap: 16px; }
-        .form-body { padding: 20px; }
-        .form-footer { padding: 16px 20px; gap: 10px; }
-        .form-footer .btn { width: 100%; }
+           .form-page { padding: 16px 10px; }
+           .form-header { padding: 20px; flex-direction: column; text-align: center; border-radius: 18px 18px 0 0; }
+           .form-header h1 { font-size: 22px; }
+           .form-section-title { margin-bottom: 18px; }
+           .form-row { grid-template-columns: 1fr; gap: 14px; }
+           .form-body { padding: 18px; }
+           .form-footer { padding: 14px 18px; gap: 10px; }
+           .form-footer .btn { width: 100%; }
+           .form-control, .form-select, .form-footer .btn { min-height: 48px; }
         .sidebar-card { padding: 20px; }
     }
     @media (max-width: 480px) {

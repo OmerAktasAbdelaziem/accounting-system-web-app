@@ -20,6 +20,9 @@
     @if($locale === 'ar')
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     @endif
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Chart.js -->
@@ -51,7 +54,8 @@
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Manrope', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 500;
         }
 
         body.dark-theme {
@@ -216,6 +220,13 @@
             transition: all 0.3s;
         }
 
+        button,
+        input,
+        select,
+        textarea {
+            font-weight: 500;
+        }
+
         .form-control:focus, .form-select:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
@@ -275,6 +286,55 @@
         @media (max-width: 768px) {
             .dashboard-container {
                 padding: 10px;
+            }
+
+            .d-flex.flex-wrap.justify-content-between.align-items-start.gap-3,
+            .d-flex.gap-2,
+            .d-flex.flex-wrap.gap-2,
+            .d-flex.gap-3,
+            .d-flex.flex-wrap.gap-3,
+            .col-12.d-flex.gap-2.pt-2,
+            .col-12.d-flex.flex-wrap.gap-2.pt-2,
+            .btn-group,
+            .btn-toolbar,
+            .form-footer,
+            .card-footer,
+            .modal-footer,
+            .page-actions,
+            .hero-actions,
+            .header-actions,
+            .filter-actions,
+            .content-actions,
+            .action-buttons,
+            .stacked-actions {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .btn-group > .btn,
+            .btn-toolbar > .btn,
+            .form-footer > .btn,
+            .card-footer > .btn,
+            .modal-footer > .btn,
+            .page-actions > .btn,
+            .hero-actions > .btn,
+            .header-actions > .btn,
+            .filter-actions > .btn,
+            .content-actions > .btn,
+            .action-buttons > .btn,
+            .stacked-actions > .btn,
+            .d-flex.flex-wrap.justify-content-between.align-items-start.gap-3 > .btn,
+            .d-flex.gap-2 > .btn,
+            .d-flex.flex-wrap.gap-2 > .btn,
+            .d-flex.gap-3 > .btn,
+            .d-flex.flex-wrap.gap-3 > .btn,
+            .col-12.d-flex.gap-2.pt-2 > .btn,
+            .col-12.d-flex.flex-wrap.gap-2.pt-2 > .btn {
+                width: 100%;
+                justify-content: center;
+                margin-left: 0 !important;
             }
 
             .stat-card .number {

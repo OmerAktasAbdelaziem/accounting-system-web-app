@@ -20,6 +20,9 @@
     @if($locale === 'ar')
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     @endif
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Font Awesome (icons used across the app) -->
@@ -49,9 +52,25 @@
         body {
             background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Manrope', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 500;
             color: var(--primary-black);
             overflow-x: hidden;
+        }
+
+        body,
+        button,
+        input,
+        select,
+        textarea {
+            font-family: inherit;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font-weight: 500;
         }
 
         /* Navbar Styling */
@@ -214,6 +233,12 @@
             letter-spacing: 0.5px;
         }
 
+        /* Global override: make all card headers orange with white text */
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-orange), #ffb347) !important;
+            color: #fff !important;
+        }
+
         .card-header .badge {
             background: var(--primary-orange);
             color: white;
@@ -264,6 +289,59 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
             color: white;
+        }
+
+        .btn,
+        .btn-sm,
+        .btn-lg {
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .btn-sm {
+            padding: .42rem .75rem;
+            font-size: .85rem;
+        }
+
+        .btn-lg {
+            padding: .9rem 1.2rem;
+        }
+
+        .dashboard-container h1,
+        .dashboard-container h2,
+        .dashboard-container h3,
+        .dashboard-container h4,
+        .dashboard-container h5,
+        .dashboard-container h6 {
+            letter-spacing: -0.03em;
+            color: var(--primary-black);
+        }
+
+        .dashboard-container .table-responsive {
+            border-radius: 16px;
+        }
+
+        .dashboard-container .table {
+            color: var(--primary-black);
+        }
+
+        .dashboard-container .table thead th {
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .dashboard-container .table tbody td {
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        .dashboard-container .card,
+        .dashboard-container .modal-content,
+        .dashboard-container .alert,
+        .dashboard-container .page-header,
+        .dashboard-container .form-section {
+            border-radius: 18px;
         }
 
         /* Action Buttons: compact, icon-focused buttons used in tables */
@@ -596,6 +674,8 @@
                     z-index: 1050;
                 }
                 .modern-content { margin-left: 320px; }
+                /* hide mobile dock on larger screens */
+                .mobile-merchant-dock { display: none !important; }
             }
 
         /* Dark Mode Support */
@@ -624,6 +704,379 @@
                 background: #2a2a2a;
                 color: #ffffff;
                 border-color: #444;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                color-scheme: light;
+            }
+
+            body {
+                background:
+                    radial-gradient(circle at top left, rgba(255, 181, 99, 0.18), transparent 28%),
+                    radial-gradient(circle at top right, rgba(39, 174, 96, 0.12), transparent 26%),
+                    linear-gradient(180deg, #fff9f3 0%, #f4f7fb 38%, #eef3f8 100%);
+                color: var(--primary-black);
+            }
+
+            body::before {
+                content: '';
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                background-image: linear-gradient(rgba(255,255,255,0.38) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.38) 1px, transparent 1px);
+                background-size: 24px 24px;
+                opacity: 0.16;
+                z-index: 0;
+            }
+
+            .dashboard-container,
+            .modern-container {
+                position: relative;
+                z-index: 1;
+            }
+
+            .dashboard-container {
+                padding: 12px 12px 96px;
+            }
+
+            .dashboard-container .page-header,
+            .dashboard-container .form-section,
+            .dashboard-container .card,
+            .dashboard-container .alert,
+            .dashboard-container .modal-content,
+            .dashboard-container .table-responsive,
+            .dashboard-container .list-group,
+            .dashboard-container .dropdown-menu {
+                border-radius: 22px !important;
+            }
+
+            .dashboard-container .page-header,
+            .dashboard-container .form-section,
+            .dashboard-container .card,
+            .dashboard-container .alert,
+            .dashboard-container .table-responsive,
+            .dashboard-container .modal-content {
+                background: rgba(255, 255, 255, 0.82) !important;
+                backdrop-filter: blur(18px);
+                border: 1px solid rgba(255, 255, 255, 0.85);
+                box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+            }
+
+            .dashboard-container .card,
+            .dashboard-container .form-section {
+                overflow: hidden;
+            }
+
+            .dashboard-container .card-header {
+                background: linear-gradient(135deg, #ffffff 0%, #fff4e8 100%);
+                color: var(--primary-black);
+                border-bottom: 1px solid rgba(255, 140, 0, 0.12);
+                padding: 16px 18px;
+            }
+
+            .dashboard-container .card-body {
+                padding: 16px;
+            }
+
+            .dashboard-container .page-title,
+            .dashboard-container h1,
+            .dashboard-container h2,
+            .dashboard-container h3,
+            .dashboard-container h4,
+            .dashboard-container h5 {
+                letter-spacing: -0.03em;
+            }
+
+            .dashboard-container .page-title {
+                font-size: 1.5rem;
+                line-height: 1.05;
+            }
+
+            .dashboard-container .page-subtitle,
+            .dashboard-container .text-muted {
+                color: #64748b !important;
+            }
+
+            .dashboard-container .btn,
+            .dashboard-container .btn-sm {
+                border-radius: 14px;
+                box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+            }
+
+            .dashboard-container .d-flex.flex-wrap.justify-content-between.align-items-start.gap-3,
+            .dashboard-container .d-flex.gap-2,
+            .dashboard-container .d-flex.flex-wrap.gap-2,
+            .dashboard-container .d-flex.gap-3,
+            .dashboard-container .d-flex.flex-wrap.gap-3,
+            .dashboard-container .col-12.d-flex.gap-2.pt-2,
+            .dashboard-container .col-12.d-flex.flex-wrap.gap-2.pt-2,
+            .dashboard-container .btn-group,
+            .dashboard-container .btn-toolbar,
+            .dashboard-container .form-footer,
+            .dashboard-container .card-footer,
+            .dashboard-container .modal-footer,
+            .dashboard-container .page-actions,
+            .dashboard-container .hero-actions,
+            .dashboard-container .header-actions,
+            .dashboard-container .filter-actions,
+            .dashboard-container .content-actions,
+            .dashboard-container .action-buttons,
+            .dashboard-container .stacked-actions,
+            .modern-container .btn-group,
+            .modern-container .btn-toolbar,
+            .modern-container .form-footer,
+            .modern-container .card-footer,
+            .modern-container .modal-footer,
+            .modern-container .page-actions,
+            .modern-container .hero-actions,
+            .modern-container .header-actions,
+            .modern-container .filter-actions,
+            .modern-container .content-actions,
+            .modern-container .action-buttons,
+            .modern-container .stacked-actions,
+            .modern-container .d-flex.flex-wrap.justify-content-between.align-items-start.gap-3,
+            .modern-container .d-flex.gap-2,
+            .modern-container .d-flex.flex-wrap.gap-2,
+            .modern-container .d-flex.gap-3,
+            .modern-container .d-flex.flex-wrap.gap-3,
+            .modern-container .col-12.d-flex.gap-2.pt-2,
+            .modern-container .col-12.d-flex.flex-wrap.gap-2.pt-2 {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .dashboard-container .btn-group > .btn,
+            .dashboard-container .btn-toolbar > .btn,
+            .dashboard-container .form-footer > .btn,
+            .dashboard-container .card-footer > .btn,
+            .dashboard-container .modal-footer > .btn,
+            .dashboard-container .page-actions > .btn,
+            .dashboard-container .hero-actions > .btn,
+            .dashboard-container .header-actions > .btn,
+            .dashboard-container .filter-actions > .btn,
+            .dashboard-container .content-actions > .btn,
+            .dashboard-container .action-buttons > .btn,
+            .dashboard-container .stacked-actions > .btn,
+            .dashboard-container .d-flex.flex-wrap.justify-content-between.align-items-start.gap-3 > .btn,
+            .dashboard-container .d-flex.gap-2 > .btn,
+            .dashboard-container .d-flex.flex-wrap.gap-2 > .btn,
+            .dashboard-container .d-flex.gap-3 > .btn,
+            .dashboard-container .d-flex.flex-wrap.gap-3 > .btn,
+            .dashboard-container .col-12.d-flex.gap-2.pt-2 > .btn,
+            .dashboard-container .col-12.d-flex.flex-wrap.gap-2.pt-2 > .btn,
+            .modern-container .btn-group > .btn,
+            .modern-container .btn-toolbar > .btn,
+            .modern-container .form-footer > .btn,
+            .modern-container .card-footer > .btn,
+            .modern-container .modal-footer > .btn,
+            .modern-container .page-actions > .btn,
+            .modern-container .hero-actions > .btn,
+            .modern-container .header-actions > .btn,
+            .modern-container .filter-actions > .btn,
+            .modern-container .content-actions > .btn,
+            .modern-container .action-buttons > .btn,
+            .modern-container .stacked-actions > .btn,
+            .modern-container .d-flex.flex-wrap.justify-content-between.align-items-start.gap-3 > .btn,
+            .modern-container .d-flex.gap-2 > .btn,
+            .modern-container .d-flex.flex-wrap.gap-2 > .btn,
+            .modern-container .d-flex.gap-3 > .btn,
+            .modern-container .d-flex.flex-wrap.gap-3 > .btn,
+            .modern-container .col-12.d-flex.gap-2.pt-2 > .btn,
+            .modern-container .col-12.d-flex.flex-wrap.gap-2.pt-2 > .btn {
+                width: 100%;
+                justify-content: center;
+                margin-left: 0 !important;
+            }
+
+            .dashboard-container .table-responsive {
+                padding: 6px;
+                border: 1px solid rgba(255, 255, 255, 0.86);
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .dashboard-container .table {
+                min-width: 720px;
+            }
+
+            .dashboard-container .table thead th {
+                background: transparent;
+                color: #0f172a;
+                border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+            }
+
+            .dashboard-container .table tbody tr {
+                background: rgba(255, 255, 255, 0.86);
+            }
+
+            .dashboard-container .table tbody td {
+                border-top: 1px solid rgba(226, 232, 240, 0.75);
+            }
+
+            .dashboard-container .form-control,
+            .dashboard-container .form-select {
+                background: rgba(255,255,255,.96);
+                border: 1px solid rgba(148,163,184,.28);
+                border-radius: 16px;
+                padding: 12px 14px;
+                min-height: 48px;
+            }
+
+            .dashboard-container .input-group-text {
+                border-radius: 16px;
+                background: rgba(255,255,255,.96);
+                border: 1px solid rgba(148,163,184,.28);
+            }
+
+            .dashboard-container .badge {
+                border-radius: 999px;
+                padding: 7px 11px;
+            }
+
+            .dashboard-container .alert {
+                border-left-width: 0;
+                border-top: 3px solid var(--primary-orange);
+            }
+
+            .dashboard-container .alert-success { background: linear-gradient(135deg, #ecfdf5 0%, #f8fffb 100%); }
+            .dashboard-container .alert-danger { background: linear-gradient(135deg, #fff1f2 0%, #fff8f8 100%); }
+            .dashboard-container .alert-warning { background: linear-gradient(135deg, #fff7ed 0%, #fffdf7 100%); }
+            .dashboard-container .alert-info { background: linear-gradient(135deg, #eff6ff 0%, #f8fbff 100%); }
+
+            .dashboard-container .modal-content {
+                border: 1px solid rgba(255,255,255,.9);
+            }
+
+            .dashboard-container .modal-header,
+            .dashboard-container .modal-footer {
+                border-color: rgba(148,163,184,.12);
+            }
+
+            .dashboard-container .spinner-border {
+                color: var(--primary-orange) !important;
+            }
+
+            .navbar-modern {
+                padding: 10px 12px;
+                background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(248,251,255,0.92));
+                border-bottom: 1px solid rgba(255,255,255,0.9);
+                box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+            }
+
+            .navbar-modern .navbar-brand {
+                font-size: 18px;
+            }
+
+            .modern-sidebar {
+                display: none !important;
+            }
+
+            .modern-content {
+                margin-left: 0 !important;
+                width: 100%;
+            }
+
+            .modern-container {
+                padding: 0;
+            }
+
+
+            /* Bottom slider-style dock: horizontally scrollable and draggable */
+            .mobile-merchant-dock {
+                position: fixed;
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+                z-index: 1090;
+                display: flex;
+                gap: 10px;
+                padding: 8px 10px;
+                border-radius: 24px;
+                background: rgba(255, 255, 255, 0.94);
+                backdrop-filter: blur(12px);
+                border: 1px solid rgba(0,0,0,0.06);
+                box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
+                overflow-x: auto;
+                scroll-behavior: smooth;
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: x mandatory;
+                align-items: center;
+            }
+
+            .mobile-merchant-dock::-webkit-scrollbar { height: 8px; }
+            .mobile-merchant-dock::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 8px; }
+
+            .mobile-dock-item {
+                display: inline-flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 4px;
+                min-width: 84px;
+                padding: 8px 12px;
+                border-radius: 14px;
+                text-decoration: none;
+                color: #64748b;
+                background: transparent;
+                transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+                scroll-snap-align: start;
+                flex: 0 0 auto;
+                text-align: center;
+            }
+
+            .mobile-dock-item i { font-size: 1.1rem; line-height: 1; }
+            .mobile-dock-item span { font-size: 11px; font-weight:700; }
+
+            .mobile-dock-item.active {
+                color: #fff;
+                background: linear-gradient(135deg, var(--primary-orange), #ff8c00);
+                box-shadow: 0 10px 22px rgba(255,140,0,0.18);
+                transform: translateY(-2px);
+            }
+
+            .mobile-dock-item:active { transform: scale(0.98); }
+
+            /* Dock hidden state for scroll behavior */
+            .mobile-merchant-dock.dock-hidden {
+                transform: translateY(120%);
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            /* Card entrance animations */
+            .animate-card {
+                opacity: 0;
+                transform: translateY(10px) scale(0.995);
+                transition: opacity 420ms cubic-bezier(.2,.9,.2,1), transform 420ms cubic-bezier(.2,.9,.2,1);
+                will-change: opacity, transform;
+            }
+
+            .animate-card.visible {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        @media (max-width: 768px) and (prefers-color-scheme: dark) {
+            body {
+                background:
+                    radial-gradient(circle at top left, rgba(255, 181, 99, 0.18), transparent 28%),
+                    radial-gradient(circle at top right, rgba(39, 174, 96, 0.12), transparent 26%),
+                    linear-gradient(180deg, #fff9f3 0%, #f4f7fb 38%, #eef3f8 100%) !important;
+                color: var(--primary-black) !important;
+            }
+
+            .dashboard-container .card,
+            .dashboard-container .form-section,
+            .dashboard-container .alert,
+            .dashboard-container .table-responsive,
+            .dashboard-container .modal-content {
+                background: rgba(255, 255, 255, 0.82) !important;
+                color: var(--primary-black) !important;
             }
         }
     </style>
@@ -703,6 +1156,15 @@
     </div>
 
     @auth
+        @if(!auth()->user()?->isSuperAdmin())
+            <!-- Bottom slider populated from sidebar links for easy horizontal navigation -->
+            <nav class="mobile-merchant-dock" aria-label="Quick navigation" role="navigation">
+                <!-- JS will clone sidebar links into this container for a draggable slider -->
+            </nav>
+        @endif
+    @endauth
+
+    @auth
             </main>
         </div>
     @endauth
@@ -749,15 +1211,24 @@
                 }, 5000);
             });
         });
-        // Sidebar toggle for small screens
+        // Sidebar toggle for small screens (support either `sidebarToggle` or `mobileMenuBtn` id)
         document.addEventListener('DOMContentLoaded', function() {
-            const toggle = document.getElementById('sidebarToggle');
+            const toggle = document.getElementById('sidebarToggle') || document.getElementById('mobileMenuBtn');
             const sidebar = document.getElementById('modernSidebar');
             if (toggle && sidebar) {
                 toggle.addEventListener('click', function() {
-                    if (sidebar.style.display === 'block') {
-                        sidebar.style.display = 'none';
+                    // prefer class-based open state so CSS transitions can be used elsewhere
+                    if (document.body.classList.contains('sidebar-open')) {
+                        document.body.classList.remove('sidebar-open');
+                        // keep inline styles tidy
+                        sidebar.style.display = '';
+                        sidebar.style.position = '';
+                        sidebar.style.zIndex = '';
+                        sidebar.style.left = '';
+                        sidebar.style.top = '';
+                        sidebar.style.boxShadow = '';
                     } else {
+                        document.body.classList.add('sidebar-open');
                         sidebar.style.display = 'block';
                         sidebar.style.position = 'fixed';
                         sidebar.style.zIndex = '1050';
@@ -767,6 +1238,103 @@
                     }
                 });
             }
+        });
+
+        // Mobile card animations & dock behavior
+        document.addEventListener('DOMContentLoaded', function() {
+            // Entrance animations using IntersectionObserver
+            try {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.12 });
+
+                document.querySelectorAll('.dashboard-container .card, .mobile-report-list .card, .safes-mobile-list .card, .storages-mobile-list .card, .employees-mobile-list .card').forEach(el => {
+                    el.classList.add('animate-card');
+                    observer.observe(el);
+                });
+            } catch (e) {
+                // IntersectionObserver not supported — skip animations silently
+            }
+
+            // Bottom dock: populate from the sidebar, make draggable and hide on scroll down
+            (function(){
+                const dock = document.querySelector('.mobile-merchant-dock');
+                if (!dock) return;
+
+                // clone links from the sidebar menus into the dock
+                const sidebarLinks = Array.from(document.querySelectorAll('.component-sidebar .sidebar-menu a'));
+                sidebarLinks.forEach(link => {
+                    try {
+                        // skip Audit Logs link on the bottom dock
+                        const labelText = (link.querySelector('span')?.textContent || link.textContent || '').trim().toLowerCase();
+                        const hrefVal = (link.getAttribute('href') || '').toLowerCase();
+                        if (labelText.includes('audit log') || hrefVal.includes('/audit-logs')) return;
+
+                        const a = document.createElement('a');
+                        a.className = 'mobile-dock-item';
+                        a.href = link.getAttribute('href') || '#';
+                        // copy icon if present
+                        const icon = link.querySelector('i');
+                        const iconHtml = icon ? icon.outerHTML : '<i class="bi bi-circle"></i>';
+                        const label = (link.querySelector('span')?.textContent || link.textContent || '').trim();
+                        a.innerHTML = `${iconHtml}<span>${label}</span>`;
+                        if (link.classList.contains('active') || link.href === window.location.href || link.href === window.location.pathname) {
+                            a.classList.add('active');
+                        }
+                        dock.appendChild(a);
+                    } catch (e) {
+                        console.warn('Failed to clone sidebar link to dock', e);
+                    }
+                });
+
+                // drag-to-scroll support for mouse and touch
+                let isDown = false, startX = 0, scrollLeft = 0;
+                dock.addEventListener('mousedown', (e) => {
+                    isDown = true; dock.classList.add('dragging'); startX = e.pageX - dock.offsetLeft; scrollLeft = dock.scrollLeft; e.preventDefault();
+                });
+                dock.addEventListener('mouseleave', () => { isDown = false; dock.classList.remove('dragging'); });
+                dock.addEventListener('mouseup', () => { isDown = false; dock.classList.remove('dragging'); });
+                dock.addEventListener('mousemove', (e) => {
+                    if (!isDown) return; e.preventDefault(); const x = e.pageX - dock.offsetLeft; const walk = (x - startX) * 1; dock.scrollLeft = scrollLeft - walk;
+                });
+                // touch
+                dock.addEventListener('touchstart', (e) => { startX = e.touches[0].pageX - dock.offsetLeft; scrollLeft = dock.scrollLeft; }, { passive: true });
+                dock.addEventListener('touchmove', (e) => { const x = e.touches[0].pageX - dock.offsetLeft; const walk = (x - startX); dock.scrollLeft = scrollLeft - walk; }, { passive: true });
+
+                // allow clicking nav items and give visual feedback
+                dock.addEventListener('click', function(e){
+                    const item = e.target.closest('.mobile-dock-item');
+                    if (!item) return;
+                    dock.querySelectorAll('.mobile-dock-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    // let navigation proceed — visual active cleared shortly after
+                    setTimeout(()=> item.classList.remove('active'), 800);
+                });
+
+                // Hide on scroll down / show on scroll up
+                let lastY = window.scrollY || 0; let ticking = false;
+                window.addEventListener('scroll', function(){
+                    if (!ticking) {
+                        window.requestAnimationFrame(function(){
+                            const currentY = window.scrollY || 0;
+                            if (currentY > lastY + 10) dock.classList.add('dock-hidden');
+                            else if (currentY < lastY - 10) dock.classList.remove('dock-hidden');
+                            lastY = currentY; ticking = false;
+                        });
+                        ticking = true;
+                    }
+                }, { passive: true });
+                // center active item on load
+                try {
+                    const active = dock.querySelector('.mobile-dock-item.active');
+                    if (active) active.scrollIntoView({ inline: 'center', behavior: 'smooth', block: 'nearest' });
+                } catch (e) {}
+            })();
         });
     </script>
 

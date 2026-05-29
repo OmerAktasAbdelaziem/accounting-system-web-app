@@ -4,7 +4,53 @@
 
 @section('content')
 <div class="mb-4">
-    <div class="d-flex justify-content-between align-items-center">
+    <style>
+        @media (max-width: 768px) {
+            .safes-hero {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 12px;
+            }
+
+            .safes-hero .btn {
+                width: 100%;
+            }
+
+            .safes-desktop-table {
+                display: none;
+            }
+
+            .safes-mobile-list {
+                display: grid;
+                gap: 12px;
+            }
+
+            .safe-mobile-card {
+                background: rgba(255,255,255,.96);
+                border: 1px solid rgba(226,232,240,.95);
+                border-radius: 20px;
+                padding: 14px;
+                box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+            }
+
+            .safe-mobile-card .top {
+                display: flex;
+                justify-content: space-between;
+                gap: 10px;
+                align-items: flex-start;
+                margin-bottom: 10px;
+            }
+
+            .safe-mobile-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+                margin-bottom: 12px;
+            }
+        }
+    </style>
+
+    <div class="d-flex justify-content-between align-items-center safes-hero">
         <h1 style="font-weight: 900; color: #1a1a1a;">
             <i class="bi bi-safe" style="color: #ff8c00;"></i> {{ __('messages.safe_management') }}
         </h1>
@@ -46,7 +92,46 @@
     <div class="card-header">
         <i class="bi bi-list"></i> {{ __('messages.all_safes') }}
     </div>
-    <div class="table-responsive">
+    <style>
+        @media (max-width: 768px) {
+            .safes-mobile-list { display: block; }
+            .table { display: none !important; }
+        }
+    </style>
+
+    <!-- Mobile safes cards -->
+    <div class="safes-mobile-list d-md-none">
+        @forelse($safes ?? [] as $safe)
+            @php
+                $usagePercent = ($safe->max_balance && (float) $safe->max_balance > 0)
+                    ? min(100, max(0, (($safe->balance ?? 0) / $safe->max_balance) * 100))
+                    : 0;
+            @endphp
+            <div class="safe-mobile-card">
+                <div class="top">
+                        <div>
+                            <strong>{{ $safe->name }}</strong>
+                            <div class="small text-muted">{{ $safe->location }}</div>
+                        </div>
+                    <div class="text-end fw-bold">{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</div>
+                    </div>
+                <div class="safe-mobile-grid">
+                    <div class="bg-light rounded-4 p-2"><div class="text-muted small">{{ __('messages.current_balance') }}</div><strong>{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</strong></div>
+                    <div class="bg-light rounded-4 p-2"><div class="text-muted small">{{ __('messages.usage') }}</div><strong>{{ round($usagePercent) }}%</strong></div>
+                </div>
+                <div class="d-grid gap-2">
+                        @feature('safes')
+                        <a href="{{ route('safes.show', $safe->id) }}" class="btn btn-sm btn-info">{{ __('messages.view_details') }}</a>
+                        <a href="{{ route('safes.transactions', $safe->id) }}" class="btn btn-sm btn-secondary">{{ __('messages.view_transactions') }}</a>
+                        @endfeature
+                </div>
+            </div>
+        @empty
+            <div class="safe-mobile-card text-center text-muted">{{ __('messages.no_safes_found') }}</div>
+        @endforelse
+    </div>
+
+    <div class="table-responsive safes-desktop-table">
         <table class="table table-hover">
             <thead>
                 <tr>

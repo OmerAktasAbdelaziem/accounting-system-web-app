@@ -2,7 +2,61 @@
 
 @section('content')
 <div class="container">
-    <div class="d-flex justify-content-between mb-3">
+    <style>
+        @media (max-width: 768px) {
+            .suppliers-hero {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 12px;
+            }
+
+            .suppliers-hero .btn,
+            .suppliers-search .btn,
+            .suppliers-search .form-control {
+                width: 100%;
+            }
+
+            .suppliers-desktop-table {
+                display: none;
+            }
+
+            .suppliers-mobile-list {
+                display: grid;
+                gap: 12px;
+            }
+
+            .supplier-mobile-card {
+                background: rgba(255,255,255,.96);
+                border: 1px solid rgba(226,232,240,.95);
+                border-radius: 20px;
+                padding: 14px;
+                box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+            }
+
+            .supplier-mobile-card .top {
+                display: flex;
+                justify-content: space-between;
+                gap: 10px;
+                align-items: flex-start;
+                margin-bottom: 10px;
+            }
+
+            .supplier-mobile-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+                margin-bottom: 12px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .suppliers-hero h3 {
+                font-size: 22px;
+            }
+        }
+    </style>
+
+    <div class="d-flex justify-content-between mb-3 suppliers-hero">
         <h3>{{ __('messages.suppliers') }}</h3>
         @feature('suppliers.create')
             <a href="{{ route('suppliers.create') }}" class="btn btn-primary">{{ __('Create') }}</a>
@@ -10,7 +64,7 @@
     </div>
 
     <div class="card mb-3">
-        <div class="card-body">
+        <div class="card-body suppliers-search">
             <form method="GET" action="{{ route('suppliers.index') }}" class="row g-2 align-items-end">
                 <div class="col-md-8">
                     <label for="supplier-search" class="form-label">Search</label>
@@ -31,7 +85,41 @@
         </div>
     </div>
 
-    <div class="card" id="suppliers-list-container">
+    <div class="suppliers-mobile-list d-md-none">
+        @foreach($suppliers as $supplier)
+            <div class="supplier-mobile-card">
+                <div class="top">
+                    <div>
+                        <strong>{{ is_string($supplier->name) ? $supplier->name : (is_array($supplier->name) ? ($supplier->name[app()->getLocale()] ?? implode(' - ', $supplier->name)) : json_encode($supplier->name)) }}</strong>
+                        <div class="small text-muted">ID: {{ $supplier->id }}</div>
+                    </div>
+                    <div class="text-end fw-bold">{{ $currencySymbol }}{{ number_format(((float)($supplier->opening_balance ?? 0) + (float)($supplier->total_purchased ?? 0) - (float)($supplier->total_paid ?? 0)), 2) }}</div>
+                </div>
+                <div class="supplier-mobile-grid">
+                    <div class="bg-light rounded-4 p-2"><div class="text-muted small">Balance</div><strong>{{ $currencySymbol }}{{ number_format($supplier->opening_balance ?? 0,2) }}</strong></div>
+                    <div class="bg-light rounded-4 p-2"><div class="text-muted small">Outstanding</div><strong class="{{ (((float)($supplier->opening_balance ?? 0) + (float)($supplier->total_purchased ?? 0) - (float)($supplier->total_paid ?? 0)) > 0) ? 'text-danger' : 'text-success' }}">{{ $currencySymbol }}{{ number_format(((float)($supplier->opening_balance ?? 0) + (float)($supplier->total_purchased ?? 0) - (float)($supplier->total_paid ?? 0)), 2) }}</strong></div>
+                </div>
+                <div class="d-grid gap-2">
+                    @feature('suppliers.view')
+                        <a href="{{ route('suppliers.show', $supplier) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
+                    @endfeature
+                    @feature('suppliers.edit')
+                        <a href="{{ route('suppliers.edit', $supplier) }}" class="btn btn-sm btn-outline-primary">{{ __('Edit') }}</a>
+                    @endfeature
+                    @feature('suppliers.delete')
+                        <form action="{{ route('suppliers.destroy', $supplier) }}" method="POST" class="m-0">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-sm btn-outline-danger w-100" onclick="return confirm('{{ __('Are you sure?') }}')">{{ __('Delete') }}</button>
+                        </form>
+                    @endfeature
+                </div>
+            </div>
+        @endforeach
+        <div class="mt-2">{{ $suppliers->links() }}</div>
+    </div>
+
+    <div class="card suppliers-desktop-table" id="suppliers-list-container">
         <div class="card-body">
             <table class="table table-striped">
                 <thead class="bg-light text-dark">

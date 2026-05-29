@@ -4,6 +4,12 @@
 
 @section('content')
 @feature('inventory_report')
+<style>
+    @media (max-width: 768px) {
+        .inventory-mobile-list { display: block; }
+        .table { display: none !important; }
+    }
+</style>
 <div class="row mb-4">
     <div class="col-md-6">
         <h2>{{ __('messages.inventory_report') }}</h2>
@@ -35,6 +41,35 @@
             </div>
         </form>
     </div>
+    <!-- Mobile product cards -->
+    <div class="inventory-mobile-list d-md-none">
+        @forelse($products ?? [] as $product)
+            <div class="card mb-2">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>{{ $product->name }}</strong>
+                            <div class="small text-muted">{{ $product->category->name ?? 'N/A' }}</div>
+                        </div>
+                        <div class="text-end">
+                            <div>{{ $product->current_stock }}</div>
+                            <div class="small text-muted">{{ $currencySymbol }}{{ number_format($product->current_stock * $product->selling_price, 2) }}</div>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        @if($product->current_stock <= 0)
+                            <span class="badge bg-danger">{{ __('messages.low_stock') }}</span>
+                        @else
+                            <span class="badge bg-success">{{ __('messages.in_stock') }}</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="card mb-2"><div class="card-body text-center text-muted">{{ __('messages.no_data') }}</div></div>
+        @endforelse
+    </div>
+
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>

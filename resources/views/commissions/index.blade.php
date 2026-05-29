@@ -5,14 +5,46 @@
 @section('content')
 <style>
     @media (max-width: 768px) {
-        .d-flex.justify-content-between.align-items-center {
+        .commissions-hero {
             flex-direction: column;
             align-items: stretch !important;
             gap: 12px;
         }
 
-        .d-flex.justify-content-between.align-items-center .btn {
+        .commissions-hero .btn {
             width: 100%;
+        }
+
+        .commissions-desktop-table {
+            display: none;
+        }
+
+        .commissions-mobile-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .commission-mobile-card {
+            background: rgba(255,255,255,.96);
+            border: 1px solid rgba(226,232,240,.95);
+            border-radius: 20px;
+            padding: 14px;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+        }
+
+        .commission-mobile-card .top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .commission-mobile-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
         }
 
         .row.mb-4 .col-md-3,
@@ -52,7 +84,7 @@
 </style>
 
 <div class="mb-4">
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between align-items-center commissions-hero">
         <h1 style="font-weight: 900; color: #1a1a1a;">
             <i class="bi bi-percent" style="color: #ff8c00;"></i> {{ __('messages.commissions_management') }}
         </h1>
@@ -135,13 +167,31 @@
 
 <!-- Monthly Commission Aggregation -->
 @if($monthlyCommissions->isNotEmpty())
+    <div class="commissions-mobile-list d-md-none mb-3">
+        @foreach($monthlyCommissions as $monthly)
+            @php
+                $date = \Carbon\Carbon::createFromDate((int)$monthly->year, (int)$monthly->month, 1);
+            @endphp
+            <div class="commission-mobile-card">
+                <div class="top">
+                    <div>
+                        <strong>{{ $date->format('F Y') }}</strong>
+                        <div class="small text-muted">Monthly commission summary</div>
+                    </div>
+                    <span class="badge bg-light text-dark border">{{ $currencySymbol }}{{ number_format($monthly->total, 2) }}</span>
+                </div>
+                <div class="small text-muted">Use the desktop table for detailed monthly breakdowns.</div>
+            </div>
+        @endforeach
+    </div>
+
     <div class="card">
         <div class="card-header" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white;">
             <h5 class="mb-0">
                 <i class="bi bi-graph-up"></i> Monthly Commission Summary
             </h5>
         </div>
-        <div class="table-responsive">
+        <div class="table-responsive commissions-desktop-table">
             <table class="table table-hover">
                 <thead class="table-light">
                     <tr>

@@ -57,6 +57,12 @@
             font-size: 22px;
         }
     }
+
+    /* Mobile card list */
+    @media (max-width: 768px) {
+        .mobile-report-list { display: block; }
+        .table { display: none !important; }
+    }
 </style>
 
 @feature('sales_report')
@@ -113,6 +119,43 @@
                 </button>
             </div>
         </form>
+    </div>
+
+    <!-- Mobile list (cards) -->
+    <div class="mobile-report-list d-md-none">
+        @forelse($salesData ?? [] as $sale)
+            <div class="card mb-2">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="small text-muted">{{ $sale->date->format('M d, Y') }}</div>
+                            <strong>{{ $sale->reference_number ?? '-' }}</strong>
+                            <div class="small text-muted">{{ $sale->description }}</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold">{{ $currencySymbol }}{{ number_format($sale->total_credit,2) }}</div>
+                            <div class="small text-muted">{{ $currencySymbol }}{{ number_format($sale->total_debit,2) }}</div>
+                        </div>
+                    </div>
+                    <div class="mt-2 d-flex gap-2">
+                        @feature('sales_report')
+                        <a href="{{ route('reports.sales.show', $sale) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        <form action="{{ route('reports.sales.destroy', $sale) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this sales report entry?');" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                        @endfeature
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="card mb-2"><div class="card-body text-center text-muted">{{ __('messages.no_data') }}</div></div>
+        @endforelse
     </div>
 
     <div class="table-responsive">

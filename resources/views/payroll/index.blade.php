@@ -2,11 +2,33 @@
 
 @section('content')
 <style>
+    .payroll-page {
+        position: relative;
+        padding: 24px 0 40px;
+    }
+
+    .payroll-page::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+            radial-gradient(circle at top left, rgba(255, 140, 0, 0.14), transparent 28%),
+            radial-gradient(circle at top right, rgba(39, 174, 96, 0.10), transparent 24%),
+            linear-gradient(180deg, rgba(248,250,252,0.7), rgba(248,250,252,0.95));
+        z-index: 0;
+    }
+
+    .payroll-page > * {
+        position: relative;
+        z-index: 1;
+    }
+
     .payroll-hero {
         position: relative;
         overflow: hidden;
         border: 0;
-        border-radius: 28px;
+        border-radius: 32px;
         background:
             radial-gradient(circle at top right, rgba(255, 140, 0, 0.22), transparent 26%),
             radial-gradient(circle at left center, rgba(39, 174, 96, 0.18), transparent 28%),
@@ -29,13 +51,18 @@
         display: inline-flex;
         align-items: center;
         gap: .5rem;
-        padding: .35rem .75rem;
+        padding: .38rem .8rem;
         border-radius: 999px;
-        background: rgba(255,255,255,.12);
-        border: 1px solid rgba(255,255,255,.12);
+        background: rgba(255,255,255,.92);
+        border: 1px solid rgba(255,255,255,.65);
+        color: #1f2937;
         font-size: .78rem;
         letter-spacing: .04em;
         text-transform: uppercase;
+    }
+
+    .hero-kicker i {
+        color: #ff8c00;
     }
 
     .hero-glow {
@@ -53,7 +80,7 @@
     .mini-stat {
         border: 0;
         border-radius: 22px;
-        background: rgba(255,255,255,.72);
+        background: rgba(255,255,255,.82);
         backdrop-filter: blur(18px);
         box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
         transition: transform .22s ease, box-shadow .22s ease;
@@ -83,7 +110,7 @@
 
     .search-shell {
         border: 0;
-        border-radius: 22px;
+        border-radius: 24px;
         background: #fff;
         box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
     }
@@ -142,6 +169,103 @@
         justify-content: flex-end;
     }
 
+    .payroll-mobile-list {
+        display: none;
+    }
+
+    .payroll-mobile-card {
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        border-radius: 24px;
+        background: rgba(255,255,255,.94);
+        box-shadow: 0 16px 35px rgba(15, 23, 42, 0.08);
+        padding: 16px;
+        color: #0f172a;
+    }
+
+    .payroll-mobile-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .payroll-mobile-title {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 4px;
+    }
+
+    .payroll-mobile-subtitle {
+        font-size: .84rem;
+        color: #475569;
+    }
+
+    .payroll-mobile-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .payroll-mobile-pill {
+        border-radius: 16px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 10px 12px;
+    }
+
+    .payroll-mobile-pill .label {
+        display: block;
+        font-size: .72rem;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: #64748b;
+        margin-bottom: 4px;
+    }
+
+    .payroll-mobile-pill .value {
+        font-size: .95rem;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .payroll-page .table-shell .text-muted,
+    .payroll-page .search-shell .text-muted,
+    .payroll-page .mini-stat .text-muted,
+    .payroll-page .payroll-mobile-card .text-muted,
+    .payroll-page .payroll-mobile-card .section-heading,
+    .payroll-page .payroll-mobile-card .section-subtitle {
+        color: #475569 !important;
+    }
+
+    .payroll-page .payroll-mobile-card .badge,
+    .payroll-page .table-shell .badge {
+        font-weight: 700;
+    }
+
+    .payroll-mobile-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .payroll-mobile-actions .btn {
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    .section-heading {
+        font-weight: 800;
+        letter-spacing: -.03em;
+        color: #0f172a;
+    }
+
+    .section-subtitle {
+        color: #64748b;
+    }
+
     .soft-panel {
         border: 0;
         border-radius: 24px;
@@ -153,6 +277,22 @@
         min-width: min(100%, 290px);
         max-width: 320px;
         padding: 1rem !important;
+        background: rgba(255,255,255,.92);
+        color: #0f172a;
+        border: 1px solid rgba(226, 232, 240, .95);
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.10);
+    }
+
+    .snapshot-panel .h6,
+    .snapshot-panel .snapshot-title,
+    .snapshot-panel .snapshot-value,
+    .snapshot-panel .small {
+        color: #0f172a;
+    }
+
+    .snapshot-panel .snapshot-title,
+    .snapshot-panel .small {
+        opacity: 1 !important;
     }
 
     .snapshot-title {
@@ -172,11 +312,34 @@
     }
 
     .hero-note {
-        color: rgba(255,255,255,.78);
+        display: inline-flex;
+        align-items: center;
         max-width: 54rem;
+        padding: .85rem 1rem;
+        border-radius: 1rem;
+        background: rgba(255,255,255,.9);
+        color: #374151;
+        border: 1px solid rgba(255,255,255,.55);
+        box-shadow: 0 12px 30px rgba(15, 23, 42, .08);
+        line-height: 1.65;
     }
 
     @media (max-width: 768px) {
+        .payroll-page {
+            padding: 10px 0 26px;
+        }
+
+        .payroll-hero {
+            border-radius: 26px;
+        }
+
+        .search-shell,
+        .mini-stat,
+        .table-shell,
+        .soft-panel {
+            border-radius: 22px;
+        }
+
         .payroll-action {
             justify-content: flex-start;
         }
@@ -184,10 +347,32 @@
         .hero-buttons .btn {
             width: 100%;
         }
+
+        .payroll-mobile-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .table-shell .table-responsive,
+        .table-shell table {
+            display: none;
+        }
+
+        .payroll-mobile-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .payroll-mobile-actions {
+            grid-template-columns: 1fr;
+        }
+
+        .section-heading {
+            font-size: 1.05rem;
+        }
     }
 </style>
 
-<div class="container-fluid">
+<div class="container-fluid payroll-page">
     <div class="card payroll-hero mb-4">
         <div class="hero-glow"></div>
         <div class="card-body p-4 p-lg-5 position-relative" style="z-index: 1;">
@@ -197,7 +382,7 @@
                         <i class="bi bi-stars"></i>
                         Payroll command center
                     </div>
-                    <h1 class="display-6 fw-black mb-3" style="font-weight: 900; letter-spacing: -.04em;">{{ __('messages.payroll') }}</h1>
+                    <h1 class="display-6 fw-black mb-3" style="font-weight: 900; letter-spacing: -.05em;">{{ __('messages.payroll') }}</h1>
                     <p class="hero-note mb-4">
                         Track unsettled payrolls, settle payments from safes, and keep a clean history of every payroll movement in one place.
                     </p>
@@ -213,30 +398,30 @@
                     </div>
                 </div>
 
-                <div class="soft-panel snapshot-panel" style="background: rgba(255,255,255,.08); backdrop-filter: blur(18px); color: #fff;">
+                <div class="soft-panel snapshot-panel" style="backdrop-filter: blur(18px);">
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <div>
-                            <div class="text-uppercase fw-semibold opacity-75 snapshot-title">Live snapshot</div>
+                            <div class="text-uppercase fw-semibold snapshot-title">Live snapshot</div>
                             <div class="h6 mb-0">Payroll health</div>
                         </div>
                         <span class="badge rounded-pill bg-success snapshot-chip">Dynamic</span>
                     </div>
                     <div class="row g-2">
                         <div class="col-4">
-                            <div class="p-2 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10 h-100 text-center">
-                                <div class="small opacity-75 mb-1">Unpaid</div>
+                            <div class="p-2 rounded-4 bg-white border border-slate-200 h-100 text-center">
+                                <div class="small mb-1">Unpaid</div>
                                 <div class="snapshot-value">{{ $unpaidPayrollCount ?? 0 }}</div>
                             </div>
                         </div>
                         <div class="col-4">
-                            <div class="p-2 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10 h-100 text-center">
-                                <div class="small opacity-75 mb-1">Need pay</div>
+                            <div class="p-2 rounded-4 bg-white border border-slate-200 h-100 text-center">
+                                <div class="small mb-1">Need pay</div>
                                 <div class="snapshot-value">{{ $currencySymbol }}{{ number_format($unpaidNetSalaryTotal ?? 0, 0) }}</div>
                             </div>
                         </div>
                         <div class="col-4">
-                            <div class="p-2 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10 h-100 text-center">
-                                <div class="small opacity-75 mb-1">Paid</div>
+                            <div class="p-2 rounded-4 bg-white border border-slate-200 h-100 text-center">
+                                <div class="small mb-1">Paid</div>
                                 <div class="snapshot-value">{{ $paidPayrollCount ?? 0 }}</div>
                             </div>
                         </div>
@@ -316,7 +501,7 @@
                 <div class="card-header border-0 py-4 px-4" style="background: linear-gradient(135deg, #111827, #1f2937); color: #fff;">
                     <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
                         <div>
-                            <h5 class="mb-1">Active Payrolls</h5>
+                            <h5 class="mb-1 section-heading text-white">Active payrolls</h5>
                             <div class="small opacity-75">Settle pending salaries from an available safe.</div>
                         </div>
                         <div class="small opacity-75">
@@ -325,6 +510,83 @@
                     </div>
                 </div>
                 <div class="card-body p-0">
+                    <div class="payroll-mobile-list p-3 p-lg-0">
+                        @forelse($activePayrolls ?? [] as $payroll)
+                            @php
+                                $employeeName = '';
+                                if ($payroll->employee) {
+                                    $employeeName = is_string($payroll->employee->name)
+                                        ? $payroll->employee->name
+                                        : (is_array($payroll->employee->name)
+                                            ? ($payroll->employee->name[app()->getLocale()] ?? implode(' - ', $payroll->employee->name))
+                                            : json_encode($payroll->employee->name));
+                                }
+                                $netAmount = (float) ($payroll->calculated_net_salary ?? $payroll->net_salary);
+                                $payUrl = route('payroll.pay', $payroll);
+                            @endphp
+                            <div class="payroll-mobile-card" data-payroll-row data-row-group="active" data-search="{{ strtolower(trim($employeeName . ' ' . $payroll->month . '/' . $payroll->year . ' ' . $payroll->id . ' ' . ($payroll->safe?->name ?? '') . ' ' . strtoupper($payroll->status ?? 'draft'))) }}">
+                                <div class="payroll-mobile-top">
+                                    <div>
+                                        <div class="payroll-mobile-title">{{ $employeeName }}</div>
+                                        <div class="payroll-mobile-subtitle">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }} · ID #{{ $payroll->id }}</div>
+                                    </div>
+                                    <span class="badge rounded-pill bg-warning text-dark">{{ strtoupper($payroll->status ?? 'draft') }}</span>
+                                </div>
+                                <div class="payroll-mobile-grid">
+                                    <div class="payroll-mobile-pill">
+                                        <span class="label">Net salary</span>
+                                        <span class="value">{{ $currencySymbol }}{{ number_format($netAmount, 2) }}</span>
+                                    </div>
+                                    <div class="payroll-mobile-pill">
+                                        <span class="label">Employee code</span>
+                                        <span class="value">{{ $payroll->employee?->employee_code ?? 'N/A' }}</span>
+                                    </div>
+                                    <div class="payroll-mobile-pill">
+                                        <span class="label">Safe source</span>
+                                        <span class="value">{{ $payroll->safe?->name ?? 'Not selected' }}</span>
+                                    </div>
+                                    <div class="payroll-mobile-pill">
+                                        <span class="label">Payroll period</span>
+                                        <span class="value">{{ $payroll->month }}/{{ $payroll->year }}</span>
+                                    </div>
+                                </div>
+                                <div class="payroll-mobile-actions">
+                                    @feature('payroll')
+                                    <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-sm btn-outline-secondary">View</a>
+                                    @endfeature
+                                    @feature('payroll')
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-success"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#payrollPayModal"
+                                        data-pay-url="{{ $payUrl }}"
+                                        data-pay-employee="{{ $employeeName }}"
+                                        data-pay-amount="{{ number_format($netAmount, 2, '.', '') }}"
+                                    >
+                                        Mark paid
+                                    </button>
+                                    @endfeature
+                                    @feature('payroll')
+                                    <a href="{{ route('payroll.edit', $payroll) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                    @endfeature
+                                    @feature('payroll')
+                                    <form action="{{ route('payroll.destroy', $payroll) }}" method="POST" class="m-0" onsubmit="return confirm('Delete this payroll? If it was paid, the linked payment will be reversed.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">Delete</button>
+                                    </form>
+                                    @endfeature
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center text-muted py-4">
+                                <div class="fw-semibold mb-1">No unpaid payrolls found</div>
+                                <div class="small">Create payrolls or mark existing records as paid to populate this section.</div>
+                            </div>
+                        @endforelse
+                    </div>
+
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
                             <thead>
@@ -421,7 +683,7 @@
                 <div class="card-header border-0 py-4 px-4" style="background: linear-gradient(135deg, #0f172a, #334155); color: #fff;">
                     <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
                         <div>
-                            <h5 class="mb-1">Paid Payroll History</h5>
+                            <h5 class="mb-1 section-heading text-white">Paid payroll history</h5>
                             <div class="small opacity-75">Review settled payrolls, safe source, and payment time.</div>
                         </div>
                         <div class="small opacity-75">
@@ -430,6 +692,70 @@
                     </div>
                 </div>
                 <div class="card-body p-0">
+                    <div class="payroll-mobile-list p-3 p-lg-0">
+                        @forelse($paidPayrolls ?? [] as $payroll)
+                            @php
+                                $employeeName = '';
+                                if ($payroll->employee) {
+                                    $employeeName = is_string($payroll->employee->name)
+                                        ? $payroll->employee->name
+                                        : (is_array($payroll->employee->name)
+                                            ? ($payroll->employee->name[app()->getLocale()] ?? implode(' - ', $payroll->employee->name))
+                                            : json_encode($payroll->employee->name));
+                                }
+                                $netAmount = (float) ($payroll->calculated_net_salary ?? $payroll->net_salary);
+                                $searchText = trim($employeeName . ' ' . $payroll->month . '/' . $payroll->year . ' ' . $payroll->id . ' ' . ($payroll->safe?->name ?? '') . ' ' . strtoupper($payroll->status ?? 'paid'));
+                            @endphp
+                            <div class="payroll-mobile-card" data-payroll-row data-row-group="paid" data-search="{{ strtolower($searchText) }}">
+                                <div class="payroll-mobile-top">
+                                    <div>
+                                        <div class="payroll-mobile-title">{{ $employeeName }}</div>
+                                        <div class="payroll-mobile-subtitle">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }} · ID #{{ $payroll->id }}</div>
+                                    </div>
+                                    <span class="badge rounded-pill bg-success">PAID</span>
+                                </div>
+                                <div class="payroll-mobile-grid">
+                                    <div class="payroll-mobile-pill">
+                                        <span class="label">Net salary</span>
+                                        <span class="value text-success">{{ $currencySymbol }}{{ number_format($netAmount, 2) }}</span>
+                                    </div>
+                                    <div class="payroll-mobile-pill">
+                                        <span class="label">Safe</span>
+                                        <span class="value">{{ $payroll->safe?->name ?? '-' }}</span>
+                                    </div>
+                                    <div class="payroll-mobile-pill">
+                                        <span class="label">Paid at</span>
+                                        <span class="value">{{ optional($payroll->processed_at)->format('Y-m-d H:i') ?? '-' }}</span>
+                                    </div>
+                                    <div class="payroll-mobile-pill">
+                                        <span class="label">Code</span>
+                                        <span class="value">{{ $payroll->employee?->employee_code ?? 'N/A' }}</span>
+                                    </div>
+                                </div>
+                                <div class="payroll-mobile-actions">
+                                    @feature('payroll')
+                                    <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-sm btn-outline-secondary">View</a>
+                                    @endfeature
+                                    @feature('downloads')
+                                    <a href="{{ route('payroll.payslip', $payroll) }}" class="btn btn-sm btn-outline-danger">PDF</a>
+                                    @endfeature
+                                    @feature('payroll')
+                                    <form action="{{ route('payroll.destroy', $payroll) }}" method="POST" class="m-0" onsubmit="return confirm('Delete this payroll? If it was paid, the linked payment will be reversed.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">Delete</button>
+                                    </form>
+                                    @endfeature
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center text-muted py-4">
+                                <div class="fw-semibold mb-1">No paid payroll history found</div>
+                                <div class="small">Paid records will appear here after settlement.</div>
+                            </div>
+                        @endforelse
+                    </div>
+
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
                             <thead>

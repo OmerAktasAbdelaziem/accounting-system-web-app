@@ -39,11 +39,11 @@ class DashboardController extends Controller
         $lowStockCount = Product::where('current_stock', '<=', 0)->count();
         $lowStockProducts = Product::orderBy('current_stock')->limit(5)->get();
 
-        $journalSalesQuery = JournalEntry::query()->where('reference_type', 'invoice');
-        $this->applyTenantIds($journalSalesQuery, $branchIds, 'branch_id', $isMerchantUser);
+        $salesQuery = EmployeeSale::query();
+        $this->applyTenantIds($salesQuery, $branchIds, 'branch_id', $isMerchantUser);
 
-        $totalSales = (float) $journalSalesQuery->sum('total_credit');
-        $salesCount = (clone $journalSalesQuery)->count();
+        $totalSales = (float) $salesQuery->sum('total_amount');
+        $salesCount = (clone $salesQuery)->count();
 
         // The `status` column was removed from `commissions` table; fall back to total counts/sums
         $pendingCommissions = Commission::count();
@@ -78,13 +78,18 @@ class DashboardController extends Controller
         $this->applyTenantIds($transactionsTodayQuery, $safeIds, 'safe_id', $isMerchantUser);
         $transactionsToday = $transactionsTodayQuery->count();
 
-        $recentTransactionsQuery = JournalEntry::query();
-        $this->applyTenantIds($recentTransactionsQuery, $branchIds, 'branch_id', $isMerchantUser);
-        $recentTransactions = $recentTransactionsQuery->latest()->take(6)->get();
-
         $recentSalesQuery = EmployeeSale::with(['employee:id,name', 'product:id,name']);
         $this->applyTenantIds($recentSalesQuery, $branchIds, 'branch_id', $isMerchantUser);
         $recentSales = $recentSalesQuery->latest('sale_date')->take(6)->get();
+
+        $recentTransactions = $recentSales->map(function ($sale) {
+            return (object) [
+                'description' => $sale->product?->name ?? 'Sale',
+                'reference_number' => $sale->id,
+                'date' => $sale->sale_date,
+                'total_credit' => $sale->total_amount,
+            ];
+        });
 
         $recentIncomeQuery = SafeIncome::query()->with(['safe:id,name', 'currency:id,code,name']);
         $this->applyTenantIds($recentIncomeQuery, $safeIds, 'safe_id', $isMerchantUser);
@@ -107,11 +112,11 @@ class DashboardController extends Controller
             $month = Carbon::now()->startOfMonth()->subMonths($offset);
             $months[] = $month->format('M');
 
-            $monthSalesQuery = JournalEntry::query()->where('reference_type', 'invoice')
-                ->whereYear('date', $month->year)
-                ->whereMonth('date', $month->month);
+            $monthSalesQuery = EmployeeSale::query()
+                ->whereYear('sale_date', $month->year)
+                ->whereMonth('sale_date', $month->month);
             $this->applyTenantIds($monthSalesQuery, $branchIds, 'branch_id', $isMerchantUser);
-            $salesData[] = (float) $monthSalesQuery->sum('total_credit');
+            $salesData[] = (float) $monthSalesQuery->sum('total_amount');
 
             $monthIncomeQuery = SafeIncome::query()
                 ->whereYear('created_at', $month->year)
@@ -232,11 +237,10 @@ class DashboardController extends Controller
 
             $months[] = $month->format('M Y');
             if ($canViewSales) {
-                $salesQuery = JournalEntry::where('reference_type', 'invoice')
-                    ->whereYear('date', $month->year)
-                    ->whereMonth('date', $month->month);
-                $this->applyTenantIds($salesQuery, $branchIds, 'branch_id', $isMerchantUser);
-                $salesData[] = (float) $salesQuery->sum('total_credit');
+                $monthSalesQuery = EmployeeSale::whereYear('sale_date', $month->year)
+                    ->whereMonth('sale_date', $month->month);
+                $this->applyTenantIds($monthSalesQuery, $branchIds, 'branch_id', $isMerchantUser);
+                $salesData[] = (float) $monthSalesQuery->sum('total_amount');
             } else {
                 $salesData[] = 0.0;
             }
@@ -257,8 +261,8 @@ class DashboardController extends Controller
             }
         }
 
-        $journalSalesQuery = JournalEntry::query()->where('reference_type', 'invoice');
-        $this->applyTenantIds($journalSalesQuery, $branchIds, 'branch_id', $isMerchantUser);
+        $salesQuery = EmployeeSale::query();
+        $this->applyTenantIds($salesQuery, $branchIds, 'branch_id', $isMerchantUser);
 
         $storageQuery = Storage::query();
         $storageItemQuery = StorageItem::query();
@@ -279,8 +283,8 @@ class DashboardController extends Controller
             'total_products' => Product::count(),
             'total_employees' => Employee::count(),
             'low_stock_count' => Product::where('current_stock', '<=', 0)->count(),
-            'total_sales' => (float) $journalSalesQuery->sum('total_credit'),
-            'sales_count' => (clone $journalSalesQuery)->count(),
+            'total_sales' => (float) $salesQuery->sum('total_amount'),
+            'sales_count' => (clone $salesQuery)->count(),
             // `status` was removed; show total commissions instead
             'pending_commissions' => Commission::count(),
             'storage_usage' => (float) ($storageQuery->sum('capacity') > 0 ? round(($storageItemQuery->sum('quantity') / $storageQuery->sum('capacity')) * 100, 2) : 0),

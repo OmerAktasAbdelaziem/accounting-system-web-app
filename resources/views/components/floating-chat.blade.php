@@ -4,7 +4,16 @@
         right: 22px;
         bottom: 22px;
         z-index: 3000;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Manrope', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: 500;
+    }
+
+    /* Hide floating chat on small mobile devices (show on tablet and up) */
+    @media (max-width: 767px) {
+        .floating-chat-root,
+        .floating-chat-notification-list {
+            display: none !important;
+        }
     }
 
     .floating-chat-toggle {

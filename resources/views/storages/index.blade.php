@@ -46,6 +46,40 @@
     <div class="card-header">
         <i class="bi bi-list"></i> {{ __('messages.all_storages') }}
     </div>
+    <style>
+        @media (max-width: 768px) {
+            .storages-mobile-list { display: block; }
+            .table { display: none !important; }
+        }
+    </style>
+
+    <!-- Mobile storages cards -->
+    <div class="storages-mobile-list d-md-none">
+        @forelse($storages ?? [] as $storage)
+            <div class="card mb-2">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>{{ $storage->name }}</strong>
+                            <div class="small text-muted">{{ $storage->location }}</div>
+                        </div>
+                        <div class="text-end">
+                            <div>{{ $storage->items->count() }} {{ __('messages.items') }}</div>
+                            <div class="small text-muted">{{ $storage->is_active ? __('messages.active') : __('messages.inactive') }}</div>
+                        </div>
+                    </div>
+                    <div class="mt-2 d-flex gap-2">
+                        @feature('storages.view')
+                        <a href="{{ route('storages.items', $storage->id) }}" class="btn btn-sm btn-info"> <i class="bi bi-box"></i> </a>
+                        @endfeature
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="card mb-2"><div class="card-body text-center text-muted">{{ __('messages.no_storages_found') }}</div></div>
+        @endforelse
+    </div>
+
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>

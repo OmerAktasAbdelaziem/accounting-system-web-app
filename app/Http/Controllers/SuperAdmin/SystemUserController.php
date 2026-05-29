@@ -179,8 +179,13 @@ class SystemUserController extends Controller
     /**
      * Inspect/impersonate a merchant - log in as that merchant
      */
-    public function inspectMerchant(Merchant $merchant)
+    public function inspectMerchant(Request $request, Merchant $merchant)
     {
+        $ip = $request->ip();
+        $allowed = ['127.0.0.1', '::1', '::ffff:127.0.0.1'];
+        if (!in_array($ip, $allowed, true)) {
+            abort(403, 'Inspect action is allowed from localhost only.');
+        }
         // Store the original super-admin ID in session for returning later
         Session::put('original_admin_id', auth()->id());
         Session::put('inspecting_merchant', $merchant->id);
@@ -206,8 +211,13 @@ class SystemUserController extends Controller
     /**
      * Return to super-admin dashboard from inspection
      */
-    public function exitInspection()
+    public function exitInspection(Request $request)
     {
+        $ip = $request->ip();
+        $allowed = ['127.0.0.1', '::1', '::ffff:127.0.0.1'];
+        if (!in_array($ip, $allowed, true)) {
+            abort(403, 'Exit inspection is allowed from localhost only.');
+        }
         if (!Session::has('original_admin_id')) {
             return redirect()->route('login');
         }

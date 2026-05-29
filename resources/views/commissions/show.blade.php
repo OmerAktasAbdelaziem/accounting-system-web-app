@@ -8,6 +8,71 @@
 @endphp
 
 <style>
+    .commission-page-header {
+        color: #fff !important;
+    }
+
+    .commission-page-header * {
+        color: #fff !important;
+    }
+
+    .commission-mobile-list {
+        display: none;
+    }
+
+    .commission-mobile-card {
+        border: 1px solid rgba(226, 232, 240, 0.95);
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+        padding: 14px;
+    }
+
+    .commission-mobile-card .meta {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+    .commission-mobile-card .meta-item {
+        border-radius: 14px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 10px 12px;
+    }
+
+    .commission-mobile-card .label {
+        display: block;
+        font-size: .72rem;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: #64748b;
+        margin-bottom: 4px;
+    }
+
+    .commission-mobile-card .value {
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .commission-mobile-actions {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .commission-mobile-actions .btn,
+    .commission-mobile-actions form {
+        width: 100%;
+    }
+
+    .commission-mobile-actions .btn {
+        min-height: 42px;
+        border-radius: 12px;
+    }
+
     @media (max-width: 768px) {
         .mb-4.d-flex.justify-content-between.align-items-start.flex-wrap.gap-3 {
             flex-direction: column;
@@ -41,6 +106,19 @@
         .btn-group {
             flex-wrap: wrap;
         }
+
+        .commission-desktop-table {
+            display: none;
+        }
+
+        .commission-mobile-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .commission-mobile-actions {
+            grid-template-columns: 1fr;
+        }
     }
 
     @media (max-width: 576px) {
@@ -51,6 +129,19 @@
         .table {
             min-width: 640px;
         }
+
+        .commission-mobile-card .meta {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Force all card header text on this page to white */
+    .card-header {
+        color: #fff !important;
+    }
+
+    .card-header * {
+        color: #fff !important;
     }
 </style>
 
@@ -124,7 +215,7 @@
 <div class="row g-4">
     <div class="col-lg-4">
         <div class="card mb-4">
-            <div class="card-header" style="background: linear-gradient(135deg, #1a1a1a, #333); color: white;">
+            <div class="card-header commission-page-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <h5 class="mb-0"><i class="bi bi-person"></i> {{ __('messages.employee_information') }}</h5>
             </div>
             <div class="card-body">
@@ -151,7 +242,7 @@
         </div>
 
         <div class="card">
-            <div class="card-header" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white;">
+            <div class="card-header commission-page-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <h5 class="mb-0"><i class="bi bi-plus-circle"></i> {{ __('messages.add_commission') }}</h5>
             </div>
             <div class="card-body">
@@ -206,13 +297,13 @@
 
     <div class="col-lg-8">
         <div class="card mb-4">
-            <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
+            <div class="card-header commission-page-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-clock-history"></i> {{ __('messages.commissions') }}</h5>
                     <span class="badge bg-light text-dark">{{ $commissions->count() }} records</span>
                 </div>
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive commission-desktop-table">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
@@ -231,22 +322,25 @@
                                 <td>{{ number_format($item->commission_rate, 2) }}%</td>
                                 <td><strong>{{ $currencySymbol }}{{ number_format($item->commission_amount, 2) }}</strong></td>
                                 <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="{{ route('commissions.edit', $item) }}" class="btn btn-outline-warning">
+                                    <div class="commission-mobile-actions commission-action-grid">
+                                        <a href="{{ route('commissions.edit', $item) }}" class="btn btn-outline-warning btn-sm">
                                             <i class="bi bi-pencil"></i>
+                                            <span class="ms-1">Edit</span>
                                         </a>
                                         @if($item->status !== 'paid')
-                                            <form method="POST" action="{{ route('commissions.pay', $item) }}" class="d-inline">
+                                            <form method="POST" action="{{ route('commissions.pay', $item) }}">
                                                 @csrf
-                                                <button type="submit" class="btn btn-outline-success" onclick="return confirm('Mark this commission as paid? It will disappear from the active list.')">
+                                                <button type="submit" class="btn btn-outline-success btn-sm" onclick="return confirm('Mark this commission as paid? It will disappear from the active list.')">
                                                     <i class="bi bi-cash-coin"></i>
+                                                    <span class="ms-1">Pay</span>
                                                 </button>
                                             </form>
                                         @else
-                                            <span class="btn btn-outline-success disabled"><i class="bi bi-check2-circle"></i></span>
+                                            <span class="btn btn-outline-success disabled btn-sm"><i class="bi bi-check2-circle"></i><span class="ms-1">Paid</span></span>
                                         @endif
-                                        <button type="button" class="btn btn-outline-danger" onclick="deleteCommission({{ $item->id }})">
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="deleteCommission({{ $item->id }})">
                                             <i class="bi bi-trash"></i>
+                                            <span class="ms-1">Delete</span>
                                         </button>
                                     </div>
                                 </td>
@@ -259,10 +353,55 @@
                     </tbody>
                 </table>
             </div>
+
+            <div class="commission-mobile-list mt-3">
+                @forelse($commissions as $item)
+                    <div class="commission-mobile-card">
+                        <div class="d-flex justify-content-between align-items-start gap-2">
+                            <div>
+                                <div class="fw-bold">{{ $item->commission_date?->format('M d, Y') ?? '-' }}</div>
+                                <div class="text-muted small">{{ $currencySymbol }}{{ number_format($item->sale_amount, 2) }} sale · {{ number_format($item->commission_rate, 2) }}%</div>
+                            </div>
+                            <span class="badge {{ $item->status === 'paid' ? 'bg-success' : 'bg-warning text-dark' }}">{{ ucfirst($item->status ?? 'draft') }}</span>
+                        </div>
+
+                        <div class="meta">
+                            <div class="meta-item">
+                                <span class="label">Commission</span>
+                                <span class="value">{{ $currencySymbol }}{{ number_format($item->commission_amount, 2) }}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Reference</span>
+                                <span class="value">{{ $item->reference_type ?? '-' }}</span>
+                            </div>
+                        </div>
+
+                        <div class="commission-mobile-actions">
+                            <a href="{{ route('commissions.edit', $item) }}" class="btn btn-outline-warning">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                            @if($item->status !== 'paid')
+                                <form method="POST" action="{{ route('commissions.pay', $item) }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-outline-success" onclick="return confirm('Mark this commission as paid? It will disappear from the active list.')">
+                                        <i class="bi bi-cash-coin"></i> Pay
+                                    </button>
+                                </form>
+                            @else
+                                <span class="btn btn-outline-success disabled"><i class="bi bi-check2-circle"></i> Paid</span>
+                            @endif
+                            <button type="button" class="btn btn-outline-danger" onclick="deleteCommission({{ $item->id }})">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                @empty
+                @endforelse
+            </div>
         </div>
 
         <div class="card">
-            <div class="card-header" style="background: linear-gradient(135deg, #1a1a1a, #333); color: white;">
+            <div class="card-header commission-page-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <h5 class="mb-0"><i class="bi bi-info-circle"></i> {{ __('messages.commission_details') }}</h5>
             </div>
             <div class="card-body">

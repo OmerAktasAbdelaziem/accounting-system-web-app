@@ -27,14 +27,114 @@
     }
 
     .dashboard-hero {
-        background: linear-gradient(135deg, #111827 0%, #1f2937 68%, #ff8c00 180%);
+        background: linear-gradient(135deg, #ff8c00 0%, #ff9e33 40%, #ffd089 100%);
+        background-size: 200% 200%;
+        animation: heroGradientShift 30s ease-in-out infinite;
         color: #fff;
         border-radius: 28px;
         padding: 28px;
-        box-shadow: 0 18px 50px rgba(17, 24, 39, 0.18);
+        box-shadow: 0 18px 50px rgba(255, 140, 0, 0.12);
         margin-bottom: 22px;
         overflow: hidden;
         position: relative;
+    }
+
+    /* Redesigned hero layout */
+    .dashboard-hero .redesigned-hero {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 22px;
+        align-items: center;
+    }
+
+    .hero-left .dashboard-title {
+        font-size: 40px;
+        line-height: 1.02;
+        font-weight: 900;
+        color: #fff;
+    }
+
+    .hero-left .dashboard-subtitle {
+        color: rgba(255,255,255,0.9);
+        font-size: 15px;
+        max-width: 680px;
+        margin-top: 8px;
+    }
+
+    .hero-actions { margin-top: 16px; display:flex; gap:12px; flex-wrap:wrap; }
+
+    .kpi-grid { display: grid; gap: 12px; }
+
+    .kpi-card {
+        background: rgba(255,255,255,0.09);
+        border: 1px solid rgba(255,255,255,0.12);
+        padding: 12px 14px;
+        border-radius: 14px;
+        text-align: left;
+        min-width: 260px;
+    }
+
+    .kpi-card .kpi-label { font-size: 11px; color: rgba(255,255,255,0.8); text-transform:uppercase; letter-spacing:0.06em }
+    .kpi-card .kpi-value { font-size: 22px; font-weight:900; color: #fff; margin-top:6px }
+
+    /* decorative accent */
+    .hero-decor {
+        position: absolute;
+        right: -80px;
+        bottom: -80px;
+        width: 320px;
+        height: 320px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.14), rgba(255,255,255,0) 40%);
+        transform: rotate(12deg);
+        pointer-events: none;
+        filter: blur(6px);
+    }
+
+    .hero-wave {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -1px;
+        opacity: 0.18;
+        pointer-events: none;
+    }
+
+    .hero-wave svg {
+        display: block;
+        width: 100%;
+        height: 56px;
+    }
+
+    @keyframes heroGradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    @keyframes dashboardFadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .dashboard-hero,
+    .dashboard-section {
+        animation: dashboardFadeUp .9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .dashboard-section:nth-of-type(1) { animation-delay: .08s; }
+    .dashboard-section:nth-of-type(2) { animation-delay: .16s; }
+    .dashboard-section:nth-of-type(3) { animation-delay: .24s; }
+
+    @media (max-width: 900px) {
+        .dashboard-hero .redesigned-hero { grid-template-columns: 1fr; }
+        .kpi-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
     .dashboard-hero::after {
@@ -334,6 +434,45 @@
     }
 
     @media (max-width: 768px) {
+        .dashboard-hero {
+            padding: 16px;
+            border-radius: 18px;
+        }
+
+        .dashboard-hero .redesigned-hero {
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .hero-right,
+        .kpi-grid {
+            width: 100%;
+        }
+
+        .kpi-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .kpi-card {
+            min-width: 0;
+            padding: 11px 12px;
+        }
+
+        .hero-actions .btn {
+            flex: 1 1 100%;
+        }
+
+        .dashboard-subtitle {
+            display: block;
+            font-size: 13px;
+            line-height: 1.55;
+            max-width: 100%;
+        }
+
+        .hero-wave svg {
+            height: 40px;
+        }
+
         .dashboard-title {
             font-size: 26px;
         }
@@ -396,6 +535,30 @@
             min-width: 640px;
         }
 
+        .recent-sales-table thead th:nth-child(2),
+        .recent-sales-table tbody td:nth-child(2) {
+            display: none;
+        }
+
+        .low-stock-table thead th:nth-child(3),
+        .low-stock-table tbody td:nth-child(3) {
+            display: none;
+        }
+
+        .recent-sales-table thead th,
+        .low-stock-table thead th {
+            font-size: 10px;
+            letter-spacing: 0.6px;
+        }
+
+        .panel-card .table tbody td,
+        .table tbody td {
+            padding: 8px 6px;
+            font-size: 12px;
+            white-space: normal;
+            word-break: break-word;
+        }
+
         .list-group-item {
             flex-direction: column;
             gap: 8px;
@@ -407,6 +570,14 @@
     }
 
     @media (max-width: 576px) {
+        .dashboard-hero {
+            padding: 14px;
+        }
+
+        .hero-wave svg {
+            height: 32px;
+        }
+
         .dashboard-title {
             font-size: 22px;
         }
@@ -429,35 +600,168 @@
         .hero-kpi-value {
             font-size: 16px;
         }
+
+        .table-responsive {
+            overflow-x: hidden;
+        }
+
+        .panel-card .table,
+        .table {
+            min-width: 0 !important;
+            width: 100% !important;
+            table-layout: fixed !important;
+        }
+
+        .recent-sales-table thead th:nth-child(2),
+        .recent-sales-table tbody td:nth-child(2) {
+            display: none !important;
+        }
+
+        .low-stock-table thead th:nth-child(3),
+        .low-stock-table tbody td:nth-child(3) {
+            display: none !important;
+        }
+
+        .recent-sales-table thead th,
+        .low-stock-table thead th {
+            font-size: 9px;
+            letter-spacing: 0.5px;
+            padding: 10px 8px;
+        }
+    }
+</style>
+
+<style>
+    @media (max-width: 768px) {
+        .dashboard-subtitle {
+            display: none !important;
+        }
+
+        .table-responsive {
+            overflow-x: hidden !important;
+        }
+
+        .recent-sales-table,
+        .low-stock-table {
+            width: 100% !important;
+            min-width: 0 !important;
+            table-layout: fixed !important;
+        }
+
+        .recent-sales-table thead th:nth-child(2),
+        .recent-sales-table tbody td:nth-child(2) {
+            display: none !important;
+        }
+
+        .low-stock-table thead th:nth-child(3),
+        .low-stock-table tbody td:nth-child(3) {
+            display: none !important;
+        }
+
+        .recent-sales-table thead th,
+        .low-stock-table thead th {
+            font-size: 9px;
+            letter-spacing: 0.5px;
+            padding: 10px 8px;
+        }
+
+        .panel-card .table tbody td,
+        .table tbody td {
+            padding: 8px 6px;
+            font-size: 12px;
+            white-space: normal;
+            word-break: break-word;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .dashboard-hero,
+        .dashboard-section,
+        .quick-action,
+        .metric-card,
+        .panel-card,
+        .chart-card {
+            animation: none !important;
+        }
+
+        .dashboard-hero {
+            animation: none !important;
+        }
     }
 </style>
 
 <div id="merchantDashboardRoot" class="merchant-dashboard-shell" data-analytics-url="{{ route('dashboard.analytics') }}">
     <div class="dashboard-hero">
-        <div class="dashboard-hero-inner">
-            <div>
+        <div class="dashboard-hero-inner redesigned-hero">
+            <div class="hero-left">
                 <h1 class="dashboard-title"><i class="bi bi-speedometer2 me-2"></i>{{ __('messages.dashboard') }}</h1>
-                <p class="dashboard-subtitle">Welcome back, {{ auth()->user()->name }}. This merchant dashboard is built for day-to-day operations, inventory control, cash flow monitoring, and fast actions.</p>
+                <p class="dashboard-subtitle">Welcome back, <strong>{{ auth()->user()->name }}</strong>. This merchant dashboard surfaces daily KPIs, quick actions, and summarized insights for fast decision making.</p>
+
+                <div class="hero-actions">
+                    <a href="{{ route('sales.index') }}" class="btn btn-primary-modern">New Sale</a>
+                    <a href="{{ route('reports.sales') }}" class="btn btn-outline-light">Reports</a>
+                </div>
             </div>
-            <div class="hero-kpis">
-                <div class="hero-kpi">
-                    <span class="hero-kpi-label">Today Sales</span>
-                    <div class="hero-kpi-value" id="hero-total-sales">{{ $currencySymbol }}{{ number_format($totalSales ?? 0, 2) }}</div>
-                </div>
-                <div class="hero-kpi">
-                    <span class="hero-kpi-label">Total Balance</span>
-                    <div class="hero-kpi-value" id="hero-safe-balance">{{ $currencySymbol }}{{ number_format($safeBalance ?? 0, 2) }}</div>
-                </div>
-                <div class="hero-kpi">
-                    <span class="hero-kpi-label">Products</span>
-                    <div class="hero-kpi-value" id="hero-total-products">{{ $totalProducts ?? 0 }}</div>
-                </div>
-                <div class="hero-kpi">
-                    <span class="hero-kpi-label">Low Stock</span>
-                    <div class="hero-kpi-value" id="hero-low-stock">{{ $lowStockCount ?? 0 }}</div>
+
+            <div class="hero-right">
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-label">Today Sales</div>
+                        <div class="kpi-value"><span class="kpi-value-num" data-currency="1" data-target="{{ $totalSales ?? 0 }}">0</span></div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-label">Total Balance</div>
+                        <div class="kpi-value"><span class="kpi-value-num" data-currency="1" data-target="{{ $safeBalance ?? 0 }}">0</span></div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-label">Products</div>
+                        <div class="kpi-value"><span class="kpi-value-num" data-target="{{ $totalProducts ?? 0 }}">0</span></div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-label">Low Stock</div>
+                        <div class="kpi-value"><span class="kpi-value-num" data-target="{{ $lowStockCount ?? 0 }}">0</span></div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <div class="hero-decor"></div>
+        <div class="hero-wave" aria-hidden="true">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,40 C180,110 360,0 540,55 C720,110 900,10 1080,52 C1140,66 1170,76 1200,84 L1200,120 L0,120 Z" fill="rgba(255,255,255,0.65)"></path>
+            </svg>
+        </div>
+
+        <script>
+            (function(){
+                const currency = "{{ $currencySymbol }}";
+                function easeOutCubic(t){return 1-Math.pow(1-t,3)}
+                function formatNumber(n, isCurrency){
+                    if(isCurrency){
+                        return currency + Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+                    }
+                    return Number(n).toLocaleString();
+                }
+
+                document.querySelectorAll('.kpi-value-num').forEach(el=>{
+                    const raw = parseFloat(el.dataset.target) || 0;
+                    const isCurrency = el.dataset.currency === '1';
+                    const duration = 900;
+                    const start = 0;
+                    const t0 = performance.now();
+                    function step(t){
+                        const p = Math.min((t - t0)/duration,1);
+                        const v = start + (raw - start) * easeOutCubic(p);
+                        el.textContent = isCurrency ? formatNumber(v, true) : formatNumber(Math.round(v), false);
+                        if(p<1) requestAnimationFrame(step);
+                    }
+                    requestAnimationFrame(step);
+                });
+            })();
+        </script>
     </div>
 
     <div class="dashboard-section">
@@ -679,7 +983,11 @@
         <div class="chart-grid">
             <div class="chart-card">
                 <div class="section-heading mb-3">
-                    <h3 class="section-title mb-0">Sales trend</h3>
+                    <div>
+                        <h3 class="section-title mb-0">Sales trend</h3>
+                        <p class="section-subtitle">Live monthly sales from the sales page records.</p>
+                    </div>
+                    <a href="{{ route('sales.index') }}" class="btn btn-sm btn-outline-secondary">Open sales page</a>
                 </div>
                 <div class="chart-box"><canvas id="salesTrendChart"></canvas></div>
             </div>
@@ -720,8 +1028,8 @@
                         <a href="{{ route('sales.index') }}" class="btn btn-sm btn-outline-secondary">View all</a>
                         @endfeature
                     </div>
-                    <div class="table-responsive">
-                        <table class="table align-middle">
+                    <div class="table-responsive d-none d-md-block">
+                        <table class="table align-middle recent-sales-table">
                             <thead>
                                 <tr>
                                     <th>Description</th>
@@ -750,6 +1058,29 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Mobile friendly stacked list for Recent Sales -->
+                    <div id="recent-sales-mobile" class="d-block d-md-none">
+                        @forelse($recentTransactions as $transaction)
+                            <div class="panel-card mb-3">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="fw-semibold">{{ $transaction->description ?? 'Invoice' }}</div>
+                                        <small class="text-muted">{{ optional($transaction->date)->format('M d, Y') ?? 'N/A' }}</small>
+                                    </div>
+                                    <div class="fw-semibold">{{ $currencySymbol }}{{ number_format($transaction->total_credit ?? 0, 2) }}</div>
+                                </div>
+                                @if(!empty($transaction->reference_number))
+                                    <small class="text-muted">Ref: {{ $transaction->reference_number }}</small>
+                                @endif
+                            </div>
+                        @empty
+                            <div class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                No sales records found
+                            </div>
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -807,8 +1138,8 @@
                         <a href="{{ route('products.index') }}" class="btn btn-sm btn-outline-secondary">Inventory</a>
                         @endfeature
                     </div>
-                    <div class="table-responsive">
-                        <table class="table align-middle">
+                    <div class="table-responsive d-none d-md-block">
+                        <table class="table align-middle low-stock-table">
                             <thead>
                                 <tr>
                                     <th>Product</th>
@@ -843,6 +1174,34 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Mobile friendly stacked list for Low Stock Products -->
+                    <div id="low-stock-mobile" class="d-block d-md-none">
+                        @forelse($lowStockProducts as $product)
+                            <div class="panel-card mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-semibold">{{ $product->name }}</div>
+                                        <small class="text-muted">Stock: {{ $product->current_stock ?? 0 }}</small>
+                                    </div>
+                                    <div>
+                                        @if(($product->current_stock ?? 0) <= 0)
+                                            <span class="pill danger">Out of stock</span>
+                                        @elseif(($product->current_stock ?? 0) <= 10)
+                                            <span class="pill warning">Low stock</span>
+                                        @else
+                                            <span class="pill success">Healthy</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                No products available
+                            </div>
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -889,16 +1248,80 @@
         const root = document.getElementById('merchantDashboardRoot');
         const analyticsUrl = root?.dataset.analyticsUrl;
         const currencySymbol = @json($currencySymbol);
+        const serverMonths = @json($months);
+        const serverSalesData = @json($salesData);
 
         const formatMoney = (value) => `${currencySymbol}${Number(value || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         const formatInt = (value) => Number(value || 0).toLocaleString();
+
+        const applyMobileTweaks = () => {
+            const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+            const subtitle = document.querySelector('.dashboard-subtitle');
+            if (subtitle) {
+                subtitle.style.display = isMobile ? 'none' : '';
+            }
+
+            document.querySelectorAll('.table-responsive').forEach((wrapper) => {
+                wrapper.style.overflowX = isMobile ? 'hidden' : '';
+            });
+
+            document.querySelectorAll('.recent-sales-table').forEach((table) => {
+                table.style.width = isMobile ? '100%' : '';
+                table.style.minWidth = isMobile ? '0' : '';
+                table.style.tableLayout = isMobile ? 'fixed' : '';
+                const secondHeader = table.querySelector('thead th:nth-child(2)');
+                const secondCells = table.querySelectorAll('tbody td:nth-child(2)');
+                if (secondHeader) secondHeader.style.display = isMobile ? 'none' : '';
+                secondCells.forEach((cell) => { cell.style.display = isMobile ? 'none' : ''; });
+            });
+
+            document.querySelectorAll('.low-stock-table').forEach((table) => {
+                table.style.width = isMobile ? '100%' : '';
+                table.style.minWidth = isMobile ? '0' : '';
+                table.style.tableLayout = isMobile ? 'fixed' : '';
+                const thirdHeader = table.querySelector('thead th:nth-child(3)');
+                const thirdCells = table.querySelectorAll('tbody td:nth-child(3)');
+                if (thirdHeader) thirdHeader.style.display = isMobile ? 'none' : '';
+                thirdCells.forEach((cell) => { cell.style.display = isMobile ? 'none' : ''; });
+            });
+        };
+
+        applyMobileTweaks();
+        window.addEventListener('resize', applyMobileTweaks);
 
         const salesTrendCtx = document.getElementById('salesTrendChart')?.getContext('2d');
         const cashFlowCtx = document.getElementById('cashFlowChart')?.getContext('2d');
         const inventoryCtx = document.getElementById('inventoryChart')?.getContext('2d');
         const storageCtx = document.getElementById('storageChart')?.getContext('2d');
 
-        if (!analyticsUrl || !salesTrendCtx || !cashFlowCtx || !inventoryCtx || !storageCtx) {
+        let salesTrendChart = null;
+
+        if (salesTrendCtx) {
+            salesTrendChart = new Chart(salesTrendCtx, {
+                type: 'line',
+                data: {
+                    labels: serverMonths,
+                    datasets: [{
+                        label: 'Sales',
+                        data: serverSalesData,
+                        borderColor: '#ff8c00',
+                        backgroundColor: 'rgba(255, 140, 0, 0.12)',
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        if (!analyticsUrl || !cashFlowCtx || !inventoryCtx || !storageCtx) {
             return;
         }
 
@@ -927,27 +1350,11 @@
                 const charts = payload.charts || {};
                 const months = charts.months || [];
 
-                new Chart(salesTrendCtx, {
-                    type: 'line',
-                    data: {
-                        labels: months,
-                        datasets: [{
-                            label: 'Sales',
-                            data: charts.sales || [],
-                            borderColor: '#ff8c00',
-                            backgroundColor: 'rgba(255, 140, 0, 0.12)',
-                            fill: true,
-                            tension: 0.35,
-                            pointRadius: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: { y: { beginAtZero: true } }
-                    }
-                });
+                if (salesTrendChart && months.length) {
+                    salesTrendChart.data.labels = months;
+                    salesTrendChart.data.datasets[0].data = charts.sales || [];
+                    salesTrendChart.update();
+                }
 
                 new Chart(cashFlowCtx, {
                     type: 'bar',
@@ -1006,6 +1413,7 @@
             .catch(() => {
                 // Keep the server-rendered metrics if analytics cannot be fetched.
             });
+
     });
 </script>
 @endsection

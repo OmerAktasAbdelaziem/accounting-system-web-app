@@ -11,11 +11,16 @@
     @media (max-width: 768px) {
         .create-shell {
             padding: 16px 0 28px;
+            background: linear-gradient(180deg, #fff9f3 0%, #f5f7fb 46%, #eef3f8 100%);
         }
 
         .create-hero {
             padding: 20px;
-            border-radius: 20px;
+            border-radius: 22px;
+            background: linear-gradient(160deg, #ffffff 0%, #fff8ef 56%, #fff1df 100%);
+            color: #111827;
+            border: 1px solid rgba(255, 140, 0, 0.12);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
         }
 
         .create-hero,
@@ -23,21 +28,44 @@
             width: 100%;
         }
 
+        .create-hero .text-white-50 {
+            color: #64748b !important;
+        }
+
         .create-card .card-body {
             padding: 18px !important;
+        }
+
+        .create-card {
+            border-radius: 22px;
+            box-shadow: 0 16px 38px rgba(15, 23, 42, 0.08);
         }
 
         .create-card .row.g-3 > [class*="col-md-"] {
             width: 100%;
         }
 
+        .create-card .row.g-3 > .col-lg-4.ms-lg-auto {
+            order: 3;
+            margin-top: 8px;
+        }
+
+        .create-card .row.g-3 > .col-12.d-flex.gap-2.pt-2 {
+            order: 4;
+        }
+
         .table-responsive {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
+            border-radius: 18px;
         }
 
         .table {
-            min-width: 760px;
+            min-width: 620px;
+        }
+
+        .table thead th {
+            white-space: nowrap;
         }
 
         .col-lg-4.ms-lg-auto {
@@ -53,6 +81,22 @@
         .col-12.d-flex.gap-2.pt-2 a {
             width: 100%;
         }
+
+        .col-12.d-flex.gap-2.pt-2 {
+            position: sticky;
+            bottom: 12px;
+            background: rgba(255,255,255,0.82);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.9);
+            border-radius: 18px;
+            padding: 10px;
+            box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12);
+        }
+
+        .col-lg-4.ms-lg-auto .card-body {
+            background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.98));
+            border-radius: 20px;
+        }
     }
 
     @media (max-width: 576px) {
@@ -62,6 +106,10 @@
 
         .table {
             min-width: 640px;
+        }
+
+        .create-hero p {
+            font-size: 13px;
         }
     }
 </style>

@@ -6,9 +6,7 @@
 <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.11.3/dist/echo.iife.js"></script>
 <nav class="modern-top-navbar">
-    <button id="mobileMenuBtn" class="icon-btn mobile-menu-btn" aria-label="Toggle menu" title="Menu">
-        <i class="bi bi-list" aria-hidden="true"></i>
-    </button>
+    <!-- menu icon removed as requested -->
     <div class="brand">
         <a href="{{ route($dashboardRoute) }}" class="brand">
             <div class="logo-mark">A</div>
@@ -23,23 +21,6 @@
         </div>
     </div>
     <div class="actions">
-        <div class="notif-shell">
-            <button id="notifButton" class="notif-trigger icon-badge" type="button" title="Notifications" aria-expanded="false" aria-controls="notifDropdown">
-                <i class="bi bi-bell-fill" aria-hidden="true"></i>
-                <span class="notif-trigger-label">Notifications</span>
-                <span id="notifBadge" class="badge" style="display:none">0</span>
-            </button>
-            <div id="notifDropdown" class="notif-dropdown" style="display:none" role="menu" aria-label="Notifications">
-                <div class="notif-dropdown-head">
-                    <div>
-                        <div class="notif-title">Notifications</div>
-                        <div class="notif-subtitle">Live updates from your workspace</div>
-                    </div>
-                    <button id="markAllReadBtn" class="notif-mark-read" type="button">Mark all read</button>
-                </div>
-                <div id="notifList" class="notif-list"></div>
-            </div>
-        </div>
         <div class="user">
             @if(session()->has('original_admin_id'))
                 <form action="{{ route('super-admin.exit-inspection') }}" method="POST" style="display:inline;margin-right:10px;">
@@ -80,6 +61,75 @@
         </div>
     </div>
 </nav>
+<div id="mobileSidebarBackdrop" aria-hidden="true"></div>
+<script>
+    // Defensive sidebar toggle initializer — runs early and is independent of main bundles.
+    (function(){
+        try {
+            var btn = document.getElementById('mobileMenuBtn') || document.getElementById('sidebarToggle');
+            var sidebar = document.getElementById('modernSidebar');
+            var backdrop = document.getElementById('mobileSidebarBackdrop');
+
+            window.__toggleMobileSidebar = function(event) {
+                if (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                document.body.classList.toggle('sidebar-open');
+                var isOpen = document.body.classList.contains('sidebar-open');
+
+                if (btn) {
+                    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                }
+
+                if (sidebar) {
+                    if (isOpen) {
+                        sidebar.style.display = 'block';
+                        sidebar.style.position = 'fixed';
+                        sidebar.style.zIndex = '1065';
+                        sidebar.style.left = '0';
+                        sidebar.style.top = '0';
+                        sidebar.style.boxShadow = '0 18px 40px rgba(0,0,0,0.22)';
+                    } else {
+                        sidebar.style.display = '';
+                        sidebar.style.position = '';
+                        sidebar.style.zIndex = '';
+                        sidebar.style.left = '';
+                        sidebar.style.top = '';
+                        sidebar.style.boxShadow = '';
+                    }
+                }
+
+                if (backdrop) {
+                    backdrop.style.display = isOpen ? 'block' : 'none';
+                }
+
+                return false;
+            };
+
+            if (backdrop) {
+                backdrop.addEventListener('click', function() {
+                    if (document.body.classList.contains('sidebar-open')) {
+                        window.__toggleMobileSidebar();
+                    }
+                });
+            }
+
+            if (sidebar) {
+                sidebar.querySelectorAll('a').forEach(function(link) {
+                    link.addEventListener('click', function() {
+                        if (window.innerWidth < 992 && document.body.classList.contains('sidebar-open')) {
+                            window.__toggleMobileSidebar();
+                        }
+                    });
+                });
+            }
+        } catch (err) {
+            console.warn('Sidebar toggle initializer failed', err);
+        }
+    })();
+</script>
 @if(!empty($subscription_blocked))
     @php
         $merchantName = $subscription_block_details['merchant'] ?? 'Merchant';
@@ -145,10 +195,17 @@
         }
     </style>
 @endif
+@php
+    $__allow_local_inspect = in_array(request()->ip(), ['127.0.0.1', '::1', '::ffff:127.0.0.1'], true);
+@endphp
 <script>
     (function(){
+        const __ALLOW_LOCAL_INSPECT = @json($__allow_local_inspect);
+
         document.addEventListener('contextmenu', function(e){
-            e.preventDefault();
+            if (!__ALLOW_LOCAL_INSPECT) {
+                e.preventDefault();
+            }
         }, true);
 
         document.addEventListener('keydown', function(e){

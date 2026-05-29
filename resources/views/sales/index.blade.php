@@ -230,6 +230,142 @@
         .export-mode-section.active {
             display: block;
         }
+
+        @media (max-width: 768px) {
+            .sales-hero {
+                background: linear-gradient(160deg, #ffffff 0%, #fff8ef 56%, #fff1df 100%);
+                color: #111827;
+                border: 1px solid rgba(255, 140, 0, 0.12);
+                box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+                padding: 20px !important;
+            }
+
+            .sales-hero .text-white-75,
+            .sales-hero .text-white-50,
+            .sales-hero p,
+            .sales-hero .small {
+                color: #64748b !important;
+            }
+
+            .sales-hero .bg-white.bg-opacity-10 {
+                background: rgba(255, 255, 255, 0.84) !important;
+                color: #111827 !important;
+                border: 1px solid rgba(255, 140, 0, 0.08);
+                box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+            }
+
+            .sales-panel,
+            .sales-stat,
+            .employee-breakdown-wrap,
+            .sale-details-modal .modal-content {
+                border-radius: 22px;
+            }
+
+            .sales-panel .card-body,
+            .sales-panel .card-header {
+                padding-left: 16px !important;
+                padding-right: 16px !important;
+            }
+
+            #employee-sales-list {
+                gap: 12px !important;
+            }
+
+            .employee-sale-item {
+                border-radius: 18px !important;
+                background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.98)) !important;
+                box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+            }
+
+            .employee-sale-item .row {
+                --bs-gutter-x: 0.75rem;
+            }
+
+            .employee-sale-item .btn {
+                width: 100%;
+            }
+
+            .sales-stat {
+                border: 1px solid rgba(255, 140, 0, 0.12);
+            }
+
+            .sales-empty {
+                background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,249,242,0.98));
+            }
+
+            .sales-panel .card-header .badge,
+            .sales-panel .card-header .btn {
+                width: 100%;
+            }
+
+            .sales-panel .card-header .d-flex {
+                width: 100%;
+            }
+
+            .sales-panel .form-select,
+            .sales-panel .form-control {
+                min-height: 48px;
+                border-radius: 16px;
+            }
+
+            #open-sales-export-modal,
+            #sales-filter-form .btn,
+            .add-employee-field,
+            .remove-employee-row,
+            .btn.btn-primary.btn-lg {
+                border-radius: 16px;
+            }
+
+            .sale-details-modal .modal-body {
+                padding: 16px;
+            }
+
+            .sale-details-modal .employee-breakdown-item {
+                padding: 0.9rem 0.95rem;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .sale-details-modal .employee-breakdown-amount {
+                align-self: stretch;
+                text-align: center;
+            }
+
+            .export-mode-section .card,
+            .export-mode-section .alert {
+                border-radius: 18px;
+            }
+
+            .d-grid.gap-2.mt-4 {
+                position: sticky;
+                bottom: 14px;
+                z-index: 2;
+                background: rgba(255,255,255,0.82);
+                backdrop-filter: blur(16px);
+                padding: 10px;
+                border: 1px solid rgba(255,255,255,0.9);
+                border-radius: 20px;
+                box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12);
+            }
+
+            .d-grid.gap-2.mt-4 .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sales-hero h2 {
+                font-size: 24px;
+            }
+
+            .sales-hero .col-6 .fs-4 {
+                font-size: 1.1rem !important;
+            }
+
+            .sales-panel .card-header {
+                gap: 10px;
+            }
+        }
     </style>
 
     <div class="sales-hero rounded-4 p-4 p-lg-5 mb-4">

@@ -61,6 +61,15 @@
         opacity: .8;
     }
 
+    .settings-hero-title,
+    .settings-summary .summary-card h6 {
+        color: #fff !important;
+    }
+
+    .settings-summary .summary-card h6 {
+        opacity: 1;
+    }
+
     .settings-summary .summary-card strong {
         display: block;
         font-size: 18px;
@@ -84,6 +93,13 @@
         color: #fff;
         border: none;
         padding: 18px 22px;
+    }
+
+    .settings-panel .card-header h4,
+    .settings-side .card-header h5,
+    .settings-panel .card-header h4 *,
+    .settings-side .card-header h5 * {
+        color: #fff !important;
     }
 
     .settings-panel .card-body,
@@ -137,6 +153,11 @@
     @media (max-width: 991px) {
         .settings-summary { grid-template-columns: 1fr; }
     }
+    @media (max-width: 768px) {
+        .settings-actions .btn { width: 100%; }
+        .settings-summary { grid-template-columns: 1fr; }
+        .settings-hero { padding: 18px; border-radius: 14px; }
+    }
 </style>
 @endsection
 
@@ -145,7 +166,7 @@
     <div class="settings-hero">
         <span class="eyebrow"><i class="fas fa-cog"></i> {{ __('settings.system_settings') }}</span>
         <div class="mt-3">
-            <h2 class="fw-bold mb-2">Business settings, branding, and system controls</h2>
+            <h2 class="fw-bold mb-2 settings-hero-title">Business settings, branding, and system controls</h2>
             <p class="mb-0" style="max-width: 720px; opacity: .9;">
                 Keep the merchant identity, financial defaults, and feature switches in one place. The application name here also drives the left-top navbar.
             </p>

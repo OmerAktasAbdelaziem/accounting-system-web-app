@@ -7,15 +7,56 @@
     .create-card { border: 0; border-radius: 28px; box-shadow: 0 18px 50px rgba(12, 15, 20, 0.1); overflow: hidden; }
     .create-field { min-height: 52px; border-radius: 14px; border-color: #d9dde5; }
     .create-field:focus { border-color: #ff8c00; box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.1); }
+
+    .create-hero-chip,
+    .create-hero-note {
+        display: inline-flex;
+        align-items: center;
+        padding: .38rem .8rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,.92);
+        border: 1px solid rgba(255,255,255,.55);
+        color: #1f2937;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, .08);
+    }
+
+    .create-hero-chip {
+        font-size: .78rem;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+    }
+
+    .create-hero-note {
+        max-width: 42rem;
+        line-height: 1.6;
+        padding: .8rem 1rem;
+        border-radius: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .create-shell { padding: 16px 0 28px; }
+        .create-hero { padding: 20px; border-radius: 22px; }
+        .create-card { border-radius: 22px; }
+        .create-card .card-body { padding: 18px !important; }
+        .create-field { min-height: 48px; border-radius: 12px; }
+        .col-12.d-flex.gap-2.pt-2 { flex-direction: column; }
+        .col-12.d-flex.gap-2.pt-2 .btn, .col-12.d-flex.gap-2.pt-2 a { width: 100%; }
+        .col-12.d-flex.gap-2.pt-2 { position: sticky; bottom: 12px; background: rgba(255,255,255,.86); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.9); border-radius: 18px; padding: 10px; box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12); }
+    }
+
+    @media (max-width: 576px) {
+        .create-hero h1 { font-size: 24px; }
+        .create-hero p { font-size: 13px; }
+    }
 </style>
 
 <div class="create-shell">
     <div class="container-fluid">
         <div class="create-hero mb-4 d-flex flex-wrap justify-content-between align-items-start gap-3">
             <div>
-                <div class="text-uppercase text-white-50 small fw-semibold mb-2">Payroll</div>
+                <div class="create-hero-chip mb-3">Payroll</div>
                 <h1 class="mb-2 fw-bold" style="letter-spacing: -0.03em;">{{ __('Create Payroll') }}</h1>
-                <p class="mb-0 text-white-50">Build payroll records in a more focused working area.</p>
+                <p class="mb-0 create-hero-note">Build payroll records in a more focused working area.</p>
             </div>
         </div>
 
