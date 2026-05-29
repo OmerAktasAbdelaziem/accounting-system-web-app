@@ -173,7 +173,8 @@ class DashboardController extends Controller
     private function merchantScope(): array
     {
         $user = auth()->user();
-
+        // If there's no authenticated user or the user is a super-admin, return empty arrays
+        // which means "no tenant filtering" for admin views.
         if (!$user || $user->isSuperAdmin() || empty($user->merchant_id)) {
             return [
                 'branch_ids' => [],
@@ -182,9 +183,10 @@ class DashboardController extends Controller
             ];
         }
 
-        $branchIds = Branch::query()->pluck('id')->all();
-        $safeIds = Safe::query()->pluck('id')->all();
-        $storageIds = Storage::query()->pluck('id')->all();
+        // For merchant users, return only the IDs that belong to their merchant.
+        $branchIds = Branch::where('merchant_id', $user->merchant_id)->pluck('id')->all();
+        $safeIds = Safe::where('merchant_id', $user->merchant_id)->pluck('id')->all();
+        $storageIds = Storage::where('merchant_id', $user->merchant_id)->pluck('id')->all();
 
         return [
             'branch_ids' => $branchIds,
