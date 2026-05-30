@@ -164,20 +164,11 @@ class User extends Authenticatable
             return true;
         }
 
-        $hasPermission = $permissionName ? $this->hasPermission($permissionName) : false;
-
         if ($featureKey) {
-            $hasFeature = \App\Traits\ChecksFeatureAccess::hasFeatureAccess($featureKey);
-
-            // Allow either a feature toggle or a role permission to grant visibility.
-            if ($hasFeature || $hasPermission) {
-                return true;
-            }
-
-            return false;
+            return \App\Traits\ChecksFeatureAccess::hasFeatureAccess($featureKey);
         }
 
-        if ($permissionName && ! $hasPermission) {
+        if ($permissionName && !$this->hasPermission($permissionName)) {
             return false;
         }
 
