@@ -147,8 +147,8 @@
     }
 
     .table-shell thead th {
-        background: linear-gradient(135deg, #111827, #1f2937);
-        color: #fff;
+        background: transparent;
+        color: #111827;
         border-bottom: 0;
         font-weight: 700;
         letter-spacing: .02em;
