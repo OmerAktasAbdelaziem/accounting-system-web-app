@@ -15,11 +15,13 @@ trait ChecksFeatureAccess
     {
         $map = [
             'products' => ['view_product'],
+            'products.view' => ['view_product'],
             'products.create' => ['create_product'],
             'products.edit' => ['edit_product'],
             'products.delete' => ['delete_product'],
 
             'categories' => ['view_category'],
+            'categories.view' => ['view_category'],
             'categories.create' => ['create_category'],
             'categories.edit' => ['edit_category'],
             'categories.delete' => ['delete_category'],
@@ -59,11 +61,13 @@ trait ChecksFeatureAccess
             'branches.delete' => ['delete_branch'],
 
             'commissions' => ['view_reports'],
+            'commissions.view' => ['view_reports'],
             'commissions.create' => ['view_reports'],
             'commissions.edit' => ['view_reports'],
             'commissions.delete' => ['view_reports'],
 
             'storages' => ['view_inventory'],
+            'storages.view' => ['view_inventory'],
             'storages.create' => ['edit_inventory'],
             'storages.edit' => ['edit_inventory'],
             'storages.delete' => ['edit_inventory'],
