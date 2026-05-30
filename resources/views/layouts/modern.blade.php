@@ -48,10 +48,31 @@
             box-sizing: border-box;
         }
 
+        html,
+        body,
+        button,
+        input,
+        select,
+        textarea,
+        table,
+        th,
+        td,
+        .btn,
+        .nav,
+        .navbar,
+        .dropdown-menu,
+        .card,
+        .modal,
+        .form-control,
+        .form-select,
+        .alert,
+        .badge {
+            font-family: 'Noto Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        }
+
         body {
             background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
             min-height: 100vh;
-            font-family: 'Noto Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-weight: 500;
             color: var(--primary-black);
             overflow-x: hidden;
