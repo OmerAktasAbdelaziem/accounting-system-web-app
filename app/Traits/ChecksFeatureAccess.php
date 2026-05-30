@@ -30,7 +30,10 @@ trait ChecksFeatureAccess
             'employees.delete' => ['delete_user'],
 
             'sales' => ['view_sales', 'view_reports'],
+            'sales.view' => ['view_sales', 'view_reports'],
             'sales.create' => ['view_sales', 'view_reports'],
+            'sales.edit' => ['view_sales', 'view_reports'],
+            'sales.delete' => ['view_sales', 'view_reports'],
             'sales_report' => ['view_sales', 'view_reports'],
 
             'suppliers' => ['view_supplier'],
