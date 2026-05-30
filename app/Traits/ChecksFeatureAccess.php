@@ -25,6 +25,7 @@ trait ChecksFeatureAccess
             'categories.delete' => ['delete_category'],
 
             'employees' => ['view_user'],
+            'employees.view' => ['view_user'],
             'employees.create' => ['create_user'],
             'employees.edit' => ['edit_user'],
             'employees.delete' => ['delete_user'],
