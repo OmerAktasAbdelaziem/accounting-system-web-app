@@ -38,6 +38,7 @@ trait ChecksFeatureAccess
             'sales_report' => ['view_sales', 'view_reports'],
 
             'suppliers' => ['view_supplier'],
+            'suppliers.view' => ['view_supplier'],
             'suppliers.create' => ['create_supplier'],
             'suppliers.edit' => ['edit_supplier'],
             'suppliers.delete' => ['delete_supplier'],
