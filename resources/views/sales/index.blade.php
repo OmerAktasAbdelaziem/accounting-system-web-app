@@ -375,7 +375,7 @@
                     <i class="bi bi-receipt"></i>
                     Daily sales workspace
                 </div>
-                <h2 class="fw-bold mb-2">Sales</h2>
+                <h2 class="fw-bold mb-2 text-white">Sales</h2>
                 <p class="mb-0 text-white-75" style="max-width: 720px;">
                     Record daily sales total from employee amounts with one description for the full sale.
                 </p>

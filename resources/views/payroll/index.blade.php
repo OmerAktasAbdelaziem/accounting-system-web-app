@@ -382,7 +382,7 @@
                         <i class="bi bi-stars"></i>
                         Payroll command center
                     </div>
-                    <h1 class="display-6 fw-black mb-3" style="font-weight: 900; letter-spacing: -.05em;">{{ __('messages.payroll') }}</h1>
+                    <h1 class="display-6 fw-black mb-3 text-white" style="font-weight: 900; letter-spacing: -.05em;">{{ __('messages.payroll') }}</h1>
                     <p class="hero-note mb-4">
                         Track unsettled payrolls, settle payments from safes, and keep a clean history of every payroll movement in one place.
                     </p>
