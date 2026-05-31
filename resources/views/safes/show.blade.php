@@ -20,6 +20,10 @@
         color: #fff !important;
     }
 
+    .safe-black-label {
+        color: #000 !important;
+    }
+
     @media (max-width: 768px) {
         .safe-mobile-orange-header {
             background: linear-gradient(135deg, #ff8c00, #ffb347) !important;
@@ -50,7 +54,7 @@
                 <i class="bi bi-cash-coin"></i>
             </div>
                 <div class="stat-content">
-                <h6 class="safe-white-label">{{ __('messages.current_balance') }}</h6>
+                <h6><span class="safe-black-label">{{ __('messages.current_balance') }}</span></h6>
                 <h3>{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</h3>
             </div>
         </div>
@@ -61,7 +65,7 @@
                 <i class="bi bi-exclamation-triangle"></i>
             </div>
                 <div class="stat-content">
-                <h6 class="safe-white-label">{{ __('messages.max_balance') }}</h6>
+                <h6><span class="safe-black-label">{{ __('messages.max_balance') }}</span></h6>
                 <h3>{{ $currencySymbol }}{{ number_format($safe->max_balance, 2) }}</h3>
             </div>
         </div>
@@ -72,7 +76,7 @@
                 <i class="bi bi-graph-up"></i>
             </div>
                 <div class="stat-content">
-                <h6 class="safe-white-label">Today Income</h6>
+                <h6><span class="safe-black-label">Today Income</span></h6>
                 <h3>{{ $currencySymbol }}{{ number_format($todayIncome, 2) }}</h3>
             </div>
         </div>
@@ -83,7 +87,7 @@
                 <i class="bi bi-graph-down"></i>
             </div>
                 <div class="stat-content">
-                <h6 class="safe-white-label">Today Outcome</h6>
+                <h6><span class="safe-black-label">Today Outcome</span></h6>
                 <h3>{{ $currencySymbol }}{{ number_format($todayOutcome, 2) }}</h3>
             </div>
         </div>
