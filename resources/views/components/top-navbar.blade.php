@@ -3,10 +3,20 @@
     $dashboardRoute = auth()->user()?->isSuperAdmin() ? 'super-admin.dashboard' : 'dashboard';
 @endphp
 <link rel="stylesheet" href="{{ asset('css/top-navbar.css') }}">
+<style>
+    /* Keep the menu button mobile-only by default */
+    #mobileMenuBtn { display: none !important; }
+
+    @media (max-width: 991px) {
+        #mobileMenuBtn { display: inline-flex !important; }
+    }
+</style>
 <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.11.3/dist/echo.iife.js"></script>
 <nav class="modern-top-navbar">
-    <!-- menu icon removed as requested -->
+    <button type="button" id="mobileMenuBtn" class="btn mobile-menu-btn" aria-label="Open sidebar" aria-controls="modernSidebar" aria-expanded="false" onclick="return window.__toggleMobileSidebar(event)">
+        <i class="bi bi-list"></i>
+    </button>
     <div class="brand">
         <a href="{{ route($dashboardRoute) }}" class="brand">
             <div class="logo-mark">A</div>
@@ -61,14 +71,16 @@
         </div>
     </div>
 </nav>
-<div id="mobileSidebarBackdrop" aria-hidden="true"></div>
 <script>
     // Defensive sidebar toggle initializer — runs early and is independent of main bundles.
     (function(){
         try {
             var btn = document.getElementById('mobileMenuBtn') || document.getElementById('sidebarToggle');
-            var sidebar = document.getElementById('modernSidebar');
-            var backdrop = document.getElementById('mobileSidebarBackdrop');
+
+            console.debug('[mobile-sidebar] initializer', {
+                hasButton: !!btn,
+                hasBackdrop: false
+            });
 
             window.__toggleMobileSidebar = function(event) {
                 if (event) {
@@ -76,8 +88,19 @@
                     event.stopPropagation();
                 }
 
+                console.debug('[mobile-sidebar] toggle requested', {
+                    currentOpen: document.body.classList.contains('sidebar-open')
+                });
+
+                var sidebar = document.getElementById('modernSidebar');
                 document.body.classList.toggle('sidebar-open');
                 var isOpen = document.body.classList.contains('sidebar-open');
+
+                console.debug('[mobile-sidebar] toggle result', {
+                    isOpen: isOpen,
+                    sidebarFound: !!sidebar,
+                    backdropFound: false
+                });
 
                 if (btn) {
                     btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
@@ -85,13 +108,15 @@
 
                 if (sidebar) {
                     if (isOpen) {
+                        console.debug('[mobile-sidebar] opening drawer');
                         sidebar.style.display = 'block';
                         sidebar.style.position = 'fixed';
-                        sidebar.style.zIndex = '1065';
-                        sidebar.style.left = '0';
-                        sidebar.style.top = '0';
+                        sidebar.style.zIndex = '2005';
+                        sidebar.style.left = '10px';
+                        sidebar.style.top = '72px';
                         sidebar.style.boxShadow = '0 18px 40px rgba(0,0,0,0.22)';
                     } else {
+                        console.debug('[mobile-sidebar] closing drawer');
                         sidebar.style.display = '';
                         sidebar.style.position = '';
                         sidebar.style.zIndex = '';
@@ -99,31 +124,32 @@
                         sidebar.style.top = '';
                         sidebar.style.boxShadow = '';
                     }
-                }
-
-                if (backdrop) {
-                    backdrop.style.display = isOpen ? 'block' : 'none';
+                } else {
+                    console.warn('[mobile-sidebar] sidebar element not found');
                 }
 
                 return false;
             };
 
-            if (backdrop) {
-                backdrop.addEventListener('click', function() {
-                    if (document.body.classList.contains('sidebar-open')) {
-                        window.__toggleMobileSidebar();
-                    }
-                });
-            }
+            function bindSidebarLinkClose() {
+                var sidebarLinksHost = document.getElementById('modernSidebar');
+                if (!sidebarLinksHost) {
+                    return;
+                }
 
-            if (sidebar) {
-                sidebar.querySelectorAll('a').forEach(function(link) {
+                sidebarLinksHost.querySelectorAll('a').forEach(function(link) {
                     link.addEventListener('click', function() {
                         if (window.innerWidth < 992 && document.body.classList.contains('sidebar-open')) {
                             window.__toggleMobileSidebar();
                         }
                     });
                 });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', bindSidebarLinkClose, { once: true });
+            } else {
+                bindSidebarLinkClose();
             }
         } catch (err) {
             console.warn('Sidebar toggle initializer failed', err);
@@ -439,10 +465,15 @@
 
         async function refreshNotifs(){
             try{
+                if (!notifBadge && !document.getElementById('notifList')) {
+                    return;
+                }
                 const res = await fetch(`{{ url('notifications') }}`, {headers:{'X-Requested-With':'XMLHttpRequest','Accept':'application/json'}});
                 const json = await res.json();
                 const unread = json.unread || 0;
-                if(unread>0){ notifBadge.style.display='inline-block'; notifBadge.textContent = unread; } else { notifBadge.style.display='none'; }
+                if (notifBadge) {
+                    if(unread>0){ notifBadge.style.display='inline-block'; notifBadge.textContent = unread; } else { notifBadge.style.display='none'; }
+                }
                 const notifList = document.getElementById('notifList');
                 if (notifList) {
                     const items = renderGroupedNotifications(json.notifications || []);
@@ -453,6 +484,19 @@
 
         async function markOneAsRead(id){
             try{
+                if (!notifBadge) {
+                    await fetch(`{{ route('notifications.markRead') }}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ ids: [id] })
+                    });
+                    return;
+                }
                 await fetch(`{{ route('notifications.markRead') }}`, {
                     method: 'POST',
                     headers: {
@@ -481,6 +525,19 @@
 
         async function markAllAsRead(){
             try{
+                if (!notifBadge) {
+                    await fetch(`{{ route('notifications.markRead') }}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    });
+                    return;
+                }
                 await fetch(`{{ route('notifications.markRead') }}`, {
                     method: 'POST',
                     headers: {
@@ -543,11 +600,13 @@
     })();
 </script>
     <script>
-        // mobile menu toggle: toggles `sidebar-open` on body and emits event
+        // mobile menu toggle: resolve sidebar lazily (avoid null captures at load)
         (function(){
             const btn = document.getElementById('mobileMenuBtn');
-            const sidebar = document.getElementById('modernSidebar');
             if(!btn) return;
+            let savedScrollY = 0;
+            let savedSidebarScrollTop = 0;
+            let backdropHideTimer = null;
 
             // ensure a backdrop exists
             let backdrop = document.getElementById('mobileSidebarBackdrop');
@@ -557,23 +616,63 @@
                 document.body.appendChild(backdrop);
             }
 
+            function getSidebar(){
+                return document.getElementById('modernSidebar') || document.querySelector('.modern-sidebar') || document.querySelector('#modern-sidebar');
+            }
+
             function showSidebar(){
+                if (backdropHideTimer) {
+                    clearTimeout(backdropHideTimer);
+                    backdropHideTimer = null;
+                }
+                savedScrollY = window.scrollY || window.pageYOffset || 0;
+                document.documentElement.classList.add('sidebar-open');
                 document.body.classList.add('sidebar-open');
+                document.documentElement.style.overflow = 'hidden';
+                document.documentElement.style.height = '100%';
+                document.body.style.position = 'fixed';
+                document.body.style.top = `-${savedScrollY}px`;
+                document.body.style.left = '0';
+                document.body.style.right = '0';
+                document.body.style.width = '100%';
+                document.body.style.overflow = 'hidden';
+                document.body.style.height = '100%';
+                document.documentElement.style.overflow = 'hidden';
+                const sidebar = getSidebar();
                 if(sidebar){
                     sidebar.style.display = 'block';
                     sidebar.style.position = 'fixed';
                     sidebar.style.top = '0';
                     sidebar.style.left = '0';
                     sidebar.style.height = '100vh';
-                    sidebar.style.zIndex = '1060';
+                    sidebar.style.zIndex = '3005';
                     sidebar.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
+                    sidebar.scrollTop = savedSidebarScrollTop;
+                } else {
+                    console.warn('[mobile-sidebar] showSidebar: sidebar not found');
                 }
                 backdrop.style.display = 'block';
+                backdrop.style.opacity = '1';
+                backdrop.style.pointerEvents = 'auto';
                 try{ window.dispatchEvent(new CustomEvent('toggleSidebar')); }catch(e){}
             }
 
             function hideSidebar(){
+                const sidebar = getSidebar();
+                if(sidebar){
+                    savedSidebarScrollTop = sidebar.scrollTop || 0;
+                }
+                document.documentElement.classList.remove('sidebar-open');
                 document.body.classList.remove('sidebar-open');
+                document.body.style.position = '';
+                document.body.style.top = '';
+                document.body.style.left = '';
+                document.body.style.right = '';
+                document.body.style.width = '';
+                document.body.style.overflow = '';
+                document.body.style.height = '';
+                document.documentElement.style.overflow = '';
+                document.documentElement.style.height = '';
                 if(sidebar){
                     sidebar.style.display = '';
                     sidebar.style.position = '';
@@ -583,18 +682,22 @@
                     sidebar.style.zIndex = '';
                     sidebar.style.boxShadow = '';
                 }
-                backdrop.style.display = 'none';
+                backdrop.style.opacity = '0';
+                backdrop.style.pointerEvents = 'none';
+                backdropHideTimer = setTimeout(function(){
+                    backdrop.style.display = 'none';
+                }, 250);
+                window.scrollTo(0, savedScrollY);
                 try{ window.dispatchEvent(new CustomEvent('toggleSidebarClose')); }catch(e){}
             }
-
-            btn.addEventListener('click', function(){
-                if(document.body.classList.contains('sidebar-open')) hideSidebar(); else showSidebar();
-            });
 
             backdrop.addEventListener('click', hideSidebar);
             document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && document.body.classList.contains('sidebar-open')) hideSidebar(); });
 
             // ensure sidebar visibility on larger screens
-            if (!matchMedia('(max-width: 991px)').matches && sidebar){ sidebar.style.display = 'block'; backdrop.style.display = 'none'; }
+            if (!matchMedia('(max-width: 991px)').matches){
+                const sb = getSidebar();
+                if (sb){ sb.style.display = 'block'; backdrop.style.display = 'none'; }
+            }
         })();
     </script>

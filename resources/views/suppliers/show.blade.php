@@ -47,6 +47,13 @@
     }
 </style>
 
+<style>
+    .white-header,
+    .white-header * {
+        color: #fff !important;
+    }
+</style>
+
 @php
     $selectedBranch = $selectedBranchId ? $branches->firstWhere('id', $selectedBranchId) : null;
 @endphp
@@ -132,7 +139,7 @@
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Record Purchase</h5>
+                    <h5 class="mb-0 white-header">Record Purchase</h5>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ route('suppliers.purchases.store', $supplier) }}">
@@ -184,7 +191,7 @@
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white">
-                    <h5 class="mb-0">Record Payment</h5>
+                    <h5 class="mb-0 white-header">Record Payment</h5>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ route('suppliers.payments.store', $supplier) }}">
@@ -211,7 +218,7 @@
 
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Transaction Timeline</h5>
+            <h5 class="mb-0 white-header">Transaction Timeline</h5>
             <small class="text-muted">Showing the latest {{ count($timeline) }} entries</small>
         </div>
         <div class="card-body">

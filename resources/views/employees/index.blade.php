@@ -74,7 +74,7 @@
 
 <div class="mb-4">
     <div class="d-flex justify-content-between align-items-center employees-hero">
-        <h1 style="font-weight: 900; color: #1a1a1a;">
+        <h1 style="font-weight: 900; color: #000 !important;">
             <i class="bi bi-people" style="color: #ff8c00;"></i> {{ __('messages.employees_management') }}
         </h1>
         @feature('employees.create')

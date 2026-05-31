@@ -5,8 +5,9 @@
 @section('content')
 <div class="mb-4">
     <div class="d-flex justify-content-between align-items-center">
-        <h1 style="font-weight: 900; color: #1a1a1a;">
-            <i class="bi bi-archive" style="color: #ff8c00;"></i> {{ __('messages.storage_management') }}
+        <h1 style="font-weight: 900;">
+            <i class="bi bi-archive" style="color: #ff8c00;"></i>
+            <span class="storages-title">{{ __('messages.storage_management') }}</span>
         </h1>
         @feature('storages.create')
             <a href="{{ route('storages.create') }}" class="btn btn-primary-modern">
@@ -15,6 +16,9 @@
         @endfeature
     </div>
 </div>
+<style>
+    .storages-title { color: #000 !important; }
+</style>
 
 <!-- Statistics -->
 <div class="row mb-4">

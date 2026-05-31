@@ -5,7 +5,7 @@
 @section('content')
 <div class="row mb-4">
     <div class="col-md-8">
-        <h1><i class="bi bi-person-circle"></i> {{ $employee->name }}</h1>
+        <h1 style="color: #000 !important;"><i class="bi bi-person-circle"></i> {{ $employee->name }}</h1>
         <p class="text-muted">{{ $employee->position }}</p>
     </div>
     <div class="col-md-4 text-end">
@@ -48,7 +48,7 @@
                 <i class="bi bi-person-check"></i>
             </div>
             <div class="stat-content">
-                <h6>{{ __('messages.advances') }}</h6>
+                <h6 class="advances-text">{{ __('messages.advances') }}</h6>
                 <h3>{{ $currencySymbol }}{{ number_format($employee->advances()->sum('amount'), 2) }}</h3>
             </div>
         </div>
@@ -66,7 +66,7 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.name') }}</label>
-                        <p class="text-muted">{{ $employee->name }}</p>
+                        <p class="text-dark fw-semibold">{{ $employee->name }}</p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.position') }}</label>
@@ -74,6 +74,20 @@
                     </div>
                 </div>
                 <style>
+                        .employee-white-header,
+                        .employee-white-header * {
+                            color: #fff !important;
+                        }
+
+                        .card-header.employee-white-header,
+                        .card-header.employee-white-header * {
+                            color: #fff !important;
+                        }
+
+                            .advances-text {
+                                color: #fff !important;
+                            }
+
                     .employee-detail-header {
                         color: #fff !important;
                     }
@@ -128,7 +142,7 @@
 
         <!-- Sales History -->
         <div class="card mb-4">
-            <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
+            <div class="card-header employee-white-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <h5 class="mb-0"><i class="bi bi-graph-up"></i> {{ __('messages.recent_sales') }}</h5>
             </div>
             <div class="table-responsive">
@@ -161,7 +175,7 @@
 
         <!-- Commissions History -->
         <div class="card">
-            <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
+            <div class="card-header employee-white-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <h5 class="mb-0"><i class="bi bi-percent"></i> {{ __('messages.commissions') }}</h5>
             </div>
             <div class="table-responsive">
@@ -200,7 +214,7 @@
 
         <!-- Employee Advances -->
         <div class="card mb-4">
-            <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
+            <div class="card-header employee-white-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-cash-coin"></i> {{ __('messages.advances') }}</h5>
                     <button class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#addAdvanceModal">
@@ -263,7 +277,7 @@
     <div class="col-lg-4">
         <!-- Salary Summary -->
         <div class="card mb-4">
-            <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
+            <div class="card-header employee-white-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <h5 class="mb-0"><i class="bi bi-cash-coin"></i> {{ __('messages.compensation') }}</h5>
             </div>
             <div class="card-body">
@@ -298,7 +312,7 @@
 
         <!-- Quick Stats -->
         <div class="card mb-4">
-            <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
+            <div class="card-header employee-white-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <h5 class="mb-0"><i class="bi bi-graph-up-arrow"></i> {{ __('messages.statistics') }}</h5>
             </div>
             <div class="card-body">
@@ -331,7 +345,7 @@
 
         <!-- Actions -->
         <div class="card">
-            <div class="card-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
+            <div class="card-header employee-white-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <h5 class="mb-0"><i class="bi bi-lightning"></i> {{ __('messages.actions') }}</h5>
             </div>
             <div class="card-body">

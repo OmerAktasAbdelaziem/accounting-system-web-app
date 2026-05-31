@@ -18,7 +18,7 @@
     .sidebar-stat-label { color: #9ca3af; font-weight: 600; }
     .sidebar-stat-value { font-size: 15px; font-weight: 800; color: var(--primary); }
     .form-card { background: white; border-radius: 20px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); border: 1px solid var(--border-light); overflow: hidden; }
-    .form-header { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 40px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+    .form-header { background: linear-gradient(135deg, #1a1a1a, #333); color: white; padding: 40px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
     .form-header h1 { margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
     .form-header .btn { transition: all 0.3s ease; }
     .form-header .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); }
@@ -76,8 +76,8 @@
                     <div>
                         <h1><i class="bi bi-tags" style="margin-right: 12px; font-size: 36px;"></i>{{ isset($category) ? __('messages.edit_category') : __('messages.add_category') }}</h1>
                     </div>
-                    <a href="{{ route('categories.index') }}" class="btn btn-outline-light btn-sm" style="padding: 10px 20px; border-radius: 10px; border: 1.5px solid rgba(255, 255, 255, 0.4); color: white; text-decoration: none;">
-                        <i class="bi bi-arrow-left"></i> Back
+                    <a href="{{ route('categories.index') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left"></i> {{ __('messages.back') }}
                     </a>
                 </div>
 

@@ -141,6 +141,17 @@
         color: #fff !important;
     }
 
+    /* Commission specific text utilities */
+    .commission-employee-name { color: #000 !important; }
+
+    /* Desktop-only action button compacting */
+    @media (min-width: 769px) {
+        .commission-action-grid .btn span { display: none; }
+        .commission-action-grid .btn { padding: .35rem .5rem; border-radius: 8px; }
+        .commission-action-grid .btn + .btn { margin-left: .5rem; }
+        .commission-action-grid .btn.form-button { display: inline-flex; align-items:center; }
+    }
+
     @media (max-width: 768px) {
         .card-header {
             background: linear-gradient(135deg, #ff8c00, #ffb347) !important;
@@ -150,8 +161,8 @@
 
 <div class="mb-4 d-flex justify-content-between align-items-start flex-wrap gap-3">
     <div>
-        <h1 class="mb-2" style="font-weight: 900; color: #1a1a1a;">
-            <i class="bi bi-person-badge" style="color: #ff8c00;"></i> {{ $employee->name }}
+        <h1 class="mb-2" style="font-weight: 900;">
+            <i class="bi bi-person-badge" style="color: #ff8c00;"></i> <span class="commission-employee-name">{{ $employee->name }}</span>
         </h1>
         <div class="text-muted">
             {{ $employee->employee_code ?? __('messages.employee') }}
@@ -217,33 +228,6 @@
 
 <div class="row g-4">
     <div class="col-lg-4">
-        <div class="card mb-4">
-            <div class="card-header commission-page-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
-                <h5 class="mb-0"><i class="bi bi-person"></i> {{ __('messages.employee_information') }}</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-flex align-items-center gap-3 mb-3">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 64px; height: 64px; background: linear-gradient(135deg, #ff8c00, #ffb347); color: white; font-size: 24px; font-weight: 800;">
-                        {{ strtoupper(substr($employee->name ?? 'U', 0, 1)) }}
-                    </div>
-                    <div>
-                        <h5 class="mb-1">{{ $employee->name }}</h5>
-                        <div class="text-muted small">{{ $employee->position ?? '-' }}</div>
-                        <div class="text-muted small">{{ $employee->employee_code ?? '-' }}</div>
-                    </div>
-                </div>
-                <hr>
-                <div class="small text-muted mb-2">{{ __('messages.branches') }}</div>
-                <div class="d-flex flex-wrap gap-2">
-                    @forelse($employee->branches ?? [] as $branch)
-                        <span class="badge bg-light text-dark border">{{ $branch->name }}</span>
-                    @empty
-                        <span class="text-muted">{{ __('messages.none') }}</span>
-                    @endforelse
-                </div>
-            </div>
-        </div>
-
         <div class="card">
             <div class="card-header commission-page-header" style="background: linear-gradient(135deg, #ff8c00, #ffb347); color: white;">
                 <h5 class="mb-0"><i class="bi bi-plus-circle"></i> {{ __('messages.add_commission') }}</h5>

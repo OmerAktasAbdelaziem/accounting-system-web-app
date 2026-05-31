@@ -9,6 +9,15 @@
         color: #fff !important;
     }
 
+    .white-header,
+    .white-header * {
+        color: #fff !important;
+    }
+
+    .commissions-title {
+        color: #000 !important;
+    }
+
     @media (max-width: 768px) {
         .commissions-hero {
             flex-direction: column;
@@ -94,8 +103,9 @@
 
 <div class="mb-4">
     <div class="d-flex justify-content-between align-items-center commissions-hero">
-        <h1 style="font-weight: 900; color: #1a1a1a;">
-            <i class="bi bi-percent" style="color: #ff8c00;"></i> {{ __('messages.commissions_management') }}
+        <h1 style="font-weight: 900;">
+            <i class="bi bi-percent" style="color: #ff8c00;"></i>
+            <span class="commissions-title">{{ __('messages.commissions_management') }}</span>
         </h1>
         @feature('commissions.create')
             <a href="{{ route('commissions.create') }}" class="btn btn-primary-modern">
@@ -121,7 +131,7 @@
 <div class="card mb-4">
     <div class="card-header commissions-page-header">
         <div class="d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="bi bi-person-badge"></i> Commission Profiles</h5>
+            <h5 class="mb-0 white-header"><i class="bi bi-person-badge"></i> Commission Profiles</h5>
                 <small>Open an employee profile to pay active commissions or add more records</small>
         </div>
     </div>
@@ -237,7 +247,7 @@
 <!-- Paid Commissions History -->
 <div class="card mt-4">
     <div class="card-header bg-secondary text-white">
-        <h5 class="mb-0"><i class="bi bi-clock-history"></i> Paid Commissions History</h5>
+        <h5 class="mb-0 white-header"><i class="bi bi-clock-history"></i> Paid Commissions History</h5>
     </div>
     <div class="card-body">
         @if(($paidCommissions ?? collect())->isNotEmpty())

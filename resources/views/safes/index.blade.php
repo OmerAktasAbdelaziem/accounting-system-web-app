@@ -51,8 +51,9 @@
     </style>
 
     <div class="d-flex justify-content-between align-items-center safes-hero">
-        <h1 style="font-weight: 900; color: #1a1a1a;">
-            <i class="bi bi-safe" style="color: #ff8c00;"></i> {{ __('messages.safe_management') }}
+        <h1 style="font-weight: 900;">
+            <i class="bi bi-safe" style="color: #ff8c00;"></i>
+            <span class="safes-title">{{ __('messages.safe_management') }}</span>
         </h1>
         @feature('safes.create')
         <a href="{{ route('safes.create') }}" class="btn btn-primary-modern">
@@ -61,6 +62,10 @@
         @endfeature
     </div>
 </div>
+</div>
+<style>
+    .safes-title { color: #000 !important; }
+</style>
 
 <!-- Statistics -->
 <div class="row mb-4">

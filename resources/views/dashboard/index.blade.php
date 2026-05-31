@@ -21,13 +21,64 @@
     .merchant-dashboard-shell {
         min-height: 100vh;
         padding: 28px 16px 40px;
+        color: #111827;
+        /* Desktop / tablet: keep the light background */
         background:
             radial-gradient(circle at top right, rgba(255, 140, 0, 0.08), transparent 26%),
             linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
     }
 
+    /* Mobile-only: dark hero background for small screens */
+    @media (max-width: 900px) {
+        .merchant-dashboard-shell {
+            color: #e6eef8;
+            background: #191917;
+        }
+    }
+
+    .dashboard-orb,
+    .dashboard-orb-two,
+    .dashboard-noise {
+        position: absolute;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .dashboard-orb {
+        width: 320px;
+        height: 320px;
+        right: -130px;
+        top: -120px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 140, 0, 0.22) 0%, rgba(255, 140, 0, 0) 68%);
+        filter: blur(8px);
+    }
+
+    .dashboard-orb-two {
+        width: 220px;
+        height: 220px;
+        left: -100px;
+        bottom: 120px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, rgba(59, 130, 246, 0) 72%);
+        filter: blur(10px);
+    }
+
+    .dashboard-noise {
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+        background-size: 24px 24px;
+        mask-image: linear-gradient(180deg, rgba(0,0,0,0.24), transparent 82%);
+        opacity: .22;
+    }
+
     .dashboard-hero {
-        background: linear-gradient(135deg, #111827 0%, #1f2937 68%, #ff8c00 180%);
+        background:
+            radial-gradient(circle at top right, rgba(255, 255, 255, 0.10), transparent 24%),
+            radial-gradient(circle at left center, rgba(59, 130, 246, 0.18), transparent 28%),
+            linear-gradient(135deg, #0b1020 0%, #111827 42%, #1f2937 74%, #ff8c00 180%);
         color: #fff;
         border-radius: 28px;
         padding: 28px;
@@ -35,6 +86,39 @@
         margin-bottom: 22px;
         overflow: hidden;
         position: relative;
+    }
+
+    .hero-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        border: 1px solid rgba(255,255,255,0.14);
+        background: rgba(255,255,255,0.08);
+        color: rgba(255,255,255,0.92);
+        backdrop-filter: blur(14px);
+    }
+
+    .hero-badge-live {
+        background: rgba(16, 185, 129, 0.14);
+        border-color: rgba(16, 185, 129, 0.22);
+        color: #d1fae5;
+    }
+
+    .hero-badge-soft {
+        background: rgba(255,255,255,0.06);
     }
 
     /* Redesigned hero layout */
@@ -61,10 +145,25 @@
 
     .hero-actions { margin-top: 16px; display:flex; gap:12px; flex-wrap:wrap; }
 
+    .hero-actions .btn {
+        border-radius: 999px;
+        padding-inline: 18px;
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14);
+    }
+
+    .btn-primary-modern {
+        background: linear-gradient(135deg, #ff8c00, #ffb347);
+        border: 0;
+    }
+
+    .btn-primary-modern:hover {
+        background: linear-gradient(135deg, #ff9e1a, #ffc56b);
+    }
+
     .kpi-grid { display: grid; gap: 12px; }
 
     .kpi-card {
-        background: rgba(255,255,255,0.09);
+        background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
         border: 1px solid rgba(255,255,255,0.12);
         padding: 12px 14px;
         border-radius: 14px;
@@ -87,6 +186,22 @@
         transform: rotate(12deg);
         pointer-events: none;
         filter: blur(6px);
+    }
+
+    .ambient-strip {
+        height: 3px;
+        width: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #ff8c00, #3b82f6, #10b981, #ff8c00);
+        background-size: 220% 100%;
+        animation: ambientMove 16s linear infinite;
+        margin-top: 12px;
+        opacity: .8;
+    }
+
+    @keyframes ambientMove {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 220% 50%; }
     }
 
     .hero-wave {
@@ -284,17 +399,17 @@
     .metric-card,
     .panel-card,
     .chart-card {
-        background: var(--surface);
-        border: 1px solid var(--border-light);
+        background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,250,255,0.96));
+        border: 1px solid rgba(226, 232, 240, 0.95);
         border-radius: 22px;
         padding: 20px;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
     }
 
     .metric-card:hover {
         transform: translateY(-3px);
         transition: all 0.25s ease;
-        box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
+        box-shadow: 0 22px 40px rgba(15, 23, 42, 0.10);
     }
 
     .metric-top {
@@ -424,13 +539,32 @@
     }
 
     @media (max-width: 768px) {
+        .merchant-dashboard-shell {
+            --mobile-bg: #191917;
+            --mobile-surface: #22211d;
+            --mobile-surface-strong: #2a2823;
+            --mobile-border: rgba(255, 255, 255, 0.08);
+            --mobile-text: #f5f3ee;
+            --mobile-muted: rgba(245, 243, 238, 0.72);
+            --mobile-accent: #f59e0b;
+            --mobile-accent-2: #14b8a6;
+            padding: 12px 10px 24px;
+            background: var(--mobile-bg);
+            color: var(--mobile-text);
+        }
+
         .dashboard-hero {
-            background: linear-gradient(135deg, #ff8c00 0%, #ff9e33 40%, #ffd089 100%);
-            background-size: 200% 200%;
-            animation: heroGradientShift 30s ease-in-out infinite;
-            padding: 16px;
-            border-radius: 18px;
-            box-shadow: 0 18px 50px rgba(255, 140, 0, 0.12);
+            background:
+                radial-gradient(circle at top right, rgba(245, 158, 11, 0.12), transparent 24%),
+                radial-gradient(circle at 18% 22%, rgba(20, 184, 166, 0.14), transparent 30%),
+                linear-gradient(160deg, #26231e 0%, #1b1a17 44%, #191917 100%);
+            background-size: 180% 180%;
+            animation: heroGradientShift 22s ease-in-out infinite;
+            padding: 14px;
+            border-radius: 24px;
+            box-shadow: 0 24px 55px rgba(0, 0, 0, 0.34);
+            border: 1px solid var(--mobile-border);
+            overflow: hidden;
         }
 
         .dashboard-hero,
@@ -447,13 +581,22 @@
             gap: 14px;
         }
 
+        .hero-badges {
+            margin-bottom: 12px;
+        }
+
+        .hero-badge {
+            padding: 7px 10px;
+            font-size: 10px;
+        }
+
         .hero-right,
         .kpi-grid {
             width: 100%;
         }
 
         .kpi-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr 1fr;
         }
 
         .kpi-card {
@@ -467,9 +610,10 @@
 
         .dashboard-subtitle {
             display: block;
-            font-size: 13px;
+            font-size: 12px;
             line-height: 1.55;
             max-width: 100%;
+            color: var(--mobile-muted);
         }
 
         .hero-wave svg {
@@ -477,16 +621,12 @@
         }
 
         .dashboard-title {
-            font-size: 26px;
-        }
-
-        .dashboard-hero {
-            padding: 22px;
-            border-radius: 22px;
+            font-size: 28px;
+            color: var(--mobile-text);
         }
 
         .merchant-dashboard-shell {
-            padding: 16px 12px 28px;
+            padding: 12px 10px 24px;
         }
 
         .dashboard-hero-inner {
@@ -495,11 +635,12 @@
 
         .hero-kpis {
             min-width: 100%;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: 1fr;
         }
 
         .metric-value {
             font-size: 24px;
+            color: var(--mobile-text);
         }
 
         .quick-actions-grid,
@@ -509,7 +650,7 @@
         }
 
         .chart-box {
-            height: 260px;
+            height: 240px;
         }
 
         .section-heading {
@@ -524,9 +665,71 @@
         .panel-card,
         .chart-card,
         .metric-card {
-            padding: 16px;
-            border-radius: 18px;
+            padding: 15px;
+            border-radius: 20px;
+            background: linear-gradient(180deg, var(--mobile-surface), var(--mobile-surface-strong));
+            border-color: var(--mobile-border);
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.24);
         }
+
+        .quick-action {
+            background: linear-gradient(180deg, var(--mobile-surface), var(--mobile-surface-strong));
+            border-color: var(--mobile-border);
+            color: var(--mobile-text);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+        }
+
+        .quick-action-text span,
+        .section-subtitle,
+        .metric-label,
+        .metric-note,
+        .panel-card .table thead th,
+        .panel-card .table tbody td,
+        .table tbody td {
+            color: var(--mobile-muted);
+        }
+
+        .section-title,
+        .metric-value {
+            color: var(--mobile-text);
+        }
+
+        .panel-card .table thead th {
+            background: rgba(255,255,255,0.03);
+            border-bottom-color: var(--mobile-border);
+        }
+
+        .progress-line {
+            background: rgba(255,255,255,0.08);
+        }
+
+        .hero-badge {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--mobile-text);
+            border-color: var(--mobile-border);
+        }
+
+        .hero-badge-live {
+            background: rgba(20, 184, 166, 0.14);
+            border-color: rgba(20, 184, 166, 0.28);
+            color: #ccfbf1;
+        }
+
+        .hero-badge-soft {
+            background: rgba(245, 158, 11, 0.10);
+            border-color: rgba(245, 158, 11, 0.18);
+        }
+
+        .metric-badge.primary,
+        .quick-action-icon {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(20, 184, 166, 0.16));
+            color: var(--mobile-text);
+        }
+
+        .metric-badge.success { background: rgba(16,185,129,0.14); color: #d1fae5; }
+        .metric-badge.info { background: rgba(59,130,246,0.14); color: #dbeafe; }
+        .metric-badge.warning { background: rgba(245,158,11,0.14); color: #fef3c7; }
+        .metric-badge.danger { background: rgba(239,68,68,0.14); color: #fee2e2; }
 
         .table-responsive {
             overflow-x: auto;
@@ -536,6 +739,11 @@
         .panel-card .table,
         .table {
             min-width: 640px;
+        }
+
+        .metric-card:hover,
+        .quick-action:hover {
+            transform: none;
         }
 
         .recent-sales-table thead th:nth-child(2),
@@ -574,7 +782,7 @@
 
     @media (max-width: 576px) {
         .dashboard-hero {
-            padding: 14px;
+            padding: 14px 14px 16px;
         }
 
         .hero-wave svg {
@@ -586,11 +794,15 @@
         }
 
         .dashboard-title {
-            font-size: 22px;
+            font-size: 24px;
         }
 
-        .hero-kpis {
-            grid-template-columns: 1fr;
+        .hero-badges {
+            gap: 6px;
+        }
+
+        .hero-badge {
+            width: fit-content;
         }
 
         .dashboard-hero,
@@ -598,14 +810,47 @@
         .chart-card,
         .panel-card {
             border-radius: 16px;
+            background: linear-gradient(180deg, #22211d, #2a2823);
+            border-color: rgba(255,255,255,0.08);
         }
 
         .quick-action {
             padding: 14px;
+            border-radius: 20px;
+            background: linear-gradient(180deg, #22211d, #2a2823);
+            color: #f5f3ee;
+        }
+
+        .quick-action-icon {
+            background: linear-gradient(135deg, rgba(245,158,11,0.20), rgba(20,184,166,0.18));
+            color: #fff7ed;
+        }
+
+        .panel-card .table thead th,
+        .panel-card .table tbody td,
+        .table tbody td,
+        .section-subtitle,
+        .metric-label,
+        .metric-note,
+        .quick-action-text span {
+            color: rgba(243, 244, 246, 0.8) !important;
+        }
+
+        .section-title,
+        .metric-value {
+            color: #ffffff !important;
+        }
+
+        .panel-card .table thead th {
+            background: rgba(255,255,255,0.03);
         }
 
         .hero-kpi-value {
             font-size: 16px;
+        }
+
+        .ambient-strip {
+            margin-top: 10px;
         }
 
         .table-responsive {
@@ -699,8 +944,14 @@
 
 <div id="merchantDashboardRoot" class="merchant-dashboard-shell" data-analytics-url="{{ route('dashboard.analytics') }}">
     <div class="dashboard-hero">
+        <div class="dashboard-noise" aria-hidden="true"></div>
+        <div class="dashboard-orb" aria-hidden="true"></div>
+        <div class="dashboard-orb-two" aria-hidden="true"></div>
         <div class="dashboard-hero-inner redesigned-hero">
             <div class="hero-left">
+                <div class="hero-badges">
+                    <span class="hero-badge hero-badge-live"><i class="bi bi-broadcast"></i> Live analytics</span>
+                </div>
                 <h1 class="dashboard-title"><i class="bi bi-speedometer2 me-2"></i>{{ __('messages.dashboard') }}</h1>
                 <p class="dashboard-subtitle">Welcome back, <strong>{{ auth()->user()->name }}</strong>. This merchant dashboard surfaces daily KPIs, quick actions, and summarized insights for fast decision making.</p>
 
@@ -708,6 +959,8 @@
                     <a href="{{ route('sales.index') }}" class="btn btn-primary-modern">New Sale</a>
                     <a href="{{ route('reports.sales') }}" class="btn btn-outline-light">Reports</a>
                 </div>
+
+                <div class="ambient-strip" aria-hidden="true"></div>
             </div>
 
             <div class="hero-right">

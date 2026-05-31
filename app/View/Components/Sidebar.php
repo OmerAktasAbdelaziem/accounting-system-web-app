@@ -26,15 +26,14 @@ class Sidebar extends Component
                 'reports' => [],
                 'systems' => [],
                 'admin' => [
-                    ['route' => 'super-admin.users.index', 'icon' => 'bi-people', 'label' => 'System Users'],
-                    ['route' => 'roles.index', 'icon' => 'bi-shield-lock', 'label' => 'Roles Management'],
-                    ['route' => 'super-admin.feature-access.index', 'icon' => 'bi-sliders', 'label' => 'Feature Access'],
-                    ['route' => 'super-admin.merchants.index', 'icon' => 'bi-building', 'label' => 'Merchants'],
-                    ['route' => 'super-admin.packages.index', 'icon' => 'bi-box-seam', 'label' => 'Packages'],
-                    ['route' => 'super-admin.subscriptions.index', 'icon' => 'bi-bookmark-check', 'label' => 'Subscriptions'],
-                    ['route' => 'super-admin.vat-rates.index', 'icon' => 'bi-percent', 'label' => 'VAT Rates'],
-                    
-                    ['route' => 'audit-logs.index', 'icon' => 'bi-journal-text', 'label' => 'Audit Logs'],
+                    ['route' => 'super-admin.users.index', 'icon' => 'bi-people', 'label' => 'System Users', 'feature' => 'user_management'],
+                    ['route' => 'roles.index', 'icon' => 'bi-shield-lock', 'label' => 'Roles Management', 'feature' => 'roles_management'],
+                    ['route' => 'super-admin.feature-access.index', 'icon' => 'bi-sliders', 'label' => 'Feature Access', 'feature' => 'permissions_management'],
+                    ['route' => 'super-admin.merchants.index', 'icon' => 'bi-building', 'label' => 'Merchants', 'feature' => 'merchants'],
+                    ['route' => 'super-admin.packages.index', 'icon' => 'bi-box-seam', 'label' => 'Packages', 'feature' => 'packages'],
+                    ['route' => 'super-admin.subscriptions.index', 'icon' => 'bi-bookmark-check', 'label' => 'Subscriptions', 'feature' => 'subscriptions'],
+                    ['route' => 'super-admin.vat-rates.index', 'icon' => 'bi-percent', 'label' => 'VAT Rates', 'feature' => 'vat_rates'],
+                    ['route' => 'audit-logs.index', 'icon' => 'bi-journal-text', 'label' => 'Audit Logs', 'feature' => 'audit_logs'],
                 ],
             ];
 
@@ -43,7 +42,7 @@ class Sidebar extends Component
 
         // Build a clear, predictable menu structure covering requested sections
         $main = [
-            ['route' => 'system.dashboard', 'icon' => 'bi-speedometer2', 'label' => 'Dashboard'],
+            ['route' => 'system.dashboard', 'icon' => 'bi-speedometer2', 'label' => 'Dashboard', 'feature' => 'dashboard', 'permission' => 'view_reports'],
             ['route' => 'products.index', 'icon' => 'bi-box-seam', 'label' => 'Products', 'feature' => 'products', 'permission' => 'view_product'],
             ['route' => 'categories.index', 'icon' => 'bi-tags', 'label' => 'Categories', 'feature' => 'categories', 'permission' => 'view_category'],
             ['route' => 'employees.index', 'icon' => 'bi-people', 'label' => 'Employees', 'feature' => 'employees', 'permission' => 'view_user'],

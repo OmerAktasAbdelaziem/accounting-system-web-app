@@ -3,55 +3,34 @@
 @section('title', $product->name)
 
 @section('content')
-<div class="row mb-4">
-<style>
-    @media (max-width: 768px) {
-        .d-flex.justify-content-between.align-items-center.mb-4,
-        .row > .col-lg-8,
-        .row > .col-lg-4 {
-            width: 100%;
-        }
+<div class="products-shell mb-4">
+    <style>
+        .products-shell { position: relative; isolation: isolate; }
+        .products-hero { border-radius: 20px; padding: 18px; background: linear-gradient(135deg, rgba(17,24,39,0.96), rgba(31,41,55,0.92)); color:#fff; display:flex; justify-content:space-between; gap:12px; align-items:center }
+        .products-hero .badge { background: rgba(255,255,255,0.06); color: #fff; padding:6px 10px; border-radius:999px; font-weight:800 }
+        .products-hero-title { margin:0; font-size: clamp(1.6rem, 3.2vw, 2.4rem); font-weight:900; color:#fff }
+        @media (max-width:768px) { .products-hero { flex-direction:column; align-items:stretch } .products-hero .actions { width:100%; display:flex; gap:8px; justify-content:flex-end } }
+    </style>
 
-        .d-flex.justify-content-between.align-items-center.mb-4 {
-            flex-direction: column;
-            align-items: stretch !important;
-            gap: 12px;
-        }
+    <x-section-hero :badge="'<i class=\"bi bi-box-seam\"></i> ' . __('messages.product')"
+                   title="<i class='bi bi-box-seam'></i> {{ $product->name }}"
+                   :description="e(Str::limit($product->description ?? __('messages.no_description'), 160))">
+        <x-slot name="actions">
+            <a href="{{ route('products.index') }}" class="btn btn-outline-secondary me-2"><i class="bi bi-arrow-left"></i> {{ __('messages.back') }}</a>
+            @feature('products.edit')<a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning"><i class="bi bi-pencil"></i> {{ __('messages.edit') }}</a>@endfeature
+        </x-slot>
 
-        .d-flex.justify-content-between.align-items-center.mb-4 .btn,
-        .d-flex.justify-content-between.align-items-center.mb-4 form {
-            width: 100%;
-        }
-
-        .card,
-        .card-body {
-            border-radius: 16px;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .table {
-            min-width: 640px;
-        }
-    }
-</style>
-    <div class="col-md-8">
-        <h1><i class="bi bi-box-seam"></i> {{ $product->name }}</h1>
-    </div>
-    <div class="col-md-4 text-end">
-        <a href="{{ route('products.index') }}" class="btn btn-outline-secondary me-2">
-            <i class="bi bi-arrow-left"></i> {{ __('messages.back') }}
-        </a>
-
-        @feature('products.edit')
-            <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning">
-                <i class="bi bi-pencil"></i> {{ __('messages.edit') }}
-            </a>
-        @endfeature
-    </div>
+        <x-slot name="panel">
+            <div class="products-hero-panel-top">
+                <p class="products-hero-panel-title">Summary</p>
+                <div class="products-hero-panel-value"><span>{{ $product->current_stock }}</span><small>in stock</small></div>
+            </div>
+            <div class="products-hero-panel-list">
+                <div class="products-mini-metric"><div><span class="label">Price</span><span class="value">{{ $currencySymbol }}{{ number_format($product->selling_price, 2) }}</span></div><div class="tone"><i class="bi bi-tag"></i></div></div>
+                <div class="products-mini-metric"><div><span class="label">Status</span><span class="value">{{ $product->is_active ? __('messages.active') : __('messages.inactive') }}</span></div><div class="tone"><i class="bi bi-info-circle"></i></div></div>
+            </div>
+        </x-slot>
+    </x-section-hero>
 </div>
 
 <!-- Product Statistics -->

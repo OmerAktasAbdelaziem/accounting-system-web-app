@@ -61,6 +61,10 @@ class FeatureAccessController extends Controller
         'user_management' => 'User Management',
         'roles_management' => 'Roles Management',
         'permissions_management' => 'Permissions Management',
+        'merchants' => 'Merchants Management',
+        'packages' => 'Packages Management',
+        'subscriptions' => 'Subscriptions Management',
+        'vat_rates' => 'VAT Rates Management',
     ];
 
     /**

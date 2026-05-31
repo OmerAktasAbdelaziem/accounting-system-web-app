@@ -16,7 +16,15 @@ class ProductController extends Controller
     {
         $products = Product::with('category')->paginate(20);
         $categories = Category::all();
-        return view('products.index', compact('products', 'categories'));
+        $stats = [
+            'total_products' => Product::count(),
+            'active_products' => Product::where('is_active', true)->count(),
+            'low_stock_products' => Product::where('current_stock', '<=', 0)->count(),
+            'categories_count' => Category::count(),
+            'avg_price' => (float) Product::avg('selling_price'),
+        ];
+
+        return view('products.index', compact('products', 'categories', 'stats'));
     }
 
     public function create()

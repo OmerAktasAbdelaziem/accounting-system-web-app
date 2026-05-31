@@ -42,6 +42,11 @@
             --green-light: #d5f4e6;
         }
 
+        /* Ensure all top-level headings are legible on dark sections */
+        h1 {
+            color: #fff !important;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -76,6 +81,18 @@
             font-weight: 500;
             color: var(--primary-black);
             overflow-x: hidden;
+        }
+
+        @media (max-width: 900px) {
+            body {
+                background: #191917;
+                background-color: #191917;
+                color: #f3f4f6;
+            }
+
+            html {
+                background: #191917;
+            }
         }
 
         body,
@@ -526,10 +543,14 @@
 
             .navbar-modern {
                 padding: 10px 15px;
+                background: linear-gradient(135deg, #23211d 0%, #191917 100%);
+                border-bottom-color: rgba(255,255,255,0.06);
+                color: #f5f3ee;
             }
 
             .navbar-modern .navbar-brand {
                 font-size: 20px;
+                color: #f5f3ee !important;
             }
 
             .stat-card {
@@ -567,6 +588,7 @@
 
             body.sidebar-open .modern-sidebar {
                 transform: translateX(0);
+                overflow: hidden;
             }
 
             body.sidebar-open .modern-sidebar,
@@ -643,8 +665,12 @@
                 border-radius: 8px;
                 padding: 12px;
                 flex-shrink: 0;
-                min-height: calc(100vh - 120px);
-                overflow-y: auto;
+                    height: calc(100vh - 120px);
+                    max-height: calc(100vh - 120px);
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    overscroll-behavior: contain;
+                    -webkit-overflow-scrolling: touch;
                 position: sticky;
                 top: 100px;
             }
@@ -686,6 +712,12 @@
                     top: 100px;
                     left: 20px;
                     z-index: 1050;
+                    height: calc(100vh - 120px);
+                    max-height: calc(100vh - 120px);
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    overscroll-behavior: contain;
+                    -webkit-overflow-scrolling: touch;
                 }
                 .modern-content { margin-left: 320px; }
                 /* hide mobile dock on larger screens */
@@ -723,15 +755,12 @@
 
         @media (max-width: 768px) {
             :root {
-                color-scheme: light;
+                color-scheme: dark;
             }
 
             body {
-                background:
-                    radial-gradient(circle at top left, rgba(255, 181, 99, 0.18), transparent 28%),
-                    radial-gradient(circle at top right, rgba(39, 174, 96, 0.12), transparent 26%),
-                    linear-gradient(180deg, #fff9f3 0%, #f4f7fb 38%, #eef3f8 100%);
-                color: var(--primary-black);
+                background: #191917;
+                color: #f5f3ee;
             }
 
             body::before {
@@ -739,9 +768,9 @@
                 position: fixed;
                 inset: 0;
                 pointer-events: none;
-                background-image: linear-gradient(rgba(255,255,255,0.38) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.38) 1px, transparent 1px);
+                background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
                 background-size: 24px 24px;
-                opacity: 0.16;
+                opacity: 0.12;
                 z-index: 0;
             }
 
@@ -773,7 +802,6 @@
             .dashboard-container .table-responsive,
             .dashboard-container .modal-content {
                 background: rgba(255, 255, 255, 0.82) !important;
-                backdrop-filter: blur(18px);
                 border: 1px solid rgba(255, 255, 255, 0.85);
                 box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
             }
@@ -989,6 +1017,31 @@
                 display: none !important;
             }
 
+            body.sidebar-open .modern-sidebar {
+                display: block !important;
+                position: fixed;
+                top: 72px;
+                left: 10px;
+                width: min(86vw, 320px);
+                height: calc(100vh - 92px);
+                z-index: 2005;
+                overflow: hidden;
+                background: linear-gradient(180deg, #23211d 0%, #191917 100%);
+                border: 1px solid rgba(255,255,255,0.08);
+                border-radius: 20px;
+                box-shadow: 0 18px 40px rgba(0,0,0,0.28);
+                padding: 10px;
+            }
+
+            body.sidebar-open .modern-sidebar .component-sidebar {
+                max-height: none;
+                height: 100%;
+                overflow-y: auto;
+                overflow-x: hidden;
+                overscroll-behavior: contain;
+                -webkit-overflow-scrolling: touch;
+            }
+
             .modern-content {
                 margin-left: 0 !important;
                 width: 100%;
@@ -998,68 +1051,6 @@
                 padding: 0;
             }
 
-
-            /* Bottom slider-style dock: horizontally scrollable and draggable */
-            .mobile-merchant-dock {
-                position: fixed;
-                left: 12px;
-                right: 12px;
-                bottom: 12px;
-                z-index: 1090;
-                display: flex;
-                gap: 10px;
-                padding: 8px 10px;
-                border-radius: 24px;
-                background: rgba(255, 255, 255, 0.94);
-                backdrop-filter: blur(12px);
-                border: 1px solid rgba(0,0,0,0.06);
-                box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
-                overflow-x: auto;
-                scroll-behavior: smooth;
-                -webkit-overflow-scrolling: touch;
-                scroll-snap-type: x mandatory;
-                align-items: center;
-            }
-
-            .mobile-merchant-dock::-webkit-scrollbar { height: 8px; }
-            .mobile-merchant-dock::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 8px; }
-
-            .mobile-dock-item {
-                display: inline-flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                gap: 4px;
-                min-width: 84px;
-                padding: 8px 12px;
-                border-radius: 14px;
-                text-decoration: none;
-                color: #64748b;
-                background: transparent;
-                transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
-                scroll-snap-align: start;
-                flex: 0 0 auto;
-                text-align: center;
-            }
-
-            .mobile-dock-item i { font-size: 1.1rem; line-height: 1; }
-            .mobile-dock-item span { font-size: 11px; font-weight:700; }
-
-            .mobile-dock-item.active {
-                color: #fff;
-                background: linear-gradient(135deg, var(--primary-orange), #ff8c00);
-                box-shadow: 0 10px 22px rgba(255,140,0,0.18);
-                transform: translateY(-2px);
-            }
-
-            .mobile-dock-item:active { transform: scale(0.98); }
-
-            /* Dock hidden state for scroll behavior */
-            .mobile-merchant-dock.dock-hidden {
-                transform: translateY(120%);
-                opacity: 0;
-                pointer-events: none;
-            }
 
             /* Card entrance animations */
             .animate-card {
@@ -1073,15 +1064,19 @@
                 opacity: 1;
                 transform: none;
             }
+
+            footer {
+                background: linear-gradient(135deg, #23211d 0%, #191917 100%);
+                color: rgba(245, 243, 238, 0.82);
+                border-top: 1px solid rgba(255,255,255,0.06);
+                padding: 18px 16px;
+            }
         }
 
         @media (max-width: 768px) and (prefers-color-scheme: dark) {
             body {
-                background:
-                    radial-gradient(circle at top left, rgba(255, 181, 99, 0.18), transparent 28%),
-                    radial-gradient(circle at top right, rgba(39, 174, 96, 0.12), transparent 26%),
-                    linear-gradient(180deg, #fff9f3 0%, #f4f7fb 38%, #eef3f8 100%) !important;
-                color: var(--primary-black) !important;
+                background: #191917 !important;
+                color: #f5f3ee !important;
             }
 
             .dashboard-container .card,
@@ -1089,8 +1084,8 @@
             .dashboard-container .alert,
             .dashboard-container .table-responsive,
             .dashboard-container .modal-content {
-                background: rgba(255, 255, 255, 0.82) !important;
-                color: var(--primary-black) !important;
+                background: linear-gradient(180deg, rgba(34, 33, 29, 0.96), rgba(42, 40, 35, 0.96)) !important;
+                color: #f5f3ee !important;
             }
         }
     </style>
@@ -1170,15 +1165,6 @@
     </div>
 
     @auth
-        @if(!auth()->user()?->isSuperAdmin())
-            <!-- Bottom slider populated from sidebar links for easy horizontal navigation -->
-            <nav class="mobile-merchant-dock" aria-label="Quick navigation" role="navigation">
-                <!-- JS will clone sidebar links into this container for a draggable slider -->
-            </nav>
-        @endif
-    @endauth
-
-    @auth
             </main>
         </div>
     @endauth
@@ -1225,36 +1211,7 @@
                 }, 5000);
             });
         });
-        // Sidebar toggle for small screens (support either `sidebarToggle` or `mobileMenuBtn` id)
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggle = document.getElementById('sidebarToggle') || document.getElementById('mobileMenuBtn');
-            const sidebar = document.getElementById('modernSidebar');
-            if (toggle && sidebar) {
-                toggle.addEventListener('click', function() {
-                    // prefer class-based open state so CSS transitions can be used elsewhere
-                    if (document.body.classList.contains('sidebar-open')) {
-                        document.body.classList.remove('sidebar-open');
-                        // keep inline styles tidy
-                        sidebar.style.display = '';
-                        sidebar.style.position = '';
-                        sidebar.style.zIndex = '';
-                        sidebar.style.left = '';
-                        sidebar.style.top = '';
-                        sidebar.style.boxShadow = '';
-                    } else {
-                        document.body.classList.add('sidebar-open');
-                        sidebar.style.display = 'block';
-                        sidebar.style.position = 'fixed';
-                        sidebar.style.zIndex = '1050';
-                        sidebar.style.left = '10px';
-                        sidebar.style.top = '80px';
-                        sidebar.style.boxShadow = '0 8px 30px rgba(0,0,0,0.2)';
-                    }
-                });
-            }
-        });
-
-        // Mobile card animations & dock behavior
+        // Mobile card animations
         document.addEventListener('DOMContentLoaded', function() {
             // Entrance animations using IntersectionObserver
             try {
@@ -1274,81 +1231,6 @@
             } catch (e) {
                 // IntersectionObserver not supported — skip animations silently
             }
-
-            // Bottom dock: populate from the sidebar, make draggable and hide on scroll down
-            (function(){
-                const dock = document.querySelector('.mobile-merchant-dock');
-                if (!dock) return;
-
-                // clone links from the sidebar menus into the dock
-                const sidebarLinks = Array.from(document.querySelectorAll('.component-sidebar .sidebar-menu a'));
-                sidebarLinks.forEach(link => {
-                    try {
-                        // skip Audit Logs link on the bottom dock
-                        const labelText = (link.querySelector('span')?.textContent || link.textContent || '').trim().toLowerCase();
-                        const hrefVal = (link.getAttribute('href') || '').toLowerCase();
-                        if (labelText.includes('audit log') || hrefVal.includes('/audit-logs')) return;
-
-                        const a = document.createElement('a');
-                        a.className = 'mobile-dock-item';
-                        a.href = link.getAttribute('href') || '#';
-                        // copy icon if present
-                        const icon = link.querySelector('i');
-                        const iconHtml = icon ? icon.outerHTML : '<i class="bi bi-circle"></i>';
-                        const label = (link.querySelector('span')?.textContent || link.textContent || '').trim();
-                        a.innerHTML = `${iconHtml}<span>${label}</span>`;
-                        if (link.classList.contains('active') || link.href === window.location.href || link.href === window.location.pathname) {
-                            a.classList.add('active');
-                        }
-                        dock.appendChild(a);
-                    } catch (e) {
-                        console.warn('Failed to clone sidebar link to dock', e);
-                    }
-                });
-
-                // drag-to-scroll support for mouse and touch
-                let isDown = false, startX = 0, scrollLeft = 0;
-                dock.addEventListener('mousedown', (e) => {
-                    isDown = true; dock.classList.add('dragging'); startX = e.pageX - dock.offsetLeft; scrollLeft = dock.scrollLeft; e.preventDefault();
-                });
-                dock.addEventListener('mouseleave', () => { isDown = false; dock.classList.remove('dragging'); });
-                dock.addEventListener('mouseup', () => { isDown = false; dock.classList.remove('dragging'); });
-                dock.addEventListener('mousemove', (e) => {
-                    if (!isDown) return; e.preventDefault(); const x = e.pageX - dock.offsetLeft; const walk = (x - startX) * 1; dock.scrollLeft = scrollLeft - walk;
-                });
-                // touch
-                dock.addEventListener('touchstart', (e) => { startX = e.touches[0].pageX - dock.offsetLeft; scrollLeft = dock.scrollLeft; }, { passive: true });
-                dock.addEventListener('touchmove', (e) => { const x = e.touches[0].pageX - dock.offsetLeft; const walk = (x - startX); dock.scrollLeft = scrollLeft - walk; }, { passive: true });
-
-                // allow clicking nav items and give visual feedback
-                dock.addEventListener('click', function(e){
-                    const item = e.target.closest('.mobile-dock-item');
-                    if (!item) return;
-                    dock.querySelectorAll('.mobile-dock-item').forEach(i => i.classList.remove('active'));
-                    item.classList.add('active');
-                    // let navigation proceed — visual active cleared shortly after
-                    setTimeout(()=> item.classList.remove('active'), 800);
-                });
-
-                // Hide on scroll down / show on scroll up
-                let lastY = window.scrollY || 0; let ticking = false;
-                window.addEventListener('scroll', function(){
-                    if (!ticking) {
-                        window.requestAnimationFrame(function(){
-                            const currentY = window.scrollY || 0;
-                            if (currentY > lastY + 10) dock.classList.add('dock-hidden');
-                            else if (currentY < lastY - 10) dock.classList.remove('dock-hidden');
-                            lastY = currentY; ticking = false;
-                        });
-                        ticking = true;
-                    }
-                }, { passive: true });
-                // center active item on load
-                try {
-                    const active = dock.querySelector('.mobile-dock-item.active');
-                    if (active) active.scrollIntoView({ inline: 'center', behavior: 'smooth', block: 'nearest' });
-                } catch (e) {}
-            })();
         });
     </script>
 

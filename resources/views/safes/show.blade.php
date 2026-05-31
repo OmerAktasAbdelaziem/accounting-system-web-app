@@ -9,6 +9,17 @@
         color: #fff !important;
     }
 
+    .safe-name {
+        color: #000 !important;
+    }
+    .safe-name-icon {
+        color: #000 !important;
+    }
+    .safe-white-label,
+    .safe-white-label * {
+        color: #fff !important;
+    }
+
     @media (max-width: 768px) {
         .safe-mobile-orange-header {
             background: linear-gradient(135deg, #ff8c00, #ffb347) !important;
@@ -17,7 +28,7 @@
 </style>
 <div class="row mb-4">
     <div class="col-md-8">
-        <h1><i class="bi bi-safe"></i> {{ $safe->name }}</h1>
+        <h1><i class="bi bi-safe safe-name-icon"></i> <span class="safe-name">{{ $safe->name }}</span></h1>
         <p class="text-muted">{{ $safe->location }}</p>
     </div>
     <div class="col-md-4 text-end">
@@ -38,8 +49,8 @@
             <div class="stat-icon" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">
                 <i class="bi bi-cash-coin"></i>
             </div>
-            <div class="stat-content">
-                <h6>{{ __('messages.current_balance') }}</h6>
+                <div class="stat-content">
+                <h6 class="safe-white-label">{{ __('messages.current_balance') }}</h6>
                 <h3>{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</h3>
             </div>
         </div>
@@ -49,8 +60,8 @@
             <div class="stat-icon" style="background: linear-gradient(135deg, #ff8c00, #ffb347);">
                 <i class="bi bi-exclamation-triangle"></i>
             </div>
-            <div class="stat-content">
-                <h6>{{ __('messages.max_balance') }}</h6>
+                <div class="stat-content">
+                <h6 class="safe-white-label">{{ __('messages.max_balance') }}</h6>
                 <h3>{{ $currencySymbol }}{{ number_format($safe->max_balance, 2) }}</h3>
             </div>
         </div>
@@ -60,8 +71,8 @@
             <div class="stat-icon" style="background: linear-gradient(135deg, #e74c3c, #ec7063);">
                 <i class="bi bi-graph-up"></i>
             </div>
-            <div class="stat-content">
-                <h6>Today Income</h6>
+                <div class="stat-content">
+                <h6 class="safe-white-label">Today Income</h6>
                 <h3>{{ $currencySymbol }}{{ number_format($todayIncome, 2) }}</h3>
             </div>
         </div>
@@ -71,8 +82,8 @@
             <div class="stat-icon" style="background: linear-gradient(135deg, #3498db, #5dade2);">
                 <i class="bi bi-graph-down"></i>
             </div>
-            <div class="stat-content">
-                <h6>Today Outcome</h6>
+                <div class="stat-content">
+                <h6 class="safe-white-label">Today Outcome</h6>
                 <h3>{{ $currencySymbol }}{{ number_format($todayOutcome, 2) }}</h3>
             </div>
         </div>
@@ -83,13 +94,13 @@
     <div class="col-lg-8">
         <div class="card mb-4">
             <div class="card-header" style="background: linear-gradient(135deg, #1a1a1a, #333); color: white;">
-                <h5 class="mb-0"><i class="bi bi-info-circle"></i> {{ __('messages.safe_information') }}</h5>
+                <h5 class="mb-0 safe-white-label"><i class="bi bi-info-circle"></i> {{ __('messages.safe_information') }}</h5>
             </div>
             <div class="card-body">
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.safe_name') }}</label>
-                        <p class="text-muted">{{ $safe->name }}</p>
+                        <p class="safe-name">{{ $safe->name }}</p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.location') }}</label>
@@ -135,7 +146,7 @@
                         <p class="text-muted">{{ $safe->description ?? __('messages.no_description') }}</p>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">{{ __('messages.status') }}</label>
+                        <label class="form-label fw-bold safe-white-label">{{ __('messages.status') }}</label>
                         <p>
                             @if($safe->is_active)
                                 <span class="badge bg-success"><i class="bi bi-check-circle"></i> {{ __('messages.active') }}</span>
@@ -165,7 +176,7 @@
     <div class="col-lg-4">
         <div class="card mb-4">
             <div class="card-header safe-mobile-orange-header">
-                <h5 class="mb-0"><i class="bi bi-calendar-day"></i> {{ __('messages.today') }}</h5>
+                <h5 class="mb-0 safe-white-label"><i class="bi bi-calendar-day"></i> {{ __('messages.today') }}</h5>
             </div>
             <div class="card-body">
                 <table class="table table-sm">
@@ -191,7 +202,7 @@
 
         <div class="card">
             <div class="card-header" style="background: linear-gradient(135deg, #1a1a1a, #333); color: white;">
-                <h5 class="mb-0"><i class="bi bi-speedometer2"></i> {{ __('messages.status') }}</h5>
+                <h5 class="mb-0 safe-white-label"><i class="bi bi-speedometer2"></i> {{ __('messages.status') }}</h5>
             </div>
             <div class="card-body">
                 @if($hasMaxBalance)
@@ -226,7 +237,7 @@
     <div class="col-lg-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white;">
-                <h5 class="mb-0"><i class="bi bi-arrow-up-circle"></i> Income Tracking</h5>
+                <h5 class="mb-0 safe-white-label"><i class="bi bi-arrow-up-circle"></i> Income Tracking</h5>
             </div>
             <div class="card-body">
                 <div class="mb-3">
@@ -304,7 +315,7 @@
     <div class="col-lg-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header" style="background: linear-gradient(135deg, #e74c3c, #ec7063); color: white;">
-                <h5 class="mb-0"><i class="bi bi-arrow-down-circle"></i> Outcome Tracking</h5>
+                <h5 class="mb-0 safe-white-label"><i class="bi bi-arrow-down-circle"></i> Outcome Tracking</h5>
             </div>
             <div class="card-body">
                 <div class="mb-3">
@@ -387,7 +398,7 @@
         <div class="card border-0 shadow-sm">
             <div class="card-header" style="background: linear-gradient(135deg, #3498db, #5dade2); color: white;">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="bi bi-currency-exchange"></i> Multi-Currency Management</h5>
+                    <h5 class="mb-0 safe-white-label"><i class="bi bi-currency-exchange"></i> Multi-Currency Management</h5>
                     @feature('safes.create')
                     <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#addCurrencyModal">
                         <i class="bi bi-plus-circle"></i> Add Currency

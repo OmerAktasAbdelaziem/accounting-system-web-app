@@ -9,6 +9,15 @@
         color: #fff !important;
     }
 
+    .payroll-employee-name { color: #000 !important; }
+
+    /* Ensure key payroll headers render white */
+    .card-header h5.mb-0 { color: #fff !important; }
+    .payroll-mobile-orange-header h5.mb-0 { color: #fff !important; }
+
+    /* Payroll subtitle/meta text under the title */
+    .payroll-meta { color: #000 !important; }
+
     @media (max-width: 768px) {
         .payroll-mobile-orange-header {
             background: linear-gradient(135deg, #ff8c00, #ffb347) !important;
@@ -20,11 +29,11 @@
     <div class="mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
-                <h1 style="font-weight: 900; color: #1a1a1a;">
-                    <i class="bi bi-receipt" style="color: #ff8c00;"></i> 
-                    {{ __('messages.payroll') }} - {{ $payroll->employee?->name }}
+                <h1 style="font-weight: 900;">
+                    <i class="bi bi-receipt" style="color: #ff8c00;"></i>
+                    {{ __('messages.payroll') }} - <span class="payroll-employee-name">{{ $payroll->employee?->name }}</span>
                 </h1>
-                <p class="text-muted">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}</p>
+                <p class="payroll-meta">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}</p>
                 <span class="badge {{ $payroll->status === 'paid' ? 'bg-success' : 'bg-warning text-dark' }}">{{ strtoupper($payroll->status ?? 'draft') }}</span>
             </div>
             <div class="d-flex gap-2">
@@ -178,7 +187,7 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <small class="text-muted d-block">{{ __('messages.name') }}</small>
-                        <h6 class="mb-0">{{ $payroll->employee?->name }}</h6>
+                        <h6 class="mb-0 payroll-employee-name">{{ $payroll->employee?->name }}</h6>
                     </div>
                     <div class="mb-3">
                         <small class="text-muted d-block">{{ __('messages.position') }}</small>
