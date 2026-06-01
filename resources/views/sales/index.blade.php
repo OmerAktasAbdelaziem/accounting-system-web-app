@@ -1160,7 +1160,21 @@
             salesExportForm.addEventListener('submit', function (event) {
                 salesExportForm.querySelectorAll('input[name="sale_ids[]"]').forEach((input) => input.remove());
 
-                const mode = document.getElementById('sales-export-mode-input')?.value || 'selected';
+                // Get the current mode from radio button (this is authoritative)
+                const modeRadio = document.querySelector('input[name="sales_export_mode_radio"]:checked');
+                const mode = modeRadio ? modeRadio.value : 'selected';
+                
+                // Update the hidden export_mode input
+                const modeInput = document.getElementById('sales-export-mode-input');
+                if (modeInput) {
+                    modeInput.value = mode;
+                }
+
+                console.log('Form Submit:', {
+                    mode: mode,
+                    from_date: document.querySelector('input[name="from_date"]')?.value,
+                    to_date: document.querySelector('input[name="to_date"]')?.value,
+                });
 
                 if (mode === 'selected') {
                     const selectedIds = getSelectedSaleCheckboxes().map((checkbox) => checkbox.value).filter(Boolean);
@@ -1178,13 +1192,15 @@
                         salesExportForm.appendChild(input);
                     });
                 } else if (mode === 'date') {
-                    // Validate that at least one date is provided for date export
+                    // Date mode - form will submit with dates
                     const fromDate = document.querySelector('input[name="from_date"]')?.value?.trim();
                     const toDate = document.querySelector('input[name="to_date"]')?.value?.trim();
                     
+                    console.log('Date Export:', { fromDate, toDate });
+                    
+                    // If no dates provided, that's OK - it will export all records
                     if (!fromDate && !toDate) {
-                        // Allow empty dates to export all records
-                        console.log('No date range specified - exporting all records');
+                        console.log('No date range specified - will export all records');
                     }
                 }
             });
