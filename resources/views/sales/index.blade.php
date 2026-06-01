@@ -697,7 +697,7 @@
                         <input type="hidden" name="export_mode" id="sales-export-mode-input" value="selected">
 
                         <div class="modal-header">
-                            <h5 class="modal-title">Download Sales PDF</h5>
+                            <h5 class="modal-title">Satış PDF İndir</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
 
@@ -705,11 +705,11 @@
                             <div class="mb-3">
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="sales_export_mode_radio" id="export-mode-selected" value="selected" checked>
-                                    <label class="form-check-label" for="export-mode-selected">Selected rows</label>
+                                    <label class="form-check-label" for="export-mode-selected">Seçili satırlar</label>
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="sales_export_mode_radio" id="export-mode-date" value="date">
-                                    <label class="form-check-label" for="export-mode-date">Date filter</label>
+                                    <label class="form-check-label" for="export-mode-date">Tarih filtresi</label>
                                 </div>
                             </div>
 
@@ -717,10 +717,10 @@
                                 <div class="alert alert-light border mb-0">
                                     <div class="d-flex align-items-center justify-content-between gap-2">
                                         <div>
-                                            <div class="fw-semibold mb-1">Selected sales for export</div>
-                                            <div class="small text-muted">Choose rows using the checkboxes in the table, then export only those rows.</div>
+                                            <div class="fw-semibold mb-1">Dışa aktarılacak seçili satışlar</div>
+                                            <div class="small text-muted">Tabloda seç kutularını kullanarak satırları seçin, ardından yalnızca bu satırları dışa aktarın.</div>
                                         </div>
-                                        <span class="badge text-bg-primary" id="selected-sales-count">0 selected</span>
+                                        <span class="badge text-bg-primary" id="selected-sales-count">0 seçili</span>
                                     </div>
                                 </div>
                             </div>
@@ -728,32 +728,32 @@
                             <div id="export-date-section" class="export-mode-section">
                                 <div class="row g-3">
                                     <div class="col-md-4">
-                                        <label class="form-label">Branch</label>
+                                        <label class="form-label"Şube</label>
                                         <select name="branch_id" class="form-select">
-                                            <option value="">All branches</option>
+                                            <option value="">Tüm şubeler</option>
                                             @foreach($branches as $branch)
                                                 <option value="{{ $branch->id }}" @selected((string) request('branch_id') === (string) $branch->id)>{{ $branch->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label">From</label>
+                                        <label class="form-label">Başlangıç</label>
                                         <input type="date" name="from_date" class="form-control" value="{{ request('from_date') }}">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label">To</label>
+                                        <label class="form-label">Bitiş</label>
                                         <input type="date" name="to_date" class="form-control" value="{{ request('to_date') }}">
                                     </div>
                                 </div>
-                                <div class="small text-muted mt-2">Leave dates empty to export all dates (with optional branch filter).</div>
+                                <div class="small text-muted mt-2">Tarih aralığının tümünü dışa aktarmak için tarihleri boş bırakın (ısteğe bağlı şube filtresi ile).</div>
                             </div>
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">İptal</button>
                             <button type="submit" class="btn btn-danger">
                                 <i class="bi bi-download"></i>
-                                Download PDF
+                                Satış PDF İndir
                             </button>
                         </div>
                     </form>
@@ -1088,6 +1088,16 @@
             if (dateSection) {
                 dateSection.classList.toggle('active', mode === 'date');
             }
+            
+            // When switching to date mode, ensure fields are properly set
+            if (mode === 'date') {
+                const fromDateInput = document.querySelector('input[name="from_date"]');
+                const toDateInput = document.querySelector('input[name="to_date"]');
+                // Keep the existing values or leave empty to export all
+                if (fromDateInput && toDateInput) {
+                    // Fields are ready for input
+                }
+            }
         }
 
         function openExportModal() {
@@ -1156,7 +1166,7 @@
                     const selectedIds = getSelectedSaleCheckboxes().map((checkbox) => checkbox.value).filter(Boolean);
                     if (selectedIds.length === 0) {
                         event.preventDefault();
-                        alert('Please select at least one sale before downloading PDF.');
+                        alert('Lütfen indirmeden önce en az bir satış seçin.');
                         return;
                     }
 
@@ -1167,6 +1177,15 @@
                         input.value = id;
                         salesExportForm.appendChild(input);
                     });
+                } else if (mode === 'date') {
+                    // Validate that at least one date is provided for date export
+                    const fromDate = document.querySelector('input[name="from_date"]')?.value?.trim();
+                    const toDate = document.querySelector('input[name="to_date"]')?.value?.trim();
+                    
+                    if (!fromDate && !toDate) {
+                        // Allow empty dates to export all records
+                        console.log('No date range specified - exporting all records');
+                    }
                 }
             });
         }

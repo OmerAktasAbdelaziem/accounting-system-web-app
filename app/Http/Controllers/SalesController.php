@@ -209,16 +209,16 @@ class SalesController extends Controller
 
         $currencySymbol = config('app.currency_symbol', '$');
         $lines = [
-            'Sales Export',
-            'Generated: ' . now()->format('Y-m-d H:i'),
-            'Mode: ' . ucfirst($validated['export_mode']),
-            'Entries: ' . $sales->count(),
+            'Satış Dışa Aktarımı',
+            'Oluşturuldu: ' . now()->format('Y-m-d H:i'),
+            'Mod: ' . ($validated['export_mode'] === 'selected' ? 'Seçili' : 'Tarih Aralığı'),
+            'Girişler: ' . $sales->count(),
             str_repeat('-', 72),
         ];
 
         foreach ($sales as $sale) {
             $lines[] = sprintf(
-                'Date: %s | Branch: %s | Total: %s%s | Spent: %s%s | Net: %s%s',
+                'Tarih: %s | Şube: %s | Toplam: %s%s | Harcanan: %s%s | Net: %s%s',
                 optional($sale->sale_date)->format('Y-m-d') ?? '-',
                 $sale->branch?->name ?? '-',
                 $currencySymbol,
@@ -229,13 +229,13 @@ class SalesController extends Controller
                 number_format((float) $sale->net_income, 2)
             );
 
-            $lines[] = 'Primary Employee: ' . ($sale->employee?->name ?? '-');
+            $lines[] = 'Ana Çalışan: ' . ($sale->employee?->name ?? '-');
 
             if ($sale->employeeSaleDetails->isNotEmpty()) {
                 foreach ($sale->employeeSaleDetails as $detail) {
                     $lines[] = sprintf(
                         '  - %s: %s%s',
-                        $detail->employee?->name ?? 'Deleted employee',
+                        $detail->employee?->name ?? 'Silinen çalışan',
                         $currencySymbol,
                         number_format((float) $detail->amount, 2)
                     );
@@ -243,13 +243,13 @@ class SalesController extends Controller
             }
 
             if (!empty($sale->notes)) {
-                $lines[] = 'Notes: ' . trim((string) $sale->notes);
+                $lines[] = 'Notlar: ' . trim((string) $sale->notes);
             }
 
             $lines[] = str_repeat('-', 72);
         }
 
-        $pdf = SimplePdf::textDocument('Sales Report Export', $lines);
+        $pdf = SimplePdf::textDocument('Satış Raporu Dışa Aktarımı', $lines);
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

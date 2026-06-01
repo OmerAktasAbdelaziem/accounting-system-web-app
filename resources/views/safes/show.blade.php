@@ -794,30 +794,30 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background: linear-gradient(135deg, #1f2937, #111827); color: white;">
-                <h5 class="modal-title" id="exportPdfModalTitle"><i class="bi bi-file-earmark-pdf"></i> PDF Export</h5>
+                <h5 class="modal-title" id="exportPdfModalTitle"><i class="bi bi-file-earmark-pdf"></i> PDF Dışa Aktar</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="exportPdfForm" method="GET" action="{{ route('safes.export', $safe->id) }}">
                 <div class="modal-body">
                     <input type="hidden" name="type" id="exportPdfType" value="income">
                     <div class="alert alert-info">
-                        Select a date range to export only filtered records. Leave both dates empty to export all records.
+                        Yalnızca filtrelenen kayıtları dışa aktarmak için bir tarih aralığı seçin. Tüm kayıtları dışa aktarmak için her iki tarihi boş bırakın.
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">From Date</label>
+                            <label class="form-label">Başlangıç Tarihi</label>
                             <input type="date" name="from_date" id="exportPdfFromDate" class="form-control">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">To Date</label>
+                            <label class="form-label">Bitiş Tarihi</label>
                             <input type="date" name="to_date" id="exportPdfToDate" class="form-control">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-download"></i> Download PDF
+                        <i class="bi bi-download"></i> PDF İndir
                     </button>
                 </div>
             </form>

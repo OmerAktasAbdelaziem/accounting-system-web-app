@@ -402,18 +402,18 @@ class SafeController extends Controller
                     ->latest()
                     ->get();
 
-                $title = 'Safe Outcomes - ' . $safe->name;
+                $title = 'Kasa Çıkışları - ' . $safe->name;
                 $lines = [
                     $title,
-                    'Generated: ' . now()->format('Y-m-d H:i'),
-                    'Entries: ' . $items->count(),
+                    'Oluşturuldu: ' . now()->format('Y-m-d H:i'),
+                    'Girişler: ' . $items->count(),
                     '---',
                 ];
 
                 foreach ($items as $it) {
                     $date = optional($it->created_at)->format('Y-m-d') ?? '-';
                     $currency = $it->currency?->code ?? '';
-                    $supplier = $it->supplier?->name ? ('Supplier: ' . $it->supplier->name) : '';
+                    $supplier = $it->supplier?->name ? ('Tedarikçi: ' . $it->supplier->name) : '';
                     $lines[] = sprintf('%s | -%s %s | %s | %s %s', $date, number_format((float) $it->amount, 2), $currency, $it->description ?? '-', $it->reference ?? '-', $supplier);
                 }
             } else {
@@ -424,11 +424,11 @@ class SafeController extends Controller
                     ->latest()
                     ->get();
 
-                $title = 'Safe Incomes - ' . $safe->name;
+                $title = 'Kasa Gelirleri - ' . $safe->name;
                 $lines = [
                     $title,
-                    'Generated: ' . now()->format('Y-m-d H:i'),
-                    'Entries: ' . $items->count(),
+                    'Oluşturuldu: ' . now()->format('Y-m-d H:i'),
+                    'Girişler: ' . $items->count(),
                     '---',
                 ];
 
