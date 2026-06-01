@@ -599,9 +599,6 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 44px;">
-                                <input type="checkbox" id="select-all-sales" class="form-check-input" title="Select all visible sales">
-                            </th>
                             <th>Date</th>
                             <th>Branch</th>
                             <th>Total Amount</th>
@@ -614,9 +611,6 @@
                     <tbody>
                         @forelse($sales as $sale)
                             <tr>
-                                <td>
-                                    <input type="checkbox" class="form-check-input sale-select-checkbox" value="{{ $sale->id }}" aria-label="Select sale {{ $sale->id }}">
-                                </td>
                                 <td>{{ $sale->sale_date?->format('Y-m-d') }}</td>
                                 <td>{{ $sale->branch?->name ?? '-' }}</td>
                                 <td>
@@ -1039,6 +1033,17 @@
             if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
                 try { exportModal = new bootstrap.Modal(exportModalEl); } catch (err) { exportModal = null; }
             }
+        }
+
+        // Open export modal when button is clicked
+        const openExportBtn = document.getElementById('open-sales-export-modal');
+        if (openExportBtn) {
+            openExportBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (exportModal) {
+                    exportModal.show();
+                }
+            });
         }
 
         // Simple form submission handler for date range export
