@@ -7,7 +7,6 @@ class SimplePdf
     private const PAGE_HEIGHT = 842;
     private const PAGE_WIDTH = 595;
     private const MARGIN_TOP = 50;
-    private const MARGIN_BOTTOM = 50;
     private const MARGIN_LEFT = 50;
     private const LINE_HEIGHT = 16;
     private const FONT_SIZE_TITLE = 18;
@@ -25,18 +24,16 @@ class SimplePdf
         }
 
         // Calculate pages needed
-        $titleLines = 2; // Title + spacing
+        $titleLines = 2;
         $availableLinesPerPage = self::LINES_PER_PAGE;
-        $bodyLines = count($wrappedLines);
         
-        // Calculate page breaks
+        // Split lines into pages
         $pages = [];
         $currentPage = [];
         $currentLineCount = $titleLines;
 
         foreach ($wrappedLines as $line) {
             if ($currentLineCount >= $availableLinesPerPage) {
-                // Start new page
                 $pages[] = $currentPage;
                 $currentPage = [];
                 $currentLineCount = 0;
@@ -49,12 +46,9 @@ class SimplePdf
             $pages[] = $currentPage;
         }
 
-        // Generate PDF with multiple pages
-        $objects = [];
-        $pageObjects = [];
-
-        // Generate page content
-        foreach ($pages as $pageIndex => $pageLines) {
+        // Generate content streams for each page
+        $contentStreams = [];
+        foreach ($pages as $pageLines) {
             $contentLines = [];
             $contentLines[] = 'BT';
             $contentLines[] = '/F1 ' . self::FONT_SIZE_TITLE . ' Tf';
@@ -72,46 +66,60 @@ class SimplePdf
             }
 
             $contentLines[] = 'ET';
-            $contentStream = implode("\n", $contentLines);
-            $contentLength = strlen($contentStream);
-
-            // Page object
-            $pageObjNum = count($objects) + 3 + $pageIndex;
-            $contentObjNum = count($objects) + 3 + count($pages) + $pageIndex;
-
-            $pageObjects[] = $pageObjNum;
-            $objects[] = "$contentObjNum 0 obj << /Length $contentLength >> stream\n$contentStream\nendstream endobj";
-            $objects[] = "$pageObjNum 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 " . self::PAGE_WIDTH . " " . self::PAGE_HEIGHT . "] /Resources << /Font << /F1 4 0 R >> >> /Contents $contentObjNum 0 R >> endobj";
+            $contentStreams[] = implode("\n", $contentLines);
         }
 
-        // PDF structure
-        $pdfObjects = [
-            '1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj',
-            '2 0 obj << /Type /Pages /Kids [' . implode(' ', array_map(fn($n) => "$n 0 R", $pageObjects)) . '] /Count ' . count($pageObjects) . ' >> endobj',
-            '4 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Courier >> endobj',
-        ];
+        // Build PDF with proper object numbering
+        $objects = [];
+        $pageCount = count($pages);
 
-        // Combine all objects
-        $allObjects = array_merge($pdfObjects, $objects);
+        // Object 1: Catalog
+        $objects[1] = '1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj';
 
+        // Object 2: Pages (Parent)
+        $pageKids = [];
+        for ($i = 0; $i < $pageCount; $i++) {
+            $pageKids[] = (3 + $i) . ' 0 R';
+        }
+        $objects[2] = '2 0 obj << /Type /Pages /Kids [' . implode(' ', $pageKids) . '] /Count ' . $pageCount . ' >> endobj';
+
+        // Objects 3 to 3+pageCount-1: Page objects
+        // Objects 3+pageCount to 3+2*pageCount-1: Content streams
+        for ($i = 0; $i < $pageCount; $i++) {
+            $pageObjNum = 3 + $i;
+            $contentObjNum = 3 + $pageCount + $i;
+            $contentLength = strlen($contentStreams[$i]);
+
+            $objects[$contentObjNum] = $contentObjNum . ' 0 obj << /Length ' . $contentLength . ' >> stream' . "\n" . $contentStreams[$i] . "\nendstream endobj";
+            $objects[$pageObjNum] = $pageObjNum . ' 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 ' . self::PAGE_WIDTH . ' ' . self::PAGE_HEIGHT . '] /Resources << /Font << /F1 ' . (3 + 2 * $pageCount) . ' 0 R >> >> /Contents ' . $contentObjNum . ' 0 R >> endobj';
+        }
+
+        // Last object: Font
+        $fontObjNum = 3 + 2 * $pageCount;
+        $objects[$fontObjNum] = $fontObjNum . ' 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Courier >> endobj';
+
+        // Build PDF file
+        ksort($objects);
         $pdf = "%PDF-1.4\n";
         $offsets = [0];
 
-        foreach ($allObjects as $object) {
+        foreach ($objects as $object) {
             $offsets[] = strlen($pdf);
             $pdf .= $object . "\n";
         }
 
         $xrefPosition = strlen($pdf);
         $pdf .= 'xref' . "\n";
-        $pdf .= '0 ' . (count($allObjects) + 1) . "\n";
+        $pdf .= '0 ' . (count($objects) + 1) . "\n";
         $pdf .= "0000000000 65535 f \n";
 
-        for ($i = 1; $i < count($offsets); $i++) {
-            $pdf .= sprintf('%010d 00000 n ', $offsets[$i]) . "\n";
+        foreach ($offsets as $offset) {
+            if ($offset > 0) {
+                $pdf .= sprintf('%010d 00000 n ', $offset) . "\n";
+            }
         }
 
-        $pdf .= 'trailer << /Size ' . (count($allObjects) + 1) . ' /Root 1 0 R >>' . "\n";
+        $pdf .= 'trailer << /Size ' . (count($objects) + 1) . ' /Root 1 0 R >>' . "\n";
         $pdf .= 'startxref' . "\n";
         $pdf .= $xrefPosition . "\n";
         $pdf .= '%%EOF';
