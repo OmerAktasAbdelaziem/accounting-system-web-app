@@ -409,14 +409,18 @@ class SafeController extends Controller
 
             Log::info('Safe PDF export requested', [
                 'safe_id' => $safe->id,
+                'safe_name' => $safe->name,
                 'type' => $type,
                 'from_date' => $from,
                 'to_date' => $to,
                 'user_id' => auth()->id(),
+                'user_email' => auth()->user()?->email,
+                'exported_at' => now()->toIso8601String(),
             ]);
 
             if ($type === 'outcome') {
-                $items = SafeOutcome::with('currency', 'supplier')
+                $items = SafeOutcome::withoutGlobalScopes()
+                    ->with('currency', 'supplier')
                     ->where('safe_id', $safe->id)
                     ->whereDate('created_at', '>=', $from)
                     ->whereDate('created_at', '<=', $to)
@@ -427,7 +431,9 @@ class SafeController extends Controller
                 $lines = [
                     $title,
                     'Oluşturuldu: ' . now()->format('Y-m-d H:i'),
-                    'Girişler: ' . $items->count(),
+                    'Tarih Aralığı: ' . $from . ' - ' . $to,
+                    'Kayıt Sayısı: ' . $items->count(),
+                    'Dışa Aktaran: ' . (auth()->user()?->name ?? 'Bilinmeyen Kullanıcı'),
                     '---',
                 ];
 
@@ -437,8 +443,14 @@ class SafeController extends Controller
                     $supplier = $it->supplier?->name ? ('Tedarikçi: ' . $it->supplier->name) : '';
                     $lines[] = sprintf('%s | -%s %s | %s | %s %s', $date, number_format((float) $it->amount, 2), $currency, $it->description ?? '-', $it->reference ?? '-', $supplier);
                 }
+                
+                Log::info('Safe PDF export generated - Outcomes', [
+                    'safe_id' => $safe->id,
+                    'records_count' => $items->count(),
+                ]);
             } else {
-                $items = SafeIncome::with('currency')
+                $items = SafeIncome::withoutGlobalScopes()
+                    ->with('currency')
                     ->where('safe_id', $safe->id)
                     ->whereDate('created_at', '>=', $from)
                     ->whereDate('created_at', '<=', $to)
@@ -449,7 +461,9 @@ class SafeController extends Controller
                 $lines = [
                     $title,
                     'Oluşturuldu: ' . now()->format('Y-m-d H:i'),
-                    'Girişler: ' . $items->count(),
+                    'Tarih Aralığı: ' . $from . ' - ' . $to,
+                    'Kayıt Sayısı: ' . $items->count(),
+                    'Dışa Aktaran: ' . (auth()->user()?->name ?? 'Bilinmeyen Kullanıcı'),
                     '---',
                 ];
 
@@ -458,6 +472,11 @@ class SafeController extends Controller
                     $currency = $it->currency?->code ?? '';
                     $lines[] = sprintf('%s | %s %s | %s | %s', $date, number_format((float) $it->amount, 2), $currency, $it->source ?? '-', $it->reference ?? '');
                 }
+                
+                Log::info('Safe PDF export generated - Income', [
+                    'safe_id' => $safe->id,
+                    'records_count' => $items->count(),
+                ]);
             }
 
             $pdf = SimplePdf::textDocument($title, $lines);

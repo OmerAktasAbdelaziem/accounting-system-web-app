@@ -183,7 +183,8 @@ class SalesController extends Controller
             ]
         );
 
-        $query = EmployeeSale::with(['branch', 'employee', 'employeeSaleDetails.employee'])
+        $query = EmployeeSale::withoutGlobalScopes()
+            ->with(['branch', 'employee', 'employeeSaleDetails.employee'])
             ->latest('sale_date')
             ->latest('id');
 
@@ -198,23 +199,36 @@ class SalesController extends Controller
 
         $sales = $query->get();
         
-        \Log::info('Sales PDF Export', [
+        // Enhanced logging with user info
+        \Log::info('Sales PDF Export Executed', [
+            'user_id' => auth()->id(),
+            'user_email' => auth()->user()?->email,
             'branch_id' => $validated['branch_id'] ?? 'ALL',
             'from_date' => $validated['from_date'],
             'to_date' => $validated['to_date'],
-            'total_records' => $sales->count(),
+            'total_records_found' => $sales->count(),
+            'exported_at' => now()->toIso8601String(),
         ]);
 
         if ($sales->isEmpty()) {
+            \Log::warning('Sales PDF Export - No records found', [
+                'user_id' => auth()->id(),
+                'branch_id' => $validated['branch_id'] ?? 'ALL',
+                'from_date' => $validated['from_date'],
+                'to_date' => $validated['to_date'],
+            ]);
             return redirect()->route('sales.index')->with('error', 'Seçilen tarih aralığında satış bulunamadı: ' . $validated['from_date'] . ' - ' . $validated['to_date']);
         }
 
         $currencySymbol = config('app.currency_symbol', '$');
+        $branchText = $validated['branch_id'] ? 'Şube: ' . (\App\Models\Branch::find($validated['branch_id'])?->name ?? 'Bilinmeyen') : 'Tüm Şubeler';
         $lines = [
             'Satış Dışa Aktarımı',
-            'Olusturuldu: ' . now()->format('Y-m-d H:i'),
-            'Tarih Araligi: ' . ($validated['from_date'] ?? 'Başlangıç') . ' - ' . ($validated['to_date'] ?? 'Son'),
-            'Giri_ler: ' . $sales->count(),
+            'Oluşturuldu: ' . now()->format('Y-m-d H:i'),
+            'Tarih Aralığı: ' . $validated['from_date'] . ' - ' . $validated['to_date'],
+            'Kayıt Sayısı: ' . $sales->count(),
+            $branchText,
+            'Dışa Aktaran: ' . (auth()->user()?->name ?? 'Bilinmeyen Kullanıcı'),
             str_repeat('-', 72),
         ];
 
