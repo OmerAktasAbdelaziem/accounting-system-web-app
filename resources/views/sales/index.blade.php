@@ -1050,17 +1050,28 @@
         const salesExportForm = document.getElementById('sales-export-form');
         if (salesExportForm) {
             salesExportForm.addEventListener('submit', function (event) {
-                const fromDate = document.querySelector('input[name="from_date"]')?.value?.trim();
-                const toDate = document.querySelector('input[name="to_date"]')?.value?.trim();
+                const fromDateInput = document.querySelector('input[name="from_date"]');
+                const toDateInput = document.querySelector('input[name="to_date"]');
+                
+                const fromDate = fromDateInput ? fromDateInput.value : '';
+                const toDate = toDateInput ? toDateInput.value : '';
+                
+                console.log('Form submission check:', { 
+                    fromDate, 
+                    toDate, 
+                    fromDateEmpty: !fromDate,
+                    toDateEmpty: !toDate
+                });
                 
                 // Both dates are required
                 if (!fromDate || !toDate) {
                     event.preventDefault();
-                    alert('⚠️ Lütfen başlangıç ve bitiş tarihi seçin.\n\nÖrneğin:\nBaşlangıç: 01.05.2026\nBitiş: 31.05.2026');
+                    event.stopPropagation();
+                    alert('⚠️ Lütfen başlangıç VE bitiş tarihi seçin.\n\nÖrneğin:\nBaşlangıç: 01.05.2026\nBitiş: 31.05.2026');
                     return false;
                 }
                 
-                console.log('Sales PDF Export:', { fromDate, toDate });
+                console.log('Sales PDF Export approved:', { fromDate, toDate });
             });
         }
 

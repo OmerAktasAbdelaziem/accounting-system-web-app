@@ -1062,14 +1062,27 @@
     const exportPdfForm = document.getElementById('exportPdfForm');
     if (exportPdfForm) {
         exportPdfForm.addEventListener('submit', function (event) {
-            const fromDate = document.getElementById('exportPdfFromDate')?.value?.trim();
-            const toDate = document.getElementById('exportPdfToDate')?.value?.trim();
+            const fromDateInput = document.getElementById('exportPdfFromDate');
+            const toDateInput = document.getElementById('exportPdfToDate');
+            
+            const fromDate = fromDateInput ? fromDateInput.value : '';
+            const toDate = toDateInput ? toDateInput.value : '';
+            
+            console.log('Safe export check:', { 
+                fromDate, 
+                toDate, 
+                fromDateEmpty: !fromDate,
+                toDateEmpty: !toDate
+            });
             
             if (!fromDate || !toDate) {
                 event.preventDefault();
-                alert('⚠️ Lütfen başlangıç ve bitiş tarihi seçin.\n\nÖrneğin:\nBaşlangıç: 01.05.2026\nBitiş: 31.05.2026');
+                event.stopPropagation();
+                alert('⚠️ Lütfen başlangıç VE bitiş tarihi seçin.\n\nÖrneğin:\nBaşlangıç: 01.05.2026\nBitiş: 31.05.2026');
                 return false;
             }
+            
+            console.log('Safe PDF export approved:', { fromDate, toDate });
         });
     }
 })();

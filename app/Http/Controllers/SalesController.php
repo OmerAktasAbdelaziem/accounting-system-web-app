@@ -168,11 +168,20 @@ class SalesController extends Controller
     {
         $this->authorizeDownloads($request);
 
-        $validated = $request->validate([
-            'from_date' => 'required|date',
-            'to_date' => 'required|date|after_or_equal:from_date',
-            'branch_id' => 'nullable|integer|exists:branches,id',
-        ]);
+        $validated = $request->validate(
+            [
+                'from_date' => 'required|date|date_format:Y-m-d',
+                'to_date' => 'required|date|date_format:Y-m-d|after_or_equal:from_date',
+                'branch_id' => 'nullable|integer|exists:branches,id',
+            ],
+            [
+                'from_date.required' => 'Başlangıç tarihi zorunludur.',
+                'from_date.date' => 'Geçerli bir başlangıç tarihi girin.',
+                'to_date.required' => 'Bitiş tarihi zorunludur.',
+                'to_date.date' => 'Geçerli bir bitiş tarihi girin.',
+                'to_date.after_or_equal' => 'Bitiş tarihi, başlangıç tarihinden sonra olmalıdır.',
+            ]
+        );
 
         $query = EmployeeSale::with(['branch', 'employee', 'employeeSaleDetails.employee'])
             ->latest('sale_date')

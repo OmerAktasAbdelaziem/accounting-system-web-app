@@ -388,7 +388,23 @@ class SafeController extends Controller
 
             // Require both dates to be provided
             if (empty($from) || empty($to)) {
-                return redirect()->route('safes.show', $safe->id)->with('error', 'Lütfen başlangıç ve bitiş tarihi seçin.');
+                return redirect()->route('safes.show', $safe->id)
+                    ->with('error', 'Lütfen başlangıç ve bitiş tarihi seçin.');
+            }
+
+            // Validate date format
+            $fromDateTime = \DateTime::createFromFormat('Y-m-d', $from);
+            $toDateTime = \DateTime::createFromFormat('Y-m-d', $to);
+            
+            if (!$fromDateTime || !$toDateTime) {
+                return redirect()->route('safes.show', $safe->id)
+                    ->with('error', 'Geçersiz tarih formatı. Lütfen YYYY-MM-DD formatında tarih seçin.');
+            }
+
+            // Validate that to_date is after from_date
+            if ($toDateTime < $fromDateTime) {
+                return redirect()->route('safes.show', $safe->id)
+                    ->with('error', 'Bitiş tarihi, başlangıç tarihinden sonra olmalıdır.');
             }
 
             Log::info('Safe PDF export requested', [
