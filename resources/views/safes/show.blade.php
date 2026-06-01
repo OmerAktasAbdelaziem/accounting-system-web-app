@@ -805,12 +805,12 @@
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">Başlangıç Tarihi</label>
-                            <input type="date" name="from_date" id="exportPdfFromDate" class="form-control">
+                            <label class="form-label">Başlangıç Tarihi <span class="text-danger">*</span></label>
+                            <input type="date" name="from_date" id="exportPdfFromDate" class="form-control" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Bitiş Tarihi</label>
-                            <input type="date" name="to_date" id="exportPdfToDate" class="form-control">
+                            <label class="form-label">Bitiş Tarihi <span class="text-danger">*</span></label>
+                            <input type="date" name="to_date" id="exportPdfToDate" class="form-control" required>
                         </div>
                     </div>
                 </div>
@@ -1058,33 +1058,8 @@
         syncExportModal(outcomeExportBtn);
     });
 
-    // Validate export PDF form - require both dates
-    const exportPdfForm = document.getElementById('exportPdfForm');
-    if (exportPdfForm) {
-        exportPdfForm.addEventListener('submit', function (event) {
-            const fromDateInput = document.getElementById('exportPdfFromDate');
-            const toDateInput = document.getElementById('exportPdfToDate');
-            
-            const fromDate = fromDateInput ? fromDateInput.value : '';
-            const toDate = toDateInput ? toDateInput.value : '';
-            
-            console.log('Safe export check:', { 
-                fromDate, 
-                toDate, 
-                fromDateEmpty: !fromDate,
-                toDateEmpty: !toDate
-            });
-            
-            if (!fromDate || !toDate) {
-                event.preventDefault();
-                event.stopPropagation();
-                alert('⚠️ Lütfen başlangıç VE bitiş tarihi seçin.\n\nÖrneğin:\nBaşlangıç: 01.05.2026\nBitiş: 31.05.2026');
-                return false;
-            }
-            
-            console.log('Safe PDF export approved:', { fromDate, toDate });
-        });
-    }
+    // Form submission will be handled by backend validation
+    // Backend requires both dates and provides error messages
 })();
 </script>
 @endsection

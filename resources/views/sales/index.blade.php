@@ -701,12 +701,12 @@
 
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Başlangıç Tarihi</label>
-                                    <input type="date" name="from_date" class="form-control form-control-lg">
+                                    <label class="form-label fw-semibold">Başlangıç Tarihi <span class="text-danger">*</span></label>
+                                    <input type="date" name="from_date" class="form-control form-control-lg" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Bitiş Tarihi</label>
-                                    <input type="date" name="to_date" class="form-control form-control-lg">
+                                    <label class="form-label fw-semibold">Bitiş Tarihi <span class="text-danger">*</span></label>
+                                    <input type="date" name="to_date" class="form-control form-control-lg" required>
                                 </div>
                             </div>
 
@@ -1046,34 +1046,8 @@
             });
         }
 
-        // Form validation - require both dates for date range export
-        const salesExportForm = document.getElementById('sales-export-form');
-        if (salesExportForm) {
-            salesExportForm.addEventListener('submit', function (event) {
-                const fromDateInput = document.querySelector('input[name="from_date"]');
-                const toDateInput = document.querySelector('input[name="to_date"]');
-                
-                const fromDate = fromDateInput ? fromDateInput.value : '';
-                const toDate = toDateInput ? toDateInput.value : '';
-                
-                console.log('Form submission check:', { 
-                    fromDate, 
-                    toDate, 
-                    fromDateEmpty: !fromDate,
-                    toDateEmpty: !toDate
-                });
-                
-                // Both dates are required
-                if (!fromDate || !toDate) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    alert('⚠️ Lütfen başlangıç VE bitiş tarihi seçin.\n\nÖrneğin:\nBaşlangıç: 01.05.2026\nBitiş: 31.05.2026');
-                    return false;
-                }
-                
-                console.log('Sales PDF Export approved:', { fromDate, toDate });
-            });
-        }
+        // Form submission will be handled by backend validation
+        // Backend requires both dates and provides error messages
 
         const editEmployeeList = document.getElementById('edit-employee-sales-list');
         const editTotalInput = document.querySelector('#editSaleForm input[name="total_amount"]');
