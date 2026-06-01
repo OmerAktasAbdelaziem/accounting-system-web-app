@@ -801,7 +801,7 @@
                 <div class="modal-body">
                     <input type="hidden" name="type" id="exportPdfType" value="income">
                     <div class="alert alert-info">
-                        Yalnızca filtrelenen kayıtları dışa aktarmak için bir tarih aralığı seçin. Tüm kayıtları dışa aktarmak için her iki tarihi boş bırakın.
+                        <strong>Başlangıç ve Bitiş tarihi seçin</strong> (ör: 1 Mayıs - 31 Mayıs). Sistem tüm veriyi bu tarih aralığında indirecektir.
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6">
@@ -1057,6 +1057,21 @@
     if (outcomeExportBtn) outcomeExportBtn.addEventListener('click', function () {
         syncExportModal(outcomeExportBtn);
     });
+
+    // Validate export PDF form - require both dates
+    const exportPdfForm = document.getElementById('exportPdfForm');
+    if (exportPdfForm) {
+        exportPdfForm.addEventListener('submit', function (event) {
+            const fromDate = document.getElementById('exportPdfFromDate')?.value?.trim();
+            const toDate = document.getElementById('exportPdfToDate')?.value?.trim();
+            
+            if (!fromDate || !toDate) {
+                event.preventDefault();
+                alert('⚠️ Lütfen başlangıç ve bitiş tarihi seçin.\n\nÖrneğin:\nBaşlangıç: 01.05.2026\nBitiş: 31.05.2026');
+                return false;
+            }
+        });
+    }
 })();
 </script>
 @endsection

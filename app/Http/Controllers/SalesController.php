@@ -169,15 +169,10 @@ class SalesController extends Controller
         $this->authorizeDownloads($request);
 
         $validated = $request->validate([
-            'from_date' => 'nullable|date',
-            'to_date' => 'nullable|date|after_or_equal:from_date',
+            'from_date' => 'required|date',
+            'to_date' => 'required|date|after_or_equal:from_date',
             'branch_id' => 'nullable|integer|exists:branches,id',
         ]);
-
-        // If from_date is provided but to_date is not, use from_date as to_date (same day export)
-        if (!empty($validated['from_date']) && empty($validated['to_date'])) {
-            $validated['to_date'] = $validated['from_date'];
-        }
 
         $query = EmployeeSale::with(['branch', 'employee', 'employeeSaleDetails.employee'])
             ->latest('sale_date')
@@ -188,25 +183,21 @@ class SalesController extends Controller
             $query->where('branch_id', (int) $validated['branch_id']);
         }
         
-        // Date range filtering
-        if (!empty($validated['from_date'])) {
-            $query->whereDate('sale_date', '>=', $validated['from_date']);
-        }
-        if (!empty($validated['to_date'])) {
-            $query->whereDate('sale_date', '<=', $validated['to_date']);
-        }
+        // Date range filtering - BOTH dates are required
+        $query->whereDate('sale_date', '>=', $validated['from_date'])
+              ->whereDate('sale_date', '<=', $validated['to_date']);
 
         $sales = $query->get();
         
         \Log::info('Sales PDF Export', [
             'branch_id' => $validated['branch_id'] ?? 'ALL',
-            'from_date' => $validated['from_date'] ?? 'ANY',
-            'to_date' => $validated['to_date'] ?? 'ANY',
+            'from_date' => $validated['from_date'],
+            'to_date' => $validated['to_date'],
             'total_records' => $sales->count(),
         ]);
 
         if ($sales->isEmpty()) {
-            return redirect()->route('sales.index')->with('error', 'Secilen tarih araliginda satis bulunamadi.');
+            return redirect()->route('sales.index')->with('error', 'Seçilen tarih aralığında satış bulunamadı: ' . $validated['from_date'] . ' - ' . $validated['to_date']);
         }
 
         $currencySymbol = config('app.currency_symbol', '$');

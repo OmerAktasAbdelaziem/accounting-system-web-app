@@ -386,9 +386,9 @@ class SafeController extends Controller
             $from = $request->query('from_date');
             $to = $request->query('to_date');
 
-            // If from_date is provided but to_date is not, use from_date as to_date (same day export)
-            if (!empty($from) && empty($to)) {
-                $to = $from;
+            // Require both dates to be provided
+            if (empty($from) || empty($to)) {
+                return redirect()->route('safes.show', $safe->id)->with('error', 'Lütfen başlangıç ve bitiş tarihi seçin.');
             }
 
             Log::info('Safe PDF export requested', [
@@ -402,8 +402,8 @@ class SafeController extends Controller
             if ($type === 'outcome') {
                 $items = SafeOutcome::with('currency', 'supplier')
                     ->where('safe_id', $safe->id)
-                    ->when($from, fn ($q) => $q->whereDate('created_at', '>=', $from))
-                    ->when($to, fn ($q) => $q->whereDate('created_at', '<=', $to))
+                    ->whereDate('created_at', '>=', $from)
+                    ->whereDate('created_at', '<=', $to)
                     ->latest()
                     ->get();
 
@@ -424,8 +424,8 @@ class SafeController extends Controller
             } else {
                 $items = SafeIncome::with('currency')
                     ->where('safe_id', $safe->id)
-                    ->when($from, fn ($q) => $q->whereDate('created_at', '>=', $from))
-                    ->when($to, fn ($q) => $q->whereDate('created_at', '<=', $to))
+                    ->whereDate('created_at', '>=', $from)
+                    ->whereDate('created_at', '<=', $to)
                     ->latest()
                     ->get();
 

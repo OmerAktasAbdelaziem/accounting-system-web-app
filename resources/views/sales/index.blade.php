@@ -696,7 +696,7 @@
 
                         <div class="modal-body">
                             <div class="alert alert-info mb-3">
-                                <small><i class="bi bi-info-circle"></i> Tarih seçin - sadece başlangıç tarihi seçerseniz o güne ait tüm kayıtlar indirilir. Her iki tarihi boş bırakırsanız tüm kayıtlar indirilir.</small>
+                                <small><i class="bi bi-info-circle"></i> <strong>Başlangıç ve Bitiş tarihi seçin</strong> (ör: 1 Mayıs - 31 Mayıs). Sistem tüm veriyi bu tarih aralığında indirecektir.</small>
                             </div>
 
                             <div class="row g-3">
@@ -1046,17 +1046,21 @@
             });
         }
 
-        // Simple form submission handler for date range export
+        // Form validation - require both dates for date range export
         const salesExportForm = document.getElementById('sales-export-form');
         if (salesExportForm) {
             salesExportForm.addEventListener('submit', function (event) {
                 const fromDate = document.querySelector('input[name="from_date"]')?.value?.trim();
                 const toDate = document.querySelector('input[name="to_date"]')?.value?.trim();
                 
-                console.log('Sales PDF Export:', { fromDate, toDate });
+                // Both dates are required
+                if (!fromDate || !toDate) {
+                    event.preventDefault();
+                    alert('⚠️ Lütfen başlangıç ve bitiş tarihi seçin.\n\nÖrneğin:\nBaşlangıç: 01.05.2026\nBitiş: 31.05.2026');
+                    return false;
+                }
                 
-                // Form will submit with dates (can be empty to export all)
-                // No validation needed - backend handles it
+                console.log('Sales PDF Export:', { fromDate, toDate });
             });
         }
 
