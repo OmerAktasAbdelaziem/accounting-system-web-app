@@ -696,7 +696,7 @@
 
                         <div class="modal-body">
                             <div class="alert alert-info mb-3">
-                                <small><i class="bi bi-info-circle"></i> Tarih aralığı seçin ve satışları PDF olarak indirin. Tarihleri boş bırakırsanız tüm kayıtlar indirilir.</small>
+                                <small><i class="bi bi-info-circle"></i> Tarih seçin - sadece başlangıç tarihi seçerseniz o güne ait tüm kayıtlar indirilir. Her iki tarihi boş bırakırsanız tüm kayıtlar indirilir.</small>
                             </div>
 
                             <div class="row g-3">

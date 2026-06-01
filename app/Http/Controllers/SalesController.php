@@ -174,14 +174,21 @@ class SalesController extends Controller
             'branch_id' => 'nullable|integer|exists:branches,id',
         ]);
 
+        // If from_date is provided but to_date is not, use from_date as to_date (same day export)
+        if (!empty($validated['from_date']) && empty($validated['to_date'])) {
+            $validated['to_date'] = $validated['from_date'];
+        }
+
         $query = EmployeeSale::with(['branch', 'employee', 'employeeSaleDetails.employee'])
             ->latest('sale_date')
             ->latest('id');
 
-        // Apply filters
+        // Apply filters - branch_id can be empty to get all branches
         if (!empty($validated['branch_id'])) {
             $query->where('branch_id', (int) $validated['branch_id']);
         }
+        
+        // Date range filtering
         if (!empty($validated['from_date'])) {
             $query->whereDate('sale_date', '>=', $validated['from_date']);
         }
@@ -190,6 +197,13 @@ class SalesController extends Controller
         }
 
         $sales = $query->get();
+        
+        \Log::info('Sales PDF Export', [
+            'branch_id' => $validated['branch_id'] ?? 'ALL',
+            'from_date' => $validated['from_date'] ?? 'ANY',
+            'to_date' => $validated['to_date'] ?? 'ANY',
+            'total_records' => $sales->count(),
+        ]);
 
         if ($sales->isEmpty()) {
             return redirect()->route('sales.index')->with('error', 'Secilen tarih araliginda satis bulunamadi.');

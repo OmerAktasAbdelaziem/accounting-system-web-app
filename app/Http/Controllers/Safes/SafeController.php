@@ -386,6 +386,11 @@ class SafeController extends Controller
             $from = $request->query('from_date');
             $to = $request->query('to_date');
 
+            // If from_date is provided but to_date is not, use from_date as to_date (same day export)
+            if (!empty($from) && empty($to)) {
+                $to = $from;
+            }
+
             Log::info('Safe PDF export requested', [
                 'safe_id' => $safe->id,
                 'type' => $type,
