@@ -16,6 +16,7 @@ class SafeIncome extends Model
         'currency_id',
         'reference',
         'notes',
+        'created_at',
     ];
 
     protected $casts = [

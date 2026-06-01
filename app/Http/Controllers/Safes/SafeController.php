@@ -138,9 +138,15 @@ class SafeController extends Controller
             'currency_id' => 'nullable|exists:safe_currencies,id',
             'reference' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
+            'income_date' => 'nullable|date|before_or_equal:today',
+
         ]);
 
         $validated['safe_id'] = $safe->id;
+        $validated['created_at'] = $request->income_date  // ← زود السطرين دول
+                                ? \Carbon\Carbon::parse($request->income_date)
+                                : now();
+        unset($validated['income_date']);
         SafeIncome::create($validated);
 
         // Update currency balance if currency is specified
@@ -157,64 +163,71 @@ class SafeController extends Controller
     public function addOutcome(Request $request, Safe $safe)
     {
         $validated = $request->validate([
-            'amount' => 'required|numeric|min:0.01',
-            'description' => 'nullable|string',
-            'currency_id' => 'nullable|exists:safe_currencies,id',
-            'reference' => 'nullable|string|max:255',
-            'reference_type' => 'nullable|in:general,supplier',
-            'supplier_id' => 'nullable|exists:suppliers,id|required_if:reference_type,supplier',
+        'amount'         => 'required|numeric|min:0.01',
+        'description'    => 'nullable|string',
+        'currency_id'    => 'nullable|exists:safe_currencies,id',
+        'reference'      => 'nullable|string|max:255',
+        'reference_type' => 'nullable|in:general,supplier',
+        'supplier_id'    => 'nullable|exists:suppliers,id|required_if:reference_type,supplier',
+        'outcome_date'   => 'nullable|date|before_or_equal:today',
         ]);
 
         $referenceType = $validated['reference_type'] ?? 'general';
         $supplierId = $referenceType === 'supplier' ? ($validated['supplier_id'] ?? null) : null;
 
+        // ← زيادة
+        $outcomeDate = $request->outcome_date
+        ? \Carbon\Carbon::parse($request->outcome_date)
+        : now();
+
         if ($referenceType === 'supplier' && $supplierId) {
-            $supplier = Supplier::query()
-                ->withSum('purchases as total_purchased', 'total_amount')
-                ->withSum('payments as total_paid', 'amount')
-                ->findOrFail($supplierId);
+        $supplier = Supplier::query()
+            ->withSum('purchases as total_purchased', 'total_amount')
+            ->withSum('payments as total_paid', 'amount')
+            ->findOrFail($supplierId);
 
-            $currentOutstanding = ((float) ($supplier->opening_balance ?? 0)
-                + (float) ($supplier->total_purchased ?? 0)
-                - (float) ($supplier->total_paid ?? 0));
+        $currentOutstanding = ((float) ($supplier->opening_balance ?? 0)
+            + (float) ($supplier->total_purchased ?? 0)
+            - (float) ($supplier->total_paid ?? 0));
 
-            if ($currentOutstanding <= 0) {
-                return back()->withErrors(['supplier_id' => 'This supplier has no outstanding amount.']);
-            }
+        if ($currentOutstanding <= 0) {
+            return back()->withErrors(['supplier_id' => 'This supplier has no outstanding amount.']);
+        }
 
-            if ((float) $validated['amount'] > $currentOutstanding) {
-                return back()->withErrors(['amount' => 'Outcome amount cannot be greater than supplier outstanding amount.']);
+        if ((float) $validated['amount'] > $currentOutstanding) {
+            return back()->withErrors(['amount' => 'Outcome amount cannot be greater than supplier outstanding amount.']);
+        }
+        }
+
+        DB::transaction(function () use ($safe, $validated, $referenceType, $supplierId, $outcomeDate) {
+        $outcome = SafeOutcome::create([
+            'safe_id'        => $safe->id,
+            'amount'         => $validated['amount'],
+            'description'    => $validated['description'] ?? null,
+            'currency_id'    => $validated['currency_id'] ?? null,
+            'reference'      => $validated['reference'] ?? null,
+            'reference_type' => $referenceType,
+            'supplier_id'    => $supplierId,
+            'created_at'     => $outcomeDate, 
+        ]);
+
+        if (!empty($validated['currency_id'])) {
+            $currency = SafeCurrency::findOrFail($validated['currency_id']);
+            if ($currency->balance >= $validated['amount']) {
+                $currency->update(['balance' => $currency->balance - $validated['amount']]);
             }
         }
 
-        DB::transaction(function () use ($safe, $validated, $referenceType, $supplierId) {
-            $outcome = SafeOutcome::create([
-                'safe_id' => $safe->id,
-                'amount' => $validated['amount'],
-                'description' => $validated['description'] ?? null,
-                'currency_id' => $validated['currency_id'] ?? null,
-                'reference' => $validated['reference'] ?? null,
-                'reference_type' => $referenceType,
-                'supplier_id' => $supplierId,
+        if ($referenceType === 'supplier' && $supplierId) {
+            SupplierPayment::create([
+                'supplier_id'  => $supplierId,
+                'payment_date' => $outcomeDate->toDateString(), // ← زيادة عشان الـ payment_date يتطابق
+                'amount'       => $validated['amount'],
+                'note'         => 'Paid from safe: ' . $safe->name . ' (Outcome #' . $outcome->id . ')',
             ]);
+        }
 
-            if (!empty($validated['currency_id'])) {
-                $currency = SafeCurrency::findOrFail($validated['currency_id']);
-                if ($currency->balance >= $validated['amount']) {
-                    $currency->update(['balance' => $currency->balance - $validated['amount']]);
-                }
-            }
-
-            if ($referenceType === 'supplier' && $supplierId) {
-                SupplierPayment::create([
-                    'supplier_id' => $supplierId,
-                    'payment_date' => now()->toDateString(),
-                    'amount' => $validated['amount'],
-                    'note' => 'Paid from safe: ' . $safe->name . ' (Outcome #' . $outcome->id . ')',
-                ]);
-            }
-
-            $safe->update(['balance' => $safe->balance - $validated['amount']]);
+        $safe->update(['balance' => $safe->balance - $validated['amount']]);
         });
 
         return back()->with('success', 'Outcome recorded successfully!');
@@ -223,7 +236,7 @@ class SafeController extends Controller
     public function addCurrency(Request $request, Safe $safe)
     {
         $validated = $request->validate([
-            'code' => 'required|string|max:3|unique:safe_currencies,code,NULL,id,safe_id,' . $safe->id,
+        'code' => 'required|string|max:3|unique:safe_currencies,code,NULL,id,safe_id,' . $safe->id,
             'name' => 'required|string|max:255',
         ]);
 

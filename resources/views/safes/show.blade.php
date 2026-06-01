@@ -645,6 +645,15 @@
                         <label class="form-label">Amount *</label>
                         <input type="number" name="amount" class="form-control" step="0.01" min="0" required>
                     </div>
+
+                    {{-- ← التعديل هنا --}}
+                    <div class="mb-3">
+                        <label class="form-label">Date <span class="text-muted">(Optional)</span></label>
+                        <input type="date" name="income_date" class="form-control"
+                               value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}">
+                        <small class="text-muted">Leave as today or pick an older date</small>
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label">Source *</label>
                         <select name="source" class="form-select" required>
@@ -697,6 +706,15 @@
                         <label class="form-label">Amount *</label>
                         <input type="number" name="amount" class="form-control" step="0.01" min="0" max="{{ $safe->balance }}" required>
                     </div>
+
+                    {{-- ← التعديل هنا --}}
+                    <div class="mb-3">
+                        <label class="form-label">Date <span class="text-muted">(Optional)</span></label>
+                        <input type="date" name="outcome_date" class="form-control"
+                               value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}">
+                        <small class="text-muted">Leave as today or pick an older date</small>
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label">Currency (Optional)</label>
                         <select name="currency_id" class="form-select">

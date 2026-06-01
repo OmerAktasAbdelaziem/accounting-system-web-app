@@ -17,6 +17,7 @@ class SafeOutcome extends Model
         'reference',
         'reference_type',
         'supplier_id',
+        'created_at',
     ];
 
     protected $casts = [
