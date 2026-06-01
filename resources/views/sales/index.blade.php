@@ -690,70 +690,48 @@
 
         @feature('downloads')
         <div class="modal fade" id="salesExportModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <form id="sales-export-form" method="POST" action="{{ route('sales.export-pdf') }}">
                         @csrf
-                        <input type="hidden" name="export_mode" id="sales-export-mode-input" value="selected">
 
                         <div class="modal-header">
-                            <h5 class="modal-title">Satış PDF İndir</h5>
+                            <h5 class="modal-title"><i class="bi bi-file-earmark-pdf"></i> Satış PDF İndir</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
 
                         <div class="modal-body">
-                            <div class="mb-3">
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="sales_export_mode_radio" id="export-mode-selected" value="selected" checked>
-                                    <label class="form-check-label" for="export-mode-selected">Seçili satırlar</label>
+                            <div class="alert alert-info mb-3">
+                                <small><i class="bi bi-info-circle"></i> Tarih aralığı seçin ve satışları PDF olarak indirin. Tarihleri boş bırakırsanız tüm kayıtlar indirilir.</small>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Başlangıç Tarihi</label>
+                                    <input type="date" name="from_date" class="form-control form-control-lg">
                                 </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="sales_export_mode_radio" id="export-mode-date" value="date">
-                                    <label class="form-check-label" for="export-mode-date">Tarih filtresi</label>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Bitiş Tarihi</label>
+                                    <input type="date" name="to_date" class="form-control form-control-lg">
                                 </div>
                             </div>
 
-                            <div id="export-selected-section" class="export-mode-section active">
-                                <div class="alert alert-light border mb-0">
-                                    <div class="d-flex align-items-center justify-content-between gap-2">
-                                        <div>
-                                            <div class="fw-semibold mb-1">Dışa aktarılacak seçili satışlar</div>
-                                            <div class="small text-muted">Tabloda seç kutularını kullanarak satırları seçin, ardından yalnızca bu satırları dışa aktarın.</div>
-                                        </div>
-                                        <span class="badge text-bg-primary" id="selected-sales-count">0 seçili</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div id="export-date-section" class="export-mode-section">
-                                <div class="row g-3">
-                                    <div class="col-md-4">
-                                        <label class="form-label">Şube</label>
-                                        <select name="branch_id" class="form-select">
-                                            <option value="">Tüm şubeler</option>
-                                            @foreach($branches as $branch)
-                                                <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Başlangıç</label>
-                                        <input type="date" name="from_date" class="form-control">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Bitiş</label>
-                                        <input type="date" name="to_date" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="small text-muted mt-2">Tarih aralığının tümünü dışa aktarmak için tarihleri boş bırakın (ısteğe bağlı şube filtresi ile).</div>
+                            <div class="mt-3">
+                                <label class="form-label fw-semibold">Şube (Opsiyonel)</label>
+                                <select name="branch_id" class="form-select form-select-lg">
+                                    <option value="">Tüm şubeler</option>
+                                    @foreach($branches as $branch)
+                                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">İptal</button>
-                            <button type="submit" class="btn btn-danger">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                            <button type="submit" class="btn btn-danger btn-lg">
                                 <i class="bi bi-download"></i>
-                                Satış PDF İndir
+                                PDF İndir
                             </button>
                         </div>
                     </form>
@@ -1063,146 +1041,17 @@
             }
         }
 
-        function getSelectedSaleCheckboxes() {
-            return Array.from(document.querySelectorAll('.sale-select-checkbox:checked'));
-        }
-
-        function updateSelectedSalesCount() {
-            const countBadge = document.getElementById('selected-sales-count');
-            if (!countBadge) return;
-            const count = getSelectedSaleCheckboxes().length;
-            countBadge.textContent = `${count} selected`;
-        }
-
-        function syncExportModeUI(mode) {
-            const selectedSection = document.getElementById('export-selected-section');
-            const dateSection = document.getElementById('export-date-section');
-            const modeInput = document.getElementById('sales-export-mode-input');
-
-            if (modeInput) {
-                modeInput.value = mode;
-            }
-            if (selectedSection) {
-                selectedSection.classList.toggle('active', mode === 'selected');
-            }
-            if (dateSection) {
-                dateSection.classList.toggle('active', mode === 'date');
-            }
-            
-            // When switching to date mode, ensure fields are properly set
-            if (mode === 'date') {
-                const fromDateInput = document.querySelector('input[name="from_date"]');
-                const toDateInput = document.querySelector('input[name="to_date"]');
-                // Keep the existing values or leave empty to export all
-                if (fromDateInput && toDateInput) {
-                    // Fields are ready for input
-                }
-            }
-        }
-
-        function openExportModal() {
-            updateSelectedSalesCount();
-            syncExportModeUI(document.querySelector('input[name="sales_export_mode_radio"]:checked')?.value || 'selected');
-
-            if (exportModal) {
-                try { exportModal.show(); return; } catch (e) { /* fallback below */ }
-            }
-            if (window.jQuery && typeof jQuery(exportModalEl).modal === 'function') {
-                jQuery(exportModalEl).modal('show');
-                return;
-            }
-            if (exportModalEl) {
-                exportModalEl.classList.add('show');
-                exportModalEl.style.display = 'block';
-                exportModalEl.removeAttribute('aria-hidden');
-            }
-        }
-
-        const openExportBtn = document.getElementById('open-sales-export-modal');
-        if (openExportBtn) {
-            openExportBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                openExportModal();
-            });
-        }
-
-        document.querySelectorAll('input[name="sales_export_mode_radio"]').forEach((radio) => {
-            radio.addEventListener('change', function () {
-                syncExportModeUI(radio.value);
-            });
-        });
-
-        const selectAllSales = document.getElementById('select-all-sales');
-        if (selectAllSales) {
-            selectAllSales.addEventListener('change', function () {
-                const allCheckboxes = Array.from(document.querySelectorAll('.sale-select-checkbox'));
-                allCheckboxes.forEach((checkbox) => {
-                    checkbox.checked = selectAllSales.checked;
-                });
-                updateSelectedSalesCount();
-            });
-        }
-
-        document.addEventListener('change', function (event) {
-            if (event.target && event.target.classList && event.target.classList.contains('sale-select-checkbox')) {
-                const all = Array.from(document.querySelectorAll('.sale-select-checkbox'));
-                const checked = all.filter((checkbox) => checkbox.checked);
-                const selectAll = document.getElementById('select-all-sales');
-                if (selectAll) {
-                    selectAll.checked = all.length > 0 && checked.length === all.length;
-                }
-                updateSelectedSalesCount();
-            }
-        });
-
+        // Simple form submission handler for date range export
         const salesExportForm = document.getElementById('sales-export-form');
         if (salesExportForm) {
             salesExportForm.addEventListener('submit', function (event) {
-                salesExportForm.querySelectorAll('input[name="sale_ids[]"]').forEach((input) => input.remove());
-
-                // Get the current mode from radio button (this is authoritative)
-                const modeRadio = document.querySelector('input[name="sales_export_mode_radio"]:checked');
-                const mode = modeRadio ? modeRadio.value : 'selected';
+                const fromDate = document.querySelector('input[name="from_date"]')?.value?.trim();
+                const toDate = document.querySelector('input[name="to_date"]')?.value?.trim();
                 
-                // Update the hidden export_mode input
-                const modeInput = document.getElementById('sales-export-mode-input');
-                if (modeInput) {
-                    modeInput.value = mode;
-                }
-
-                console.log('Form Submit:', {
-                    mode: mode,
-                    from_date: document.querySelector('input[name="from_date"]')?.value,
-                    to_date: document.querySelector('input[name="to_date"]')?.value,
-                });
-
-                if (mode === 'selected') {
-                    const selectedIds = getSelectedSaleCheckboxes().map((checkbox) => checkbox.value).filter(Boolean);
-                    if (selectedIds.length === 0) {
-                        event.preventDefault();
-                        alert('Lütfen indirmeden önce en az bir satış seçin.');
-                        return;
-                    }
-
-                    selectedIds.forEach((id) => {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = 'sale_ids[]';
-                        input.value = id;
-                        salesExportForm.appendChild(input);
-                    });
-                } else if (mode === 'date') {
-                    // Date mode - form will submit with dates
-                    const fromDate = document.querySelector('input[name="from_date"]')?.value?.trim();
-                    const toDate = document.querySelector('input[name="to_date"]')?.value?.trim();
-                    
-                    console.log('Date Export:', { fromDate, toDate });
-                    
-                    // If no dates provided, that's OK - it will export all records
-                    if (!fromDate && !toDate) {
-                        console.log('No date range specified - will export all records');
-                    }
-                }
+                console.log('Sales PDF Export:', { fromDate, toDate });
+                
+                // Form will submit with dates (can be empty to export all)
+                // No validation needed - backend handles it
             });
         }
 

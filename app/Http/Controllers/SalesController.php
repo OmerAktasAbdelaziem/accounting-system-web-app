@@ -169,68 +169,38 @@ class SalesController extends Controller
         $this->authorizeDownloads($request);
 
         $validated = $request->validate([
-            'export_mode' => 'required|in:selected,date',
-            'sale_ids' => 'nullable|array',
-            'sale_ids.*' => 'integer|exists:employee_sales,id',
             'from_date' => 'nullable|date',
             'to_date' => 'nullable|date|after_or_equal:from_date',
             'branch_id' => 'nullable|integer|exists:branches,id',
-        ]);
-
-        \Log::info('Sales PDF Export Request', [
-            'export_mode' => $validated['export_mode'],
-            'from_date' => $validated['from_date'] ?? 'null',
-            'to_date' => $validated['to_date'] ?? 'null',
-            'branch_id' => $validated['branch_id'] ?? 'null',
-            'sale_ids_count' => count($validated['sale_ids'] ?? []),
         ]);
 
         $query = EmployeeSale::with(['branch', 'employee', 'employeeSaleDetails.employee'])
             ->latest('sale_date')
             ->latest('id');
 
-        if ($validated['export_mode'] === 'selected') {
-            $selectedIds = collect($validated['sale_ids'] ?? [])->map(fn ($id) => (int) $id)->filter()->values();
-
-            if ($selectedIds->isEmpty()) {
-                return redirect()->route('sales.index')->with('error', 'Lutfen indirmeden once en az bir satis secin.');
-            }
-
-            $query->whereIn('id', $selectedIds->all());
-        } else {
-            if (!empty($validated['branch_id'])) {
-                $query->where('branch_id', (int) $validated['branch_id']);
-                \Log::info('Applied branch filter', ['branch_id' => $validated['branch_id']]);
-            }
-            if (!empty($validated['from_date'])) {
-                $query->whereDate('sale_date', '>=', $validated['from_date']);
-                \Log::info('Applied from_date filter', ['from_date' => $validated['from_date']]);
-            }
-            if (!empty($validated['to_date'])) {
-                $query->whereDate('sale_date', '<=', $validated['to_date']);
-                \Log::info('Applied to_date filter', ['to_date' => $validated['to_date']]);
-            }
+        // Apply filters
+        if (!empty($validated['branch_id'])) {
+            $query->where('branch_id', (int) $validated['branch_id']);
+        }
+        if (!empty($validated['from_date'])) {
+            $query->whereDate('sale_date', '>=', $validated['from_date']);
+        }
+        if (!empty($validated['to_date'])) {
+            $query->whereDate('sale_date', '<=', $validated['to_date']);
         }
 
         $sales = $query->get();
 
-        \Log::info('Sales Export Query Result', [
-            'export_mode' => $validated['export_mode'],
-            'records_found' => $sales->count(),
-            'sql' => $query->toSql(),
-            'bindings' => $query->getBindings(),
-        ]);
-
         if ($sales->isEmpty()) {
-            return redirect()->route('sales.index')->with('error', 'Secilen kriter icin satis bulunamadi.');
+            return redirect()->route('sales.index')->with('error', 'Secilen tarih araliginda satis bulunamadi.');
         }
 
         $currencySymbol = config('app.currency_symbol', '$');
         $lines = [
             'Satış Dışa Aktarımı',
-            'Oluşturuldu: ' . now()->format('Y-m-d H:i'),
-            'Mod: ' . ($validated['export_mode'] === 'selected' ? 'Seçili' : 'Tarih Aralığı'),
-            'Girişler: ' . $sales->count(),
+            'Olusturuldu: ' . now()->format('Y-m-d H:i'),
+            'Tarih Araligi: ' . ($validated['from_date'] ?? 'Başlangıç') . ' - ' . ($validated['to_date'] ?? 'Son'),
+            'Giri_ler: ' . $sales->count(),
             str_repeat('-', 72),
         ];
 
