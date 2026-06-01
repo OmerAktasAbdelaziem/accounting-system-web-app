@@ -67,18 +67,31 @@ class SimplePdf
     }
 
     /**
-     * Convert UTF-8 string to PDF hex string format (UTF-16BE)
-     * This properly handles Turkish and other Unicode characters
+     * Convert UTF-8 string to PDF-safe format with Turkish character transliteration
+     * Maps Turkish characters to ASCII equivalents for proper PDF rendering
      */
     private static function escapeUnicode(string $text): string
     {
-        // Convert UTF-8 string to UTF-16BE (Big Endian)
-        $utf16 = iconv('UTF-8', 'UTF-16BE', $text);
+        // Turkish character to ASCII mapping
+        $turkishChars = [
+            'ç' => 'c', 'Ç' => 'C',
+            'ğ' => 'g', 'Ğ' => 'G',
+            'ı' => 'i', 'I' => 'I',
+            'ş' => 's', 'Ş' => 'S',
+            'ö' => 'o', 'Ö' => 'O',
+            'ü' => 'u', 'Ü' => 'U',
+        ];
         
-        // Add UTF-16BE BOM and convert to hex string
-        $hexString = 'FEFF' . bin2hex($utf16);
+        // Replace Turkish characters
+        $text = strtr($text, $turkishChars);
         
-        return '<' . $hexString . '>';
+        // Escape PDF special characters
+        $text = str_replace(['\\', '(', ')'], ['\\\\', '\\(', '\\)'], $text);
+        
+        // Remove any remaining non-ASCII characters
+        $text = preg_replace('/[^\x20-\x7E\x0A\x0D]/', '?', $text) ?? $text;
+        
+        return '(' . $text . ')';
     }
 
     /**
