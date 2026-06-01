@@ -6,12 +6,12 @@ class SimplePdf
 {
     public static function textDocument(string $title, array $lines): string
     {
-        $escapedTitle = self::escape($title);
+        $escapedTitle = self::escapeUnicode($title);
         $wrappedLines = [];
 
         foreach ($lines as $line) {
             foreach (self::wrapLine((string) $line, 72) as $wrappedLine) {
-                $wrappedLines[] = self::escape($wrappedLine);
+                $wrappedLines[] = self::escapeUnicode($wrappedLine);
             }
         }
 
@@ -19,7 +19,7 @@ class SimplePdf
         $contentLines[] = 'BT';
         $contentLines[] = '/F1 18 Tf';
         $contentLines[] = '50 770 Td';
-        $contentLines[] = '(' . $escapedTitle . ') Tj';
+        $contentLines[] = $escapedTitle . ' Tj';
         $contentLines[] = '/F1 11 Tf';
         $contentLines[] = '0 -28 Td';
 
@@ -27,7 +27,7 @@ class SimplePdf
             if ($index > 0) {
                 $contentLines[] = '0 -16 Td';
             }
-            $contentLines[] = '(' . $line . ') Tj';
+            $contentLines[] = $line . ' Tj';
         }
 
         $contentLines[] = 'ET';
@@ -66,10 +66,19 @@ class SimplePdf
         return $pdf;
     }
 
-    private static function escape(string $text): string
+    /**
+     * Convert UTF-8 string to PDF hex string format (UTF-16BE)
+     * This properly handles Turkish and other Unicode characters
+     */
+    private static function escapeUnicode(string $text): string
     {
-        $text = str_replace(['\\', '(', ')'], ['\\\\', '\\(', '\\)'], $text);
-        return preg_replace('/[^\x20-\x7E\x0A\x0D]/', '?', $text) ?? $text;
+        // Convert UTF-8 string to UTF-16BE (Big Endian)
+        $utf16 = iconv('UTF-8', 'UTF-16BE', $text);
+        
+        // Add UTF-16BE BOM and convert to hex string
+        $hexString = 'FEFF' . bin2hex($utf16);
+        
+        return '<' . $hexString . '>';
     }
 
     /**

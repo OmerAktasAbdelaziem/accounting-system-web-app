@@ -728,21 +728,21 @@
                             <div id="export-date-section" class="export-mode-section">
                                 <div class="row g-3">
                                     <div class="col-md-4">
-                                        <label class="form-label"Şube</label>
+                                        <label class="form-label">Şube</label>
                                         <select name="branch_id" class="form-select">
                                             <option value="">Tüm şubeler</option>
                                             @foreach($branches as $branch)
-                                                <option value="{{ $branch->id }}" @selected((string) request('branch_id') === (string) $branch->id)>{{ $branch->name }}</option>
+                                                <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Başlangıç</label>
-                                        <input type="date" name="from_date" class="form-control" value="{{ request('from_date') }}">
+                                        <input type="date" name="from_date" class="form-control">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Bitiş</label>
-                                        <input type="date" name="to_date" class="form-control" value="{{ request('to_date') }}">
+                                        <input type="date" name="to_date" class="form-control">
                                     </div>
                                 </div>
                                 <div class="small text-muted mt-2">Tarih aralığının tümünü dışa aktarmak için tarihleri boş bırakın (ısteğe bağlı şube filtresi ile).</div>
