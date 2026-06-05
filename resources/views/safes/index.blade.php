@@ -86,7 +86,7 @@
     <div class="col-md-4">
         <div class="stat-card">
             <h6>{{ __('messages.total_balance') }}</h6>
-            <div class="value">{{ $currencySymbol }}{{ number_format($stats['total_balance'] ?? 0, 2) }}</div>
+            <div class="value" @if(($stats['total_balance'] ?? 0) < 0)style="color: #dc3545;"@endif>{{ $currencySymbol }}{{ number_format($stats['total_balance'] ?? 0, 2) }}</div>
             <div class="icon"><i class="bi bi-cash-coin"></i></div>
         </div>
     </div>
@@ -118,10 +118,10 @@
                             <strong>{{ $safe->name }}</strong>
                             <div class="small text-muted">{{ $safe->location }}</div>
                         </div>
-                    <div class="text-end fw-bold">{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</div>
+                    <div class="text-end fw-bold" @if(($safe->balance ?? 0) < 0)style="color: #dc3545;"@endif>{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</div>
                     </div>
                 <div class="safe-mobile-grid">
-                    <div class="bg-light rounded-4 p-2"><div class="text-muted small">{{ __('messages.current_balance') }}</div><strong>{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</strong></div>
+                    <div class="bg-light rounded-4 p-2"><div class="text-muted small">{{ __('messages.current_balance') }}</div><strong @if(($safe->balance ?? 0) < 0)style="color: #dc3545;"@endif>{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</strong></div>
                     <div class="bg-light rounded-4 p-2"><div class="text-muted small">{{ __('messages.usage') }}</div><strong>{{ round($usagePercent) }}%</strong></div>
                 </div>
                 <div class="d-grid gap-2">
@@ -159,7 +159,7 @@
                     <tr>
                         <td><strong>{{ $safe->name }}</strong></td>
                         <td>{{ $safe->location }}</td>
-                        <td><h5 style="color: var(--primary-green); font-weight: 900;">{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</h5></td>
+                        <td><h5 @if(($safe->balance ?? 0) < 0)style="color: #dc3545; font-weight: 900;"@else style="color: var(--primary-green); font-weight: 900;"@endif>{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</h5></td>
                         <td>{{ $safe->max_balance ? $currencySymbol . number_format($safe->max_balance, 2) : __('messages.unlimited') }}</td>
                         <td>
                             @if(($safe->max_balance ?? 0) > 0)

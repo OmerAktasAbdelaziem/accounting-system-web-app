@@ -55,7 +55,7 @@
             </div>
                 <div class="stat-content">
                 <h6><span class="safe-black-label">{{ __('messages.current_balance') }}</span></h6>
-                <h3>{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</h3>
+                <h3 @if($safe->balance < 0)style="color: #dc3545;"@endif>{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</h3>
             </div>
         </div>
     </div>
@@ -115,7 +115,7 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.current_balance') }}</label>
-                        <p class="text-success fw-bold">{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</p>
+                        <p class="fw-bold" @if($safe->balance < 0)style="color: #dc3545;"@else class="text-success"@endif>{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.max_balance') }}</label>
@@ -699,12 +699,13 @@
             <form method="POST" action="{{ route('safes.add-outcome', $safe->id) }}">
                 @csrf
                 <div class="modal-body">
-                    <div class="alert alert-info">
-                        <small><strong>Current Balance:</strong> {{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</small>
+                    <div class="alert @if($safe->balance < 0)alert-danger@else alert-info@endif">
+                        <small><strong>Current Balance:</strong> <span @if($safe->balance < 0)style="color: #dc3545; font-weight: bold;"@endif>{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</span></small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Amount *</label>
-                        <input type="number" name="amount" class="form-control" step="0.01" min="0" max="{{ $safe->balance }}" required>
+                        <input type="number" name="amount" class="form-control" step="0.01" min="0" required>
+                        <small class="text-warning d-block mt-1"><i class="bi bi-exclamation-triangle"></i> Note: Balance can go negative if withdrawal exceeds current balance</small>
                     </div>
 
                     {{-- ← التعديل هنا --}}
