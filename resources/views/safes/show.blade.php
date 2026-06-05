@@ -55,7 +55,11 @@
             </div>
                 <div class="stat-content">
                 <h6><span class="safe-black-label">{{ __('messages.current_balance') }}</span></h6>
-                <h3 @if($safe->balance < 0)style="color: #dc3545;"@endif>{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</h3>
+                @if($safe->balance < 0)
+                    <h3 style="color: #dc3545;">{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</h3>
+                @else
+                    <h3>{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</h3>
+                @endif
             </div>
         </div>
     </div>
