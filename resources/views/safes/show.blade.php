@@ -115,7 +115,11 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.current_balance') }}</label>
-                        <p class="fw-bold" @if($safe->balance < 0)style="color: #dc3545;"@else class="text-success"@endif>{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</p>
+                        @if($safe->balance < 0)
+                            <p class="fw-bold" style="color: #dc3545;">{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</p>
+                        @else
+                            <p class="fw-bold text-success">{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</p>
+                        @endif
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.max_balance') }}</label>
