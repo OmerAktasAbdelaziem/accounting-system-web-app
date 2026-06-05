@@ -707,9 +707,15 @@
             <form method="POST" action="{{ route('safes.add-outcome', $safe->id) }}">
                 @csrf
                 <div class="modal-body">
-                    <div class="alert @if($safe->balance < 0)alert-danger@else alert-info@endif">
-                        <small><strong>Current Balance:</strong> <span @if($safe->balance < 0)style="color: #dc3545; font-weight: bold;"@endif>{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</span></small>
-                    </div>
+                    @if($safe->balance < 0)
+                        <div class="alert alert-danger">
+                            <small><strong>Current Balance:</strong> <span style="color: #dc3545; font-weight: bold;">{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</span></small>
+                        </div>
+                    @else
+                        <div class="alert alert-info">
+                            <small><strong>Current Balance:</strong> {{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</small>
+                        </div>
+                    @endif
                     <div class="mb-3">
                         <label class="form-label">Amount *</label>
                         <input type="number" name="amount" class="form-control" step="0.01" min="0" required>
