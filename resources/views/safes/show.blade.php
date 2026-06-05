@@ -53,7 +53,7 @@
             <div class="stat-icon" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">
                 <i class="bi bi-cash-coin"></i>
             </div>
-                <div class="stat-content">
+            <div class="stat-content">
                 <h6><span class="safe-black-label">{{ __('messages.current_balance') }}</span></h6>
                 @if($safe->balance < 0)
                     <h3 style="color: #dc3545;">{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</h3>
