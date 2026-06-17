@@ -31,7 +31,21 @@ class SupplierController extends Controller
             ->paginate(6)
             ->withQueryString();
 
-        return view('suppliers.index', compact('suppliers', 'search'));
+        $branchDebts = \App\Models\Branch::with(['suppliers.purchases', 'suppliers.payments', 'suppliers.branches'])->get();
+
+        $allBranchDebtsTotal = $branchDebts->sum(function ($branch) {
+            return $branch->suppliers->sum(function ($supplier) use ($branch) {
+                $totalPurchased = (float) $supplier->purchases->where('branch_id', $branch->id)->sum('total_amount');
+                $totalPaid = (float) $supplier->payments->where('branch_id', $branch->id)->sum('amount');
+                $openingBalance = (((int) $supplier->branch_id === (int) $branch->id || $supplier->branches->contains('id', $branch->id))
+                    ? (float) $supplier->opening_balance
+                    : 0.0);
+
+                return ($openingBalance + $totalPurchased) - $totalPaid;
+            });
+        });
+
+        return view('suppliers.index', compact('suppliers', 'search', 'allBranchDebtsTotal'));
     }
 
     public function create()

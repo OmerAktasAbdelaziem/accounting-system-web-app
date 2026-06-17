@@ -63,6 +63,23 @@
         @endfeature
     </div>
 
+    <div class="row g-3 mb-3">
+        <div class="col-12 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-start justify-content-between mb-3">
+                        <div>
+                            <h5 class="mb-1">{{ __('messages.branch_debts') }}</h5>
+                            <div class="text-muted small">{{ __('messages.total_branch_debts_summary') }}</div>
+                        </div>
+                        <div class="fs-3 fw-bold text-danger">{{ $currencySymbol }}{{ number_format((float) ($allBranchDebtsTotal ?? 0), 2) }}</div>
+                    </div>
+                    <p class="mb-0 text-muted">{{ __('messages.branch_debts_widget_text') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="card mb-3">
         <div class="card-body suppliers-search">
             <form method="GET" action="{{ route('suppliers.index') }}" class="row g-2 align-items-end">
