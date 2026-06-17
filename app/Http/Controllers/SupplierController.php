@@ -31,7 +31,9 @@ class SupplierController extends Controller
             ->paginate(6)
             ->withQueryString();
 
-        $branchDebts = \App\Models\Branch::with(['suppliers.purchases', 'suppliers.payments', 'suppliers.branches'])->get();
+        $branchDebts = \App\Models\Branch::with(['suppliers.purchases', 'suppliers.payments'])->get();
+        $branchCount = $branchDebts->count();
+        $supplierCount = $branchDebts->flatMap(fn ($branch) => $branch->suppliers->pluck('id'))->unique()->count();
 
         $allBranchDebtsTotal = $branchDebts->sum(function ($branch) {
             return $branch->suppliers->sum(function ($supplier) use ($branch) {
@@ -45,7 +47,28 @@ class SupplierController extends Controller
             });
         });
 
-        return view('suppliers.index', compact('suppliers', 'search', 'allBranchDebtsTotal'));
+        $totalPurchasedAcrossBranches = $branchDebts->sum(function ($branch) {
+            return $branch->suppliers->sum(fn ($supplier) => (float) $supplier->purchases->where('branch_id', $branch->id)->sum('total_amount'));
+        });
+
+        $totalPaidAcrossBranches = $branchDebts->sum(function ($branch) {
+            return $branch->suppliers->sum(fn ($supplier) => (float) $supplier->payments->where('branch_id', $branch->id)->sum('amount'));
+        });
+
+        $debtCoveragePercent = $totalPurchasedAcrossBranches > 0
+            ? (int) min(100, round(($totalPaidAcrossBranches / $totalPurchasedAcrossBranches) * 100))
+            : 0;
+
+        return view('suppliers.index', compact(
+            'suppliers',
+            'search',
+            'allBranchDebtsTotal',
+            'branchCount',
+            'supplierCount',
+            'totalPurchasedAcrossBranches',
+            'totalPaidAcrossBranches',
+            'debtCoveragePercent'
+        ));
     }
 
     public function create()
