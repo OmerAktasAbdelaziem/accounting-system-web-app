@@ -75,7 +75,7 @@
                         </div>
                         <div class="col-md-5 text-md-end">
                             <div class="text-uppercase small text-muted mb-2">{{ __('messages.outstanding') }}</div>
-                            <div class="debt-counter display-6 fw-bold text-danger">{{ $currencySymbol }}{{ number_format((float) ($allBranchDebtsTotal ?? 0), 2, '.', '') }}</div>
+                            <div class="debt-counter display-6 fw-bold text-danger">{{ $currencySymbol }}{{ number_format((float) ($allBranchDebtsTotal ?? 0), 2, '.', ',') }}</div>
                             <div class="small text-muted mt-1 d-block">{{ __('messages.total_branch_debts_summary') }}</div>
                         </div>
                     </div>
@@ -96,13 +96,13 @@
                         <div class="col-6 col-md-3">
                             <div class="rounded-4 bg-light border p-3 h-100">
                                 <div class="small text-muted mb-2">{{ __('messages.total_purchased') }}</div>
-                                <div class="h5 fw-bold mb-0">{{ $currencySymbol }}{{ number_format((float) ($totalPurchasedAcrossBranches ?? 0), 2, '.', '') }}</div>
+                                <div class="h5 fw-bold mb-0">{{ $currencySymbol }}{{ number_format((float) ($totalPurchasedAcrossBranches ?? 0), 2, '.', ',') }}</div>
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
                             <div class="rounded-4 bg-light border p-3 h-100">
                                 <div class="small text-muted mb-2">{{ __('messages.total_paid') }}</div>
-                                <div class="h5 fw-bold mb-0">{{ $currencySymbol }}{{ number_format((float) ($totalPaidAcrossBranches ?? 0), 2, '.', '') }}</div>
+                                <div class="h5 fw-bold mb-0">{{ $currencySymbol }}{{ number_format((float) ($totalPaidAcrossBranches ?? 0), 2, '.', ',') }}</div>
                             </div>
                         </div>
                     </div>
@@ -234,14 +234,19 @@
 function animateCounter(element, targetValue, duration = 1200) {
     const startValue = 0;
     const startTime = performance.now();
+    const formatter = new Intl.NumberFormat(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
 
     function update(now) {
         const elapsed = now - startTime;
         const progress = Math.min(elapsed / duration, 1);
         const value = startValue + (targetValue - startValue) * easeOutCubic(progress);
+        const formatted = formatter.format(value);
         element.textContent = element.textContent.startsWith('{{ $currencySymbol }}')
-            ? '{{ $currencySymbol }}' + value.toFixed(2)
-            : value.toFixed(2);
+            ? '{{ $currencySymbol }}' + formatted
+            : formatted;
 
         if (progress < 1) {
             requestAnimationFrame(update);
