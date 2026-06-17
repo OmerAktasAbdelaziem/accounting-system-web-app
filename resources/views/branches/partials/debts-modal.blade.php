@@ -1,5 +1,18 @@
+<style>
+    #branchDebtsModal .modal-dialog {
+        max-width: 900px;
+    }
+    #branchDebtsModal .modal-content {
+        max-height: calc(100vh - 120px);
+    }
+    #branchDebtsModal .modal-body {
+        max-height: calc(100vh - 220px);
+        overflow-y: auto;
+    }
+</style>
+
 <div class="modal fade" id="branchDebtsModal" tabindex="-1" aria-labelledby="branchDebtsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="branchDebtsModalLabel">{{ __('messages.branch_debts') }}</h5>
