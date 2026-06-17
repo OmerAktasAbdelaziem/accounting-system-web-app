@@ -79,7 +79,7 @@
                     @feature('branches')
                     <a href="{{ route('branches.show', $branch) }}" class="btn btn-sm btn-outline-secondary">{{ __('messages.view') }}</a>
                     @endfeature
-                    <button type="button" class="btn btn-sm btn-outline-danger" data-action="branch-debts" data-url="{{ route('branches.debts', $branch) }}">{{ __('messages.view_branch_debts') }}</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-action="branch-debts" data-url="{{ route('branches.debts', $branch) }}">{{ __('messages.branch_debts') }}</button>
                     @feature('branches.edit')
                     <a href="{{ route('branches.edit', $branch) }}" class="btn btn-sm btn-outline-primary">{{ __('messages.edit') }}</a>
                     @endfeature
@@ -128,7 +128,7 @@
                             <a href="{{ route('branches.show', $branch) }}" class="btn btn-sm btn-outline-secondary">{{ __('messages.view') }}</a>
                             @endfeature
 
-                            <button type="button" class="btn btn-sm btn-outline-danger" data-action="branch-debts" data-url="{{ route('branches.debts', $branch) }}">{{ __('messages.view_branch_debts') }}</button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-action="branch-debts" data-url="{{ route('branches.debts', $branch) }}">{{ __('messages.branch_debts') }}</button>
 
                             @feature('branches.edit')
                             <a href="{{ route('branches.edit', $branch) }}" class="btn btn-sm btn-outline-primary">{{ __('messages.edit') }}</a>

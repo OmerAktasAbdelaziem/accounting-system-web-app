@@ -218,7 +218,7 @@
 
                         <div class="mb-4">
                             <button type="button" class="btn btn-outline-danger" data-action="branch-debts" data-url="{{ route('branches.debts', $branch) }}">
-                                <i class="bi bi-journal-text me-2"></i>{{ __('messages.view_branch_debts') }}
+                                <i class="bi bi-journal-text me-2"></i>{{ __('messages.branch_debts') }}
                             </button>
                         </div>
 

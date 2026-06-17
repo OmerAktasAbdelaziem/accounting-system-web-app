@@ -451,7 +451,7 @@ return [
     'manager_name' => 'Manager Name',
     'city' => 'City',
     'branch_debts' => 'Branch Debts',
-    'view_branch_debts' => 'View Branch Debts',
+    'view_branch_debts' => 'Branch Debts',
     'branch_debts_details_text' => 'Supplier purchases, payments and outstanding balances for this branch.',
     'total_suppliers' => 'Suppliers',
     'total_outstanding' => 'Total Outstanding',
