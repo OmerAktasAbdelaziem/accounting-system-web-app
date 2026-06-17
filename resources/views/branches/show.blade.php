@@ -216,6 +216,12 @@
                             <span class="glass-pill"><i class="bi bi-person-badge"></i>{{ $branch->manager_name ?: __('messages.not_available') }}</span>
                         </div>
 
+                        <div class="mb-4">
+                            <button type="button" class="btn btn-outline-danger" data-action="branch-debts" data-url="{{ route('branches.debts', $branch) }}">
+                                <i class="bi bi-journal-text me-2"></i>{{ __('messages.view_branch_debts') }}
+                            </button>
+                        </div>
+
                         <div class="row g-3">
                             @foreach($summaryCards as $card)
                                 <div class="col-6 col-md-4 col-xl-3">
@@ -432,6 +438,11 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="mt-4">
+                                            <button type="button" class="btn btn-outline-danger" data-action="branch-debts" data-url="{{ route('branches.debts', $branch) }}">
+                                                <i class="bi bi-journal-text me-2"></i>{{ __('messages.view_branch_debts') }}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -610,6 +621,8 @@
         </div>
     </div>
 </div>
+
+@include('branches.partials.debts-modal')
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {

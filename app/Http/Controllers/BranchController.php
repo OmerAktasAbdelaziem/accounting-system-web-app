@@ -18,7 +18,7 @@ class BranchController extends Controller
             }
 
             return $next($request);
-        })->only(['index', 'show']);
+        })->only(['index', 'show', 'debts']);
     }
 
     public function index()
@@ -212,5 +212,36 @@ class BranchController extends Controller
         $employee->branches()->detach($branch->id);
 
         return back()->with('success', $employee->name . ' removed from branch successfully!');
+    }
+
+    public function debts(Branch $branch)
+    {
+        $branchSuppliers = $branch->suppliers()
+            ->with(['purchases' => function ($query) use ($branch) {
+                $query->where('branch_id', $branch->id);
+            }])
+            ->with(['payments' => function ($query) use ($branch) {
+                $query->where('branch_id', $branch->id);
+            }])
+            ->latest()
+            ->get()
+            ->transform(function (Supplier $supplier) use ($branch) {
+                $totalPurchased = (float) $supplier->purchases->sum('total_amount');
+                $totalPaid = (float) $supplier->payments->sum('amount');
+                $openingBalance = (((int) $supplier->branch_id === (int) $branch->id || $supplier->branches()->whereKey($branch->id)->exists())
+                    ? (float) $supplier->opening_balance
+                    : 0.0);
+
+                $supplier->opening_balance_amount = $openingBalance;
+                $supplier->branch_total_purchased = $totalPurchased;
+                $supplier->branch_total_paid = $totalPaid;
+                $supplier->outstanding_amount = ($openingBalance + $totalPurchased) - $totalPaid;
+
+                return $supplier;
+            });
+
+        $branchOutstandingTotal = (float) $branchSuppliers->sum('outstanding_amount');
+
+        return view('branches.partials.debts-content', compact('branch', 'branchSuppliers', 'branchOutstandingTotal'));
     }
 }

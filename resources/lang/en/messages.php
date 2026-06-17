@@ -450,6 +450,15 @@ return [
     'branch_deleted_successfully' => 'Branch deleted successfully',
     'manager_name' => 'Manager Name',
     'city' => 'City',
+    'branch_debts' => 'Branch Debts',
+    'view_branch_debts' => 'View Branch Debts',
+    'branch_debts_details_text' => 'Supplier purchases, payments and outstanding balances for this branch.',
+    'total_suppliers' => 'Suppliers',
+    'total_outstanding' => 'Total Outstanding',
+    'branch_opening' => 'Branch opening',
+    'no_branch_debts' => 'No supplier debts found for this branch.',
+    'branch_debts_load_error' => 'Failed to load branch debts. Please try again.',
+    'loading' => 'Loading...',
 
     // Generic Actions
     'created' => 'Created',

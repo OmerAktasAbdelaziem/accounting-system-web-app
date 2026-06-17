@@ -175,11 +175,13 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const input = document.getElementById('supplier-search');
-    const container = document.getElementById('suppliers-list-container');
-    if (!input || !container) return;
+    const desktopContainer = document.getElementById('suppliers-list-container');
+    const mobileContainer = document.querySelector('.suppliers-mobile-list');
+    if (!input || (!desktopContainer && !mobileContainer)) return;
 
     let timer = null;
     const debounceMs = 300;
+
     async function fetchAndRender(urlOrQ) {
         try {
             let url;
@@ -194,14 +196,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const resp = await fetch(url.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
             if (!resp.ok) throw new Error('Network response was not ok');
+
             const html = await resp.text();
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
-            const newContainer = doc.getElementById('suppliers-list-container');
-            if (newContainer) {
-                container.innerHTML = newContainer.innerHTML;
-                window.history.replaceState({}, '', url);
+            const newDesktopContainer = doc.getElementById('suppliers-list-container');
+            const newMobileContainer = doc.querySelector('.suppliers-mobile-list');
+
+            if (desktopContainer && newDesktopContainer) {
+                desktopContainer.innerHTML = newDesktopContainer.innerHTML;
             }
+            if (mobileContainer && newMobileContainer) {
+                mobileContainer.innerHTML = newMobileContainer.innerHTML;
+            }
+
+            window.history.replaceState({}, '', url);
         } catch (err) {
             console.error('Supplier search failed', err);
         }
@@ -212,19 +221,17 @@ document.addEventListener('DOMContentLoaded', function () {
         timer = setTimeout(() => fetchAndRender(input.value.trim()), debounceMs);
     });
 
-    // Delegate clicks inside the container to handle pagination links via AJAX
-    container.addEventListener('click', function (e) {
-        const anchor = e.target.closest('a');
+    document.addEventListener('click', function (e) {
+        const anchor = e.target.closest('.pagination a');
         if (!anchor) return;
+
         const href = anchor.getAttribute('href') || '';
-        // detect Laravel paginator links which include "page=" query param
-        if (href.includes('page=')) {
-            e.preventDefault();
-            fetchAndRender(href);
-        }
+        if (!href.includes('page=')) return;
+
+        e.preventDefault();
+        fetchAndRender(href);
     });
 });
-</script>
 </script>
 @endpush
 

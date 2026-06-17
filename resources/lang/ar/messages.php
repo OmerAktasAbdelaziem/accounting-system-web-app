@@ -450,6 +450,15 @@ return [
     'branch_deleted_successfully' => 'تم حذف الفرع بنجاح',
     'manager_name' => 'اسم المدير',
     'city' => 'المدينة',
+    'branch_debts' => 'ديون الفرع',
+    'view_branch_debts' => 'عرض ديون الفرع',
+    'branch_debts_details_text' => 'المشتريات والمدفوعات والأرصدة المستحقة للموردين في هذا الفرع.',
+    'total_suppliers' => 'الموردين',
+    'total_outstanding' => 'إجمالي المستحق',
+    'branch_opening' => 'الرصيد الافتتاحي للفرع',
+    'no_branch_debts' => 'لا توجد ديون موردين لهذا الفرع.',
+    'branch_debts_load_error' => 'فشل تحميل ديون الفرع. حاول مرة أخرى.',
+    'loading' => 'جاري التحميل...',
 
     // Generic Actions
     'created' => 'تم الإنشاء',
