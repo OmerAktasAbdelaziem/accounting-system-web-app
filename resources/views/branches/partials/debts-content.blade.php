@@ -27,7 +27,6 @@
                         <tr>
                             <td>
                                 <div class="fw-semibold">{{ $supplier->name }}</div>
-                                <div class="text-muted small">{{ __('messages.branch_opening') }} {{ $currencySymbol }}{{ number_format((float) ($supplier->opening_balance_amount ?? 0), 2) }}</div>
                             </td>
                             <td class="text-end text-secondary">{{ $currencySymbol }}{{ number_format((float) ($supplier->opening_balance_amount ?? 0), 2) }}</td>
                             <td class="text-end text-primary">{{ $currencySymbol }}{{ number_format((float) ($supplier->branch_total_purchased ?? 0), 2) }}</td>
