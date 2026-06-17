@@ -455,6 +455,8 @@ return [
     'branch_debts_details_text' => 'المشتريات والمدفوعات والأرصدة المستحقة للموردين في هذا الفرع.',
     'total_branch_debts_summary' => 'إجمالي الديون المستحقة عبر جميع الفروع.',
     'branch_debts_widget_text' => 'ملخص ديون الموردين والمستحقات عبر جميع الفروع.',
+    'payment_coverage' => 'نسبة التغطية',
+    'branches' => 'الفروع',
     'total_suppliers' => 'الموردين',
     'total_outstanding' => 'إجمالي المستحق',
     'branch_opening' => 'الرصيد الافتتاحي للفرع',

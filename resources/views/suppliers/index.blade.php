@@ -65,59 +65,55 @@
 
     <div class="row g-3 mb-4">
         <div class="col-12">
-            <div class="card border-0 shadow-soft overflow-hidden" style="border-radius: 28px; background: linear-gradient(135deg, #3b78ff 0%, #38c7ab 100%); color: #fff;">
-                <div class="card-body position-relative p-4">
-                    <div class="position-absolute top-0 end-0 opacity-15" style="font-size: 8rem; line-height: 1; transform: translate(25%, -20%);">
-                        <strong>₿</strong>
-                    </div>
-                    <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3">
-                        <div class="me-3">
-                            <span class="badge bg-white bg-opacity-15 text-white rounded-pill px-3 py-2">{{ __('messages.branch_debts') }}</span>
-                            <h2 class="mt-3 mb-2 fw-bold">{{ __('messages.branch_debts') }}</h2>
-                            <p class="mb-0 opacity-85">{{ __('messages.branch_debts_widget_text') }}</p>
+            <div class="card shadow-sm rounded-4 border-0">
+                <div class="card-body p-4">
+                    <div class="row align-items-center gy-3">
+                        <div class="col-md-7">
+                            <span class="badge bg-primary text-white rounded-pill px-3 py-2">{{ __('messages.branch_debts') }}</span>
+                            <h4 class="mt-3 mb-2 fw-semibold text-dark">{{ __('messages.branch_debts') }}</h4>
+                            <p class="text-secondary mb-0">{{ __('messages.branch_debts_widget_text') }}</p>
                         </div>
-
-                        <div class="text-end">
-                            <div class="text-uppercase small opacity-75 mb-2">{{ __('messages.outstanding') }}</div>
-                            <div class="debt-counter display-5 fw-bold">{{ $currencySymbol }}{{ number_format((float) ($allBranchDebtsTotal ?? 0), 2) }}</div>
-                            <div class="small mt-1 opacity-75">{{ __('messages.total_branch_debts_summary') }}</div>
+                        <div class="col-md-5 text-md-end">
+                            <div class="text-uppercase small text-muted mb-2">{{ __('messages.outstanding') }}</div>
+                            <div class="debt-counter display-6 fw-bold text-danger">{{ $currencySymbol }}{{ number_format((float) ($allBranchDebtsTotal ?? 0), 2, '.', '') }}</div>
+                            <div class="small text-muted mt-1 d-block">{{ __('messages.total_branch_debts_summary') }}</div>
                         </div>
                     </div>
 
-                    <div class="row g-3 mt-4 text-white">
+                    <div class="row g-3 mt-4">
                         <div class="col-6 col-md-3">
-                            <div class="rounded-4 bg-white bg-opacity-15 p-3">
-                                <div class="small opacity-75">{{ __('messages.branches') }}</div>
-                                <div class="h4 fw-bold mb-0">{{ $branchCount }}</div>
+                            <div class="rounded-4 bg-light border p-3 h-100">
+                                <div class="small text-muted mb-2">{{ __('messages.branches') }}</div>
+                                <div class="h5 fw-bold mb-0">{{ $branchCount }}</div>
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
-                            <div class="rounded-4 bg-white bg-opacity-15 p-3">
-                                <div class="small opacity-75">{{ __('messages.total_suppliers') }}</div>
-                                <div class="h4 fw-bold mb-0">{{ $supplierCount }}</div>
+                            <div class="rounded-4 bg-light border p-3 h-100">
+                                <div class="small text-muted mb-2">{{ __('messages.total_suppliers') }}</div>
+                                <div class="h5 fw-bold mb-0">{{ $supplierCount }}</div>
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
-                            <div class="rounded-4 bg-white bg-opacity-15 p-3">
-                                <div class="small opacity-75">{{ __('messages.total_purchased') }}</div>
-                                <div class="h4 fw-bold mb-0">{{ $currencySymbol }}{{ number_format((float) ($totalPurchasedAcrossBranches ?? 0), 2) }}</div>
+                            <div class="rounded-4 bg-light border p-3 h-100">
+                                <div class="small text-muted mb-2">{{ __('messages.total_purchased') }}</div>
+                                <div class="h5 fw-bold mb-0">{{ $currencySymbol }}{{ number_format((float) ($totalPurchasedAcrossBranches ?? 0), 2, '.', '') }}</div>
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
-                            <div class="rounded-4 bg-white bg-opacity-15 p-3">
-                                <div class="small opacity-75">{{ __('messages.total_paid') }}</div>
-                                <div class="h4 fw-bold mb-0">{{ $currencySymbol }}{{ number_format((float) ($totalPaidAcrossBranches ?? 0), 2) }}</div>
+                            <div class="rounded-4 bg-light border p-3 h-100">
+                                <div class="small text-muted mb-2">{{ __('messages.total_paid') }}</div>
+                                <div class="h5 fw-bold mb-0">{{ $currencySymbol }}{{ number_format((float) ($totalPaidAcrossBranches ?? 0), 2, '.', '') }}</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-4">
-                        <div class="d-flex justify-content-between align-items-center mb-2 text-white-75 small">
-                            <span>{{ __('Payment coverage') }}</span>
-                            <span>{{ $debtCoveragePercent }}%</span>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small text-muted">{{ __('messages.payment_coverage') }}</span>
+                            <span class="small fw-semibold">{{ $debtCoveragePercent }}%</span>
                         </div>
-                        <div class="progress rounded-pill" style="height: 10px; background: rgba(255,255,255,0.18);">
-                            <div class="progress-bar rounded-pill" role="progressbar" aria-valuenow="{{ $debtCoveragePercent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $debtCoveragePercent }}%; background: rgba(255,255,255,0.95);"></div>
+                        <div class="progress rounded-pill" style="height: 10px; background: #f1f3f5;">
+                            <div class="progress-bar bg-primary rounded-pill" role="progressbar" aria-valuenow="{{ $debtCoveragePercent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $debtCoveragePercent }}%;"></div>
                         </div>
                     </div>
                 </div>

@@ -455,6 +455,8 @@ return [
     'branch_debts_details_text' => 'Supplier purchases, payments and outstanding balances for this branch.',
     'total_branch_debts_summary' => 'Total outstanding debts across all branches.',
     'branch_debts_widget_text' => 'Summary of all branch supplier debts and outstanding balances.',
+    'payment_coverage' => 'Payment Coverage',
+    'branches' => 'Branches',
     'total_suppliers' => 'Suppliers',
     'total_outstanding' => 'Total Outstanding',
     'branch_opening' => 'Branch opening',
