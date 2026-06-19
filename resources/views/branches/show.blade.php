@@ -348,9 +348,7 @@
                                 </div>
                             @endforeach
                         </div>
-                    </div>
 
-                    <div class="tab-pane fade" id="operations-pane" role="tabpanel" aria-labelledby="operations-tab">
                         <div class="row g-4">
                             <div class="col-xl-6">
                                 <div class="card tab-block h-100">
@@ -449,6 +447,37 @@
                         </div>
                     </div>
 
+                    <div class="tab-pane fade" id="operations-pane" role="tabpanel" aria-labelledby="operations-tab">
+                        <div class="row g-4">
+                            <div class="col-xl-12">
+                                <div class="card tab-block h-100">
+                                    <div class="card-header panel-head py-3 px-4">
+                                        <div class="section-title mb-1">Branch analytics</div>
+                                        <h5 class="mb-0">Sales trend</h5>
+                                    </div>
+                                    <div class="card-body p-4">
+                                        <div class="chart-box" style="min-height: 320px;">
+                                            <canvas id="branchSalesTrendChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-12">
+                                <div class="card tab-block h-100">
+                                    <div class="card-header panel-head py-3 px-4">
+                                        <div class="section-title mb-1">Branch analytics</div>
+                                        <h5 class="mb-0">Income vs outcome</h5>
+                                    </div>
+                                    <div class="card-body p-4">
+                                        <div class="chart-box" style="min-height: 320px;">
+                                            <canvas id="branchCashFlowChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="tab-pane fade" id="records-pane" role="tabpanel" aria-labelledby="records-tab">
                         <div class="d-grid gap-4">
                             <div class="card tab-block" data-pagination-section="branch-payrolls" id="branch-payrolls-section">
@@ -690,6 +719,76 @@ document.addEventListener('DOMContentLoaded', function () {
         event.stopImmediatePropagation();
         loadPaginatedSection(link, true);
     }, true);
+
+    const branchMonths = @json($branchChartMonths ?? []);
+    const branchSalesTrendData = @json($branchSalesTrendData ?? []);
+    const branchIncomeData = @json($branchIncomeData ?? []);
+    const branchOutcomeData = @json($branchOutcomeData ?? []);
+
+    const branchSalesTrendCtx = document.getElementById('branchSalesTrendChart')?.getContext('2d');
+    const branchCashFlowCtx = document.getElementById('branchCashFlowChart')?.getContext('2d');
+
+    if (branchSalesTrendCtx) {
+        new Chart(branchSalesTrendCtx, {
+            type: 'line',
+            data: {
+                labels: branchMonths,
+                datasets: [{
+                    label: 'Sales',
+                    data: branchSalesTrendData,
+                    borderColor: '#0d6efd',
+                    backgroundColor: 'rgba(13, 110, 253, 0.16)',
+                    fill: true,
+                    tension: 0.32,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#0d6efd',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
+
+    if (branchCashFlowCtx) {
+        new Chart(branchCashFlowCtx, {
+            type: 'bar',
+            data: {
+                labels: branchMonths,
+                datasets: [
+                    {
+                        label: 'Income',
+                        data: branchIncomeData,
+                        backgroundColor: 'rgba(16, 185, 129, 0.85)',
+                        borderRadius: 10,
+                    },
+                    {
+                        label: 'Outcome',
+                        data: branchOutcomeData,
+                        backgroundColor: 'rgba(220, 38, 38, 0.85)',
+                        borderRadius: 10,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
 
     window.addEventListener('popstate', function (event) {
         if (event.state && event.state.paginatedUrl) {
