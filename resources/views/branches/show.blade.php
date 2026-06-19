@@ -306,6 +306,45 @@
             </div>
         </div>
 
+        <div class="mb-4">
+            <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+                <div>
+                    <div class="section-title mb-1">Branch analytics</div>
+                    <h3 class="h4 mb-1">Branch performance summary</h3>
+                    <p class="text-muted mb-0">Monthly sales and cash flow metrics for this branch only.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-xl-6">
+                <div class="card panel-card h-100">
+                    <div class="card-header panel-head py-3 px-4">
+                        <div class="section-title mb-1">Branch analytics</div>
+                        <h5 class="mb-0">Sales trend</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="chart-box" style="min-height: 320px;">
+                            <canvas id="branchSalesTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="card panel-card h-100">
+                    <div class="card-header panel-head py-3 px-4">
+                        <div class="section-title mb-1">Branch analytics</div>
+                        <h5 class="mb-0">Income vs outcome</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="chart-box" style="min-height: 320px;">
+                            <canvas id="branchCashFlowChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="card panel-card mb-4">
             <div class="card-body p-3 p-md-4">
                 <div class="nav-surface">
@@ -348,7 +387,9 @@
                                 </div>
                             @endforeach
                         </div>
+                    </div>
 
+                    <div class="tab-pane fade" id="operations-pane" role="tabpanel" aria-labelledby="operations-tab">
                         <div class="row g-4">
                             <div class="col-xl-6">
                                 <div class="card tab-block h-100">
@@ -440,38 +481,6 @@
                                             <button type="button" class="btn btn-outline-danger" data-action="branch-debts" data-url="{{ route('branches.debts', $branch) }}">
                                                 <i class="bi bi-journal-text me-2"></i>{{ __('messages.view_branch_debts') }}
                                             </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tab-pane fade" id="operations-pane" role="tabpanel" aria-labelledby="operations-tab">
-                        <div class="row g-4">
-                            <div class="col-xl-12">
-                                <div class="card tab-block h-100">
-                                    <div class="card-header panel-head py-3 px-4">
-                                        <div class="section-title mb-1">Branch analytics</div>
-                                        <h5 class="mb-0">Sales trend</h5>
-                                    </div>
-                                    <div class="card-body p-4">
-                                        <div class="chart-box" style="min-height: 320px;">
-                                            <canvas id="branchSalesTrendChart"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-12">
-                                <div class="card tab-block h-100">
-                                    <div class="card-header panel-head py-3 px-4">
-                                        <div class="section-title mb-1">Branch analytics</div>
-                                        <h5 class="mb-0">Income vs outcome</h5>
-                                    </div>
-                                    <div class="card-body p-4">
-                                        <div class="chart-box" style="min-height: 320px;">
-                                            <canvas id="branchCashFlowChart"></canvas>
                                         </div>
                                     </div>
                                 </div>
