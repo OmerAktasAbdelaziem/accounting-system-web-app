@@ -1,6 +1,6 @@
 @extends('layouts.super-admin')
 
-@section('title', 'Super Admin Dashboard')
+@section('title', __('messages.dashboard_super_admin_title'))
 
 @section('content')
 <style>
@@ -569,31 +569,31 @@
     <div class="dashboard-hero">
         <div class="dashboard-hero-inner redesigned-hero">
             <div class="hero-left">
-                <h1 class="dashboard-title"><i class="bi bi-speedometer2 me-2"></i>Super Admin Dashboard</h1>
-                <p class="dashboard-subtitle">Welcome back, <strong>{{ auth()->user()->name }}</strong>. This view tracks live sales, cash flow, subscriptions and operational shortcuts.</p>
+                <h1 class="dashboard-title"><i class="bi bi-speedometer2 me-2"></i>{{ __('messages.dashboard_super_admin_title') }}</h1>
+                <p class="dashboard-subtitle">{{ __('messages.dashboard_welcome_back_prefix') }} <strong>{{ auth()->user()->name }}</strong>. {{ __('messages.dashboard_welcome_back_suffix') }}</p>
                 <div class="hero-actions small-links">
-                    <a href="{{ route('reports.sales') }}" class="btn btn-outline-light btn-sm"><i class="bi bi-graph-up me-1"></i>Sales</a>
-                    <a href="{{ route('reports.financial') }}" class="btn btn-outline-light btn-sm"><i class="bi bi-journal-text me-1"></i>Financial</a>
-                    <a href="{{ route('super-admin.feature-access.index') }}" class="btn btn-outline-light btn-sm"><i class="bi bi-shield-lock me-1"></i>Features</a>
+                    <a href="{{ route('reports.sales') }}" class="btn btn-outline-light btn-sm"><i class="bi bi-graph-up me-1"></i>{{ __('messages.sales_report') }}</a>
+                    <a href="{{ route('reports.financial') }}" class="btn btn-outline-light btn-sm"><i class="bi bi-journal-text me-1"></i>{{ __('messages.financial_report') }}</a>
+                    <a href="{{ route('super-admin.feature-access.index') }}" class="btn btn-outline-light btn-sm"><i class="bi bi-shield-lock me-1"></i>{{ __('messages.dashboard_action_features') }}</a>
                 </div>
             </div>
 
             <div class="hero-right">
                 <div class="hero-meta">
                     <div class="hero-meta-item">
-                        <span class="hero-meta-label">Active Merchants</span>
+                        <span class="hero-meta-label">{{ __('messages.dashboard_active_merchants') }}</span>
                         <div class="hero-meta-value"><span class="kpi-value-num" data-target="{{ $activeMerchants }}">0</span></div>
                     </div>
                     <div class="hero-meta-item">
-                        <span class="hero-meta-label">Net Cash Flow</span>
+                        <span class="hero-meta-label">{{ __('messages.dashboard_net_cash_flow') }}</span>
                         <div class="hero-meta-value"><span class="kpi-value-num" data-currency="1" data-target="{{ $netCashFlow }}">0</span></div>
                     </div>
                     <div class="hero-meta-item">
-                        <span class="hero-meta-label">Sales Count</span>
+                        <span class="hero-meta-label">{{ __('messages.dashboard_sales_count') }}</span>
                         <div class="hero-meta-value"><span class="kpi-value-num" data-target="{{ $salesCount }}">0</span></div>
                     </div>
                     <div class="hero-meta-item">
-                        <span class="hero-meta-label">Active Safes</span>
+                        <span class="hero-meta-label">{{ __('messages.dashboard_active_safes') }}</span>
                         <div class="hero-meta-value"><span class="kpi-value-num" data-target="{{ $activeSafes }}">0</span></div>
                     </div>
                 </div>
@@ -607,7 +607,7 @@
             </svg>
         </div>
 
-        <script>
+        {{ __('<script>
             (function(){
                 const currency = "{{ $currencySymbol }}";
                 function easeOutCubic(t){return 1-Math.pow(1-t,3)}
@@ -632,64 +632,64 @@
                     requestAnimationFrame(step);
                 });
             })();
-        </script>
+        </script>') }}
     </div>
 
     <div class="quick-actions-section">
         <div class="section-heading">
             <div>
-                <h2 class="section-title"><i class="bi bi-lightning-charge-fill text-warning"></i>Quick actions</h2>
-                <p class="section-subtitle">Fast access to the most used admin, sales, and finance flows.</p>
+                <h2 class="section-title"><i class="bi bi-lightning-charge-fill text-warning"></i>{{ __('messages.dashboard_quick_actions_title') }}</h2>
+                <p class="section-subtitle">{{ __('messages.dashboard_quick_actions_subtitle') }}</p>
             </div>
         </div>
         <div class="quick-actions-grid">
             <a href="{{ route('super-admin.merchants.create') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-building"></i></div>
-                <div class="quick-action-text"><strong>New Merchant</strong><span>Create merchant account</span></div>
+                <div class="quick-action-text"><strong>{{ __('messages.dashboard_action_new_merchant') }}</strong><span>{{ __('messages.dashboard_action_new_merchant_note') }}</span></div>
             </a>
             <a href="{{ route('super-admin.users.create') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-person-plus"></i></div>
-                <div class="quick-action-text"><strong>New User</strong><span>Register admin user</span></div>
+                <div class="quick-action-text"><strong>{{ __('messages.dashboard_action_new_user') }}</strong><span>{{ __('messages.dashboard_action_new_user_note') }}</span></div>
             </a>
             <a href="{{ route('super-admin.packages.create') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-box-seam"></i></div>
-                <div class="quick-action-text"><strong>New Package</strong><span>Build subscription plan</span></div>
+                <div class="quick-action-text"><strong>{{ __('messages.dashboard_action_new_package') }}</strong><span>{{ __('messages.dashboard_action_new_package_note') }}</span></div>
             </a>
             <a href="{{ route('super-admin.subscriptions.create') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-bookmark-check"></i></div>
-                <div class="quick-action-text"><strong>New Subscription</strong><span>Activate package</span></div>
+                <div class="quick-action-text"><strong>{{ __('messages.dashboard_action_new_subscription') }}</strong><span>{{ __('messages.dashboard_action_new_subscription_note') }}</span></div>
             </a>
             <a href="{{ route('products.create') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-box"></i></div>
-                <div class="quick-action-text"><strong>Add Product</strong><span>Open product form</span></div>
+                <div class="quick-action-text"><strong>{{ __('messages.add_product') }}</strong><span>{{ __('messages.dashboard_action_add_product_note') }}</span></div>
             </a>
             <a href="{{ route('sales.index') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-cart-check"></i></div>
-                <div class="quick-action-text"><strong>Sales</strong><span>View sales entries</span></div>
+                <div class="quick-action-text"><strong>{{ __('messages.dashboard_action_sales') }}</strong><span>{{ __('messages.dashboard_action_sales_note') }}</span></div>
             </a>
             <a href="{{ route('reports.sales') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-graph-up-arrow"></i></div>
-                <div class="quick-action-text"><strong>Sales Report</strong><span>Open report page</span></div>
+                <div class="quick-action-text"><strong>{{ __('messages.sales_report') }}</strong><span>{{ __('messages.dashboard_action_sales_report_note') }}</span></div>
             </a>
             <a href="{{ route('reports.financial') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-receipt"></i></div>
-                <div class="quick-action-text"><strong>Financial Report</strong><span>Review accounts</span></div>
+                <div class="quick-action-text"><strong>{{ __('messages.financial_report') }}</strong><span>{{ __('messages.dashboard_action_financial_report_note') }}</span></div>
             </a>
             <a href="{{ route('safes.index') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-safe"></i></div>
-                <div class="quick-action-text"><strong>Safes</strong><span>Open safes module</span></div>
+                <div class="quick-action-text"><strong>{{ __('messages.safes') }}</strong><span>{{ __('messages.dashboard_action_safes_note') }}</span></div>
             </a>
             <a href="{{ route('super-admin.feature-access.index') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-shield-lock"></i></div>
-                <div class="quick-action-text"><strong>Features</strong><span>Manage access</span></div>
+                <div class="quick-action-text"><strong>{{ __('messages.dashboard_action_features') }}</strong><span>{{ __('messages.dashboard_action_features_note') }}</span></div>
             </a>
             <button type="button" class="quick-action text-start" data-bs-toggle="modal" data-bs-target="#incomeModal">
                 <div class="quick-action-icon"><i class="bi bi-arrow-down-circle"></i></div>
-                <div class="quick-action-text"><strong>Add Income</strong><span>Record cash in</span></div>
+                <div class="quick-action-text"><strong>{{ __('messages.dashboard_action_add_income') }}</strong><span>{{ __('messages.dashboard_action_add_income_note') }}</span></div>
             </button>
             <button type="button" class="quick-action text-start" data-bs-toggle="modal" data-bs-target="#outcomeModal">
                 <div class="quick-action-icon"><i class="bi bi-arrow-up-circle"></i></div>
-                <div class="quick-action-text"><strong>Add Outcome</strong><span>Record cash out</span></div>
+                <div class="quick-action-text"><strong>{{ __('messages.dashboard_action_add_outcome') }}</strong><span>{{ __('messages.dashboard_action_add_outcome_note') }}</span></div>
             </button>
         </div>
     </div>
@@ -697,97 +697,97 @@
     <div class="metrics-section">
         <div class="section-heading">
             <div>
-                <h2 class="section-title"><i class="bi bi-bar-chart-line-fill text-warning"></i>Key metrics</h2>
-                <p class="section-subtitle">Live financial and operational totals refreshed from controller data.</p>
+                <h2 class="section-title"><i class="bi bi-bar-chart-line-fill text-warning"></i>{{ __('messages.dashboard_key_metrics_title') }}</h2>
+                <p class="section-subtitle">{{ __('messages.dashboard_key_metrics_subtitle') }}</p>
             </div>
         </div>
         <div class="metric-grid">
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
-                        <span class="metric-label">Subscription Revenue</span>
+                        <span class="metric-label">{{ __('messages.dashboard_subscription_revenue') }}</span>
                         <div class="metric-value" id="metric-total-revenue">{{ $currencySymbol }}{{ number_format($totalRevenue, 2) }}</div>
                     </div>
                     <div class="metric-badge revenue"><i class="bi bi-cash-coin"></i></div>
                 </div>
-                <div class="metric-note"><i class="bi bi-arrow-up-right"></i>Active plan income</div>
+                <div class="metric-note"><i class="bi bi-arrow-up-right"></i>{{ __('messages.dashboard_active_plan_income') }}</div>
             </div>
 
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
-                        <span class="metric-label">Sales</span>
+                        <span class="metric-label">{{ __('messages.dashboard_action_sales') }}</span>
                         <div class="metric-value" id="metric-total-sales">{{ $currencySymbol }}{{ number_format($totalSales, 2) }}</div>
                     </div>
                     <div class="metric-badge sales"><i class="bi bi-bag-check"></i></div>
                 </div>
-                <div class="metric-note"><i class="bi bi-receipt"></i><span id="metric-sales-count">{{ $salesCount }}</span> transactions</div>
+                <div class="metric-note"><i class="bi bi-receipt"></i><span id="metric-sales-count">{{ $salesCount }}</span> {{ __('messages.dashboard_transactions') }}</div>
             </div>
 
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
-                        <span class="metric-label">Income</span>
+                        <span class="metric-label">{{ __('messages.dashboard_income') }}</span>
                         <div class="metric-value" id="metric-total-income">{{ $currencySymbol }}{{ number_format($totalIncome, 2) }}</div>
                     </div>
                     <div class="metric-badge income"><i class="bi bi-arrow-down-circle"></i></div>
                 </div>
-                <div class="metric-note"><i class="bi bi-safe"></i>Safe income entries</div>
+                <div class="metric-note"><i class="bi bi-safe"></i>{{ __('messages.dashboard_safe_income_entries') }}</div>
             </div>
 
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
-                        <span class="metric-label">Outcome</span>
+                        <span class="metric-label">{{ __('messages.dashboard_outcome') }}</span>
                         <div class="metric-value" id="metric-total-outcome">{{ $currencySymbol }}{{ number_format($totalOutcome, 2) }}</div>
                     </div>
                     <div class="metric-badge outcome"><i class="bi bi-arrow-up-circle"></i></div>
                 </div>
-                <div class="metric-note"><i class="bi bi-credit-card"></i>Safe outcome entries</div>
+                <div class="metric-note"><i class="bi bi-credit-card"></i>{{ __('messages.dashboard_safe_outcome_entries') }}</div>
             </div>
 
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
-                        <span class="metric-label">Net Cash Flow</span>
+                        <span class="metric-label">{{ __('messages.dashboard_net_cash_flow') }}</span>
                         <div class="metric-value" id="metric-net-cash-flow">{{ $currencySymbol }}{{ number_format($netCashFlow, 2) }}</div>
                     </div>
                     <div class="metric-badge cash"><i class="bi bi-activity"></i></div>
                 </div>
-                <div class="metric-note"><i class="bi bi-graph-up"></i>Income + sales - outcome</div>
+                <div class="metric-note"><i class="bi bi-graph-up"></i>{{ __('messages.dashboard_net_cash_flow_note') }}</div>
             </div>
 
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
-                        <span class="metric-label">Merchants</span>
+                        <span class="metric-label">{{ __('messages.dashboard_merchants') }}</span>
                         <div class="metric-value" id="metric-total-merchants">{{ $totalMerchants }}</div>
                     </div>
                     <div class="metric-badge default"><i class="bi bi-building"></i></div>
                 </div>
-                <div class="metric-note"><i class="bi bi-check-circle"></i><span id="metric-active-merchants">{{ $activeMerchants }}</span> active</div>
+                <div class="metric-note"><i class="bi bi-check-circle"></i><span id="metric-active-merchants">{{ $activeMerchants }}</span> {{ __('messages.active') }}</div>
             </div>
 
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
-                        <span class="metric-label">Subscriptions</span>
+                        <span class="metric-label">{{ __('messages.dashboard_subscriptions') }}</span>
                         <div class="metric-value" id="metric-active-subscriptions">{{ $activeSubscriptions }}</div>
                     </div>
                     <div class="metric-badge default"><i class="bi bi-bookmark-check"></i></div>
                 </div>
-                <div class="metric-note"><i class="bi bi-exclamation-circle"></i><span id="metric-expiring-soon">{{ $expiringSoon }}</span> expiring soon</div>
+                <div class="metric-note"><i class="bi bi-exclamation-circle"></i><span id="metric-expiring-soon">{{ $expiringSoon }}</span> {{ __('messages.dashboard_expiring_soon') }}</div>
             </div>
 
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
-                        <span class="metric-label">Safes</span>
+                        <span class="metric-label">{{ __('messages.dashboard_active_safes') }}</span>
                         <div class="metric-value" id="metric-total-safes">{{ $totalSafes }}</div>
                     </div>
                     <div class="metric-badge default"><i class="bi bi-safe"></i></div>
                 </div>
-                <div class="metric-note"><i class="bi bi-wallet2"></i><span id="metric-active-safes">{{ $activeSafes }}</span> active safes</div>
+                <div class="metric-note"><i class="bi bi-wallet2"></i><span id="metric-active-safes">{{ $activeSafes }}</span> {{ __('messages.dashboard_active_safes_note') }}</div>
             </div>
         </div>
     </div>
@@ -795,35 +795,35 @@
     <div class="charts-section">
         <div class="section-heading">
             <div>
-                <h2 class="section-title"><i class="bi bi-graph-up-arrow text-warning"></i>Sales and finance reports</h2>
-                <p class="section-subtitle">These charts are loaded from the dashboard analytics endpoint.</p>
+                <h2 class="section-title"><i class="bi bi-graph-up-arrow text-warning"></i>{{ __('messages.dashboard_reports_title') }}</h2>
+                <p class="section-subtitle">{{ __('messages.dashboard_reports_subtitle') }}</p>
             </div>
         </div>
         <div class="chart-grid">
             <div class="chart-card">
                 <div class="section-heading mb-3">
-                    <h3 class="section-title mb-0">Monthly sales and income</h3>
+                    <h3 class="section-title mb-0">{{ __('messages.dashboard_monthly_sales_income') }}</h3>
                 </div>
                 <div class="chart-box"><canvas id="salesTrendChart"></canvas></div>
             </div>
 
             <div class="chart-card">
                 <div class="section-heading mb-3">
-                    <h3 class="section-title mb-0">Income, outcome, profit</h3>
+                    <h3 class="section-title mb-0">{{ __('messages.dashboard_income_outcome_profit') }}</h3>
                 </div>
                 <div class="chart-box"><canvas id="cashFlowChart"></canvas></div>
             </div>
 
             <div class="chart-card">
                 <div class="section-heading mb-3">
-                    <h3 class="section-title mb-0">Top products</h3>
+                    <h3 class="section-title mb-0">{{ __('messages.dashboard_top_products') }}</h3>
                 </div>
                 <div class="chart-box"><canvas id="topProductsChart"></canvas></div>
             </div>
 
             <div class="chart-card">
                 <div class="section-heading mb-3">
-                    <h3 class="section-title mb-0">Subscriptions status</h3>
+                    <h3 class="section-title mb-0">{{ __('messages.dashboard_subscriptions_status') }}</h3>
                 </div>
                 <div class="chart-box"><canvas id="subscriptionChart"></canvas></div>
             </div>
@@ -836,41 +836,41 @@
                 <div class="panel-card h-100">
                     <div class="section-heading">
                         <div>
-                            <h2 class="section-title mb-1"><i class="bi bi-bag-check text-warning"></i>Recent sales</h2>
-                            <p class="section-subtitle">Latest recorded employee sales.</p>
+                            <h2 class="section-title mb-1"><i class="bi bi-bag-check text-warning"></i>{{ __('messages.dashboard_recent_sales') }}</h2>
+                            <p class="section-subtitle">{{ __('messages.dashboard_recent_sales_subtitle') }}</p>
                         </div>
-                        <a href="{{ route('sales.index') }}" class="btn btn-sm btn-outline-secondary">View all</a>
+                        <a href="{{ route('sales.index') }}" class="btn btn-sm btn-outline-secondary">{{ __('messages.view_all') }}</a>
                     </div>
                     <div class="table-responsive">
                         <table class="table align-middle">
                             <thead>
                                 <tr>
-                                    <th>Product</th>
-                                    <th>Employee</th>
-                                    <th>Qty</th>
-                                    <th>Amount</th>
-                                    <th>Date</th>
+                                    <th>{{ __('messages.product') }}</th>
+                                    <th>{{ __('messages.employee') }}</th>
+                                    <th>{{ __('messages.dashboard_qty') }}</th>
+                                    <th>{{ __('messages.amount') }}</th>
+                                    <th>{{ __('messages.date') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($recentSales as $sale)
                                     <tr>
-                                        <td>{{ $sale->product->name ?? 'N/A' }}</td>
-                                        <td>{{ $sale->employee->name ?? 'N/A' }}</td>
+                                        <td>{{ $sale->product->name ?? __('messages.not_available') }}</td>
+                                        <td>{{ $sale->employee->name ?? __('messages.not_available') }}</td>
                                         <td>{{ $sale->quantity }}</td>
                                         <td>{{ $currencySymbol }}{{ number_format($sale->total_amount, 2) }}</td>
-                                        <td>{{ optional($sale->sale_date)->format('M d, Y') ?? 'N/A' }}</td>
+                                        <td>{{ optional($sale->sale_date)->translatedFormat('M d, Y') ?? __('messages.not_available') }}</td>
                                     </tr>
-                                @empty
+                                {{ __('@empty') }}
                                     <tr>
                                         <td colspan="5">
                                             <div class="empty-state">
                                                 <i class="bi bi-inbox"></i>
-                                                No sales found
+                                                {{ __('messages.no_sales_found') }}
                                             </div>
                                         </td>
                                     </tr>
-                                @endforelse
+                                {{ __('@endforelse') }}
                             </tbody>
                         </table>
                     </div>
@@ -881,17 +881,17 @@
                 <div class="panel-card h-100">
                     <div class="section-heading">
                         <div>
-                            <h2 class="section-title mb-1"><i class="bi bi-cash-stack text-warning"></i>Recent cash movements</h2>
-                            <p class="section-subtitle">Income and outcome entries from safes.</p>
+                            <h2 class="section-title mb-1"><i class="bi bi-cash-stack text-warning"></i>{{ __('messages.dashboard_recent_cash_movements') }}</h2>
+                            <p class="section-subtitle">{{ __('messages.dashboard_recent_cash_movements_subtitle') }}</p>
                         </div>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#incomeModal">Add cash</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#incomeModal">{{ __('messages.dashboard_add_cash') }}</button>
                     </div>
                     <div class="list-group list-group-flush">
                         @forelse($recentCashMovements as $movement)
                             <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-start">
                                 <div>
-                                    <div class="fw-semibold">{{ $movement['label'] ?? 'Entry' }}</div>
-                                    <small class="text-muted">{{ $movement['safe'] ?? 'N/A' }} · {{ $movement['date'] ? $movement['date']->format('M d, Y h:i A') : '' }}</small>
+                                    <div class="fw-semibold">{{ $movement['label'] ?? __('messages.dashboard_entry') }}</div>
+                                    <small class="text-muted">{{ $movement['safe'] ?? __('messages.not_available') }} · {{ $movement['date'] ? $movement['date']->translatedFormat('M d, Y h:i A') : '' }}</small>
                                 </div>
                                 <div class="text-end">
                                     <span class="pill {{ $movement['type'] === 'income' ? 'success' : 'danger' }}">
@@ -900,12 +900,12 @@
                                     </span>
                                 </div>
                             </div>
-                        @empty
+                        {{ __('@empty') }}
                             <div class="empty-state">
                                 <i class="bi bi-inbox"></i>
-                                No cash movements found
+                                {{ __('messages.dashboard_no_cash_movements_found') }}
                             </div>
-                        @endforelse
+                        {{ __('@endforelse') }}
                     </div>
                 </div>
             </div>
@@ -914,45 +914,45 @@
                 <div class="panel-card h-100">
                     <div class="section-heading">
                         <div>
-                            <h2 class="section-title mb-1"><i class="bi bi-bookmark-check text-warning"></i>Recent subscriptions</h2>
-                            <p class="section-subtitle">Recently created or renewed subscriptions.</p>
+                            <h2 class="section-title mb-1"><i class="bi bi-bookmark-check text-warning"></i>{{ __('messages.dashboard_recent_subscriptions') }}</h2>
+                            <p class="section-subtitle">{{ __('messages.dashboard_recent_subscriptions_subtitle') }}</p>
                         </div>
-                        <a href="{{ route('super-admin.subscriptions.index') }}" class="btn btn-sm btn-outline-secondary">View all</a>
+                        <a href="{{ route('super-admin.subscriptions.index') }}" class="btn btn-sm btn-outline-secondary">{{ __('messages.view_all') }}</a>
                     </div>
                     <div class="table-responsive">
                         <table class="table align-middle">
                             <thead>
                                 <tr>
-                                    <th>Merchant</th>
-                                    <th>Package</th>
-                                    <th>Status</th>
-                                    <th>Expires</th>
+                                    <th>{{ __('messages.dashboard_merchant') }}</th>
+                                    <th>{{ __('messages.dashboard_package') }}</th>
+                                    <th>{{ __('messages.dashboard_status') }}</th>
+                                    <th>{{ __('messages.dashboard_expires') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($recentSubscriptions as $subscription)
                                     <tr>
-                                        <td>{{ $subscription->merchant->name ?? 'N/A' }}</td>
-                                        <td>{{ $subscription->package->name ?? 'N/A' }}</td>
+                                        <td>{{ $subscription->merchant->name ?? __('messages.not_available') }}</td>
+                                        <td>{{ $subscription->package->name ?? __('messages.not_available') }}</td>
                                         <td>
                                             @if($subscription->is_active)
-                                                <span class="pill success">Active</span>
-                                            @else
-                                                <span class="pill warning">Inactive</span>
+                                                <span class="pill success">{{ __('messages.active') }}</span>
+                                            {{ __('@else') }}
+                                                <span class="pill warning">{{ __('messages.inactive') }}</span>
                                             @endif
                                         </td>
-                                        <td>{{ $subscription->expires_at ? $subscription->expires_at->format('M d, Y') : 'N/A' }}</td>
+                                        <td>{{ $subscription->expires_at ? $subscription->expires_at->translatedFormat('M d, Y') : __('messages.not_available') }}</td>
                                     </tr>
-                                @empty
+                                {{ __('@empty') }}
                                     <tr>
                                         <td colspan="4">
                                             <div class="empty-state">
                                                 <i class="bi bi-inbox"></i>
-                                                No subscriptions yet
+                                                {{ __('messages.dashboard_no_subscriptions_yet') }}
                                             </div>
                                         </td>
                                     </tr>
-                                @endforelse
+                                {{ __('@endforelse') }}
                             </tbody>
                         </table>
                     </div>
@@ -963,18 +963,18 @@
                 <div class="panel-card h-100">
                     <div class="section-heading">
                         <div>
-                            <h2 class="section-title mb-1"><i class="bi bi-box-seam text-warning"></i>Top packages</h2>
-                            <p class="section-subtitle">Package performance and merchant adoption.</p>
+                            <h2 class="section-title mb-1"><i class="bi bi-box-seam text-warning"></i>{{ __('messages.dashboard_top_packages') }}</h2>
+                            <p class="section-subtitle">{{ __('messages.dashboard_top_packages_subtitle') }}</p>
                         </div>
-                        <a href="{{ route('super-admin.packages.index') }}" class="btn btn-sm btn-outline-secondary">Manage</a>
+                        <a href="{{ route('super-admin.packages.index') }}" class="btn btn-sm btn-outline-secondary">{{ __('messages.dashboard_manage') }}</a>
                     </div>
                     <div class="table-responsive">
                         <table class="table align-middle">
                             <thead>
                                 <tr>
-                                    <th>Package</th>
-                                    <th>Merchants</th>
-                                    <th>Price</th>
+                                    <th>{{ __('messages.dashboard_package') }}</th>
+                                    <th>{{ __('messages.dashboard_merchants') }}</th>
+                                    <th>{{ __('messages.price') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -984,16 +984,16 @@
                                         <td><span class="pill info">{{ $package->subscriptions_count }}</span></td>
                                         <td>{{ $currencySymbol }}{{ number_format($package->price, 2) }}</td>
                                     </tr>
-                                @empty
+                                {{ __('@empty') }}
                                     <tr>
                                         <td colspan="3">
                                             <div class="empty-state">
                                                 <i class="bi bi-inbox"></i>
-                                                No packages available
+                                                {{ __('messages.no_packages_available') }}
                                             </div>
                                         </td>
                                     </tr>
-                                @endforelse
+                                {{ __('@endforelse') }}
                             </tbody>
                         </table>
                     </div>
@@ -1008,57 +1008,62 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div>
-                    <h5 class="modal-title"><i class="bi bi-arrow-down-circle me-2"></i>Add Income</h5>
-                    <small class="text-white-50">Record money entering a safe.</small>
+                    <h5 class="modal-title"><i class="bi bi-arrow-down-circle me-2"></i>{{ __('messages.dashboard_action_add_income') }}</h5>
+                    <small class="text-white-50">{{ __('messages.dashboard_record_money_entering_safe') }}</small>
                 </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="incomeForm" method="POST" action="{{ url('/safes/__SAFE_ID__/add-income') }}">
-                @csrf
+                {{ __('@csrf') }}
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">Safe</label>
+                            <label class="form-label">{{ __('messages.safe') }}</label>
                             <select class="form-select" id="incomeSafeSelect" name="safe_selector" required>
-                                <option value="">Select safe</option>
+                                <option value="">{{ __('messages.select_safe') }}</option>
                                 @foreach($safes as $safe)
-                                    <option value="{{ $safe->id }}" data-currencies='@json($safe->currencies->map(fn ($currency) => ["id" => $currency->id, "label" => trim(($currency->code ?? '') . " - " . ($currency->name ?? ''))]))'>{{ $safe->name }}</option>
+                                    <option value="{{ $safe->id }}" data-currencies='@json($safe->currencies->map(function ($currency) {
+                                        return [
+                                            "id" => $currency->id,
+                                            "label" => trim(($currency->code ?? '') . " - " . ($currency->name ?? '')),
+                                        ];
+                                    }))'>{{ $safe->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Currency</label>
+                            <label class="form-label">{{ __('messages.dashboard_currency') }}</label>
                             <select class="form-select" id="incomeCurrencySelect" name="currency_id">
-                                <option value="">Select a safe first</option>
+                                <option value="">{{ __('messages.dashboard_select_a_safe_first') }}</option>
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Amount</label>
+                            <label class="form-label">{{ __('messages.amount') }}</label>
                             <input type="number" step="0.01" min="0.01" class="form-control" name="amount" required>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Source</label>
+                            <label class="form-label">{{ __('messages.dashboard_source') }}</label>
                             <select class="form-select" name="source" required>
-                                <option value="cash">Cash</option>
-                                <option value="bank">Bank</option>
+                                <option value="cash">{{ __('messages.dashboard_cash') }}</option>
+                                <option value="bank">{{ __('messages.dashboard_bank') }}</option>
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Reference</label>
-                            <input type="text" class="form-control" name="reference" placeholder="Optional reference">
+                            <label class="form-label">{{ __('messages.reference') }}</label>
+                            <input type="text" class="form-control" name="reference" placeholder="{{ __('messages.dashboard_optional') }} {{ __('messages.reference') }}">
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Notes</label>
-                            <textarea class="form-control" name="notes" rows="4" placeholder="Optional notes"></textarea>
+                            <label class="form-label">{{ __('messages.notes') }}</label>
+                            <textarea class="form-control" name="notes" rows="4" placeholder="{{ __('messages.dashboard_optional') }} {{ __('messages.notes') | lower ?? '' }}"></textarea>
                         </div>
                     </div>
                     @if($safes->isEmpty())
-                        <div class="alert alert-warning mt-3 mb-0">Create a safe first before recording income.</div>
+                        <div class="alert alert-warning mt-3 mb-0">{{ __('messages.dashboard_create_safe_first_before_income') }}</div>
                     @endif
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-dashboard-primary">Save Income</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                    <button type="submit" class="btn btn-dashboard-primary">{{ __('messages.save_income') }}</button>
                 </div>
             </form>
         </div>
@@ -1070,66 +1075,71 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div>
-                    <h5 class="modal-title"><i class="bi bi-arrow-up-circle me-2"></i>Add Outcome</h5>
-                    <small class="text-white-50">Record money leaving a safe.</small>
+                    <h5 class="modal-title"><i class="bi bi-arrow-up-circle me-2"></i>{{ __('messages.dashboard_action_add_outcome') }}</h5>
+                    <small class="text-white-50">{{ __('messages.dashboard_record_money_leaving_safe') }}</small>
                 </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="outcomeForm" method="POST" action="{{ url('/safes/__SAFE_ID__/add-outcome') }}">
-                @csrf
+                {{ __('@csrf') }}
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">Safe</label>
+                            <label class="form-label">{{ __('messages.safe') }}</label>
                             <select class="form-select" id="outcomeSafeSelect" name="safe_selector" required>
-                                <option value="">Select safe</option>
+                                <option value="">{{ __('messages.select_safe') }}</option>
                                 @foreach($safes as $safe)
-                                    <option value="{{ $safe->id }}" data-currencies='@json($safe->currencies->map(fn ($currency) => ["id" => $currency->id, "label" => trim(($currency->code ?? '') . " - " . ($currency->name ?? ''))]))'>{{ $safe->name }}</option>
+                                    <option value="{{ $safe->id }}" data-currencies='@json($safe->currencies->map(function ($currency) {
+                                        return [
+                                            "id" => $currency->id,
+                                            "label" => trim(($currency->code ?? '') . " - " . ($currency->name ?? '')),
+                                        ];
+                                    }))'>{{ $safe->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Currency</label>
+                            <label class="form-label">{{ __('messages.dashboard_currency') }}</label>
                             <select class="form-select" id="outcomeCurrencySelect" name="currency_id">
-                                <option value="">Select a safe first</option>
+                                <option value="">{{ __('messages.dashboard_select_a_safe_first') }}</option>
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Amount</label>
+                            <label class="form-label">{{ __('messages.amount') }}</label>
                             <input type="number" step="0.01" min="0.01" class="form-control" name="amount" required>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Reference Type</label>
+                            <label class="form-label">{{ __('messages.reference_type') }}</label>
                             <select class="form-select" name="reference_type">
-                                <option value="general">General</option>
-                                <option value="supplier">Supplier</option>
+                                <option value="general">{{ __('messages.general') }}</option>
+                                <option value="supplier">{{ __('messages.supplier') }}</option>
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Supplier</label>
+                            <label class="form-label">{{ __('messages.supplier') }}</label>
                             <select class="form-select" name="supplier_id">
-                                <option value="">Optional</option>
+                                <option value="">{{ __('messages.dashboard_optional') }}</option>
                                 @foreach($suppliers as $supplier)
                                     <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Reference</label>
-                            <input type="text" class="form-control" name="reference" placeholder="Optional reference">
+                            <label class="form-label">{{ __('messages.reference') }}</label>
+                            <input type="text" class="form-control" name="reference" placeholder="{{ __('messages.dashboard_optional') }} {{ __('messages.reference') }}">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Description</label>
-                            <input type="text" class="form-control" name="description" placeholder="Short description">
+                            <label class="form-label">{{ __('messages.description') }}</label>
+                            <input type="text" class="form-control" name="description" placeholder="{{ __('messages.description') }}">
                         </div>
                     </div>
                     @if($safes->isEmpty())
-                        <div class="alert alert-warning mt-3 mb-0">Create a safe first before recording outcome.</div>
+                        <div class="alert alert-warning mt-3 mb-0">{{ __('messages.dashboard_create_safe_first_before_outcome') }}</div>
                     @endif
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-dashboard-primary">Save Outcome</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                    <button type="submit" class="btn btn-dashboard-primary">{{ __('messages.save_outcome') }}</button>
                 </div>
             </form>
         </div>
@@ -1154,17 +1164,17 @@
             currencySelect.innerHTML = '';
 
             if (!currencies.length) {
-                currencySelect.innerHTML = '<option value="">No currencies available</option>';
+                currencySelect.innerHTML = '<option value="">{{ __('messages.no_currencies_available') }}</option>';
                 currencySelect.disabled = true;
                 return;
             }
 
             currencySelect.disabled = false;
-            currencySelect.innerHTML = '<option value="">Select currency</option>';
+            currencySelect.innerHTML = '<option value="">{{ __('messages.select_currency') }}</option>';
             currencies.forEach(currency => {
                 const option = document.createElement('option');
                 option.value = currency.id;
-                option.textContent = currency.label || 'Currency';
+                option.textContent = currency.label || @json(__('messages.dashboard_currency'));
                 currencySelect.appendChild(option);
             });
         };
@@ -1230,7 +1240,7 @@
                         labels: months,
                         datasets: [
                             {
-                                label: 'Sales',
+                                label: @json(__('messages.dashboard_action_sales')),
                                 data: chartsData.sales || [],
                                 borderColor: '#ff8c00',
                                 backgroundColor: 'rgba(255, 140, 0, 0.12)',
@@ -1238,7 +1248,7 @@
                                 tension: 0.4
                             },
                             {
-                                label: 'Income',
+                                label: @json(__('messages.dashboard_income')),
                                 data: chartsData.income || [],
                                 borderColor: '#3b82f6',
                                 backgroundColor: 'rgba(59, 130, 246, 0.12)',
@@ -1264,19 +1274,19 @@
                         labels: months,
                         datasets: [
                             {
-                                label: 'Income',
+                                label: @json(__('messages.dashboard_income')),
                                 data: chartsData.income || [],
                                 backgroundColor: 'rgba(16, 185, 129, 0.8)',
                                 borderRadius: 10
                             },
                             {
-                                label: 'Outcome',
+                                label: @json(__('messages.dashboard_outcome')),
                                 data: chartsData.outcome || [],
                                 backgroundColor: 'rgba(239, 68, 68, 0.8)',
                                 borderRadius: 10
                             },
                             {
-                                label: 'Profit',
+                                label: @json(__('messages.dashboard_chart_profit')),
                                 data: chartsData.profit || [],
                                 backgroundColor: 'rgba(245, 158, 11, 0.8)',
                                 borderRadius: 10
@@ -1316,7 +1326,7 @@
                     data: {
                         labels: chartsData.subscription_labels || [],
                         datasets: [{
-                            label: 'Subscriptions',
+                            label: @json(__('messages.dashboard_subscriptions')),
                             data: chartsData.subscription_values || [],
                             backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
                             borderRadius: 12

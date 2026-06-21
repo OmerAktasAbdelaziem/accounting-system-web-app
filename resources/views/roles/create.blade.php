@@ -15,9 +15,9 @@
     <div class="container-fluid">
         <div class="create-hero mb-4 d-flex flex-wrap justify-content-between align-items-start gap-3">
             <div>
-                <div class="text-uppercase text-white-50 small fw-semibold mb-2">Access Control</div>
+                <div class="text-uppercase text-white-50 small fw-semibold mb-2">{{ __('Access Control') }}</div>
                 <h1 class="mb-2 fw-bold" style="letter-spacing: -0.03em;">{{ __('roles.add_role') }}</h1>
-                <p class="mb-0 text-white-50">Define a role and attach permissions in a clearer flow.</p>
+                <p class="mb-0 text-white-50">{{ __('Define a role and attach permissions in a clearer flow.') }}</p>
             </div>
             <a href="{{ route('roles.index') }}" class="btn btn-light rounded-pill px-3"><i class="fas fa-arrow-left me-2"></i>{{ __('actions.back') }}</a>
         </div>
@@ -38,17 +38,17 @@
                         @endif
 
                         <form action="{{ route('roles.store') }}" method="POST" class="row g-3">
-                            @csrf
+                            {{ __('@csrf') }}
                             <div class="col-12">
                                 <label for="name" class="form-label fw-semibold">{{ __('roles.role_name') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control create-field @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required>
-                                @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'name\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-12">
                                 <label for="description" class="form-label fw-semibold">{{ __('roles.description') }}</label>
                                 <textarea class="form-control create-field @error('description') is-invalid @enderror" id="description" name="description" rows="3">{{ old('description') }}</textarea>
-                                @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'description\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-12">
@@ -103,8 +103,8 @@
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label fw-semibold">Feature Toggles</label>
-                                <div class="small text-muted mb-2">Enable system features for this role (applies to all merchants).</div>
+                                <label class="form-label fw-semibold">{{ __('Feature Toggles') }}</label>
+                                <div class="small text-muted mb-2">{{ __('Enable system features for this role (applies to all merchants).') }}</div>
                                 @php
                                     $features = $availableFeatures ?? [];
                                 @endphp
@@ -125,11 +125,11 @@
                             <div class="col-12">
                                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
                                     <div>
-                                        <label class="form-label fw-semibold mb-1">Branch visibility</label>
-                                        <div class="text-muted small">Select the branches this role can see inside the merchant. If nothing is selected, the role keeps full branch visibility.</div>
+                                        <label class="form-label fw-semibold mb-1">{{ __('Branch visibility') }}</label>
+                                        <div class="text-muted small">{{ __('Select the branches this role can see inside the merchant. If nothing is selected, the role keeps full branch visibility.') }}</div>
                                     </div>
                                     <button type="button" class="btn btn-outline-primary btn-sm" id="selectAllRoleBranchesBtn">
-                                        <i class="bi bi-check2-square me-1"></i>Select all branches
+                                        <i class="bi bi-check2-square me-1"></i>{{ __('Select all branches') }}
                                     </button>
                                 </div>
 
@@ -141,22 +141,22 @@
                                                     {{ $merchant->name }}
                                                 </button>
                                             </h2>
-                                            <div id="merchant-branches-{{ $merchant->id }}" class="accordion-collapse collapse" data-bs-parent="#branchAccessAccordion">
+                                            <div id="merchant-branches-{{ $merchant->{{ __('id }}" class="accordion-collapse collapse" data-bs-parent="#branchAccessAccordion">') }}
                                                 <div class="accordion-body bg-white">
                                                     <div class="row g-2">
                                                         @forelse ($merchant->branches as $branch)
                                                             <div class="col-md-6">
                                                                 <div class="form-check p-3 border rounded-4 h-100">
                                                                     <input class="form-check-input" type="checkbox" name="branch_ids[]" value="{{ $branch->id }}" id="branch_{{ $branch->id }}" {{ in_array($branch->id, old('branch_ids', [])) ? 'checked' : '' }}>
-                                                                    <label class="form-check-label ms-2" for="branch_{{ $branch->id }}">
+                                                                    <label class="form-check-label ms-2" for="branch_{{ $branch->{{ __('id }}">') }}
                                                                         <strong>{{ $branch->name }}</strong>
                                                                         <small class="d-block text-muted">{{ $branch->city ?? $branch->address ?? 'Branch' }}</small>
                                                                     </label>
                                                                 </div>
                                                             </div>
-                                                        @empty
-                                                            <div class="col-12 text-muted">No branches found for this merchant.</div>
-                                                        @endforelse
+                                                        {{ __('@empty') }}
+                                                            <div class="col-12 text-muted">{{ __('No branches found for this merchant.') }}</div>
+                                                        {{ __('@endforelse') }}
                                                     </div>
                                                 </div>
                                             </div>

@@ -24,7 +24,7 @@
             <input type="hidden" name="from_date" value="{{ $fromDate ?? request('from_date') }}">
             <input type="hidden" name="to_date" value="{{ $toDate ?? request('to_date') }}">
             <button type="submit" class="btn btn-danger">
-                <i class="bi bi-file-pdf"></i> PDF
+                <i class="bi bi-file-pdf"></i> {{ __('PDF') }}
             </button>
         </form>
         @endfeature
@@ -35,7 +35,7 @@
     <div class="col-md-4">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body">
-                <div class="text-muted small text-uppercase fw-semibold mb-2">{{ __('Paid payrolls') }}</div>
+                <div class="text-muted small text-uppercase fw-semibold mb-2">{{ __('messages.paid_payrolls') }}</div>
                 <div class="display-6 fw-bold">{{ ($payrollSettlements ?? collect())->count() }}</div>
             </div>
         </div>
@@ -43,7 +43,7 @@
     <div class="col-md-4">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body">
-                <div class="text-muted small text-uppercase fw-semibold mb-2">{{ __('Paid commissions') }}</div>
+                <div class="text-muted small text-uppercase fw-semibold mb-2">{{ __('messages.paid_commissions_2') }}</div>
                 <div class="display-6 fw-bold">{{ ($commissionSettlements ?? collect())->count() }}</div>
             </div>
         </div>
@@ -51,7 +51,7 @@
     <div class="col-md-4">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body">
-                <div class="text-muted small text-uppercase fw-semibold mb-2">{{ __('Payroll safe payouts') }}</div>
+                <div class="text-muted small text-uppercase fw-semibold mb-2">{{ __('messages.payroll_safe_payouts_2') }}</div>
                 <div class="display-6 fw-bold">{{ ($safePayrollOutcomes ?? collect())->count() }}</div>
             </div>
         </div>
@@ -86,7 +86,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <div class="small text-muted">{{ $entry->date->format('M d, Y') }}</div>
+                                <div class="small text-muted">{{ $entry->date->translatedFormat('M d, Y') }}</div>
                                 <strong>{{ $item->account->name ?? 'N/A' }}</strong>
                                 <div class="small text-muted">{{ $item->description ?? $entry->description }}</div>
                             </div>
@@ -118,7 +118,7 @@
                 @forelse($entries ?? [] as $entry)
                     @forelse($entry->items ?? [] as $item)
                         <tr>
-                            <td>{{ $entry->date->format('M d, Y') }}</td>
+                            <td>{{ $entry->date->translatedFormat('M d, Y') }}</td>
                             <td><strong>{{ $item->account->name ?? 'N/A' }}</strong></td>
                             <td class="text-success">{{ $item->debit > 0 ? $currencySymbol . number_format($item->debit, 2) : '-' }}</td>
                             <td class="text-danger">{{ $item->credit > 0 ? $currencySymbol . number_format($item->credit, 2) : '-' }}</td>
@@ -141,7 +141,7 @@
 
 <div class="card mt-4">
     <div class="card-header bg-white">
-        <strong>{{ __('Paid Payrolls') }}</strong>
+        <strong>{{ __('messages.paid_payrolls') }}</strong>
     </div>
     <!-- Mobile payroll list -->
     <div class="financial-mobile-list payroll-mobile-list d-md-none">
@@ -149,7 +149,7 @@
             <div class="card mb-2">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="small text-muted">{{ optional($payroll->processed_at)->format('M d, Y') ?? '-' }}</div>
+                        <div class="small text-muted">{{ optional($payroll->processed_at)->translatedFormat('M d, Y') ?? '-' }}</div>
                         <strong>{{ $payroll->employee?->name ?? '-' }}</strong>
                     </div>
                     <div class="text-end">
@@ -176,7 +176,7 @@
             <tbody>
                 @forelse($payrollSettlements ?? [] as $payroll)
                     <tr>
-                        <td>{{ optional($payroll->processed_at)->format('M d, Y') ?? '-' }}</td>
+                        <td>{{ optional($payroll->processed_at)->translatedFormat('M d, Y') ?? '-' }}</td>
                         <td>{{ $payroll->employee?->name ?? '-' }}</td>
                         <td>{{ $payroll->safe?->name ?? '-' }}</td>
                         <td class="text-success">{{ $currencySymbol }}{{ number_format((float) $payroll->net_salary, 2) }}</td>
@@ -191,7 +191,7 @@
 
 <div class="card mt-4">
     <div class="card-header bg-white">
-        <strong>{{ __('Paid Commissions') }}</strong>
+        <strong>{{ __('messages.paid_commissions') }}</strong>
     </div>
     <!-- Mobile commissions list -->
     <div class="financial-mobile-list commissions-mobile-list d-md-none">
@@ -199,7 +199,7 @@
             <div class="card mb-2">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="small text-muted">{{ optional($commission->updated_at)->format('M d, Y') ?? '-' }}</div>
+                        <div class="small text-muted">{{ optional($commission->updated_at)->translatedFormat('M d, Y') ?? '-' }}</div>
                         <strong>{{ $commission->employee?->name ?? '-' }}</strong>
                     </div>
                     <div class="text-end">
@@ -226,7 +226,7 @@
             <tbody>
                 @forelse($commissionSettlements ?? [] as $commission)
                     <tr>
-                        <td>{{ optional($commission->updated_at)->format('M d, Y') ?? '-' }}</td>
+                        <td>{{ optional($commission->updated_at)->translatedFormat('M d, Y') ?? '-' }}</td>
                         <td>{{ $commission->employee?->name ?? '-' }}</td>
                         <td class="text-success">{{ $currencySymbol }}{{ number_format((float) $commission->commission_amount, 2) }}</td>
                         <td><span class="badge bg-success">{{ strtoupper($commission->status ?? 'paid') }}</span></td>
@@ -241,7 +241,7 @@
 
 <div class="card mt-4 mb-4">
     <div class="card-header bg-white">
-        <strong>{{ __('Payroll Safe Payouts') }}</strong>
+        <strong>{{ __('messages.payroll_safe_payouts') }}</strong>
     </div>
     <!-- Mobile payouts list -->
     <div class="financial-mobile-list payouts-mobile-list d-md-none">
@@ -249,7 +249,7 @@
             <div class="card mb-2">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="small text-muted">{{ optional($outcome->created_at)->format('M d, Y') ?? '-' }}</div>
+                        <div class="small text-muted">{{ optional($outcome->created_at)->translatedFormat('M d, Y') ?? '-' }}</div>
                         <strong>{{ $outcome->safe?->name ?? '-' }}</strong>
                     </div>
                     <div class="text-end">
@@ -276,7 +276,7 @@
             <tbody>
                 @forelse($safePayrollOutcomes ?? [] as $outcome)
                     <tr>
-                        <td>{{ optional($outcome->created_at)->format('M d, Y') ?? '-' }}</td>
+                        <td>{{ optional($outcome->created_at)->translatedFormat('M d, Y') ?? '-' }}</td>
                         <td>{{ $outcome->safe?->name ?? '-' }}</td>
                         <td class="text-danger">{{ $currencySymbol }}{{ number_format((float) $outcome->amount, 2) }}</td>
                         <td>{{ $outcome->description ?? '-' }}</td>
@@ -288,5 +288,5 @@
         </table>
     </div>
 </div>
-@endsection
 @endfeature
+@endsection

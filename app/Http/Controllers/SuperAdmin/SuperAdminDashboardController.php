@@ -180,7 +180,7 @@ class SuperAdminDashboardController extends Controller
         for ($offset = 5; $offset >= 0; $offset--) {
             $month = Carbon::now()->startOfMonth()->subMonths($offset);
 
-            $months[] = $month->format('M Y');
+            $months[] = $month->translatedFormat('M Y');
             $salesSeries[] = (float) EmployeeSale::whereYear('sale_date', $month->year)
                 ->whereMonth('sale_date', $month->month)
                 ->sum('total_amount');

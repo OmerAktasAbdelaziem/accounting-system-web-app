@@ -74,17 +74,17 @@
             <div class="form-sidebar">
                 @if(isset($employee) && $employee)
                 <div class="sidebar-card">
-                    <div class="sidebar-title">📊 Employee Info</div>
+                    <div class="sidebar-title">{{ __('📊 Employee Info') }}</div>
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-label">Base Salary</span>
+                        <span class="sidebar-stat-label">{{ __('Base Salary') }}</span>
                         <span class="sidebar-stat-value">${{ number_format($employee->base_salary ?? 0, 2) }}</span>
                     </div>
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-label">Joined</span>
-                        <span class="sidebar-stat-value" style="font-size: 13px;">{{ $employee->created_at?->format('M d, Y') ?? 'N/A' }}</span>
+                        <span class="sidebar-stat-label">{{ __('Joined') }}</span>
+                        <span class="sidebar-stat-value" style="font-size: 13px;">{{ $employee->created_at?->translatedFormat('M d, Y') ?? 'N/A' }}</span>
                     </div>
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-label">Status</span>
+                        <span class="sidebar-stat-label">{{ __('Status') }}</span>
                         <span class="sidebar-stat-value" style="color: {{ $employee->is_active ? '#10b981' : '#ef4444' }};">{{ $employee->is_active ? 'Active' : 'Inactive' }}</span>
                     </div>
                 </div>
@@ -97,7 +97,7 @@
                         <h1><i class="bi bi-person" style="margin-right: 12px; font-size: 36px;"></i>{{ isset($employee) ? __('messages.edit_employee') : __('messages.add_employee') }}</h1>
                     </div>
                     <a href="{{ route('employees.index') }}" class="btn btn-outline-light btn-sm" style="padding: 10px 20px; border-radius: 10px; border: 1.5px solid rgba(255, 255, 255, 0.4); color: white; text-decoration: none;">
-                        <i class="bi bi-arrow-left"></i> Back
+                        <i class="bi bi-arrow-left"></i> {{ __('Back') }}
                     </a>
                 </div>
 
@@ -109,7 +109,7 @@
 
                     <div class="form-body">
                         <div class="form-section">
-                            <div class="form-section-title">👤 Personal Information</div>
+                            <div class="form-section-title">{{ __('👤 Personal Information') }}</div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.name') }} <span class="required">*</span></label>
@@ -125,7 +125,7 @@
                         </div>
 
                         <div class="form-section">
-                            <div class="form-section-title">💰 Compensation</div>
+                            <div class="form-section-title">{{ __('💰 Compensation') }}</div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.salary') }} <span class="required">*</span></label>
@@ -136,7 +136,7 @@
                         </div>
 
                         <div class="form-section">
-                            <div class="form-section-title">⚙️ Settings</div>
+                            <div class="form-section-title">{{ __('⚙️ Settings') }}</div>
                             <div class="form-checkbox">
                                 <input type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active', isset($employee) && $employee ? $employee->is_active : true) ? 'checked' : '' }}>
                                 <label for="is_active">{{ __('messages.is_active') }}</label>

@@ -54,17 +54,17 @@
             <div class="form-sidebar">
                 @if(isset($category) && $category)
                 <div class="sidebar-card">
-                    <div class="sidebar-title">📊 Overview</div>
+                    <div class="sidebar-title">{{ __('📊 Overview') }}</div>
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-label">Total Products</span>
+                        <span class="sidebar-stat-label">{{ __('Total Products') }}</span>
                         <span class="sidebar-stat-value">{{ $category->products()->count() ?? 0 }}</span>
                     </div>
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-label">Created</span>
-                        <span class="sidebar-stat-value" style="font-size: 13px;">{{ $category->created_at?->format('M d, Y') ?? 'N/A' }}</span>
+                        <span class="sidebar-stat-label">{{ __('Created') }}</span>
+                        <span class="sidebar-stat-value" style="font-size: 13px;">{{ $category->created_at?->translatedFormat('M d, Y') ?? 'N/A' }}</span>
                     </div>
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-label">Status</span>
+                        <span class="sidebar-stat-label">{{ __('Status') }}</span>
                         <span class="sidebar-stat-value" style="color: {{ $category->is_active ? '#6366f1' : '#ef4444' }};">{{ $category->is_active ? 'Active' : 'Inactive' }}</span>
                     </div>
                 </div>
@@ -89,12 +89,12 @@
 
                     <div class="form-body">
                         <div class="form-section">
-                            <div class="form-section-title">📝 Category Details</div>
+                            <div class="form-section-title">{{ __('📝 Category Details') }}</div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.category_name') }} <span class="required">*</span></label>
-                                    <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', isset($category) && $category ? $category->name : '') }}" placeholder="Enter category name" required>
-                                    @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', isset($category) && $category ? $category->{{ __('name : \'\') }}" placeholder="Enter category name" required>
+                                    @error(\'name\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.status') }}</label>
@@ -102,25 +102,25 @@
                                         <option value="1" {{ old('is_active', isset($category) && $category ? $category->is_active : true) ? 'selected' : '' }}>{{ __('messages.active') }}</option>
                                         <option value="0" {{ old('is_active', isset($category) && $category ? $category->is_active : true) ? '' : 'selected' }}>{{ __('messages.inactive') }}</option>
                                     </select>
-                                    @error('is_active')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    {{ __('@error(\'is_active\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-section">
-                            <div class="form-section-title">📄 Description</div>
+                            <div class="form-section-title">{{ __('📄 Description') }}</div>
                             <div class="form-row" style="margin-bottom: 0;">
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.description') }}</label>
                                     <textarea class="form-control @error('description') is-invalid @enderror" name="description" placeholder="Enter category description">{{ old('description', isset($category) && $category ? $category->description : '') }}</textarea>
                                     <small style="color: #6b7280; font-size: 12px; margin-top: 6px;">{{ __('messages.max_characters_1000') }}</small>
-                                    @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    {{ __('@error(\'description\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-section">
-                            <div class="form-section-title">🏢 Branches</div>
+                            <div class="form-section-title">{{ __('🏢 Branches') }}</div>
                             @include('branches.partials.multi-select', ['branches' => $branches ?? [], 'selectedBranchIds' => $selectedBranchIds ?? []])
                         </div>
                     </div>

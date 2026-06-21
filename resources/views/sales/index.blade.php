@@ -373,24 +373,24 @@
             <div class="col-lg-7">
                 <div class="sales-history-chip mb-3">
                     <i class="bi bi-receipt"></i>
-                    Daily sales workspace
+                    {{ __('Daily sales workspace') }}
                 </div>
-                <h2 class="fw-bold mb-2 text-white">Sales</h2>
+                <h2 class="fw-bold mb-2 text-white">{{ __('Sales') }}</h2>
                 <p class="mb-0 text-white-75" style="max-width: 720px;">
-                    Record daily sales total from employee amounts with one description for the full sale.
+                    {{ __('Record daily sales total from employee amounts with one description for the full sale.') }}
                 </p>
             </div>
             <div class="col-lg-5">
                 <div class="row g-3">
                     <div class="col-6">
                         <div class="bg-white bg-opacity-10 backdrop-blur rounded-4 p-3 text-center h-100">
-                            <div class="small text-white-50">Entries</div>
+                            <div class="small text-white-50">{{ __('Entries') }}</div>
                             <div class="fs-4 fw-bold">{{ $stats['count'] }}</div>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="bg-white bg-opacity-10 backdrop-blur rounded-4 p-3 text-center h-100">
-                            <div class="small text-white-50">Net Income</div>
+                            <div class="small text-white-50">{{ __('Net Income') }}</div>
                             <div class="fs-4 fw-bold">{{ $currencySymbol ?? '$' }}{{ number_format($stats['net_total'], 2) }}</div>
                         </div>
                     </div>
@@ -409,62 +409,62 @@
             <div class="card sales-panel h-100">
                 <div class="card-header px-4 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
                     <div>
-                        <h5 class="mb-1">Record a Sale</h5>
-                        <div class="field-hint">Select branch, date, and total amount sold.</div>
+                        <h5 class="mb-1">{{ __('Record a Sale') }}</h5>
+                        <div class="field-hint">{{ __('Select branch, date, and total amount sold.') }}</div>
                     </div>
-                    <span class="badge text-bg-light border">Live total calculator</span>
+                    <span class="badge text-bg-light border">{{ __('Live total calculator') }}</span>
                 </div>
                 <div class="card-body p-4">
                     <form method="POST" action="{{ route('sales.store') }}" class="row g-3">
                         @csrf
                         @php($employeeRows = old('employee_sales', [['employee_id' => '', 'amount' => '']]))
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Branch</label>
+                            <label class="form-label fw-semibold">{{ __('Branch') }}</label>
                             <select name="branch_id" class="form-select form-select-lg" required>
-                                <option value="">Select branch</option>
+                                <option value="">{{ __('Select branch') }}</option>
                                 @foreach($branches as $branch)
                                     <option value="{{ $branch->id }}" @selected(old('branch_id') == $branch->id)>{{ $branch->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Sale Date</label>
+                            <label class="form-label fw-semibold">{{ __('Sale Date') }}</label>
                             <input type="date" name="sale_date" class="form-control form-control-lg" value="{{ old('sale_date', now()->toDateString()) }}" required>
                         </div>
                         <div class="col-md-12">
-                            <label class="form-label fw-semibold">Total Amount Sold</label>
+                            <label class="form-label fw-semibold">{{ __('Total Amount Sold') }}</label>
                             <input type="number" name="total_amount" class="form-control form-control-lg js-total-amount" min="0.01" step="0.01" value="{{ old('total_amount') }}" required>
-                            <div class="field-hint mt-1">Enter total manually.</div>
+                            <div class="field-hint mt-1">{{ __('Enter total manually.') }}</div>
                         </div>
                         <div class="col-md-12">
-                            <label class="form-label fw-semibold">Amount Spent by Store <span class="text-muted">(Optional)</span></label>
+                            <label class="form-label fw-semibold">{{ __('Amount Spent by Store') }} <span class="text-muted">{{ __('(Optional)') }}</span></label>
                             <input type="number" name="spent_amount" class="form-control form-control-lg" min="0" step="0.01" value="{{ old('spent_amount', 0) }}" placeholder="Amount the store spent">
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label fw-semibold">Employees Involved</label>
-                            <div class="field-hint mb-2">Choose one or more employees and add the amount each one sold today.</div>
-                            <div class="small text-muted">Optional — leave empty to record the sale without per-employee breakdown.</div>
+                            <label class="form-label fw-semibold">{{ __('Employees Involved') }}</label>
+                            <div class="field-hint mb-2">{{ __('Choose one or more employees and add the amount each one sold today.') }}</div>
+                            <div class="small text-muted">{{ __('Optional — leave empty to record the sale without per-employee breakdown.') }}</div>
                             <div id="employee-sales-list" class="d-grid gap-3">
                                 @foreach($employeeRows as $index => $row)
                                     <div class="employee-sale-item border rounded-4 p-3 bg-light">
                                         <div class="row g-3">
                                             <div class="col-md-6">
-                                                <label class="form-label small text-muted mb-1">Employee</label>
+                                                <label class="form-label small text-muted mb-1">{{ __('Employee') }}</label>
                                                 <select name="employee_sales[{{ $index }}][employee_id]" class="form-select">
-                                                    <option value="">Select employee</option>
+                                                    <option value="">{{ __('Select employee') }}</option>
                                                     @foreach($employees as $employee)
                                                         <option value="{{ $employee->id }}" @selected((string) ($row['employee_id'] ?? '') === (string) $employee->id)>{{ $employee->name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label small text-muted mb-1">Amount Sold</label>
+                                                <label class="form-label small text-muted mb-1">{{ __('Amount Sold') }}</label>
                                                 <input type="number" name="employee_sales[{{ $index }}][amount]" class="form-control employee-sale-amount" min="0.01" step="0.01" value="{{ $row['amount'] ?? '' }}" placeholder="0.00">
                                             </div>
                                         </div>
                                         <div class="d-flex justify-content-end mt-2">
-                                            <button type="button" class="btn btn-outline-danger btn-sm remove-employee-row">Remove</button>
+                                            <button type="button" class="btn btn-outline-danger btn-sm remove-employee-row">{{ __('Remove') }}</button>
                                         </div>
                                     </div>
                                 @endforeach
@@ -472,40 +472,40 @@
                             @error('employee_sales')
                                 <div class="text-danger small mt-2">{{ $message }}</div>
                             @enderror
-                            <button type="button" class="btn btn-outline-secondary btn-sm add-employee-field mt-2">+ Add Employee</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm add-employee-field mt-2">{{ __('+ Add Employee') }}</button>
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label fw-semibold">Description</label>
+                            <label class="form-label fw-semibold">{{ __('Description') }}</label>
                             <textarea name="notes" class="form-control" rows="4" placeholder="Add a description for the whole sale...">{{ old('notes') }}</textarea>
-                            <div class="field-hint mt-1">This description applies to the whole sale, not to individual employees.</div>
+                            <div class="field-hint mt-1">{{ __('This description applies to the whole sale, not to individual employees.') }}</div>
                         </div>
 
                         <template id="employee-sale-row-template">
                             <div class="employee-sale-item border rounded-4 p-3 bg-light">
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <label class="form-label small text-muted mb-1">Employee</label>
+                                        <label class="form-label small text-muted mb-1">{{ __('Employee') }}</label>
                                         <select name="employee_sales[__INDEX__][employee_id]" class="form-select">
-                                            <option value="">Select employee</option>
+                                            <option value="">{{ __('Select employee') }}</option>
                                             @foreach($employees as $employee)
                                                 <option value="{{ $employee->id }}">{{ $employee->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label small text-muted mb-1">Amount Sold</label>
+                                        <label class="form-label small text-muted mb-1">{{ __('Amount Sold') }}</label>
                                         <input type="number" name="employee_sales[__INDEX__][amount]" class="form-control employee-sale-amount" min="0.01" step="0.01" placeholder="0.00">
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-end mt-2">
-                                    <button type="button" class="btn btn-outline-danger btn-sm remove-employee-row">Remove</button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm remove-employee-row">{{ __('Remove') }}</button>
                                 </div>
                             </div>
                         </template>
 
                         <div class="col-12 d-grid d-md-flex justify-content-md-end gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg px-4">Save Sale</button>
+                            <button type="submit" class="btn btn-primary btn-lg px-4">{{ __('Save Sale') }}</button>
                         </div>
                     </form>
                 @endfeature
@@ -516,8 +516,8 @@
         <div class="col-xl-5">
             <div class="card sales-panel h-100">
                 <div class="card-header px-4 py-3">
-                    <h5 class="mb-1">What this screen captures</h5>
-                    <div class="field-hint">Quick entry for total daily sales amount built from employee amounts.</div>
+                    <h5 class="mb-1">{{ __('What this screen captures') }}</h5>
+                    <div class="field-hint">{{ __('Quick entry for total daily sales amount built from employee amounts.') }}</div>
                 </div>
                 <div class="card-body p-4">
                     <div class="sales-empty p-4 mb-3">
@@ -526,8 +526,8 @@
                                 <i class="bi bi-cash-coin fs-5"></i>
                             </div>
                             <div>
-                                <h6 class="mb-1">Daily sales tracking</h6>
-                                <div class="text-muted small">Record total amount sold by adding each employee's amount. The total updates automatically.</div>
+                                <h6 class="mb-1">{{ __('Daily sales tracking') }}</h6>
+                                <div class="text-muted small">{{ __('Record total amount sold by adding each employee\'s amount. The total updates automatically.') }}</div>
                             </div>
                         </div>
                     </div>
@@ -537,7 +537,7 @@
                             <div class="sales-stat h-100 d-flex">
                                 <div class="accent"></div>
                                 <div class="p-3 flex-grow-1">
-                                    <small class="text-muted d-block">Total sales recorded</small>
+                                    <small class="text-muted d-block">{{ __('Total sales recorded') }}</small>
                                     <h5 class="mb-0">{{ $stats['count'] }}</h5>
                                 </div>
                             </div>
@@ -545,7 +545,7 @@
                         <div class="col-12">
                             <div class="alert alert-light border mb-0">
                                 <i class="bi bi-info-circle me-1"></i>
-                                Enter the total amount sold for the day. Optionally add product details using the "+ Add Product Field" button.
+                                {{ __('Enter the total amount sold for the day. Optionally add product details using the "+ Add Product Field" button.') }}
                             </div>
                         </div>
                     </div>
@@ -558,14 +558,14 @@
     <div class="card-header px-4 py-3">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                 <div>
-                    <h5 class="mb-1">Recent Sales</h5>
-                    <div class="field-hint">Filter by date range.</div>
+                    <h5 class="mb-1">{{ __('Recent Sales') }}</h5>
+                    <div class="field-hint">{{ __('Filter by date range.') }}</div>
                 </div>
                 <div class="d-flex align-items-center gap-2">
                     @feature('downloads')
                     <button type="button" id="open-sales-export-modal" class="btn btn-outline-danger btn-sm">
                         <i class="bi bi-file-earmark-pdf"></i>
-                        Download PDF
+                        {{ __('Download PDF') }}
                     </button>
                     @endfeature
                     <span class="badge text-bg-light border">{{ $sales->total() }} results</span>
@@ -573,24 +573,24 @@
             </div>
             <form id="sales-filter-form" method="GET" class="row g-2 mt-3 align-items-end">
                 <div class="col-lg-4 col-md-6">
-                    <label class="form-label mb-0 small">Branch</label>
+                    <label class="form-label mb-0 small">{{ __('Branch') }}</label>
                     <select name="branch_id" class="form-select">
-                        <option value="">All branches</option>
+                        <option value="">{{ __('All branches') }}</option>
                         @foreach($branches as $branch)
                             <option value="{{ $branch->id }}" @selected((string) request('branch_id') === (string) $branch->id)>{{ $branch->name }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <label class="form-label mb-0 small">From</label>
+                    <label class="form-label mb-0 small">{{ __('From') }}</label>
                     <input type="date" name="from_date" class="form-control" value="{{ request('from_date') }}">
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <label class="form-label mb-0 small">To</label>
+                    <label class="form-label mb-0 small">{{ __('To') }}</label>
                     <input type="date" name="to_date" class="form-control" value="{{ request('to_date') }}">
                 </div>
                 <div class="col-lg-2 col-md-12 d-grid">
-                    <button class="btn btn-outline-primary">Filter</button>
+                    <button class="btn btn-outline-primary">{{ __('Filter') }}</button>
                 </div>
             </form>
         </div>
@@ -599,13 +599,13 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Date</th>
-                            <th>Branch</th>
-                            <th>Total Amount</th>
-                            <th>Spent</th>
-                            <th>Net</th>
-                            <th>Description</th>
-                            <th>Actions</th>
+                            <th>{{ __('Date') }}</th>
+                            <th>{{ __('Branch') }}</th>
+                            <th>{{ __('Total Amount') }}</th>
+                            <th>{{ __('Spent') }}</th>
+                            <th>{{ __('Net') }}</th>
+                            <th>{{ __('Description') }}</th>
+                            <th>{{ __('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -625,7 +625,12 @@
                                         data-net-amount="{{ number_format((float) $sale->net_income, 2, '.', '') }}"
                                         data-primary-employee="{{ e($sale->employee?->name ?? '-') }}"
                                         data-sale-notes="{{ e($sale->notes ?? '') }}"
-                                        data-sale-employees='@json($sale->employeeSaleDetails->map(fn ($detail) => ["name" => $detail->employee?->name ?? "Deleted employee", "amount" => (float) $detail->amount])->values(), JSON_HEX_APOS)'
+                                        data-sale-employees='@json($sale->employeeSaleDetails->map(function ($detail) {
+                                            return [
+                                                "name" => $detail->employee?->name ?? "Deleted employee",
+                                                "amount" => (float) $detail->amount,
+                                            ];
+                                        })->values(), JSON_HEX_APOS)'
                                     >
                                         {{ $currencySymbol ?? '$' }}{{ number_format((float) $sale->total_amount, 2) }}
                                     </button>
@@ -652,7 +657,12 @@
                                             data-spent_amount="{{ (float) ($sale->spent_amount ?? 0) }}"
                                             data-notes="{{ e($sale->notes) }}"
                                                     data-primary-employee-id="{{ $sale->employee_id }}"
-                                                    data-employee-sales='@json($sale->employeeSaleDetails->map(fn ($detail) => ["employee_id" => $detail->employee_id, "amount" => (float) $detail->amount])->values(), JSON_HEX_APOS)'
+                                                    data-employee-sales='@json($sale->employeeSaleDetails->map(function ($detail) {
+                                                        return [
+                                                            "employee_id" => $detail->employee_id,
+                                                            "amount" => (float) $detail->amount,
+                                                        ];
+                                                    })->values(), JSON_HEX_APOS)'
                                             data-update_url="{{ route('sales.update', $sale->id) }}"
                                         >
                                             <i class="bi bi-pencil"></i>
@@ -666,7 +676,7 @@
                                 <td colspan="8" class="text-center text-muted py-5">
                                     <div class="py-3">
                                         <i class="bi bi-receipt fs-1 d-block mb-2"></i>
-                                        No sales recorded yet.
+                                        {{ __('No sales recorded yet.') }}
                                     </div>
                                 </td>
                             </tr>
@@ -690,30 +700,30 @@
                         @csrf
 
                         <div class="modal-header">
-                            <h5 class="modal-title"><i class="bi bi-file-earmark-pdf"></i> Satış PDF İndir</h5>
+                            <h5 class="modal-title"><i class="bi bi-file-earmark-pdf"></i> {{ __('Satış PDF İndir') }}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
 
                         <div class="modal-body">
                             <div class="alert alert-info mb-3">
-                                <small><i class="bi bi-info-circle"></i> <strong>Başlangıç ve Bitiş tarihi seçin</strong> (ör: 1 Mayıs - 31 Mayıs). Sistem tüm veriyi bu tarih aralığında indirecektir.</small>
+                                <small><i class="bi bi-info-circle"></i> <strong>{{ __('Başlangıç ve Bitiş tarihi seçin') }}</strong> {{ __('(ör: 1 Mayıs - 31 Mayıs). Sistem tüm veriyi bu tarih aralığında indirecektir.') }}</small>
                             </div>
 
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Başlangıç Tarihi <span class="text-danger">*</span></label>
+                                    <label class="form-label fw-semibold">{{ __('Başlangıç Tarihi') }} <span class="text-danger">*</span></label>
                                     <input type="date" name="from_date" class="form-control form-control-lg" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Bitiş Tarihi <span class="text-danger">*</span></label>
+                                    <label class="form-label fw-semibold">{{ __('Bitiş Tarihi') }} <span class="text-danger">*</span></label>
                                     <input type="date" name="to_date" class="form-control form-control-lg" required>
                                 </div>
                             </div>
 
                             <div class="mt-3">
-                                <label class="form-label fw-semibold">Şube (Opsiyonel)</label>
+                                <label class="form-label fw-semibold">{{ __('Şube (Opsiyonel)') }}</label>
                                 <select name="branch_id" class="form-select form-select-lg">
-                                    <option value="">Tüm şubeler</option>
+                                    <option value="">{{ __('Tüm şubeler') }}</option>
                                     @foreach($branches as $branch)
                                         <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                                     @endforeach
@@ -722,10 +732,10 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('İptal') }}</button>
                             <button type="submit" class="btn btn-danger btn-lg">
                                 <i class="bi bi-download"></i>
-                                PDF İndir
+                                {{ __('PDF İndir') }}
                             </button>
                         </div>
                     </form>
@@ -742,11 +752,11 @@
                     <div class="modal-header">
                         <div>
                             <div class="d-flex align-items-center gap-2 mb-1">
-                                <span class="badge text-bg-light text-dark border">Sale details</span>
-                                <span class="badge text-bg-warning">Employee breakdown</span>
+                                <span class="badge text-bg-light text-dark border">{{ __('Sale details') }}</span>
+                                <span class="badge text-bg-warning">{{ __('Employee breakdown') }}</span>
                             </div>
-                            <h5 class="modal-title mb-0 fw-bold">Employees Involved</h5>
-                            <div class="field-hint">Review who contributed to the sale and the amounts they sold.</div>
+                            <h5 class="modal-title mb-0 fw-bold">{{ __('Employees Involved') }}</h5>
+                            <div class="field-hint">{{ __('Review who contributed to the sale and the amounts they sold.') }}</div>
                         </div>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -754,43 +764,43 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6 col-xl-3">
                                 <div class="detail-tile">
-                                    <span class="label">Date</span>
+                                    <span class="label">{{ __('Date') }}</span>
                                     <div class="value" id="sale-details-date">-</div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-xl-3">
                                 <div class="detail-tile">
-                                    <span class="label">Branch</span>
+                                    <span class="label">{{ __('Branch') }}</span>
                                     <div class="value" id="sale-details-branch">-</div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-xl-3">
                                 <div class="detail-tile">
-                                    <span class="label">Primary Employee</span>
+                                    <span class="label">{{ __('Primary Employee') }}</span>
                                     <div class="value" id="sale-details-primary-employee">-</div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-xl-3">
                                 <div class="detail-tile">
-                                    <span class="label">Total Amount</span>
+                                    <span class="label">{{ __('Total Amount') }}</span>
                                     <div class="value amount" id="sale-details-total">-</div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-xl-3">
                                 <div class="detail-tile">
-                                    <span class="label">Spent</span>
+                                    <span class="label">{{ __('Spent') }}</span>
                                     <div class="value amount" id="sale-details-spent">-</div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-xl-3">
                                 <div class="detail-tile">
-                                    <span class="label">Net</span>
+                                    <span class="label">{{ __('Net') }}</span>
                                     <div class="value amount" id="sale-details-net">-</div>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="detail-notes">
-                                    <div class="label mb-2">Description</div>
+                                    <div class="label mb-2">{{ __('Description') }}</div>
                                     <div class="value" id="sale-details-notes">-</div>
                                 </div>
                             </div>
@@ -798,8 +808,8 @@
 
                         <div class="employee-breakdown-wrap">
                             <div class="employee-breakdown-head d-flex justify-content-between align-items-center gap-2">
-                                <h6 class="mb-0">Employees involved</h6>
-                                <span class="badge text-bg-light border" id="sale-details-count-badge">0 employees</span>
+                                <h6 class="mb-0">{{ __('Employees involved') }}</h6>
+                                <span class="badge text-bg-light border" id="sale-details-count-badge">{{ __('0 employees') }}</span>
                             </div>
                             <div id="sale-details-list" class="employee-breakdown-list"></div>
                         </div>
@@ -816,52 +826,52 @@
                         @csrf
                         @method('PUT')
                         <div class="modal-header">
-                            <h5 class="modal-title">Edit Sale</h5>
+                            <h5 class="modal-title">{{ __('Edit Sale') }}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label">Branch</label>
+                                    <label class="form-label">{{ __('Branch') }}</label>
                                     <select name="branch_id" class="form-select" required>
-                                        <option value="">Select branch</option>
+                                        <option value="">{{ __('Select branch') }}</option>
                                         @foreach($branches as $branch)
                                             <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Sale Date</label>
+                                    <label class="form-label">{{ __('Sale Date') }}</label>
                                     <input type="date" name="sale_date" class="form-control" required>
                                 </div>
                                 <div class="col-md-12">
-                                    <label class="form-label">Total Amount</label>
+                                    <label class="form-label">{{ __('Total Amount') }}</label>
                                     <input type="number" name="total_amount" class="form-control js-total-amount" step="0.01" min="0.01" required>
-                                    <div class="field-hint mt-1">Enter total manually.</div>
+                                    <div class="field-hint mt-1">{{ __('Enter total manually.') }}</div>
                                 </div>
                                 <div class="col-md-12">
-                                    <label class="form-label">Amount Spent by Store <span class="text-muted">(Optional)</span></label>
+                                    <label class="form-label">{{ __('Amount Spent by Store') }} <span class="text-muted">{{ __('(Optional)') }}</span></label>
                                     <input type="number" name="spent_amount" class="form-control" step="0.01" min="0" placeholder="Amount the store spent">
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label fw-semibold">Employees Involved</label>
-                                    <div class="field-hint mb-2">Add or change the employees linked to this sale and their sold amounts.</div>
+                                    <label class="form-label fw-semibold">{{ __('Employees Involved') }}</label>
+                                    <div class="field-hint mb-2">{{ __('Add or change the employees linked to this sale and their sold amounts.') }}</div>
                                     <div id="edit-employee-sales-list" class="d-grid gap-3"></div>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm mt-2 add-edit-employee-field">+ Add Employee</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm mt-2 add-edit-employee-field">{{ __('+ Add Employee') }}</button>
                                     @error('employee_sales')
                                         <div class="text-danger small mt-2">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label">Description</label>
+                                    <label class="form-label">{{ __('Description') }}</label>
                                     <textarea name="notes" rows="4" class="form-control" placeholder="Add a description for the whole sale..."></textarea>
-                                    <div class="field-hint mt-1">This description applies to the whole sale, not to individual employees.</div>
+                                    <div class="field-hint mt-1">{{ __('This description applies to the whole sale, not to individual employees.') }}</div>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Save changes</button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                            <button type="submit" class="btn btn-primary">{{ __('Save changes') }}</button>
                         </div>
                     </form>
                 </div>
@@ -872,21 +882,21 @@
             <div class="employee-sale-item border rounded-4 p-3 bg-light">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label small text-muted mb-1">Employee</label>
+                        <label class="form-label small text-muted mb-1">{{ __('Employee') }}</label>
                         <select name="employee_sales[__INDEX__][employee_id]" class="form-select">
-                            <option value="">Select employee</option>
+                            <option value="">{{ __('Select employee') }}</option>
                             @foreach($employees as $employee)
                                 <option value="{{ $employee->id }}">{{ $employee->name }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label small text-muted mb-1">Amount Sold</label>
+                        <label class="form-label small text-muted mb-1">{{ __('Amount Sold') }}</label>
                         <input type="number" name="employee_sales[__INDEX__][amount]" class="form-control employee-sale-amount" min="0.01" step="0.01" placeholder="0.00">
                     </div>
                 </div>
                 <div class="d-flex justify-content-end mt-2">
-                    <button type="button" class="btn btn-outline-danger btn-sm remove-employee-row">Remove</button>
+                    <button type="button" class="btn btn-outline-danger btn-sm remove-employee-row">{{ __('Remove') }}</button>
                 </div>
             </div>
         </template>

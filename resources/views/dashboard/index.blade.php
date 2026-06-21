@@ -950,14 +950,14 @@
         <div class="dashboard-hero-inner redesigned-hero">
             <div class="hero-left">
                 <div class="hero-badges">
-                    <span class="hero-badge hero-badge-live"><i class="bi bi-broadcast"></i> Live analytics</span>
+                    <span class="hero-badge hero-badge-live"><i class="bi bi-broadcast"></i> {{ __('Live analytics') }}</span>
                 </div>
                 <h1 class="dashboard-title"><i class="bi bi-speedometer2 me-2"></i>{{ __('messages.dashboard') }}</h1>
-                <p class="dashboard-subtitle">Welcome back, <strong>{{ auth()->user()->name }}</strong>. This merchant dashboard surfaces daily KPIs, quick actions, and summarized insights for fast decision making.</p>
+                <p class="dashboard-subtitle">{{ __('Welcome back,') }} <strong>{{ auth()->user()->name }}</strong>{{ __('. This merchant dashboard surfaces daily KPIs, quick actions, and summarized insights for fast decision making.') }}</p>
 
                 <div class="hero-actions">
-                    <a href="{{ route('sales.index') }}" class="btn btn-primary-modern">New Sale</a>
-                    <a href="{{ route('reports.sales') }}" class="btn btn-outline-light">Reports</a>
+                    <a href="{{ route('sales.index') }}" class="btn btn-primary-modern">{{ __('New Sale') }}</a>
+                    <a href="{{ route('reports.sales') }}" class="btn btn-outline-light">{{ __('Reports') }}</a>
                 </div>
 
                 <div class="ambient-strip" aria-hidden="true"></div>
@@ -966,22 +966,22 @@
             <div class="hero-right">
                 <div class="kpi-grid">
                     <div class="kpi-card">
-                        <div class="kpi-label">Today Sales</div>
+                        <div class="kpi-label">{{ __('Today Sales') }}</div>
                             <div class="kpi-value"><span class="kpi-value-num" data-currency="1" data-target="{{ $todaySales ?? 0 }}">0</span></div>
                     </div>
 
                     <div class="kpi-card">
-                        <div class="kpi-label">Total Balance</div>
+                        <div class="kpi-label">{{ __('Total Balance') }}</div>
                         <div class="kpi-value"><span class="kpi-value-num" data-currency="1" data-target="{{ $safeBalance ?? 0 }}">0</span></div>
                     </div>
 
                     <div class="kpi-card">
-                        <div class="kpi-label">Products</div>
+                        <div class="kpi-label">{{ __('Products') }}</div>
                         <div class="kpi-value"><span class="kpi-value-num" data-target="{{ $totalProducts ?? 0 }}">0</span></div>
                     </div>
 
                     <div class="kpi-card">
-                        <div class="kpi-label">Low Stock</div>
+                        <div class="kpi-label">{{ __('Low Stock') }}</div>
                         <div class="kpi-value"><span class="kpi-value-num" data-target="{{ $lowStockCount ?? 0 }}">0</span></div>
                     </div>
                 </div>
@@ -1027,92 +1027,92 @@
     <div class="dashboard-section">
         <div class="section-heading">
             <div>
-                <h2 class="section-title"><i class="bi bi-lightning-charge-fill text-warning"></i>Quick actions</h2>
-                <p class="section-subtitle">Open the most important operational screens fast.</p>
+                <h2 class="section-title"><i class="bi bi-lightning-charge-fill text-warning"></i>{{ __('Quick actions') }}</h2>
+                <p class="section-subtitle">{{ __('Open the most important operational screens fast.') }}</p>
             </div>
         </div>
             <div class="quick-actions-grid">
             @feature('products.create')
             <a href="{{ route('products.create') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-box-seam"></i></div>
-                <div class="quick-action-text"><strong>Add Product</strong><span>Create inventory item</span></div>
+                <div class="quick-action-text"><strong>{{ __('Add Product') }}</strong><span>{{ __('Create inventory item') }}</span></div>
             </a>
             @endfeature
 
             @feature('sales')
             <a href="{{ route('sales.index') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-cart-check"></i></div>
-                <div class="quick-action-text"><strong>Sales</strong><span>Open sales list</span></div>
+                <div class="quick-action-text"><strong>{{ __('Sales') }}</strong><span>{{ __('Open sales list') }}</span></div>
             </a>
             @endfeature
 
             @feature('invoicing')
             <a href="{{ route('invoices.create') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-receipt"></i></div>
-                <div class="quick-action-text"><strong>New Invoice</strong><span>Create invoice</span></div>
+                <div class="quick-action-text"><strong>{{ __('New Invoice') }}</strong><span>{{ __('Create invoice') }}</span></div>
             </a>
             @endfeature
 
             @feature('employees')
             <a href="{{ route('employees.create') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-person-plus"></i></div>
-                <div class="quick-action-text"><strong>Add Employee</strong><span>Register staff</span></div>
+                <div class="quick-action-text"><strong>{{ __('Add Employee') }}</strong><span>{{ __('Register staff') }}</span></div>
             </a>
             @endfeature
 
             @feature('suppliers.create')
             <a href="{{ route('suppliers.create') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-truck"></i></div>
-                <div class="quick-action-text"><strong>Add Supplier</strong><span>Register supplier</span></div>
+                <div class="quick-action-text"><strong>{{ __('Add Supplier') }}</strong><span>{{ __('Register supplier') }}</span></div>
             </a>
             @endfeature
 
             @feature('payroll')
             <a href="{{ route('payroll.create') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-wallet2"></i></div>
-                <div class="quick-action-text"><strong>Payroll</strong><span>Payroll entry</span></div>
+                <div class="quick-action-text"><strong>{{ __('Payroll') }}</strong><span>{{ __('Payroll entry') }}</span></div>
             </a>
             @endfeature
 
             @feature('safes')
             <a href="{{ route('safes.index') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-safe"></i></div>
-                <div class="quick-action-text"><strong>Safes</strong><span>Cash management</span></div>
+                <div class="quick-action-text"><strong>{{ __('Safes') }}</strong><span>{{ __('Cash management') }}</span></div>
             </a>
             @endfeature
 
             @feature('commissions')
             <a href="{{ route('commissions.index') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-percent"></i></div>
-                <div class="quick-action-text"><strong>Commissions</strong><span>Review payouts</span></div>
+                <div class="quick-action-text"><strong>{{ __('Commissions') }}</strong><span>{{ __('Review payouts') }}</span></div>
             </a>
             @endfeature
 
             @feature('storages')
             <a href="{{ route('storages.index') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-boxes"></i></div>
-                <div class="quick-action-text"><strong>Storages</strong><span>Warehouse overview</span></div>
+                <div class="quick-action-text"><strong>{{ __('Storages') }}</strong><span>{{ __('Warehouse overview') }}</span></div>
             </a>
             @endfeature
 
             @feature('branches.create')
             <a href="{{ route('branches.create') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-diagram-3"></i></div>
-                <div class="quick-action-text"><strong>New Branch</strong><span>Expand locations</span></div>
+                <div class="quick-action-text"><strong>{{ __('New Branch') }}</strong><span>{{ __('Expand locations') }}</span></div>
             </a>
             @endfeature
 
             @feature('sales_report')
             <a href="{{ route('reports.sales') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-graph-up-arrow"></i></div>
-                <div class="quick-action-text"><strong>Sales Report</strong><span>View analytics</span></div>
+                <div class="quick-action-text"><strong>{{ __('Sales Report') }}</strong><span>{{ __('View analytics') }}</span></div>
             </a>
             @endfeature
 
             @feature('financial_report')
             <a href="{{ route('reports.financial') }}" class="quick-action">
                 <div class="quick-action-icon"><i class="bi bi-bar-chart-line"></i></div>
-                <div class="quick-action-text"><strong>Financial Report</strong><span>Review accounts</span></div>
+                <div class="quick-action-text"><strong>{{ __('Financial Report') }}</strong><span>{{ __('Review accounts') }}</span></div>
             </a>
             @endfeature
         </div>
@@ -1122,8 +1122,8 @@
     <div class="dashboard-section">
         <div class="section-heading">
             <div>
-                <h2 class="section-title"><i class="bi bi-bar-chart-line-fill text-warning"></i>Operational metrics</h2>
-                <p class="section-subtitle">Live totals for sales, inventory, storage, commissions, and cash flow.</p>
+                <h2 class="section-title"><i class="bi bi-bar-chart-line-fill text-warning"></i>{{ __('Operational metrics') }}</h2>
+                <p class="section-subtitle">{{ __('Live totals for sales, inventory, storage, commissions, and cash flow.') }}</p>
             </div>
         </div>
         <div class="metrics-grid">
@@ -1131,12 +1131,12 @@
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
-                        <span class="metric-label">Products</span>
+                        <span class="metric-label">{{ __('Products') }}</span>
                         <div class="metric-value" id="metric-total-products">{{ $totalProducts ?? 0 }}</div>
                     </div>
                     <div class="metric-badge primary"><i class="bi bi-box-seam"></i></div>
                 </div>
-                <div class="metric-note"><i class="bi bi-exclamation-triangle"></i><span id="metric-low-stock-count">{{ $lowStockCount ?? 0 }}</span> low stock</div>
+                <div class="metric-note"><i class="bi bi-exclamation-triangle"></i><span id="metric-low-stock-count">{{ $lowStockCount ?? 0 }}</span> {{ __('low stock') }}</div>
             </div>
             @endfeature
 
@@ -1144,12 +1144,12 @@
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
-                        <span class="metric-label">Sales</span>
+                        <span class="metric-label">{{ __('Sales') }}</span>
                         <div class="metric-value" id="metric-total-sales">{{ $currencySymbol }}{{ number_format($totalSales ?? 0, 2) }}</div>
                     </div>
                     <div class="metric-badge success"><i class="bi bi-cash-coin"></i></div>
                 </div>
-                <div class="metric-note"><i class="bi bi-receipt"></i><span id="metric-sales-count">{{ $salesCount ?? 0 }}</span> invoices</div>
+                <div class="metric-note"><i class="bi bi-receipt"></i><span id="metric-sales-count">{{ $salesCount ?? 0 }}</span> {{ __('invoices') }}</div>
             </div>
             @endfeature
 
@@ -1157,12 +1157,12 @@
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
-                        <span class="metric-label">Employees</span>
+                        <span class="metric-label">{{ __('Employees') }}</span>
                         <div class="metric-value" id="metric-total-employees">{{ $totalEmployees ?? 0 }}</div>
                     </div>
                     <div class="metric-badge info"><i class="bi bi-people"></i></div>
                 </div>
-                <div class="metric-note"><i class="bi bi-person-check"></i>Team coverage</div>
+                <div class="metric-note"><i class="bi bi-person-check"></i>{{ __('Team coverage') }}</div>
             </div>
             @endfeature
 
@@ -1170,7 +1170,7 @@
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
-                        <span class="metric-label">Pending Commissions</span>
+                        <span class="metric-label">{{ __('Pending Commissions') }}</span>
                         <div class="metric-value" id="metric-pending-commissions">{{ $pendingCommissions ?? 0 }}</div>
                     </div>
                     <div class="metric-badge warning"><i class="bi bi-percent"></i></div>
@@ -1183,7 +1183,7 @@
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
-                        <span class="metric-label">Storage Usage</span>
+                        <span class="metric-label">{{ __('Storage Usage') }}</span>
                         <div class="metric-value" id="metric-storage-usage">{{ number_format($storageUsage ?? 0, 2) }}%</div>
                     </div>
                     <div class="metric-badge primary"><i class="bi bi-boxes"></i></div>
@@ -1197,36 +1197,34 @@
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
-                        <span class="metric-label">Safe Balance</span>
+                        <span class="metric-label">{{ __('Safe Balance') }}</span>
                         <div class="metric-value" id="metric-safe-balance">{{ $currencySymbol }}{{ number_format($safeBalance ?? 0, 2) }}</div>
                     </div>
                     <div class="metric-badge success"><i class="bi bi-safe"></i></div>
                 </div>
                 <div class="metric-note"><i class="bi bi-arrow-left-right"></i>{{ $safeCount ?? 0 }} safes</div>
             </div>
-            @endfeature
 
-            @feature('safes')
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
-                        <span class="metric-label">Income</span>
+                        <span class="metric-label">{{ __('Income') }}</span>
                         <div class="metric-value" id="metric-safe-income">{{ $currencySymbol }}{{ number_format($safeIncomeTotal ?? 0, 2) }}</div>
                     </div>
                     <div class="metric-badge info"><i class="bi bi-arrow-down-circle"></i></div>
                 </div>
-                <div class="metric-note"><i class="bi bi-lightning-charge"></i>Cash inflow</div>
+                <div class="metric-note"><i class="bi bi-lightning-charge"></i>{{ __('Cash inflow') }}</div>
             </div>
 
             <div class="metric-card">
                 <div class="metric-top">
                     <div>
-                        <span class="metric-label">Outcome</span>
+                        <span class="metric-label">{{ __('Outcome') }}</span>
                         <div class="metric-value" id="metric-safe-outcome">{{ $currencySymbol }}{{ number_format($safeOutcomeTotal ?? 0, 2) }}</div>
                     </div>
                     <div class="metric-badge danger"><i class="bi bi-arrow-up-circle"></i></div>
                 </div>
-                <div class="metric-note"><i class="bi bi-lightning-charge"></i>Cash outflow</div>
+                <div class="metric-note"><i class="bi bi-lightning-charge"></i>{{ __('Cash outflow') }}</div>
             </div>
             @endfeature
         </div>
@@ -1236,39 +1234,39 @@
     <div class="dashboard-section">
         <div class="section-heading">
             <div>
-                <h2 class="section-title"><i class="bi bi-graph-up-arrow text-warning"></i>Sales and finance reports</h2>
-                <p class="section-subtitle">The charts are loaded from a live analytics endpoint.</p>
+                <h2 class="section-title"><i class="bi bi-graph-up-arrow text-warning"></i>{{ __('Sales and finance reports') }}</h2>
+                <p class="section-subtitle">{{ __('The charts are loaded from a live analytics endpoint.') }}</p>
             </div>
         </div>
         <div class="chart-grid">
             <div class="chart-card">
                 <div class="section-heading mb-3">
                     <div>
-                        <h3 class="section-title mb-0">Sales trend</h3>
-                        <p class="section-subtitle">Live monthly sales from the sales page records.</p>
+                        <h3 class="section-title mb-0">{{ __('Sales trend') }}</h3>
+                        <p class="section-subtitle">{{ __('Live monthly sales from the sales page records.') }}</p>
                     </div>
-                    <a href="{{ route('sales.index') }}" class="btn btn-sm btn-outline-secondary">Open sales page</a>
+                    <a href="{{ route('sales.index') }}" class="btn btn-sm btn-outline-secondary">{{ __('Open sales page') }}</a>
                 </div>
                 <div class="chart-box"><canvas id="salesTrendChart"></canvas></div>
             </div>
 
             <div class="chart-card">
                 <div class="section-heading mb-3">
-                    <h3 class="section-title mb-0">Income vs outcome</h3>
+                    <h3 class="section-title mb-0">{{ __('Income vs outcome') }}</h3>
                 </div>
                 <div class="chart-box"><canvas id="cashFlowChart"></canvas></div>
             </div>
 
             <div class="chart-card">
                 <div class="section-heading mb-3">
-                    <h3 class="section-title mb-0">Inventory health</h3>
+                    <h3 class="section-title mb-0">{{ __('Inventory health') }}</h3>
                 </div>
                 <div class="chart-box"><canvas id="inventoryChart"></canvas></div>
             </div>
 
             <div class="chart-card">
                 <div class="section-heading mb-3">
-                    <h3 class="section-title mb-0">Storage mix</h3>
+                    <h3 class="section-title mb-0">{{ __('Storage mix') }}</h3>
                 </div>
                 <div class="chart-box"><canvas id="storageChart"></canvas></div>
             </div>
@@ -1281,21 +1279,21 @@
                 <div class="panel-card h-100">
                     <div class="section-heading">
                         <div>
-                            <h2 class="section-title mb-1"><i class="bi bi-bag-check text-warning"></i>Recent sales</h2>
-                            <p class="section-subtitle">Latest invoice activity and product movement.</p>
+                            <h2 class="section-title mb-1"><i class="bi bi-bag-check text-warning"></i>{{ __('Recent sales') }}</h2>
+                            <p class="section-subtitle">{{ __('Latest invoice activity and product movement.') }}</p>
                         </div>
                         @feature('sales')
-                        <a href="{{ route('sales.index') }}" class="btn btn-sm btn-outline-secondary">View all</a>
+                        <a href="{{ route('sales.index') }}" class="btn btn-sm btn-outline-secondary">{{ __('View all') }}</a>
                         @endfeature
                     </div>
                     <div class="table-responsive d-none d-md-block">
                         <table class="table align-middle recent-sales-table">
                             <thead>
                                 <tr>
-                                    <th>Description</th>
-                                    <th>Reference</th>
-                                    <th>Date</th>
-                                    <th>Amount</th>
+                                    <th>{{ __('Description') }}</th>
+                                    <th>{{ __('Reference') }}</th>
+                                    <th>{{ __('Date') }}</th>
+                                    <th>{{ __('Amount') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1303,7 +1301,7 @@
                                     <tr>
                                         <td>{{ $transaction->description ?? 'Invoice' }}</td>
                                         <td>{{ $transaction->reference_number ?? 'N/A' }}</td>
-                                        <td>{{ optional($transaction->date)->format('M d, Y') ?? 'N/A' }}</td>
+                                        <td>{{ optional($transaction->date)->translatedFormat('M d, Y') ?? 'N/A' }}</td>
                                         <td>{{ $currencySymbol }}{{ number_format($transaction->total_credit ?? 0, 2) }}</td>
                                     </tr>
                                 @empty
@@ -1311,7 +1309,7 @@
                                         <td colspan="4">
                                             <div class="empty-state">
                                                 <i class="bi bi-inbox"></i>
-                                                No sales records found
+                                                {{ __('No sales records found') }}
                                             </div>
                                         </td>
                                     </tr>
@@ -1327,7 +1325,7 @@
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
                                         <div class="fw-semibold">{{ $transaction->description ?? 'Invoice' }}</div>
-                                        <small class="text-muted">{{ optional($transaction->date)->format('M d, Y') ?? 'N/A' }}</small>
+                                        <small class="text-muted">{{ optional($transaction->date)->translatedFormat('M d, Y') ?? 'N/A' }}</small>
                                     </div>
                                     <div class="fw-semibold">{{ $currencySymbol }}{{ number_format($transaction->total_credit ?? 0, 2) }}</div>
                                 </div>
@@ -1338,7 +1336,7 @@
                         @empty
                             <div class="empty-state">
                                 <i class="bi bi-inbox"></i>
-                                No sales records found
+                                {{ __('No sales records found') }}
                             </div>
                         @endforelse
                     </div>
@@ -1349,11 +1347,11 @@
                 <div class="panel-card h-100">
                     <div class="section-heading">
                         <div>
-                            <h2 class="section-title mb-1"><i class="bi bi-cash-stack text-warning"></i>Recent cash entries</h2>
-                            <p class="section-subtitle">Income and outcome entries from safe modules.</p>
+                            <h2 class="section-title mb-1"><i class="bi bi-cash-stack text-warning"></i>{{ __('Recent cash entries') }}</h2>
+                            <p class="section-subtitle">{{ __('Income and outcome entries from safe modules.') }}</p>
                         </div>
                         @feature('safes')
-                        <a href="{{ route('safes.index') }}" class="btn btn-sm btn-outline-secondary">Safes</a>
+                        <a href="{{ route('safes.index') }}" class="btn btn-sm btn-outline-secondary">{{ __('Safes') }}</a>
                         @endfeature
                     </div>
                     <div class="list-group list-group-flush">
@@ -1361,7 +1359,7 @@
                             <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-start">
                                 <div>
                                     <div class="fw-semibold">Income · {{ $income->reference ?: $income->source }}</div>
-                                    <small class="text-muted">{{ $income->safe->name ?? 'N/A' }} · {{ optional($income->created_at)->format('M d, Y h:i A') }}</small>
+                                    <small class="text-muted">{{ $income->safe->name ?? 'N/A' }} · {{ optional($income->created_at)->translatedFormat('M d, Y h:i A') }}</small>
                                 </div>
                                 <span class="pill success">{{ $currencySymbol }}{{ number_format($income->amount, 2) }}</span>
                             </div>
@@ -1371,7 +1369,7 @@
                             <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-start">
                                 <div>
                                     <div class="fw-semibold">Outcome · {{ $outcome->description ?: ($outcome->reference ?: 'Cash out') }}</div>
-                                    <small class="text-muted">{{ $outcome->safe->name ?? 'N/A' }} · {{ optional($outcome->created_at)->format('M d, Y h:i A') }}</small>
+                                    <small class="text-muted">{{ $outcome->safe->name ?? 'N/A' }} · {{ optional($outcome->created_at)->translatedFormat('M d, Y h:i A') }}</small>
                                 </div>
                                 <span class="pill danger">{{ $currencySymbol }}{{ number_format($outcome->amount, 2) }}</span>
                             </div>
@@ -1380,7 +1378,7 @@
                         @if($recentIncomeEntries->isEmpty() && $recentOutcomeEntries->isEmpty())
                             <div class="empty-state">
                                 <i class="bi bi-inbox"></i>
-                                No cash entries found
+                                {{ __('No cash entries found') }}
                             </div>
                         @endif
                     </div>
@@ -1391,20 +1389,20 @@
                 <div class="panel-card h-100">
                     <div class="section-heading">
                         <div>
-                            <h2 class="section-title mb-1"><i class="bi bi-exclamation-triangle text-warning"></i>Low stock products</h2>
-                            <p class="section-subtitle">Items that need replenishing soon.</p>
+                            <h2 class="section-title mb-1"><i class="bi bi-exclamation-triangle text-warning"></i>{{ __('Low stock products') }}</h2>
+                            <p class="section-subtitle">{{ __('Items that need replenishing soon.') }}</p>
                         </div>
                         @feature('products')
-                        <a href="{{ route('products.index') }}" class="btn btn-sm btn-outline-secondary">Inventory</a>
+                        <a href="{{ route('products.index') }}" class="btn btn-sm btn-outline-secondary">{{ __('Inventory') }}</a>
                         @endfeature
                     </div>
                     <div class="table-responsive d-none d-md-block">
                         <table class="table align-middle low-stock-table">
                             <thead>
                                 <tr>
-                                    <th>Product</th>
-                                    <th>Stock</th>
-                                    <th>Alert</th>
+                                    <th>{{ __('Product') }}</th>
+                                    <th>{{ __('Stock') }}</th>
+                                    <th>{{ __('Alert') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1414,11 +1412,11 @@
                                         <td>{{ $product->current_stock ?? 0 }}</td>
                                         <td>
                                             @if(($product->current_stock ?? 0) <= 0)
-                                                <span class="pill danger">Out of stock</span>
+                                                <span class="pill danger">{{ __('Out of stock') }}</span>
                                             @elseif(($product->current_stock ?? 0) <= 10)
-                                                <span class="pill warning">Low stock</span>
+                                                <span class="pill warning">{{ __('Low stock') }}</span>
                                             @else
-                                                <span class="pill success">Healthy</span>
+                                                <span class="pill success">{{ __('Healthy') }}</span>
                                             @endif
                                         </td>
                                     </tr>
@@ -1427,7 +1425,7 @@
                                         <td colspan="3">
                                             <div class="empty-state">
                                                 <i class="bi bi-inbox"></i>
-                                                No products available
+                                                {{ __('No products available') }}
                                             </div>
                                         </td>
                                     </tr>
@@ -1447,11 +1445,11 @@
                                     </div>
                                     <div>
                                         @if(($product->current_stock ?? 0) <= 0)
-                                            <span class="pill danger">Out of stock</span>
+                                            <span class="pill danger">{{ __('Out of stock') }}</span>
                                         @elseif(($product->current_stock ?? 0) <= 10)
-                                            <span class="pill warning">Low stock</span>
+                                            <span class="pill warning">{{ __('Low stock') }}</span>
                                         @else
-                                            <span class="pill success">Healthy</span>
+                                            <span class="pill success">{{ __('Healthy') }}</span>
                                         @endif
                                     </div>
                                 </div>
@@ -1459,7 +1457,7 @@
                         @empty
                             <div class="empty-state">
                                 <i class="bi bi-inbox"></i>
-                                No products available
+                                {{ __('No products available') }}
                             </div>
                         @endforelse
                     </div>
@@ -1470,11 +1468,11 @@
                 <div class="panel-card h-100">
                     <div class="section-heading">
                         <div>
-                            <h2 class="section-title mb-1"><i class="bi bi-hdd-stack text-warning"></i>Storage snapshot</h2>
-                            <p class="section-subtitle">Storage utilization and current load.</p>
+                            <h2 class="section-title mb-1"><i class="bi bi-hdd-stack text-warning"></i>{{ __('Storage snapshot') }}</h2>
+                            <p class="section-subtitle">{{ __('Storage utilization and current load.') }}</p>
                         </div>
                         @feature('storages')
-                        <a href="{{ route('storages.index') }}" class="btn btn-sm btn-outline-secondary">Storages</a>
+                        <a href="{{ route('storages.index') }}" class="btn btn-sm btn-outline-secondary">{{ __('Storages') }}</a>
                         @endfeature
                     </div>
                     <div class="list-group list-group-flush">
@@ -1490,7 +1488,7 @@
                         @empty
                             <div class="empty-state">
                                 <i class="bi bi-inbox"></i>
-                                No storages found
+                                {{ __('No storages found') }}
                             </div>
                         @endforelse
                     </div>

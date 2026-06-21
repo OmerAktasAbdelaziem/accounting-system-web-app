@@ -51,9 +51,9 @@
     <div class="container-fluid">
         <div class="create-hero mb-4 d-flex flex-wrap justify-content-between align-items-start gap-3">
             <div>
-                <div class="text-uppercase text-white-50 small fw-semibold mb-2">Administration</div>
+                <div class="text-uppercase text-white-50 small fw-semibold mb-2">{{ __('Administration') }}</div>
                 <h1 class="mb-2 fw-bold" style="letter-spacing: -0.03em;">{{ __('users.add_user') }}</h1>
-                <p class="mb-0 text-white-50">Create a new team member with a clean, focused form.</p>
+                <p class="mb-0 text-white-50">{{ __('Create a new team member with a clean, focused form.') }}</p>
             </div>
             <a href="{{ route('users.index') }}" class="btn btn-light rounded-pill px-3">
                 <i class="fas fa-arrow-left me-2"></i>{{ __('actions.back') }}
@@ -76,25 +76,25 @@
                         @endif
 
                         <form action="{{ route('users.store') }}" method="POST" class="row g-3">
-                            @csrf
+                            {{ __('@csrf') }}
 
                             <div class="col-md-6">
                                 <label for="name" class="form-label fw-semibold">{{ __('users.name') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control create-field @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required>
-                                @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'name\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-md-6">
                                 <label for="email" class="form-label fw-semibold">{{ __('users.email') }} <span class="text-danger">*</span></label>
                                 <input type="email" class="form-control create-field @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required>
-                                @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'email\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-md-6">
                                 <label for="password" class="form-label fw-semibold">{{ __('users.password') }} <span class="text-danger">*</span></label>
                                 <input type="password" class="form-control create-field @error('password') is-invalid @enderror" id="password" name="password" required>
                                 <small class="text-muted d-block mt-1">{{ __('users.min_8_characters') }}</small>
-                                @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'password\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-md-6">
@@ -110,13 +110,13 @@
                                         <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
                                     @endforeach
                                 </select>
-                                @error('role_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'role_id\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-md-6">
                                 <label for="phone" class="form-label fw-semibold">{{ __('users.phone') }}</label>
                                 <input type="tel" class="form-control create-field @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}">
-                                @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'phone\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-12">
@@ -145,22 +145,22 @@
                                 <i class="fas fa-user-plus"></i>
                             </div>
                             <div>
-                                <h5 class="mb-1">Team access</h5>
-                                <small class="text-white-50">Keep the form tight and readable.</small>
+                                <h5 class="mb-1">{{ __('Team access') }}</h5>
+                                <small class="text-white-50">{{ __('Keep the form tight and readable.') }}</small>
                             </div>
                         </div>
                         <div class="d-flex flex-column gap-3">
                             <div class="d-flex gap-3">
                                 <i class="fas fa-check-circle mt-1"></i>
-                                <div>Use a clear email address and assign the role that matches the user's workflow.</div>
+                                <div>{{ __('Use a clear email address and assign the role that matches the user\'s workflow.') }}</div>
                             </div>
                             <div class="d-flex gap-3">
                                 <i class="fas fa-shield-alt mt-1"></i>
-                                <div>Passwords should meet the project's existing validation rules.</div>
+                                <div>{{ __('Passwords should meet the project\'s existing validation rules.') }}</div>
                             </div>
                             <div class="d-flex gap-3">
                                 <i class="fas fa-toggle-on mt-1"></i>
-                                <div>Inactive users can be staged here without losing their profile details.</div>
+                                <div>{{ __('Inactive users can be staged here without losing their profile details.') }}</div>
                             </div>
                         </div>
                     </div>

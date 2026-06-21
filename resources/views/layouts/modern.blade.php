@@ -1104,12 +1104,10 @@
             </aside>
 
             <main class="modern-content">
-    @endauth
-
     <!-- Loading -->
     <div class="loading" id="loading">
         <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden">{{ __('Loading...') }}</span>
         </div>
     </div>
 
@@ -1163,8 +1161,6 @@
 
         @yield('content')
     </div>
-
-    @auth
             </main>
         </div>
     @endauth

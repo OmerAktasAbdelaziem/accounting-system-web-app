@@ -80,7 +80,7 @@
                 <i class="bi bi-graph-up"></i>
             </div>
                 <div class="stat-content">
-                <h6><span class="safe-black-label">Today Income</span></h6>
+                <h6><span class="safe-black-label">{{ __('Today Income') }}</span></h6>
                 <h3>{{ $currencySymbol }}{{ number_format($todayIncome, 2) }}</h3>
             </div>
         </div>
@@ -91,7 +91,7 @@
                 <i class="bi bi-graph-down"></i>
             </div>
                 <div class="stat-content">
-                <h6><span class="safe-black-label">Today Outcome</span></h6>
+                <h6><span class="safe-black-label">{{ __('Today Outcome') }}</span></h6>
                 <h3>{{ $currencySymbol }}{{ number_format($todayOutcome, 2) }}</h3>
             </div>
         </div>
@@ -174,11 +174,11 @@
                 <div class="row">
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.created') }}</label>
-                        <p class="text-muted">{{ $safe->created_at->format('M d, Y H:i') }}</p>
+                        <p class="text-muted">{{ $safe->created_at->translatedFormat('M d, Y H:i') }}</p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.last_updated') }}</label>
-                        <p class="text-muted">{{ $safe->updated_at->format('M d, Y H:i') }}</p>
+                        <p class="text-muted">{{ $safe->updated_at->translatedFormat('M d, Y H:i') }}</p>
                     </div>
                 </div>
             </div>
@@ -193,11 +193,11 @@
             <div class="card-body">
                 <table class="table table-sm">
                     <tr class="table-success">
-                        <td><strong>Income</strong></td>
+                        <td><strong>{{ __('Income') }}</strong></td>
                         <td class="text-end text-success fw-bold">{{ $currencySymbol }}{{ number_format($todayIncome, 2) }}</td>
                     </tr>
                     <tr class="table-danger">
-                        <td><strong>Outcome</strong></td>
+                        <td><strong>{{ __('Outcome') }}</strong></td>
                         <td class="text-end text-danger fw-bold">-{{ $currencySymbol }}{{ number_format($todayOutcome, 2) }}</td>
                     </tr>
                     <tr class="table-info">
@@ -205,7 +205,7 @@
                         <td class="text-end fw-bold">{{ $currencySymbol }}{{ number_format($todayNetChange, 2) }}</td>
                     </tr>
                     <tr>
-                        <td><strong>Entries today</strong></td>
+                        <td><strong>{{ __('Entries today') }}</strong></td>
                         <td class="text-end">{{ $todayTransactionCount }}</td>
                     </tr>
                 </table>
@@ -249,16 +249,16 @@
     <div class="col-lg-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white;">
-                <h5 class="mb-0 safe-white-label"><i class="bi bi-arrow-up-circle"></i> Income Tracking</h5>
+                <h5 class="mb-0 safe-white-label"><i class="bi bi-arrow-up-circle"></i> {{ __('Income Tracking') }}</h5>
             </div>
             <div class="card-body">
                 <div class="mb-3">
-                    <h6>Total Income: <span class="text-success fw-bold">{{ $currencySymbol }}{{ number_format($totalIncome, 2) }}</span></h6>
+                    <h6>{{ __('Total Income:') }} <span class="text-success fw-bold">{{ $currencySymbol }}{{ number_format($totalIncome, 2) }}</span></h6>
                 </div>
 
                 @feature('safes.create')
                 <button class="btn btn-success btn-sm w-100 mb-3" data-bs-toggle="modal" data-bs-target="#addIncomeModal">
-                    <i class="bi bi-plus-circle"></i> Add Income
+                    <i class="bi bi-plus-circle"></i> {{ __('Add Income') }}
                 </button>
                 @endfeature
 
@@ -271,16 +271,16 @@
                             data-bs-toggle="modal"
                             data-bs-target="#exportPdfModal"
                             data-export-type="income"
-                            data-export-title="Income PDF Export">Export PDF</button>
+                            data-export-title="Income PDF Export">{{ __('Export PDF') }}</button>
                         @endif
                     </div>
                     <div class="table-responsive" id="incomeTableWrapper" style="max-height: 320px; overflow-y: auto;">
                         <table class="table table-sm align-middle mb-0">
                             <thead>
                                 <tr>
-                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">Amount</th>
-                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">Source</th>
-                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">Date</th>
+                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">{{ __('Amount') }}</th>
+                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">{{ __('Source') }}</th>
+                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">{{ __('Date') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -294,7 +294,7 @@
                                         data-notes="{{ $income->notes }}"
                                         data-currency_name="{{ $income->currency?->name ?? '' }}"
                                         data-currency_code="{{ $income->currency?->code ?? $currencySymbol }}"
-                                        data-created_at="{{ $income->created_at->format('M d, Y') }}"
+                                        data-created_at="{{ $income->created_at->translatedFormat('M d, Y') }}"
                                         data-created_at_iso="{{ $income->created_at->toDateString() }}"
                                         data-update_url="{{ route('safes.income.update', [$safe->id, $income->id]) }}"
                                         data-delete_url="{{ route('safes.income.delete', [$safe->id, $income->id]) }}">
@@ -309,7 +309,7 @@
                                                 <i class="bi bi-{{ $income->source === 'cash' ? 'wallet2' : 'bank' }}"></i> {{ ucfirst($income->source) }}
                                             </span>
                                         </td>
-                                        <td><small class="text-muted">{{ $income->created_at->format('M d, Y') }}</small></td>
+                                        <td><small class="text-muted">{{ $income->created_at->translatedFormat('M d, Y') }}</small></td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -317,7 +317,7 @@
                     </div>
                 @else
                     <div class="alert alert-info mb-0">
-                        <small>No income records yet</small>
+                        <small>{{ __('No income records yet') }}</small>
                     </div>
                 @endif
             </div>
@@ -327,16 +327,16 @@
     <div class="col-lg-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header" style="background: linear-gradient(135deg, #e74c3c, #ec7063); color: white;">
-                <h5 class="mb-0 safe-white-label"><i class="bi bi-arrow-down-circle"></i> Outcome Tracking</h5>
+                <h5 class="mb-0 safe-white-label"><i class="bi bi-arrow-down-circle"></i> {{ __('Outcome Tracking') }}</h5>
             </div>
             <div class="card-body">
                 <div class="mb-3">
-                    <h6>Total Outcome: <span class="text-danger fw-bold">{{ $currencySymbol }}{{ number_format($totalOutcome, 2) }}</span></h6>
+                    <h6>{{ __('Total Outcome:') }} <span class="text-danger fw-bold">{{ $currencySymbol }}{{ number_format($totalOutcome, 2) }}</span></h6>
                 </div>
 
                 @feature('safes.create')
                 <button class="btn btn-danger btn-sm w-100 mb-3" data-bs-toggle="modal" data-bs-target="#addOutcomeModal">
-                    <i class="bi bi-plus-circle"></i> Add Outcome
+                    <i class="bi bi-plus-circle"></i> {{ __('Add Outcome') }}
                 </button>
                 @endfeature
 
@@ -349,16 +349,16 @@
                             data-bs-toggle="modal"
                             data-bs-target="#exportPdfModal"
                             data-export-type="outcome"
-                            data-export-title="Outcome PDF Export">Export PDF</button>
+                            data-export-title="Outcome PDF Export">{{ __('Export PDF') }}</button>
                         @endif
                     </div>
                     <div class="table-responsive" id="outcomeTableWrapper" style="max-height: 320px; overflow-y: auto;">
                         <table class="table table-sm align-middle mb-0">
                             <thead>
                                 <tr>
-                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">Amount</th>
-                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">Description</th>
-                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">Date</th>
+                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">{{ __('Amount') }}</th>
+                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">{{ __('Description') }}</th>
+                                    <th style="position: sticky; top: 0; z-index: 2; background: #fff;">{{ __('Date') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -371,7 +371,7 @@
                                         data-reference="{{ $outcome->reference }}"
                                         data-currency_name="{{ $outcome->currency?->name ?? '' }}"
                                         data-currency_code="{{ $outcome->currency?->code ?? $currencySymbol }}"
-                                        data-created_at="{{ $outcome->created_at->format('M d, Y') }}"
+                                        data-created_at="{{ $outcome->created_at->translatedFormat('M d, Y') }}"
                                         data-created_at_iso="{{ $outcome->created_at->toDateString() }}"
                                         data-supplier_name="{{ $outcome->supplier?->name ?? '' }}"
                                         data-reference_type="{{ $outcome->reference_type }}"
@@ -389,7 +389,7 @@
                                                 <br><small class="text-danger">Supplier: {{ $outcome->supplier->name }}</small>
                                             @endif
                                         </td>
-                                        <td><small class="text-muted">{{ $outcome->created_at->format('M d, Y') }}</small></td>
+                                        <td><small class="text-muted">{{ $outcome->created_at->translatedFormat('M d, Y') }}</small></td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -397,7 +397,7 @@
                     </div>
                 @else
                     <div class="alert alert-info mb-0">
-                        <small>No outcome records yet</small>
+                        <small>{{ __('No outcome records yet') }}</small>
                     </div>
                 @endif
             </div>
@@ -410,10 +410,10 @@
         <div class="card border-0 shadow-sm">
             <div class="card-header" style="background: linear-gradient(135deg, #3498db, #5dade2); color: white;">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 safe-white-label"><i class="bi bi-currency-exchange"></i> Multi-Currency Management</h5>
+                    <h5 class="mb-0 safe-white-label"><i class="bi bi-currency-exchange"></i> {{ __('Multi-Currency Management') }}</h5>
                     @feature('safes.create')
                     <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#addCurrencyModal">
-                        <i class="bi bi-plus-circle"></i> Add Currency
+                        <i class="bi bi-plus-circle"></i> {{ __('Add Currency') }}
                     </button>
                     @endfeature
                 </div>
@@ -435,7 +435,7 @@
                     </div>
                 @else
                     <div class="alert alert-info mb-0">
-                        <i class="bi bi-info-circle"></i> No currencies added yet. Click "Add Currency" to start tracking different currencies.
+                        <i class="bi bi-info-circle"></i> {{ __('No currencies added yet. Click "Add Currency" to start tracking different currencies.') }}
                     </div>
                 @endif
             </div>
@@ -448,7 +448,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white;">
-                <h5 class="modal-title"><i class="bi bi-arrow-up-circle"></i> Income Details</h5>
+                <h5 class="modal-title"><i class="bi bi-arrow-up-circle"></i> {{ __('Income Details') }}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             
@@ -457,43 +457,43 @@
                 <div class="modal-body">
                     <div class="row mb-3">
                         <div class="col-6">
-                            <label class="text-muted small">Amount</label>
+                            <label class="text-muted small">{{ __('Amount') }}</label>
                             <h5 id="incomeDetailAmount"></h5>
                         </div>
                         <div class="col-6">
-                            <label class="text-muted small">Source</label>
+                            <label class="text-muted small">{{ __('Source') }}</label>
                             <p id="incomeDetailSource"></p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-6">
-                            <label class="text-muted small">Date</label>
+                            <label class="text-muted small">{{ __('Date') }}</label>
                             <p id="incomeDetailDate"></p>
                         </div>
                         <div class="col-6">
-                            <label class="text-muted small">Currency</label>
+                            <label class="text-muted small">{{ __('Currency') }}</label>
                             <p id="incomeDetailCurrency"></p>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="text-muted small">Reference</label>
+                        <label class="text-muted small">{{ __('Reference') }}</label>
                         <p id="incomeDetailReference"></p>
                     </div>
                     <div class="mb-3">
-                        <label class="text-muted small">Notes</label>
+                        <label class="text-muted small">{{ __('Notes') }}</label>
                         <p id="incomeDetailNotes"></p>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Close') }}</button>
                     @feature('safes.edit')
                     <button type="button" class="btn btn-primary" id="incomeDetailEditBtn">
-                        <i class="bi bi-pencil"></i> Edit
+                        <i class="bi bi-pencil"></i> {{ __('Edit') }}
                     </button>
                     @endfeature
                     @feature('safes.delete')
                     <button type="button" class="btn btn-danger" id="incomeDetailDeleteBtn">
-                        <i class="bi bi-trash"></i> Delete
+                        <i class="bi bi-trash"></i> {{ __('Delete') }}
                     </button>
                     @endfeature
                 </div>
@@ -506,38 +506,38 @@
                     @method('PUT')
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label">Amount *</label>
+                            <label class="form-label">{{ __('Amount *') }}</label>
                             <input type="number" name="amount" class="form-control" step="0.01" min="0" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Source *</label>
+                            <label class="form-label">{{ __('Source *') }}</label>
                             <select name="source" class="form-select" required>
-                                <option value="">Select Source</option>
-                                <option value="cash">Cash</option>
-                                <option value="bank">Bank</option>
+                                <option value="">{{ __('Select Source') }}</option>
+                                <option value="cash">{{ __('Cash') }}</option>
+                                <option value="bank">{{ __('Bank') }}</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Currency (Optional)</label>
+                            <label class="form-label">{{ __('Currency (Optional)') }}</label>
                             <select name="currency_id" class="form-select">
-                                <option value="">Select Currency</option>
+                                <option value="">{{ __('Select Currency') }}</option>
                                 @foreach($currencies as $currency)
                                     <option value="{{ $currency->id }}">{{ $currency->code }} - {{ $currency->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Reference (Optional)</label>
-                            <input type="text" name="reference" class="form-control" placeholder="Invoice #, Check #, etc.">
+                            <label class="form-label">{{ __('Reference (Optional)') }}</label>
+                            <input type="text" name="reference" class="form-control" placeholder="{{ __('Invoice #, Check #, etc.') }}">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Notes (Optional)</label>
-                            <textarea name="notes" class="form-control" rows="3" placeholder="Additional notes about this income..."></textarea>
+                            <label class="form-label">{{ __('Notes (Optional)') }}</label>
+                            <textarea name="notes" class="form-control" rows="3" placeholder="{{ __('Additional notes about this income...') }}"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" id="incomeEditCancelBtn">Cancel</button>
-                        <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Update Income</button>
+                        <button type="button" class="btn btn-secondary" id="incomeEditCancelBtn">{{ __('Cancel') }}</button>
+                        <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> {{ __('Update Income') }}</button>
                     </div>
                 </form>
             </div>
@@ -550,7 +550,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background: linear-gradient(135deg, #e74c3c, #ec7063); color: white;">
-                <h5 class="modal-title"><i class="bi bi-arrow-down-circle"></i> Outcome Details</h5>
+                <h5 class="modal-title"><i class="bi bi-arrow-down-circle"></i> {{ __('Outcome Details') }}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
@@ -559,43 +559,43 @@
                 <div class="modal-body">
                     <div class="row mb-3">
                         <div class="col-6">
-                            <label class="text-muted small">Amount</label>
+                            <label class="text-muted small">{{ __('Amount') }}</label>
                             <h5 id="outcomeDetailAmount"></h5>
                         </div>
                         <div class="col-6">
-                            <label class="text-muted small">Date</label>
+                            <label class="text-muted small">{{ __('Date') }}</label>
                             <p id="outcomeDetailDate"></p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-6">
-                            <label class="text-muted small">Currency</label>
+                            <label class="text-muted small">{{ __('Currency') }}</label>
                             <p id="outcomeDetailCurrency"></p>
                         </div>
                         <div class="col-6" id="outcomeSupplierWrapper" style="display: none;">
-                            <label class="text-muted small">Supplier</label>
+                            <label class="text-muted small">{{ __('Supplier') }}</label>
                             <p id="outcomeDetailSupplier"></p>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="text-muted small">Description</label>
+                        <label class="text-muted small">{{ __('Description') }}</label>
                         <p id="outcomeDetailDescription"></p>
                     </div>
                     <div class="mb-3">
-                        <label class="text-muted small">Reference</label>
+                        <label class="text-muted small">{{ __('Reference') }}</label>
                         <p id="outcomeDetailReference"></p>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Close') }}</button>
                     @feature('safes.edit')
                     <button type="button" class="btn btn-warning" id="outcomeDetailEditBtn">
-                        <i class="bi bi-pencil"></i> Edit
+                        <i class="bi bi-pencil"></i> {{ __('Edit') }}
                     </button>
                     @endfeature
                     @feature('safes.delete')
                     <button type="button" class="btn btn-danger" id="outcomeDetailDeleteBtn">
-                        <i class="bi bi-trash"></i> Delete
+                        <i class="bi bi-trash"></i> {{ __('Delete') }}
                     </button>
                     @endfeature
                 </div>
@@ -608,30 +608,30 @@
                     @method('PUT')
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label">Amount *</label>
+                            <label class="form-label">{{ __('Amount *') }}</label>
                             <input type="number" name="amount" class="form-control" step="0.01" min="0" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Currency (Optional)</label>
+                            <label class="form-label">{{ __('Currency (Optional)') }}</label>
                             <select name="currency_id" class="form-select">
-                                <option value="">Select Currency</option>
+                                <option value="">{{ __('Select Currency') }}</option>
                                 @foreach($currencies as $currency)
                                     <option value="{{ $currency->id }}">{{ $currency->code }} - {{ $currency->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Description (Optional)</label>
-                            <textarea name="description" class="form-control" rows="3" placeholder="Outcome description..."></textarea>
+                            <label class="form-label">{{ __('Description (Optional)') }}</label>
+                            <textarea name="description" class="form-control" rows="3" placeholder="{{ __('Outcome description...') }}"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Reference (Optional)</label>
-                            <input type="text" name="reference" class="form-control" placeholder="Invoice #, Reference, etc.">
+                            <label class="form-label">{{ __('Reference (Optional)') }}</label>
+                            <input type="text" name="reference" class="form-control" placeholder="{{ __('Invoice #, Reference, etc.') }}">
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" id="outcomeEditCancelBtn">Cancel</button>
-                        <button type="submit" class="btn btn-warning"><i class="bi bi-check-circle"></i> Update Outcome</button>
+                        <button type="button" class="btn btn-secondary" id="outcomeEditCancelBtn">{{ __('Cancel') }}</button>
+                        <button type="submit" class="btn btn-warning"><i class="bi bi-check-circle"></i> {{ __('Update Outcome') }}</button>
                     </div>
                 </form>
             </div>
@@ -643,54 +643,54 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white;">
-                <h5 class="modal-title"><i class="bi bi-arrow-up-circle"></i> Add Income</h5>
+                <h5 class="modal-title"><i class="bi bi-arrow-up-circle"></i> {{ __('Add Income') }}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST" action="{{ route('safes.add-income', $safe->id) }}">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Amount *</label>
+                        <label class="form-label">{{ __('Amount *') }}</label>
                         <input type="number" name="amount" class="form-control" step="0.01" min="0" required>
                     </div>
 
                     {{-- ← التعديل هنا --}}
                     <div class="mb-3">
-                        <label class="form-label">Date <span class="text-muted">(Optional)</span></label>
+                        <label class="form-label">{{ __('Date') }} <span class="text-muted">{{ __('(Optional)') }}</span></label>
                         <input type="date" name="income_date" class="form-control"
                                value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}">
-                        <small class="text-muted">Leave as today or pick an older date</small>
+                        <small class="text-muted">{{ __('Leave as today or pick an older date') }}</small>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Source *</label>
+                        <label class="form-label">{{ __('Source *') }}</label>
                         <select name="source" class="form-select" required>
-                            <option value="">Select Source</option>
-                            <option value="cash">Cash</option>
-                            <option value="bank">Bank</option>
+                            <option value="">{{ __('Select Source') }}</option>
+                            <option value="cash">{{ __('Cash') }}</option>
+                            <option value="bank">{{ __('Bank') }}</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Currency (Optional)</label>
+                        <label class="form-label">{{ __('Currency (Optional)') }}</label>
                         <select name="currency_id" class="form-select">
-                            <option value="">Select Currency</option>
+                            <option value="">{{ __('Select Currency') }}</option>
                             @foreach($currencies as $currency)
                                 <option value="{{ $currency->id }}">{{ $currency->code }} - {{ $currency->name }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Reference (Optional)</label>
+                        <label class="form-label">{{ __('Reference (Optional)') }}</label>
                         <input type="text" name="reference" class="form-control" placeholder="Invoice #, Check #, etc.">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Notes (Optional)</label>
+                        <label class="form-label">{{ __('Notes (Optional)') }}</label>
                         <textarea name="notes" class="form-control" rows="3" placeholder="Additional notes about this income..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Record Income</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> {{ __('Record Income') }}</button>
                 </div>
             </form>
         </div>
@@ -701,7 +701,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header" style="background: linear-gradient(135deg, #e74c3c, #ec7063); color: white;">
-                <h5 class="modal-title"><i class="bi bi-arrow-down-circle"></i> Add Outcome</h5>
+                <h5 class="modal-title"><i class="bi bi-arrow-down-circle"></i> {{ __('Add Outcome') }}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST" action="{{ route('safes.add-outcome', $safe->id) }}">
@@ -709,47 +709,47 @@
                 <div class="modal-body">
                     @if($safe->balance < 0)
                         <div class="alert alert-danger">
-                            <small><strong>Current Balance:</strong> <span style="color: #dc3545; font-weight: bold;">{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</span></small>
+                            <small><strong>{{ __('Current Balance:') }}</strong> <span style="color: #dc3545; font-weight: bold;">{{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</span></small>
                         </div>
                     @else
                         <div class="alert alert-info">
-                            <small><strong>Current Balance:</strong> {{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</small>
+                            <small><strong>{{ __('Current Balance:') }}</strong> {{ $currencySymbol }}{{ number_format($safe->balance, 2) }}</small>
                         </div>
                     @endif
                     <div class="mb-3">
-                        <label class="form-label">Amount *</label>
+                        <label class="form-label">{{ __('Amount *') }}</label>
                         <input type="number" name="amount" class="form-control" step="0.01" min="0" required>
-                        <small class="text-warning d-block mt-1"><i class="bi bi-exclamation-triangle"></i> Note: Balance can go negative if withdrawal exceeds current balance</small>
+                        <small class="text-warning d-block mt-1"><i class="bi bi-exclamation-triangle"></i> {{ __('Note: Balance can go negative if withdrawal exceeds current balance') }}</small>
                     </div>
 
                     {{-- ← التعديل هنا --}}
                     <div class="mb-3">
-                        <label class="form-label">Date <span class="text-muted">(Optional)</span></label>
+                        <label class="form-label">{{ __('Date') }} <span class="text-muted">{{ __('(Optional)') }}</span></label>
                         <input type="date" name="outcome_date" class="form-control"
                                value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}">
-                        <small class="text-muted">Leave as today or pick an older date</small>
+                        <small class="text-muted">{{ __('Leave as today or pick an older date') }}</small>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Currency (Optional)</label>
+                        <label class="form-label">{{ __('Currency (Optional)') }}</label>
                         <select name="currency_id" class="form-select">
-                            <option value="">Select Currency</option>
+                            <option value="">{{ __('Select Currency') }}</option>
                             @foreach($currencies as $currency)
                                 <option value="{{ $currency->id }}">{{ $currency->code }} - {{ $currency->name }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Reference Type</label>
+                        <label class="form-label">{{ __('Reference Type') }}</label>
                         <select name="reference_type" id="outcomeReferenceType" class="form-select">
-                            <option value="general">General</option>
-                            <option value="supplier">Supplier</option>
+                            <option value="general">{{ __('General') }}</option>
+                            <option value="supplier">{{ __('Supplier') }}</option>
                         </select>
                     </div>
                     <div class="mb-3 d-none" id="outcomeSupplierWrapper">
-                        <label class="form-label">Supplier (With Outstanding Balance)</label>
+                        <label class="form-label">{{ __('Supplier (With Outstanding Balance)') }}</label>
                         <select name="supplier_id" id="outcomeSupplierId" class="form-select">
-                            <option value="">Select supplier</option>
+                            <option value="">{{ __('Select supplier') }}</option>
                             @foreach(($suppliersWithOutstanding ?? []) as $supplier)
                                 <option value="{{ $supplier->id }}">
                                     {{ $supplier->name }} - {{ $currencySymbol }}{{ number_format($supplier->outstanding_amount, 2) }} due
@@ -758,17 +758,17 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Description (Optional)</label>
-                        <textarea name="description" class="form-control" rows="3" placeholder="What is this outcome for? (e.g., Supplies, Maintenance, etc.)"></textarea>
+                        <label class="form-label">{{ __('Description (Optional)') }}</label>
+                        <textarea name="description" class="form-control" rows="3" placeholder="{{ __('What is this outcome for? (e.g., Supplies, Maintenance, etc.)') }}"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Reference (Optional)</label>
-                        <input type="text" name="reference" class="form-control" placeholder="Reference number or code">
+                        <label class="form-label">{{ __('Reference (Optional)') }}</label>
+                        <input type="text" name="reference" class="form-control" placeholder="{{ __('Reference number or code') }}">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger"><i class="bi bi-check-circle"></i> Record Outcome</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-check-circle"></i> {{ __('Record Outcome') }}</button>
                 </div>
             </form>
         </div>
@@ -779,25 +779,25 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header" style="background: linear-gradient(135deg, #3498db, #5dade2); color: white;">
-                <h5 class="modal-title"><i class="bi bi-currency-exchange"></i> Add Currency</h5>
+                <h5 class="modal-title"><i class="bi bi-currency-exchange"></i> {{ __('Add Currency') }}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST" action="{{ route('safes.add-currency', $safe->id) }}">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Currency Code *</label>
-                        <input type="text" name="code" class="form-control text-uppercase" placeholder="USD, EUR, GBP, etc." maxlength="3" required>
-                        <small class="text-muted">Enter 3-letter currency code (e.g., USD, EUR, GBP)</small>
+                        <label class="form-label">{{ __('Currency Code *') }}</label>
+                        <input type="text" name="code" class="form-control text-uppercase" placeholder="{{ __('USD, EUR, GBP, etc.') }}" maxlength="3" required>
+                        <small class="text-muted">{{ __('Enter 3-letter currency code (e.g., USD, EUR, GBP)') }}</small>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Currency Name *</label>
-                        <input type="text" name="name" class="form-control" placeholder="Dollar, Euro, British Pound, etc." required>
+                        <label class="form-label">{{ __('Currency Name *') }}</label>
+                        <input type="text" name="name" class="form-control" placeholder="{{ __('Dollar, Euro, British Pound, etc.') }}" required>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add Currency</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle"></i> {{ __('Add Currency') }}</button>
                 </div>
             </form>
         </div>
@@ -809,30 +809,30 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background: linear-gradient(135deg, #1f2937, #111827); color: white;">
-                <h5 class="modal-title" id="exportPdfModalTitle"><i class="bi bi-file-earmark-pdf"></i> PDF Dışa Aktar</h5>
+                <h5 class="modal-title" id="exportPdfModalTitle"><i class="bi bi-file-earmark-pdf"></i> {{ __('PDF Dışa Aktar') }}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="exportPdfForm" method="GET" action="{{ route('safes.export', $safe->id) }}">
                 <div class="modal-body">
                     <input type="hidden" name="type" id="exportPdfType" value="income">
                     <div class="alert alert-info">
-                        <strong>Başlangıç ve Bitiş tarihi seçin</strong> (ör: 1 Mayıs - 31 Mayıs). Sistem tüm veriyi bu tarih aralığında indirecektir.
+                        <strong>{{ __('Başlangıç ve Bitiş tarihi seçin') }}</strong> {{ __('(ör: 1 Mayıs - 31 Mayıs). Sistem tüm veriyi bu tarih aralığında indirecektir.') }}
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">Başlangıç Tarihi <span class="text-danger">*</span></label>
+                            <label class="form-label">{{ __('Başlangıç Tarihi') }} <span class="text-danger">*</span></label>
                             <input type="date" name="from_date" id="exportPdfFromDate" class="form-control" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Bitiş Tarihi <span class="text-danger">*</span></label>
+                            <label class="form-label">{{ __('Bitiş Tarihi') }} <span class="text-danger">*</span></label>
                             <input type="date" name="to_date" id="exportPdfToDate" class="form-control" required>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('İptal') }}</button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-download"></i> PDF İndir
+                        <i class="bi bi-download"></i> {{ __('PDF İndir') }}
                     </button>
                 </div>
             </form>
@@ -899,9 +899,9 @@
         document.getElementById('incomeDetailAmount').textContent = currencyCode + ' ' + parseFloat(amount).toFixed(2);
         document.getElementById('incomeDetailSource').textContent = source.charAt(0).toUpperCase() + source.slice(1);
         document.getElementById('incomeDetailDate').textContent = createdAt;
-        document.getElementById('incomeDetailCurrency').textContent = currencyName || 'N/A';
-        document.getElementById('incomeDetailReference').textContent = reference || 'N/A';
-        document.getElementById('incomeDetailNotes').textContent = notes || 'N/A';
+        document.getElementById('incomeDetailCurrency').textContent = currencyName || '{{ __('N/A') }}';
+        document.getElementById('incomeDetailReference').textContent = reference || '{{ __('N/A') }}';
+        document.getElementById('incomeDetailNotes').textContent = notes || '{{ __('N/A') }}';
 
         // Store data for editing
         const detailModal = document.getElementById('incomeDetailModal');
@@ -935,7 +935,7 @@
 
         // Handle delete button
         document.getElementById('incomeDetailDeleteBtn').onclick = function () {
-            if (confirm('Are you sure you want to delete this income record?')) {
+            if (confirm('{{ __('Are you sure you want to delete this income record?') }}')) {
                 const detailModal = document.getElementById('incomeDetailModal');
                 if (incomeDetailModal) incomeDetailModal.hide();
                 setTimeout(() => {
@@ -979,9 +979,9 @@
         // Populate detail modal
         document.getElementById('outcomeDetailAmount').textContent = currencyCode + ' ' + parseFloat(amount).toFixed(2);
         document.getElementById('outcomeDetailDate').textContent = createdAt;
-        document.getElementById('outcomeDetailCurrency').textContent = currencyName || 'N/A';
-        document.getElementById('outcomeDetailDescription').textContent = description || 'N/A';
-        document.getElementById('outcomeDetailReference').textContent = reference || 'N/A';
+        document.getElementById('outcomeDetailCurrency').textContent = currencyName || '{{ __('N/A') }}';
+        document.getElementById('outcomeDetailDescription').textContent = description || '{{ __('N/A') }}';
+        document.getElementById('outcomeDetailReference').textContent = reference || '{{ __('N/A') }}';
 
         // Show supplier info if applicable
         const supplierWrapper = document.getElementById('outcomeSupplierWrapper');
@@ -1022,7 +1022,7 @@
 
         // Handle delete button
         document.getElementById('outcomeDetailDeleteBtn').onclick = function () {
-            if (confirm('Are you sure you want to delete this outcome record?')) {
+            if (confirm('{{ __('Are you sure you want to delete this outcome record?') }}')) {
                 const detailModal = document.getElementById('outcomeDetailModal');
                 if (outcomeDetailModal) outcomeDetailModal.hide();
                 setTimeout(() => {

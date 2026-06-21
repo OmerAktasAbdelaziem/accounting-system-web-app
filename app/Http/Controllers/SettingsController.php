@@ -72,6 +72,12 @@ class SettingsController extends Controller
             Setting::set('app_name', $validated['app_name'], 'string');
         }
 
-        return back()->with('success', __('messages.settings_updated_successfully'));
+        session(['locale' => $validated['language']]);
+        app()->setLocale($validated['language']);
+        app('translator')->setFallback($validated['language']);
+
+        return redirect()
+            ->route('settings.index', ['lang' => $validated['language']])
+            ->with('success', __('messages.settings_updated_successfully'));
     }
 }

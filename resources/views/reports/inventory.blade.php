@@ -22,7 +22,7 @@
             <input type="hidden" name="format" value="csv">
             <input type="hidden" name="branch_id" value="{{ $branchId ?? request('branch_id') }}">
             <button type="submit" class="btn btn-success">
-                <i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
+                <i class="bi bi-file-earmark-spreadsheet"></i> {{ __('Export CSV') }}
             </button>
         </form>
         @endfeature

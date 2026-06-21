@@ -80,7 +80,7 @@
             <input type="hidden" name="from_date" value="{{ $fromDate ?? request('from_date') }}">
             <input type="hidden" name="to_date" value="{{ $toDate ?? request('to_date') }}">
             <button type="submit" class="btn btn-danger">
-                <i class="bi bi-file-pdf"></i> Export PDF
+                <i class="bi bi-file-pdf"></i> {{ __('Export PDF') }}
             </button>
         </form>
         <form action="{{ route('reports.generate-pdf') }}" method="POST" class="d-inline ms-2">
@@ -91,7 +91,7 @@
             <input type="hidden" name="from_date" value="{{ $fromDate ?? request('from_date') }}">
             <input type="hidden" name="to_date" value="{{ $toDate ?? request('to_date') }}">
             <button type="submit" class="btn btn-success">
-                <i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
+                <i class="bi bi-file-earmark-spreadsheet"></i> {{ __('Export CSV') }}
             </button>
         </form>
         @endfeature
@@ -128,7 +128,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <div class="small text-muted">{{ $sale->date->format('M d, Y') }}</div>
+                            <div class="small text-muted">{{ $sale->date->translatedFormat('M d, Y') }}</div>
                             <strong>{{ $sale->reference_number ?? '-' }}</strong>
                             <div class="small text-muted">{{ $sale->description }}</div>
                         </div>
@@ -142,7 +142,7 @@
                         <a href="{{ route('reports.sales.show', $sale) }}" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-eye"></i>
                         </a>
-                        <form action="{{ route('reports.sales.destroy', $sale) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this sales report entry?');" class="d-inline">
+                        <form action="{{ route('reports.sales.destroy', $sale) }}" method="POST" onsubmit="return confirm('{{ __('Are you sure you want to delete this sales report entry?') }}');" class="d-inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm btn-outline-danger">
@@ -173,26 +173,26 @@
             <tbody>
                 @forelse($salesData ?? [] as $sale)
                     <tr>
-                        <td>{{ $sale->date->format('M d, Y') }}</td>
+                        <td>{{ $sale->date->translatedFormat('M d, Y') }}</td>
                         <td><code>{{ $sale->reference_number ?? '-' }}</code></td>
                         <td>{{ $sale->description }}</td>
                         <td>{{ $currencySymbol }}{{ number_format($sale->total_debit, 2) }}</td>
                         <td><strong>{{ $currencySymbol }}{{ number_format($sale->total_credit, 2) }}</strong></td>
                         <td>
                             <div class="d-flex gap-2">
-                                @feature('sales_report')
-                                <a href="{{ route('reports.sales.show', $sale) }}" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-eye"></i> {{ __('messages.view') }}
-                                </a>
-                                <form action="{{ route('reports.sales.destroy', $sale) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this sales report entry?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="bi bi-trash"></i> {{ __('messages.delete') }}
-                                    </button>
-                                </form>
-                                @endfeature
-                            </div>
+                            @feature('sales_report')
+                            <a href="{{ route('reports.sales.show', $sale) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> {{ __('messages.view') }}
+                            </a>
+                            <form action="{{ route('reports.sales.destroy', $sale) }}" method="POST" onsubmit="return confirm('{{ __('Are you sure you want to delete this sales report entry?') }}');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i> {{ __('messages.delete') }}
+                                </button>
+                            </form>
+                            @endfeature
+                        </div>
                         </td>
                     </tr>
                 @empty

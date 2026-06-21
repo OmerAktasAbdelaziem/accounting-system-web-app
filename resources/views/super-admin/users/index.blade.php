@@ -6,10 +6,10 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>
-            <i class="bi bi-people"></i> System Users Management
+            <i class="bi bi-people"></i> {{ __('System Users Management') }}
         </h1>
         <a href="{{ route('super-admin.users.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Create New User
+            <i class="bi bi-plus-circle"></i> {{ __('Create New User') }}
         </a>
     </div>
 
@@ -25,7 +25,7 @@
 
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Success!</strong> {{ session('success') }}
+            <strong>{{ __('Success!') }}</strong> {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
@@ -39,28 +39,28 @@
                 </div>
                 <div class="col-md-2">
                     <select name="user_type" class="form-select">
-                        <option value="">All Types</option>
-                        <option value="super_admin" {{ request('user_type') === 'super_admin' ? 'selected' : '' }}>Super Admin</option>
-                        <option value="merchant_admin" {{ request('user_type') === 'merchant_admin' ? 'selected' : '' }}>Merchant Admin</option>
-                        <option value="employee" {{ request('user_type') === 'employee' ? 'selected' : '' }}>Employee</option>
-                        <option value="viewer" {{ request('user_type') === 'viewer' ? 'selected' : '' }}>Viewer</option>
+                        <option value="">{{ __('All Types') }}</option>
+                        <option value="super_admin" {{ request('user_type') === 'super_admin' ? 'selected' : '' }}>{{ __('Super Admin') }}</option>
+                        <option value="merchant_admin" {{ request('user_type') === 'merchant_admin' ? 'selected' : '' }}>{{ __('Merchant Admin') }}</option>
+                        <option value="employee" {{ request('user_type') === 'employee' ? 'selected' : '' }}>{{ __('Employee') }}</option>
+                        <option value="viewer" {{ request('user_type') === 'viewer' ? 'selected' : '' }}>{{ __('Viewer') }}</option>
                     </select>
                 </div>
                 <div class="col-md-2">
                     <select name="is_active" class="form-select">
-                        <option value="">All Status</option>
-                        <option value="1" {{ request('is_active') === '1' ? 'selected' : '' }}>Active</option>
-                        <option value="0" {{ request('is_active') === '0' ? 'selected' : '' }}>Inactive</option>
+                        <option value="">{{ __('All Status') }}</option>
+                        <option value="1" {{ request('is_active') === '1' ? 'selected' : '' }}>{{ __('Active') }}</option>
+                        <option value="0" {{ request('is_active') === '0' ? 'selected' : '' }}>{{ __('Inactive') }}</option>
                     </select>
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-secondary w-100">
-                        <i class="bi bi-search"></i> Filter
+                        <i class="bi bi-search"></i> {{ __('Filter') }}
                     </button>
                 </div>
                 <div class="col-md-2">
                     <a href="{{ route('super-admin.users.index') }}" class="btn btn-outline-secondary w-100">
-                        <i class="bi bi-arrow-clockwise"></i> Reset
+                        <i class="bi bi-arrow-clockwise"></i> {{ __('Reset') }}
                     </a>
                 </div>
             </form>
@@ -73,13 +73,13 @@
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Type</th>
-                        <th>Merchant</th>
-                        <th>Status</th>
-                        <th>Created</th>
-                        <th>Actions</th>
+                        <th>{{ __('Name') }}</th>
+                        <th>{{ __('Email') }}</th>
+                        <th>{{ __('Type') }}</th>
+                        <th>{{ __('Merchant') }}</th>
+                        <th>{{ __('Status') }}</th>
+                        <th>{{ __('Created') }}</th>
+                        <th>{{ __('Actions') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -97,19 +97,19 @@
                             <td>
                                 @if ($user->merchant)
                                     <span class="text-muted">{{ $user->merchant->business_name ?? $user->merchant->name }}</span>
-                                @else
+                                {{ __('@else') }}
                                     <span class="text-muted">—</span>
                                 @endif
                             </td>
                             <td>
                                 @if ($user->is_active)
-                                    <span class="badge bg-success">Active</span>
-                                @else
-                                    <span class="badge bg-danger">Inactive</span>
+                                    <span class="badge bg-success">{{ __('Active') }}</span>
+                                {{ __('@else') }}
+                                    <span class="badge bg-danger">{{ __('Inactive') }}</span>
                                 @endif
                             </td>
                             <td>
-                                <small class="text-muted">{{ $user->created_at->format('M d, Y') }}</small>
+                                <small class="text-muted">{{ $user->created_at->translatedFormat('M d, Y') }}</small>
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm" role="group">
@@ -117,14 +117,14 @@
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                     <form action="{{ route('super-admin.users.toggleStatus', $user) }}" method="POST" class="d-inline">
-                                        @csrf
+                                        {{ __('@csrf') }}
                                         <button type="submit" class="btn btn-outline-warning" title="Toggle Status">
                                             <i class="bi bi-toggle-off"></i>
                                         </button>
                                     </form>
                                     <form action="{{ route('super-admin.users.destroy', $user) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?');">
-                                        @csrf
-                                        @method('DELETE')
+                                        {{ __('@csrf
+                                        @method(\'DELETE\')') }}
                                         <button type="submit" class="btn btn-outline-danger" title="Delete">
                                             <i class="bi bi-trash"></i>
                                         </button>
@@ -132,13 +132,13 @@
                                 </div>
                             </td>
                         </tr>
-                    @empty
+                    {{ __('@empty') }}
                         <tr>
                             <td colspan="7" class="text-center text-muted py-4">
-                                No users found
+                                {{ __('No users found') }}
                             </td>
                         </tr>
-                    @endforelse
+                    {{ __('@endforelse') }}
                 </tbody>
             </table>
         </div>

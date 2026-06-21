@@ -10,9 +10,9 @@
             <div class="text-muted">{{ $storage->location }} | {{ __('messages.storage_type') }}: <strong>{{ __('messages.' . $storage->storage_type) }}</strong></div>
         </div>
         <div class="d-flex flex-wrap gap-2">
-            <a href="{{ route('storages.transferHistory', $storage->id) }}" class="btn btn-outline-info">Transfer History</a>
-            <a href="{{ route('storages.index') }}" class="btn btn-outline-secondary">Back</a>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">+ Add Transaction</button>
+            <a href="{{ route('storages.transferHistory', $storage->{{ __('id) }}" class="btn btn-outline-info">Transfer History') }}</a>
+            <a href="{{ route('storages.index') }}" class="btn btn-outline-secondary">{{ __('Back') }}</a>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">{{ __('+ Add Transaction') }}</button>
         </div>
     </div>
 
@@ -20,7 +20,7 @@
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <small class="text-muted d-block">Transaction Entries</small>
+                    <small class="text-muted d-block">{{ __('Transaction Entries') }}</small>
                     <h4 class="mb-0">{{ $summary['entry_count'] }}</h4>
                 </div>
             </div>
@@ -28,7 +28,7 @@
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <small class="text-muted d-block">Total Quantity</small>
+                    <small class="text-muted d-block">{{ __('Total Quantity') }}</small>
                     <h4 class="mb-0">{{ number_format($summary['total_quantity'], 2) }}</h4>
                 </div>
             </div>
@@ -36,7 +36,7 @@
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <small class="text-muted d-block">Total Weight</small>
+                    <small class="text-muted d-block">{{ __('Total Weight') }}</small>
                     <h4 class="mb-0">{{ number_format($summary['total_weight'], 2) }}</h4>
                 </div>
             </div>
@@ -44,7 +44,7 @@
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <small class="text-muted d-block">Total Value</small>
+                    <small class="text-muted d-block">{{ __('Total Value') }}</small>
                     <h4 class="mb-0">{{ $currencySymbol ?? '$' }}{{ number_format($summary['total_value'], 2) }}</h4>
                 </div>
             </div>
@@ -57,12 +57,12 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Product Name</th>
-                            <th>Quantity</th>
-                            <th>Weight</th>
-                            <th>Unit Price</th>
-                            <th>Total Price</th>
-                            <th class="text-end">Actions</th>
+                            <th>{{ __('Product Name') }}</th>
+                            <th>{{ __('Quantity') }}</th>
+                            <th>{{ __('Weight') }}</th>
+                            <th>{{ __('Unit Price') }}</th>
+                            <th>{{ __('Total Price') }}</th>
+                            <th class="text-end">{{ __('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -75,7 +75,7 @@
                                 <td>{{ $currencySymbol ?? '$' }}{{ number_format((float) $item->total_price, 2) }}</td>
                                 <td>
                                     <div class="d-flex justify-content-end gap-2">
-                                        @feature('storages')
+                                        {{ __('@feature(\'storages\')') }}
                                         <button
                                             type="button"
                                             class="btn btn-sm btn-outline-success transfer-btn"
@@ -87,7 +87,7 @@
                                             data-weight="{{ $item->weight }}"
                                             data-unit-price="{{ $item->unit_price }}"
                                         >Transfer</button>
-                                        @endfeature
+                                        {{ __('@endfeature') }}
                                         <button
                                             type="button"
                                             class="btn btn-sm btn-outline-secondary edit-btn"
@@ -99,19 +99,19 @@
                                             data-weight="{{ $item->weight }}"
                                             data-unit-price="{{ $item->unit_price }}"
                                         >Edit</button>
-                                        <form method="POST" action="{{ route('storages.destroyItem', $item->id) }}" onsubmit="return confirm('Delete this transaction?');">
+                                        <form method="POST" action="{{ route('storages.destroyItem', $item->{{ __('id) }}" onsubmit="return confirm(\'Delete this transaction?\');">
                                             @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                            @method(\'DELETE\')') }}
+                                            <button class="btn btn-sm btn-outline-danger">{{ __('Delete') }}</button>
                                         </form>
                                     </div>
                                 </td>
                             </tr>
-                        @empty
+                        {{ __('@empty') }}
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-5">No storage transactions yet.</td>
+                                <td colspan="6" class="text-center text-muted py-5">{{ __('No storage transactions yet.') }}</td>
                             </tr>
-                        @endforelse
+                        {{ __('@endforelse') }}
                     </tbody>
                 </table>
             </div>
@@ -128,39 +128,39 @@
 <div class="modal fade" id="addItemModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
-            <form method="POST" action="{{ route('storages.storeItem', $storage->id) }}">
-                @csrf
+            <form method="POST" action="{{ route('storages.storeItem', $storage->{{ __('id) }}">
+                @csrf') }}
                 <div class="modal-header">
-                    <h5 class="modal-title">Add Storage Transaction</h5>
+                    <h5 class="modal-title">{{ __('Add Storage Transaction') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">Product Name</label>
+                            <label class="form-label">{{ __('Product Name') }}</label>
                             <input type="text" name="product_name" class="form-control" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Quantity</label>
+                            <label class="form-label">{{ __('Quantity') }}</label>
                             <input type="number" name="quantity" class="form-control" step="0.01" min="0.01" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Weight</label>
+                            <label class="form-label">{{ __('Weight') }}</label>
                             <input type="number" name="weight" class="form-control" step="0.01" min="0.01" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Price of Product</label>
+                            <label class="form-label">{{ __('Price of Product') }}</label>
                             <input type="number" name="unit_price" class="form-control unit-price-input" step="0.01" min="0.01" required>
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Total Price</label>
+                            <label class="form-label">{{ __('Total Price') }}</label>
                             <input type="text" class="form-control total-price-input" readonly value="0.00">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Transaction</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ __('Save Transaction') }}</button>
                 </div>
             </form>
         </div>
@@ -171,39 +171,39 @@
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <form method="POST" id="editItemForm">
-                @csrf
-                @method('PUT')
+                {{ __('@csrf
+                @method(\'PUT\')') }}
                 <div class="modal-header">
-                    <h5 class="modal-title">Edit Storage Transaction</h5>
+                    <h5 class="modal-title">{{ __('Edit Storage Transaction') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">Product Name</label>
+                            <label class="form-label">{{ __('Product Name') }}</label>
                             <input type="text" name="product_name" id="editProductName" class="form-control" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Quantity</label>
+                            <label class="form-label">{{ __('Quantity') }}</label>
                             <input type="number" name="quantity" id="editQuantity" class="form-control" step="0.01" min="0.01" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Weight</label>
+                            <label class="form-label">{{ __('Weight') }}</label>
                             <input type="number" name="weight" id="editWeight" class="form-control" step="0.01" min="0.01" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Price of Product</label>
+                            <label class="form-label">{{ __('Price of Product') }}</label>
                             <input type="number" name="unit_price" id="editUnitPrice" class="form-control unit-price-input" step="0.01" min="0.01" required>
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Total Price</label>
+                            <label class="form-label">{{ __('Total Price') }}</label>
                             <input type="text" class="form-control total-price-input" readonly value="0.00">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
                 </div>
             </form>
         </div>
@@ -213,61 +213,61 @@
 <div class="modal fade" id="transferItemModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
-            <form method="POST" action="{{ route('storages.transfer', $storage->id) }}" id="transferItemForm">
-                @csrf
+            <form method="POST" action="{{ route('storages.transfer', $storage->{{ __('id) }}" id="transferItemForm">
+                @csrf') }}
                 <div class="modal-header">
-                    <h5 class="modal-title">Transfer Between Storages</h5>
+                    <h5 class="modal-title">{{ __('Transfer Between Storages') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="item_id" id="transferItemId">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">Product Name</label>
+                            <label class="form-label">{{ __('Product Name') }}</label>
                             <input type="text" id="transferProductName" class="form-control" readonly>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Available Quantity</label>
+                            <label class="form-label">{{ __('Available Quantity') }}</label>
                             <input type="text" id="transferAvailableQuantity" class="form-control" readonly>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Available Weight</label>
+                            <label class="form-label">{{ __('Available Weight') }}</label>
                             <input type="text" id="transferAvailableWeight" class="form-control" readonly>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">To Storage</label>
+                            <label class="form-label">{{ __('To Storage') }}</label>
                             <select name="to_storage_id" class="form-select" required>
-                                <option value="">Choose storage</option>
+                                <option value="">{{ __('Choose storage') }}</option>
                                 @foreach($otherStorages as $otherStorage)
                                     <option value="{{ $otherStorage->id }}">{{ $otherStorage->name }} - {{ $otherStorage->location }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Transfer Quantity</label>
+                            <label class="form-label">{{ __('Transfer Quantity') }}</label>
                             <input type="number" name="quantity" id="transferQuantity" class="form-control" step="0.01" min="0.01" required>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Transfer Weight</label>
+                            <label class="form-label">{{ __('Transfer Weight') }}</label>
                             <input type="number" name="weight" id="transferWeight" class="form-control" step="0.01" min="0.01" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Unit Price</label>
+                            <label class="form-label">{{ __('Unit Price') }}</label>
                             <input type="text" id="transferUnitPrice" class="form-control" readonly>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Total Price</label>
+                            <label class="form-label">{{ __('Total Price') }}</label>
                             <input type="text" id="transferTotalPrice" class="form-control" readonly value="0.00">
                         </div>
                         <div class="col-12">
-                            <small class="text-muted">Total price is calculated as transfer quantity x unit price.</small>
+                            <small class="text-muted">{{ __('Total price is calculated as transfer quantity x unit price.') }}</small>
                             <div id="transferError" class="text-danger small mt-1"></div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Confirm Transfer</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-success">{{ __('Confirm Transfer') }}</button>
                 </div>
             </form>
         </div>

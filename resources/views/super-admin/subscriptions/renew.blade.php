@@ -3,12 +3,12 @@
 @section('content')
 <div class="container-fluid">
     <div class="page-header mb-4">
-        <h1 class="page-title">Renew Subscription</h1>
+        <h1 class="page-title">{{ __('Renew Subscription') }}</h1>
     </div>
 
     @if ($errors->any())
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>Validation Errors:</strong>
+        <strong>{{ __('Validation Errors:') }}</strong>
         <ul class="mb-0 mt-2">
             @foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach
         </ul>
@@ -19,26 +19,26 @@
     <div class="row">
         <div class="col-lg-8">
             <div class="card mb-3">
-                <div class="card-header bg-light"><h5 class="mb-0">Current Subscription</h5></div>
+                <div class="card-header bg-light"><h5 class="mb-0">{{ __('Current Subscription') }}</h5></div>
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <strong>Merchant:</strong><br>
+                            <strong>{{ __('Merchant:') }}</strong><br>
                             {{ $subscription->merchant->name }}
                         </div>
                         <div class="col-md-6">
-                            <strong>Package:</strong><br>
+                            <strong>{{ __('Package:') }}</strong><br>
                             {{ $subscription->package->name }}
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <strong>Current Expiry:</strong><br>
-                            <span class="text-danger fw-bold">{{ $subscription->expires_at->format('M d, Y H:i') }}</span>
+                            <strong>{{ __('Current Expiry:') }}</strong><br>
+                            <span class="text-danger fw-bold">{{ $subscription->expires_at->translatedFormat('M d, Y H:i') }}</span>
                         </div>
                         <div class="col-md-6">
-                            <strong>Days Until Expiry:</strong><br>
+                            <strong>{{ __('Days Until Expiry:') }}</strong><br>
                             @php $daysLeft = now()->diff($subscription->expires_at)->days; @endphp
                             <span class="badge {{ $daysLeft < 0 ? 'bg-danger' : ($daysLeft <= 7 ? 'bg-warning' : 'bg-success') }}">
                                 {{ $daysLeft < 0 ? 'EXPIRED' : $daysLeft . ' days' }}
@@ -48,11 +48,11 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                            <strong>Package Price:</strong><br>
+                            <strong>{{ __('Package Price:') }}</strong><br>
                             {{ $currencySymbol }}{{ number_format($subscription->package->price, 2) }}
                         </div>
                         <div class="col-md-6">
-                            <strong>Package Duration:</strong><br>
+                            <strong>{{ __('Package Duration:') }}</strong><br>
                             {{ $subscription->package->duration_days }} days
                         </div>
                     </div>
@@ -60,12 +60,12 @@
             </div>
 
             <div class="card">
-                <div class="card-header bg-light"><h5 class="mb-0">Renewal Options</h5></div>
+                <div class="card-header bg-light"><h5 class="mb-0">{{ __('Renewal Options') }}</h5></div>
                 <form action="{{ route('super-admin.subscriptions.renew.store', $subscription) }}" method="POST">
-                    @csrf
+                    {{ __('@csrf') }}
                     <div class="card-body">
                         <div class="mb-4">
-                            <label class="form-label">Choose Renewal Option</label>
+                            <label class="form-label">{{ __('Choose Renewal Option') }}</label>
                             <div class="renewal-options">
                                 @php
                                     $renewalOptions = [
@@ -89,7 +89,7 @@
                                                 $totalDays = (int) ($packageDays * $option['months']);
                                                 $newExpiry = now()->copy()->addDays((int) $totalDays);
                                             @endphp
-                                            New Expiry: {{ $newExpiry->format('M d, Y') }} | Total Duration: {{ $totalDays }} days
+                                            New Expiry: {{ $newExpiry->translatedFormat('M d, Y') }} | Total Duration: {{ $totalDays }} days
                                         </small>
                                     </label>
                                 </div>
@@ -98,23 +98,23 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Custom Duration (optional)</label>
+                            <label class="form-label">{{ __('Custom Duration (optional)') }}</label>
                             <div class="input-group">
-                                <input type="number" name="custom_days" class="form-control" placeholder="Enter number of days" min="1" value="{{ old('custom_days', (int) $subscription->package->duration_days) }}">
-                                <span class="input-group-text">days</span>
+                                <input type="number" name="custom_days" class="form-control" placeholder="Enter number of days" min="1" value="{{ old('custom_days', (int) $subscription->{{ __('package->duration_days) }}">') }}
+                                <span class="input-group-text">{{ __('days') }}</span>
                             </div>
-                            <small class="text-muted">Leave empty to use selected renewal option</small>
+                            <small class="text-muted">{{ __('Leave empty to use selected renewal option') }}</small>
                         </div>
 
                         <div class="alert alert-info">
-                            <strong>Price Summary:</strong>
+                            <strong>{{ __('Price Summary:') }}</strong>
                             <div class="row mt-2">
                                 <div class="col-md-6">
-                                    <small class="text-muted">Base Price:</small><br>
+                                    <small class="text-muted">{{ __('Base Price:') }}</small><br>
                                     {{ $currencySymbol }}{{ number_format($subscription->package->price, 2) }}
                                 </div>
                                 <div class="col-md-6">
-                                    <small class="text-muted">Renewal Cost:</small><br>
+                                    <small class="text-muted">{{ __('Renewal Cost:') }}</small><br>
                                     <span id="renewalCost">{{ $currencySymbol }}{{ number_format($subscription->package->price, 2) }}</span>
                                 </div>
                             </div>
@@ -122,13 +122,13 @@
 
                         <div class="form-check mb-3">
                             <input type="checkbox" name="send_confirmation" class="form-check-input" id="sendConfirm" value="1" checked>
-                            <label class="form-check-label" for="sendConfirm">Send confirmation email to merchant admin</label>
+                            <label class="form-check-label" for="sendConfirm">{{ __('Send confirmation email to merchant admin') }}</label>
                         </div>
                     </div>
 
                     <div class="card-footer bg-light">
-                        <button type="submit" class="btn btn-success">Renew Subscription</button>
-                        <a href="{{ route('super-admin.subscriptions.show', $subscription) }}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-success">{{ __('Renew Subscription') }}</button>
+                        <a href="{{ route('super-admin.subscriptions.show', $subscription) }}" class="btn btn-outline-secondary">{{ __('Cancel') }}</a>
                     </div>
                 </form>
             </div>
@@ -136,30 +136,30 @@
 
         <div class="col-lg-4">
             <div class="card">
-                <div class="card-header bg-light"><h5 class="mb-0">Renewal Timeline</h5></div>
+                <div class="card-header bg-light"><h5 class="mb-0">{{ __('Renewal Timeline') }}</h5></div>
                 <div class="card-body">
                     <div class="timeline-compact">
                         <div class="timeline-event">
                             <div class="event-marker"></div>
                             <div class="event-content">
-                                <small class="text-muted">Subscription Started</small><br>
-                                {{ $subscription->start_date->format('M d, Y') }}
+                                <small class="text-muted">{{ __('Subscription Started') }}</small><br>
+                                {{ $subscription->start_date->translatedFormat('M d, Y') }}
                             </div>
                         </div>
 
                         <div class="timeline-event">
                             <div class="event-marker active"></div>
                             <div class="event-content">
-                                <small class="text-muted">Currently Expires</small><br>
-                                <strong>{{ $subscription->expires_at->format('M d, Y') }}</strong>
+                                <small class="text-muted">{{ __('Currently Expires') }}</small><br>
+                                <strong>{{ $subscription->expires_at->translatedFormat('M d, Y') }}</strong>
                             </div>
                         </div>
 
                         <div class="timeline-event">
                             <div class="event-marker future"></div>
                             <div class="event-content">
-                                <small class="text-muted" id="futureLabel">New Expiry (1 month)</small><br>
-                                <strong id="futureDate">{{ now()->addDays((int) $subscription->package->duration_days)->format('M d, Y') }}</strong>
+                                <small class="text-muted" id="futureLabel">{{ __('New Expiry (1 month)') }}</small><br>
+                                <strong id="futureDate">{{ now()->addDays((int) $subscription->package->duration_days)->translatedFormat('M d, Y') }}</strong>
                             </div>
                         </div>
                     </div>
@@ -167,20 +167,20 @@
             </div>
 
             <div class="card mt-3">
-                <div class="card-header bg-light"><h5 class="mb-0">Package Details</h5></div>
+                <div class="card-header bg-light"><h5 class="mb-0">{{ __('Package Details') }}</h5></div>
                 <div class="card-body">
                     <strong>{{ $subscription->package->name }}</strong>
                     <hr>
-                    <strong>Features:</strong>
+                    <strong>{{ __('Features:') }}</strong>
                     <ul class="small mb-3">
                         @forelse($subscription->package->features as $feature)
                         <li>{{ ucfirst(str_replace('_', ' ', $feature->feature_key)) }}</li>
-                        @empty
-                        <li><em>No features listed</em></li>
-                        @endforelse
+                        {{ __('@empty') }}
+                        <li><em>{{ __('No features listed') }}</em></li>
+                        {{ __('@endforelse') }}
                     </ul>
 
-                    <strong>Limits:</strong>
+                    <strong>{{ __('Limits:') }}</strong>
                     <ul class="small">
                         <li>Employees: {{ $subscription->package->max_employees ?? 'Unlimited' }}</li>
                         <li>Currencies: {{ $subscription->package->max_currencies }}</li>

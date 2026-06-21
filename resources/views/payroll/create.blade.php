@@ -54,9 +54,9 @@
     <div class="container-fluid">
         <div class="create-hero mb-4 d-flex flex-wrap justify-content-between align-items-start gap-3">
             <div>
-                <div class="create-hero-chip mb-3">Payroll</div>
-                <h1 class="mb-2 fw-bold" style="letter-spacing: -0.03em;">{{ __('Create Payroll') }}</h1>
-                <p class="mb-0 create-hero-note">Build payroll records in a more focused working area.</p>
+                <div class="create-hero-chip mb-3">{{ __('messages.payroll') }}</div>
+                <h1 class="mb-2 fw-bold" style="letter-spacing: -0.03em;">{{ __('messages.create_payroll') }}</h1>
+                <p class="mb-0 create-hero-note">{{ __('Build payroll records in a more focused working area.') }}</p>
             </div>
         </div>
 
@@ -65,62 +65,62 @@
                 <div class="card create-card">
                     <div class="card-body p-4 p-lg-5">
                         <form action="{{ route('payroll.store') }}" method="POST" class="row g-3">
-                            @csrf
+                            {{ __('@csrf') }}
                             <div class="col-12">
-                                <label class="form-label fw-semibold">{{ __('Employee') }}</label>
+                                <label class="form-label fw-semibold">{{ __('messages.employee') }}</label>
                                 <select name="employee_id" class="form-select create-field @error('employee_id') is-invalid @enderror" required>
-                                    <option value="">{{ __('Select employee') }}</option>
+                                    <option value="">{{ __('messages.select_employee') }}</option>
                                     @foreach($employees as $id => $name)
                                         <option value="{{ $id }}">{{ $name }}</option>
                                     @endforeach
                                 </select>
-                                @error('employee_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'employee_id\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">{{ __('Year') }}</label>
+                                <label class="form-label fw-semibold">{{ __('messages.year') }}</label>
                                 <input type="number" name="year" class="form-control create-field @error('year') is-invalid @enderror" value="{{ old('year', $currentYear) }}" required>
-                                @error('year')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'year\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">{{ __('Month') }}</label>
+                                <label class="form-label fw-semibold">{{ __('messages.month') }}</label>
                                 <select name="month" class="form-select create-field @error('month') is-invalid @enderror" required>
-                                    <option value="">Select Month</option>
+                                    <option value="">{{ __('Select Month') }}</option>
                                     @for($m = 1; $m <= 12; $m++)
                                         <option value="{{ $m }}" {{ $m == $currentMonth ? 'selected' : '' }}>{{ $m }}</option>
-                                    @endfor
+                                    {{ __('@endfor') }}
                                 </select>
-                                @error('month')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'month\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label fw-semibold">{{ __('Basic Salary') }} <span class="text-danger">*</span></label>
+                                <label class="form-label fw-semibold">{{ __('messages.basic_salary') }} <span class="text-danger">*</span></label>
                                 <input type="text" name="basic_salary" inputmode="numeric" class="form-control create-field @error('basic_salary') is-invalid @enderror" value="{{ old('basic_salary') }}" placeholder="Enter basic salary" required>
-                                @error('basic_salary')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'basic_salary\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label fw-semibold">{{ __('Allowances') }}</label>
+                                <label class="form-label fw-semibold">{{ __('messages.allowances') }}</label>
                                 <input type="text" name="allowances" inputmode="numeric" class="form-control create-field @error('allowances') is-invalid @enderror" value="{{ old('allowances', 0) }}">
-                                @error('allowances')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                <small class="form-text text-muted">Additional benefits/bonuses (optional)</small>
+                                {{ __('@error(\'allowances\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
+                                <small class="form-text text-muted">{{ __('Additional benefits/bonuses (optional)') }}</small>
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label fw-semibold">{{ __('Deductions') }}</label>
+                                <label class="form-label fw-semibold">{{ __('messages.deductions') }}</label>
                                 <input type="text" name="deductions" inputmode="numeric" class="form-control create-field @error('deductions') is-invalid @enderror" value="{{ old('deductions', 0) }}">
-                                @error('deductions')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                <small class="form-text text-muted">Manual deductions / advances to apply (optional)</small>
+                                {{ __('@error(\'deductions\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
+                                <small class="form-text text-muted">{{ __('Manual deductions / advances to apply (optional)') }}</small>
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label fw-semibold">{{ __('Notes') }}</label>
+                                <label class="form-label fw-semibold">{{ __('messages.notes') }}</label>
                                 <textarea name="notes" class="form-control create-field">{{ old('notes') }}</textarea>
                             </div>
 
                             <div class="col-12 d-flex gap-2 pt-2">
-                                <button class="btn btn-primary px-4">{{ __('Save') }}</button>
-                                <a href="{{ route('payroll.index') }}" class="btn btn-outline-secondary px-4">{{ __('Cancel') }}</a>
+                                <button class="btn btn-primary px-4">{{ __('messages.save') }}</button>
+                                <a href="{{ route('payroll.index') }}" class="btn btn-outline-secondary px-4">{{ __('messages.cancel') }}</a>
                             </div>
                         </form>
                     </div>

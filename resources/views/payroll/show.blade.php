@@ -1,6 +1,6 @@
 @extends('layouts.modern')
 
-@section('title', __('messages.payroll') . ' - ' . $payroll->employee?->name)
+@section('title', __('messages.payroll') . ' - ' . ($payroll->employee?->name ?? ''))
 
 @section('content')
 <style>
@@ -33,7 +33,7 @@
                     <i class="bi bi-receipt" style="color: #ff8c00;"></i>
                     {{ __('messages.payroll') }} - <span class="payroll-employee-name">{{ $payroll->employee?->name }}</span>
                 </h1>
-                <p class="payroll-meta">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}</p>
+                <p class="payroll-meta">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->translatedFormat('F Y') }}</p>
                 <span class="badge {{ $payroll->status === 'paid' ? 'bg-success' : 'bg-warning text-dark' }}">{{ strtoupper($payroll->status ?? 'draft') }}</span>
             </div>
             <div class="d-flex gap-2">
@@ -79,7 +79,7 @@
                             </div>
                         </div>
                         <div class="col-md-6 text-end">
-                            <small class="text-muted">Base compensation</small>
+                            <small class="text-muted">{{ __('Base compensation') }}</small>
                         </div>
                     </div>
 
@@ -92,7 +92,7 @@
                             </div>
                         </div>
                         <div class="col-md-6 text-end">
-                            <small class="text-muted">Sales/performance bonus</small>
+                            <small class="text-muted">{{ __('Sales/performance bonus') }}</small>
                         </div>
                     </div>
 
@@ -105,7 +105,7 @@
                             </div>
                         </div>
                         <div class="col-md-6 text-end">
-                            <small class="text-muted">Additional benefits</small>
+                            <small class="text-muted">{{ __('Additional benefits') }}</small>
                         </div>
                     </div>
 
@@ -117,7 +117,7 @@
                             </div>
                         </div>
                         <div class="col-md-6 text-end">
-                            <small class="text-muted">Payroll deductions and advances</small>
+                            <small class="text-muted">{{ __('Payroll deductions and advances') }}</small>
                         </div>
                     </div>
 
@@ -125,9 +125,9 @@
                     <div class="alert alert-light border mb-4">
                         <div class="row g-2">
                             <div class="col-md-4"><strong>{{ __('messages.status') }}:</strong> {{ strtoupper($payroll->status ?? 'draft') }}</div>
-                            <div class="col-md-4"><strong>Safe:</strong> {{ $payroll->safe?->name ?? '-' }}</div>
-                            <div class="col-md-4"><strong>Processed By:</strong> {{ $payroll->processedBy?->name ?? '-' }}</div>
-                            <div class="col-md-4"><strong>Processed At:</strong> {{ optional($payroll->processed_at)->format('Y-m-d H:i') ?? '-' }}</div>
+                            <div class="col-md-4"><strong>{{ __('Safe:') }}</strong> {{ $payroll->safe?->name ?? '-' }}</div>
+                            <div class="col-md-4"><strong>{{ __('Processed By:') }}</strong> {{ $payroll->processedBy?->name ?? '-' }}</div>
+                            <div class="col-md-4"><strong>{{ __('Processed At:') }}</strong> {{ optional($payroll->processed_at)->format('Y-m-d H:i') ?? '-' }}</div>
                         </div>
                     </div>
                     @endif
@@ -136,12 +136,12 @@
                     <div class="row mb-4 pb-3 border-bottom">
                         <div class="col-md-6">
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="fw-bold text-muted">Total Before Deductions</span>
+                                <span class="fw-bold text-muted">{{ __('Total Before Deductions') }}</span>
                                 <span class="fs-5 fw-bold">{{ $currencySymbol }}{{ number_format($payroll->gross_salary ?? (($payroll->basic_salary ?? 0) + ($payroll->calculated_commission ?? $payroll->commission ?? 0) + ($payroll->allowances ?? 0)), 2) }}</span>
                             </div>
                         </div>
                         <div class="col-md-6 text-end">
-                            <small class="text-muted">Basic salary + commission + allowances</small>
+                            <small class="text-muted">{{ __('Basic salary + commission + allowances') }}</small>
                         </div>
                     </div>
 
@@ -153,7 +153,7 @@
                             </div>
                         </div>
                         <div class="col-md-6 text-end">
-                            <small class="text-muted">Advances + deduction records</small>
+                            <small class="text-muted">{{ __('Advances + deduction records') }}</small>
                         </div>
                     </div>
 
@@ -168,7 +168,7 @@
                             </div>
                         </div>
                         <div class="col-md-6 text-end">
-                            <small class="text-muted fw-bold">Total payable</small>
+                            <small class="text-muted fw-bold">{{ __('Total payable') }}</small>
                         </div>
                     </div>
                 </div>
@@ -211,7 +211,7 @@
                     <div class="mb-3">
                         <small class="text-muted d-block">{{ __('messages.month') }}/{{ __('messages.year') }}</small>
                         <h5 class="mb-0">
-                            {{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}
+                            {{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->translatedFormat('F Y') }}
                         </h5>
                     </div>
                 </div>
@@ -237,7 +237,7 @@
         <div class="card mb-4">
             <div class="card-header" style="background: linear-gradient(135deg, #6c757d, #adb5bd); color: white;">
                 <h5 class="mb-0">
-                    <i class="bi bi-diagram-3"></i> Assigned Branches
+                    <i class="bi bi-diagram-3"></i> {{ __('Assigned Branches') }}
                 </h5>
             </div>
             <div class="card-body">
@@ -254,7 +254,7 @@
     <div class="card mb-4">
         <div class="card-header" style="background: linear-gradient(135deg, #27ae60, #52be80); color: white;">
             <h5 class="mb-0">
-                <i class="bi bi-graph-up"></i> Commission Transactions
+                <i class="bi bi-graph-up"></i> {{ __('Commission Transactions') }}
             </h5>
         </div>
         <div class="card-body">
@@ -263,12 +263,12 @@
                     <table class="table table-hover table-sm">
                         <thead class="table-light">
                             <tr>
-                                <th>{{ __('Date') }}</th>
-                                <th>{{ __('Sale Amount') }}</th>
-                                <th>{{ __('Commission Rate') }}</th>
-                                <th>{{ __('Commission Amount') }}</th>
-                                <th>{{ __('Reference') }}</th>
-                                <th>{{ __('Notes') }}</th>
+                                <th>{{ __('messages.date') }}</th>
+                                <th>{{ __('messages.sale_amount') }}</th>
+                                <th>{{ __('messages.commission_rate') }}</th>
+                                <th>{{ __('messages.commission_amount') }}</th>
+                                <th>{{ __('messages.reference') }}</th>
+                                <th>{{ __('messages.notes') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -299,7 +299,7 @@
                 </div>
             @else
                 <div class="alert alert-info mb-0">
-                    <i class="bi bi-info-circle"></i> No commission transactions for this period.
+                    <i class="bi bi-info-circle"></i> {{ __('No commission transactions for this period.') }}
                 </div>
             @endif
         </div>
@@ -309,7 +309,7 @@
     <div class="card mb-4">
         <div class="card-header" style="background: linear-gradient(135deg, #e74c3c, #ec7063); color: white;">
             <h5 class="mb-0">
-                <i class="bi bi-cash-coin"></i> Advances Transactions
+                <i class="bi bi-cash-coin"></i> {{ __('Advances Transactions') }}
             </h5>
         </div>
         <div class="card-body">
@@ -324,10 +324,10 @@
                     <table class="table table-hover table-sm">
                         <thead class="table-light">
                             <tr>
-                                <th>{{ __('Date') }}</th>
-                                <th>{{ __('Amount') }}</th>
-                                <th>{{ __('Description') }}</th>
-                                <th>{{ __('Created By') }}</th>
+                                <th>{{ __('messages.date') }}</th>
+                                <th>{{ __('messages.amount') }}</th>
+                                <th>{{ __('messages.description') }}</th>
+                                <th>{{ __('messages.created_by') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -352,7 +352,7 @@
                 </div>
             @else
                 <div class="alert alert-info mb-0">
-                    <i class="bi bi-info-circle"></i> No advance transactions for this employee.
+                    <i class="bi bi-info-circle"></i> {{ __('No advance transactions for this employee.') }}
                 </div>
             @endif
         </div>

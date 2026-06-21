@@ -109,7 +109,7 @@
         </h1>
         @feature('commissions.create')
             <a href="{{ route('commissions.create') }}" class="btn btn-primary-modern">
-                <i class="bi bi-plus-circle"></i> Create First Commission Profile
+                <i class="bi bi-plus-circle"></i> {{ __('create_first_commission_profile') }}
             </a>
         @endfeature
     </div>
@@ -120,7 +120,7 @@
     <div class="col-md-3 mb-3">
         <div class="card" style="border-left: 4px solid #ff8c00;">
             <div class="card-body">
-                <small class="text-muted d-block mb-2">Total Commission</small>
+                <small class="text-muted d-block mb-2">{{ __('Total Commission') }}</small>
                 <h3 class="mb-0" style="color: #ff8c00;">{{ $currencySymbol }}{{ number_format($stats['totalCommission'], 2) }}</h3>
             </div>
         </div>
@@ -131,8 +131,8 @@
 <div class="card mb-4">
     <div class="card-header commissions-page-header">
         <div class="d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 white-header"><i class="bi bi-person-badge"></i> Commission Profiles</h5>
-                <small>Open an employee profile to pay active commissions or add more records</small>
+            <h5 class="mb-0 white-header"><i class="bi bi-person-badge"></i> {{ __('Commission Profiles') }}</h5>
+                <small>{{ __('Open an employee profile to pay active commissions or add more records') }}</small>
         </div>
     </div>
     <div class="card-body">
@@ -149,12 +149,12 @@
                                     </div>
                                     <span class="badge bg-light text-dark border">{{ $profile->commission_count ?? $profile->commissions->count() }} records</span>
                                 </div>
-                                <div class="mb-2 text-muted small">Last commission: {{ $profile->last_commission_date?->format('M d, Y') ?? '-' }}</div>
+                                <div class="mb-2 text-muted small">Last commission: {{ $profile->last_commission_date?->translatedFormat('M d, Y') ?? '-' }}</div>
                                 <div class="mb-3 fw-bold text-success">{{ $currencySymbol }}{{ number_format($profile->total_commission_amount ?? 0, 2) }}</div>
                                     <div class="d-grid gap-2">
                                         @feature('commissions.view')
                                             <a href="{{ route('commissions.show', $profile->latest_commission) }}" class="btn btn-outline-primary">
-                                                <i class="bi bi-eye"></i> View Profile
+                                                <i class="bi bi-eye"></i> {{ __('View Profile') }}
                                             </a>
                                         @endfeature
 
@@ -162,13 +162,13 @@
                                             @feature('commissions.edit')
                                                 <form method="POST" action="{{ route('commissions.pay', $profile->latest_commission) }}">
                                                     @csrf
-                                                    <button type="submit" class="btn btn-success w-100" onclick="return confirm('Mark this commission as paid? It will be hidden from the active list but stay in the database.')">
-                                                        <i class="bi bi-cash-coin"></i> Pay Commission
+                                                    <button type="submit" class="btn btn-success w-100" onclick="return confirm('{{ __('Mark this commission as paid? It will be hidden from the active list but stay in the database.') }}')">
+                                                        <i class="bi bi-cash-coin"></i> {{ __('Pay Commission') }}
                                                     </button>
                                                 </form>
                                             @endfeature
                                         @else
-                                            <span class="badge bg-success-subtle text-success border border-success-subtle py-2">Paid</span>
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle py-2">{{ __('Paid') }}</span>
                                         @endif
                                     </div>
                             </div>
@@ -178,7 +178,7 @@
             </div>
         @else
             <div class="text-center text-muted py-4">
-                No commission profiles yet. Use <strong>Create First Commission Profile</strong> for the first record of an employee.
+                {{ __('no_commission_profiles_yet_use_create_first_commission_profile_for_the_first_record_of_an_employee') }}
             </div>
         @endif
     </div>
@@ -194,12 +194,12 @@
             <div class="commission-mobile-card">
                 <div class="top">
                     <div>
-                        <strong>{{ $date->format('F Y') }}</strong>
-                        <div class="small text-muted">Monthly commission summary</div>
+                        <strong>{{ $date->translatedFormat('F Y') }}</strong>
+                        <div class="small text-muted">{{ __('Monthly commission summary') }}</div>
                     </div>
                     <span class="badge bg-light text-dark border">{{ $currencySymbol }}{{ number_format($monthly->total, 2) }}</span>
                 </div>
-                <div class="small text-muted">Use the desktop table for detailed monthly breakdowns.</div>
+                <div class="small text-muted">{{ __('Use the desktop table for detailed monthly breakdowns.') }}</div>
             </div>
         @endforeach
     </div>
@@ -207,16 +207,16 @@
     <div class="card">
         <div class="card-header" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white;">
             <h5 class="mb-0">
-                <i class="bi bi-graph-up"></i> Monthly Commission Summary
+                <i class="bi bi-graph-up"></i> {{ __('Monthly Commission Summary') }}
             </h5>
         </div>
         <div class="table-responsive commissions-desktop-table">
             <table class="table table-hover">
                 <thead class="table-light">
                     <tr>
-                        <th>Month/Year</th>
-                        <th>Total Commission</th>
-                        <th>Details</th>
+                        <th>{{ __('Month/Year') }}</th>
+                        <th>{{ __('Total Commission') }}</th>
+                        <th>{{ __('Details') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -226,7 +226,7 @@
                         @endphp
                         <tr>
                             <td>
-                                <strong>{{ $date->format('F Y') }}</strong>
+                                <strong>{{ $date->translatedFormat('F Y') }}</strong>
                             </td>
                             <td>
                                 <h6 class="mb-0" style="color: #27ae60;">
@@ -234,7 +234,7 @@
                                 </h6>
                             </td>
                             <td>
-                                <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+                                <a href="#" class="btn btn-sm btn-outline-primary">{{ __('View Details') }}</a>
                             </td>
                         </tr>
                     @endforeach
@@ -247,7 +247,7 @@
 <!-- Paid Commissions History -->
 <div class="card mt-4">
     <div class="card-header bg-secondary text-white">
-        <h5 class="mb-0 white-header"><i class="bi bi-clock-history"></i> Paid Commissions History</h5>
+        <h5 class="mb-0 white-header"><i class="bi bi-clock-history"></i> {{ __('Paid Commissions History') }}</h5>
     </div>
     <div class="card-body">
         @if(($paidCommissions ?? collect())->isNotEmpty())
@@ -255,11 +255,11 @@
                 <table class="table table-hover">
                     <thead class="table-light">
                         <tr>
-                            <th>Date</th>
-                            <th>Employee</th>
-                            <th>Sale Amount</th>
-                            <th>Commission</th>
-                            <th>Reference</th>
+                            <th>{{ __('Date') }}</th>
+                            <th>{{ __('Employee') }}</th>
+                            <th>{{ __('Sale Amount') }}</th>
+                            <th>{{ __('Commission') }}</th>
+                            <th>{{ __('Reference') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -279,7 +279,7 @@
                 {{ $paidCommissions->appends(request()->except('paid_page'))->links() }}
             </div>
         @else
-            <div class="text-center text-muted py-4">No paid commissions yet.</div>
+            <div class="text-center text-muted py-4">{{ __('No paid commissions yet.') }}</div>
         @endif
     </div>
 </div>

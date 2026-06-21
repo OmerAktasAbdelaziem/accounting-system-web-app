@@ -139,7 +139,7 @@ class BranchController extends Controller
 
         for ($offset = 5; $offset >= 0; $offset--) {
             $month = Carbon::now()->startOfMonth()->subMonths($offset);
-            $branchChartMonths[] = $month->format('M Y');
+            $branchChartMonths[] = $month->translatedFormat('M Y');
 
             $branchSalesTrendData[] = (float) EmployeeSale::whereYear('sale_date', $month->year)
                 ->whereMonth('sale_date', $month->month)

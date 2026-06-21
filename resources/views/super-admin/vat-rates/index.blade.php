@@ -8,12 +8,12 @@
         <div>
             <h1 class="page-title">
                 <i class="bi bi-percent"></i>
-                Tax Rates (VAT)
+                {{ __('Tax Rates (VAT)') }}
             </h1>
-            <p class="page-subtitle">Configure VAT/tax rates for each merchant</p>
+            <p class="page-subtitle">{{ __('Configure VAT/tax rates for each merchant') }}</p>
         </div>
         <button class="btn btn-primary-orange" data-bs-toggle="modal" data-bs-target="#addVatModal">
-            <i class="bi bi-plus-circle"></i> Add Tax Rate
+            <i class="bi bi-plus-circle"></i> {{ __('Add Tax Rate') }}
         </button>
     </div>
 </div>
@@ -40,10 +40,10 @@
         </div>
         <div class="col-md-6">
             <select id="statusFilter" class="form-select">
-                <option value="">All Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="no_rate">No Rate Set</option>
+                <option value="">{{ __('All Status') }}</option>
+                <option value="active">{{ __('Active') }}</option>
+                <option value="inactive">{{ __('Inactive') }}</option>
+                <option value="no_rate">{{ __('No Rate Set') }}</option>
             </select>
         </div>
     </div>
@@ -53,12 +53,12 @@
     <table class="table table-hover" id="vatTable">
                 <thead class="table-light">
                     <tr>
-                        <th>Merchant Name</th>
-                        <th>Current VAT Rate</th>
-                        <th>Applies To</th>
-                        <th>Status</th>
-                        <th>Last Updated</th>
-                        <th>Actions</th>
+                        <th>{{ __('Merchant Name') }}</th>
+                        <th>{{ __('Current VAT Rate') }}</th>
+                        <th>{{ __('Applies To') }}</th>
+                        <th>{{ __('Status') }}</th>
+                        <th>{{ __('Last Updated') }}</th>
+                        <th>{{ __('Actions') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,14 +73,14 @@
                         <td>
                             @if($vat)
                             <span class="badge bg-info">{{ $vat->rate_percentage }}%</span>
-                            @else
-                            <span class="badge bg-light text-dark">Not Set</span>
+                            {{ __('@else') }}
+                            <span class="badge bg-light text-dark">{{ __('Not Set') }}</span>
                             @endif
                         </td>
                         <td>
                             @if($vat)
                             <small class="text-muted">{{ ucfirst($vat->applies_to) }}</small>
-                            @else
+                            {{ __('@else') }}
                             <small class="text-muted">-</small>
                             @endif
                         </td>
@@ -89,14 +89,14 @@
                             <span class="badge {{ $vat->is_active ? 'bg-success' : 'bg-danger' }}">
                                 {{ $vat->is_active ? 'Active' : 'Inactive' }}
                             </span>
-                            @else
-                            <span class="badge bg-warning">Not Configured</span>
+                            {{ __('@else') }}
+                            <span class="badge bg-warning">{{ __('Not Configured') }}</span>
                             @endif
                         </td>
                         <td>
                             @if($vat)
-                            <small class="text-muted">{{ $vat->updated_at->format('M d, Y H:i') }}</small>
-                            @else
+                            <small class="text-muted">{{ $vat->updated_at->translatedFormat('M d, Y H:i') }}</small>
+                            {{ __('@else') }}
                             <small class="text-muted">-</small>
                             @endif
                         </td>
@@ -108,25 +108,25 @@
                                     <i class="icon icon-edit"></i>
                                 </button>
                                 <form method="POST" action="{{ route('super-admin.vat-rates.destroy', $vat) }}" style="display:inline;">
-                                    @csrf @method('DELETE')
+                                    {{ __('@csrf @method(\'DELETE\')') }}
                                     <button type="submit" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Delete this VAT rate?')">
                                         <i class="icon icon-trash"></i>
                                     </button>
                                 </form>
-                                @else
+                                {{ __('@else') }}
                                 <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addVatModal" 
                                     onclick="setMerchantForAdd({{ $merchant->id }}, '{{ $merchant->name }}')" title="Add VAT Rate">
-                                    <i class="icon icon-plus"></i> Add
+                                    <i class="icon icon-plus"></i> {{ __('Add') }}
                                 </button>
                                 @endif
                             </div>
                         </td>
                     </tr>
-                    @empty
+                    {{ __('@empty') }}
                     <tr>
-                        <td colspan="6" class="text-center text-muted py-4">No merchants found</td>
+                        <td colspan="6" class="text-center text-muted py-4">{{ __('No merchants found') }}</td>
                     </tr>
-                    @endforelse
+                    {{ __('@endforelse') }}
                 </tbody>
             </table>
         </div>
@@ -149,16 +149,16 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <form action="{{ route('super-admin.vat-rates.store') }}" method="POST">
-                @csrf
+                {{ __('@csrf') }}
                 <div class="modal-header">
-                    <h5 class="modal-title">Add VAT Rate</h5>
+                    <h5 class="modal-title">{{ __('Add VAT Rate') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Select Merchant *</label>
+                        <label class="form-label">{{ __('Select Merchant *') }}</label>
                         <select name="merchant_id" id="addMerchantSelect" class="form-select" required>
-                            <option value="">-- Choose a Merchant --</option>
+                            <option value="">{{ __('-- Choose a Merchant --') }}</option>
                             @foreach($merchants as $merchant)
                             @if(!$merchant->vatRates->first())
                             <option value="{{ $merchant->id }}">{{ $merchant->name }}</option>
@@ -168,30 +168,30 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">VAT Rate (%) *</label>
+                        <label class="form-label">{{ __('VAT Rate (%) *') }}</label>
                         <div class="input-group">
                             <input type="number" name="rate_percentage" class="form-control" step="0.01" min="0" max="100" value="0" required>
                             <span class="input-group-text">%</span>
                         </div>
-                        <small class="text-muted">Examples: 5, 10, 15, 20</small>
+                        <small class="text-muted">{{ __('Examples: 5, 10, 15, 20') }}</small>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Applies To *</label>
+                        <label class="form-label">{{ __('Applies To *') }}</label>
                         <select name="applies_to" class="form-select" required>
-                            <option value="invoices">Invoices Only</option>
-                            <option value="all">All Financial Transactions</option>
+                            <option value="invoices">{{ __('Invoices Only') }}</option>
+                            <option value="all">{{ __('All Financial Transactions') }}</option>
                         </select>
                     </div>
 
                     <div class="form-check">
                         <input type="checkbox" name="is_active" class="form-check-input" id="addIsActive" value="1" checked>
-                        <label class="form-check-label" for="addIsActive">Active</label>
+                        <label class="form-check-label" for="addIsActive">{{ __('Active') }}</label>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Add VAT Rate</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ __('Add VAT Rate') }}</button>
                 </div>
             </form>
         </div>
@@ -203,19 +203,19 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <form id="editVatForm" action="" method="POST">
-                @csrf @method('PUT')
+                {{ __('@csrf @method(\'PUT\')') }}
                 <div class="modal-header">
-                    <h5 class="modal-title">Edit VAT Rate</h5>
+                    <h5 class="modal-title">{{ __('Edit VAT Rate') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Merchant</label>
+                        <label class="form-label">{{ __('Merchant') }}</label>
                         <input type="text" id="editMerchantName" class="form-control" disabled>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">VAT Rate (%) *</label>
+                        <label class="form-label">{{ __('VAT Rate (%) *') }}</label>
                         <div class="input-group">
                             <input type="number" id="editRatePercentage" name="rate_percentage" class="form-control" step="0.01" min="0" max="100" required>
                             <span class="input-group-text">%</span>
@@ -223,21 +223,21 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Applies To *</label>
+                        <label class="form-label">{{ __('Applies To *') }}</label>
                         <select id="editAppliesto" name="applies_to" class="form-select" required>
-                            <option value="invoices">Invoices Only</option>
-                            <option value="all">All Financial Transactions</option>
+                            <option value="invoices">{{ __('Invoices Only') }}</option>
+                            <option value="all">{{ __('All Financial Transactions') }}</option>
                         </select>
                     </div>
 
                     <div class="form-check">
                         <input type="checkbox" id="editIsActive" name="is_active" class="form-check-input" value="1">
-                        <label class="form-check-label" for="editIsActive">Active</label>
+                        <label class="form-check-label" for="editIsActive">{{ __('Active') }}</label>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Update VAT Rate</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ __('Update VAT Rate') }}</button>
                 </div>
             </form>
         </div>

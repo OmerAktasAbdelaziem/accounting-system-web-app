@@ -14,7 +14,7 @@
 @endphp
 
 <div class="products-shell">
-    <style>
+    {{ __('<style>
         .products-shell {
             position: relative;
             isolation: isolate;
@@ -604,20 +604,20 @@
 
             <x-slot name="panel">
                 <div class="products-hero-panel-top">
-                    <p class="products-hero-panel-title">Live snapshot</p>
-                    <div class="products-hero-panel-value"><span>{{ $totalProducts }}</span><small>products</small></div>
+                    <p class="products-hero-panel-title">{{ __('Live snapshot') }}</p>
+                    <div class="products-hero-panel-value"><span>{{ $totalProducts }}</span><small>{{ __('products') }}</small></div>
                 </div>
                 <div class="products-hero-panel-list">
-                    <div class="products-mini-metric"><div><span class="label">Active rate</span><span class="value">{{ $activeRate }}%</span></div><div class="tone"><i class="bi bi-bolt"></i></div></div>
-                    <div class="products-mini-metric"><div><span class="label">Stock alerts</span><span class="value">{{ $lowStockProductsCount }}</span></div><div class="tone"><i class="bi bi-exclamation-triangle"></i></div></div>
-                    <div class="products-mini-metric"><div><span class="label">Categories</span><span class="value">{{ $categoriesCount }}</span></div><div class="tone"><i class="bi bi-tags"></i></div></div>
+                    <div class="products-mini-metric"><div><span class="label">{{ __('Active rate') }}</span><span class="value">{{ $activeRate }}%</span></div><div class="tone"><i class="bi bi-bolt"></i></div></div>
+                    <div class="products-mini-metric"><div><span class="label">{{ __('Stock alerts') }}</span><span class="value">{{ $lowStockProductsCount }}</span></div><div class="tone"><i class="bi bi-exclamation-triangle"></i></div></div>
+                    <div class="products-mini-metric"><div><span class="label">{{ __('Categories') }}</span><span class="value">{{ $categoriesCount }}</span></div><div class="tone"><i class="bi bi-tags"></i></div></div>
                 </div>
             </x-slot>
         </x-section-hero>
 
         <div class="products-stats">
             <div class="products-stat-card">
-                <div class="products-stat-label">Total products</div>
+                <div class="products-stat-label">{{ __('Total products') }}</div>
                 <div class="products-stat-value">{{ $totalProducts }}</div>
                 <div class="products-stat-meta">
                     <span>{{ __('messages.products') }}</span>
@@ -626,7 +626,7 @@
             </div>
 
             <div class="products-stat-card">
-                <div class="products-stat-label">Active products</div>
+                <div class="products-stat-label">{{ __('Active products') }}</div>
                 <div class="products-stat-value">{{ $activeProducts }}</div>
                 <div class="products-stat-meta">
                     <span>{{ $activeRate }}% active</span>
@@ -635,7 +635,7 @@
             </div>
 
             <div class="products-stat-card">
-                <div class="products-stat-label">Low stock</div>
+                <div class="products-stat-label">{{ __('Low stock') }}</div>
                 <div class="products-stat-value">{{ $lowStockProductsCount }}</div>
                 <div class="products-stat-meta">
                     <span>{{ $stockAlertRate }}% of catalog</span>
@@ -644,7 +644,7 @@
             </div>
 
             <div class="products-stat-card">
-                <div class="products-stat-label">Average price</div>
+                <div class="products-stat-label">{{ __('Average price') }}</div>
                 <div class="products-stat-value">{{ $currencySymbol }}{{ number_format($avgPrice, 2) }}</div>
                 <div class="products-stat-meta">
                     <span>{{ $categoriesCount }} categories</span>
@@ -669,15 +669,15 @@
                     </select>
                 </div>
                 <div>
-                    <label class="form-label">Quick filter</label>
+                    <label class="form-label">{{ __('Quick filter') }}</label>
                     <button class="btn btn-outline-secondary w-100" onclick="filterProducts()">
                         <i class="bi bi-funnel"></i> {{ __('messages.filter') }}
                     </button>
                 </div>
                 <div class="d-grid gap-2">
-                    <label class="form-label" style="visibility:hidden">Actions</label>
+                    <label class="form-label" style="visibility:hidden">{{ __('Actions') }}</label>
                     <button class="btn btn-outline-dark" type="button" onclick="resetFilters()">
-                        <i class="bi bi-arrow-counterclockwise"></i> Reset
+                        <i class="bi bi-arrow-counterclockwise"></i> {{ __('Reset') }}
                     </button>
                 </div>
             </div>
@@ -737,12 +737,6 @@
                                             </a>
                                         @endfeature
 
-                                        @feature('products.edit')
-                                            <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-warning" title="Edit">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                        @endfeature
-
                                         @feature('products.delete')
                                             <button onclick="deleteProduct({{ $product->id }})" class="btn btn-sm btn-danger" title="Delete">
                                                 <i class="bi bi-trash"></i>
@@ -794,13 +788,19 @@
                     </div>
                     <div class="product-mobile-actions">
                         @feature('products.view')
-                            <a href="{{ route('products.show', $product->id) }}" class="btn btn-sm btn-info"><i class="bi bi-eye"></i></a>
+                            <a href="{{ route('products.show', $product->id) }}" class="btn btn-sm btn-info">
+                                <i class="bi bi-eye"></i>
+                            </a>
                         @endfeature
                         @feature('products.edit')
-                            <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
+                            <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i>
+                            </a>
                         @endfeature
                         @feature('products.delete')
-                            <button onclick="deleteProduct({{ $product->id }})" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                            <button onclick="deleteProduct({{ $product->id }})" class="btn btn-sm btn-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         @endfeature
                     </div>
                 </div>

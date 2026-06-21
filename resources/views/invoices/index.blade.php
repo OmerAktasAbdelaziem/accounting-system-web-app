@@ -84,7 +84,7 @@
     <div class="invoice-page-hero d-flex justify-content-between mb-3 align-items-center gap-3">
         <h3>{{ __('messages.invoices') }}</h3>
         @feature('invoicing')
-        <a href="{{ route('invoices.create') }}" class="btn btn-primary invoice-mobile-create">{{ __('Create') }}</a>
+        <a href="{{ route('invoices.create') }}" class="btn btn-primary invoice-mobile-create">{{ __('messages.create') }}</a>
         @endfeature
     </div>
 
@@ -94,10 +94,10 @@
                 <thead class="bg-light text-dark">
                     <tr>
                         <th>#</th>
-                        <th>{{ __('Invoice #') }}</th>
-                        <th>{{ __('Customer') }}</th>
-                        <th>{{ __('Date') }}</th>
-                        <th>{{ __('Total') }}</th>
+                        <th>{{ __('messages.invoice_number') }}</th>
+                        <th>{{ __('messages.customer') }}</th>
+                        <th>{{ __('messages.date') }}</th>
+                        <th>{{ __('messages.total') }}</th>
                         <th>{{ __('messages.actions') }}</th>
                     </tr>
                 </thead>
@@ -111,17 +111,17 @@
                         <td>{{ $currencySymbol }}{{ number_format($invoice->total,2) }}</td>
                         <td class="action-buttons">
                             @feature('invoicing')
-                            <a href="{{ route('invoices.show', $invoice) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
-                            <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-sm btn-outline-primary">{{ __('Edit') }}</a>
+                            <a href="{{ route('invoices.show', $invoice) }}" class="btn btn-sm btn-outline-secondary">{{ __('messages.view') }}</a>
+                            <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-sm btn-outline-primary">{{ __('messages.edit') }}</a>
                             @feature('downloads')
-                                <a href="{{ route('invoices.pdf', $invoice) }}" class="btn btn-sm btn-outline-success">{{ __('PDF') }}</a>
+                                <a href="{{ route('invoices.pdf', $invoice) }}" class="btn btn-sm btn-outline-success">{{ __('messages.pdf') }}</a>
                             @endfeature
                             <form action="{{ route('invoices.destroy', $invoice) }}" method="POST" style="display:inline-block">
-                            @endfeature
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-sm btn-outline-danger" onclick="return confirm('{{ __('Are you sure?') }}')">{{ __('Delete') }}</button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="return confirm('{{ __('messages.confirm_delete') }}')">{{ __('messages.delete') }}</button>
                             </form>
+                            @endfeature
                         </td>
                     </tr>
                     @endforeach
@@ -141,25 +141,25 @@
                 </div>
                 <div class="invoice-mobile-meta">
                     <div class="invoice-mobile-chip">
-                        <span>{{ __('Customer') }}</span>
+                        <span>{{ __('messages.customer') }}</span>
                         <strong>{{ $invoice->customer ? (is_string($invoice->customer->name) ? $invoice->customer->name : (is_array($invoice->customer->name) ? ($invoice->customer->name[app()->getLocale()] ?? implode(' - ', $invoice->customer->name)) : json_encode($invoice->customer->name))) : '' }}</strong>
                     </div>
                     <div class="invoice-mobile-chip">
-                        <span>{{ __('Date') }}</span>
+                        <span>{{ __('messages.date') }}</span>
                         <strong>{{ $invoice->date }}</strong>
                     </div>
                 </div>
                 <div class="invoice-mobile-actions">
                     @feature('invoicing')
-                        <a href="{{ route('invoices.show', $invoice) }}" class="btn btn-outline-secondary btn-sm">{{ __('View') }}</a>
-                        <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-outline-primary btn-sm">{{ __('Edit') }}</a>
+                        <a href="{{ route('invoices.show', $invoice) }}" class="btn btn-outline-secondary btn-sm">{{ __('messages.view') }}</a>
+                        <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-outline-primary btn-sm">{{ __('messages.edit') }}</a>
                         @feature('downloads')
-                            <a href="{{ route('invoices.pdf', $invoice) }}" class="btn btn-outline-success btn-sm">{{ __('PDF') }}</a>
+                            <a href="{{ route('invoices.pdf', $invoice) }}" class="btn btn-outline-success btn-sm">{{ __('messages.pdf') }}</a>
                         @endfeature
                         <form action="{{ route('invoices.destroy', $invoice) }}" method="POST" class="m-0">
                             @csrf
                             @method('DELETE')
-                            <button class="btn btn-outline-danger btn-sm w-100" onclick="return confirm('{{ __('Are you sure?') }}')">{{ __('Delete') }}</button>
+                            <button class="btn btn-outline-danger btn-sm w-100" onclick="return confirm('{{ __('messages.confirm_delete') }}')">{{ __('messages.delete') }}</button>
                         </form>
                     @endfeature
                 </div>

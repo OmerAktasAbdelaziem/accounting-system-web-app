@@ -28,9 +28,9 @@
     <div class="container-fluid">
         <div class="create-hero mb-4 d-flex flex-wrap justify-content-between align-items-start gap-3">
             <div>
-                <div class="text-uppercase text-white-50 small fw-semibold mb-2">Operations</div>
+                <div class="text-uppercase text-white-50 small fw-semibold mb-2">{{ __('Operations') }}</div>
                 <h1 class="mb-2 fw-bold" style="letter-spacing: -0.03em;">{{ __('messages.add_branch') }}</h1>
-                <p class="mb-0 text-white-50">Create a branch with the details that matter first.</p>
+                <p class="mb-0 text-white-50">{{ __('Create a branch with the details that matter first.') }}</p>
             </div>
         </div>
 
@@ -39,7 +39,7 @@
                 <div class="card create-card">
                     <div class="card-body p-4 p-lg-5">
                         <form action="{{ route('branches.store') }}" method="POST" class="row g-3">
-                            @csrf
+                            {{ __('@csrf') }}
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">{{ __('messages.branch_name') }}</label>
                                 <input type="text" name="name" class="form-control create-field" value="{{ old('name') }}" required>

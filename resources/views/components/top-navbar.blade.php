@@ -19,7 +19,7 @@
     </button>
     <div class="brand">
         <a href="{{ route($dashboardRoute) }}" class="brand">
-            <div class="logo-mark">A</div>
+            <div class="logo-mark">{{ __('A') }}</div>
             <div class="app-name">{{ $appName }}</div>
         </a>
     </div>
@@ -35,7 +35,7 @@
             @if(session()->has('original_admin_id'))
                 <form action="{{ route('super-admin.exit-inspection') }}" method="POST" style="display:inline;margin-right:10px;">
                     @csrf
-                    <button type="submit" class="btn btn-sm btn-warning" title="Exit inspection">Exit Inspection</button>
+                    <button type="submit" class="btn btn-sm btn-warning" title="Exit inspection">{{ __('Exit Inspection') }}</button>
                 </form>
             @endif
             @php
@@ -61,11 +61,11 @@
                 @endif
             </div>
             <div id="avatarDropdown" style="position:absolute;right:20px;top:60px;background:#111;padding:8px;border-radius:8px;min-width:200px;display:none;z-index:2000;color:#fff">
-                <a href="{{ route('profile') }}" style="display:block;padding:8px;color:#fff;text-decoration:none">Profile</a>
-                <a href="{{ route('settings.index') }}" style="display:block;padding:8px;color:#fff;text-decoration:none">System Settings</a>
+                <a href="{{ route('profile') }}" style="display:block;padding:8px;color:#fff;text-decoration:none">{{ __('messages.profile') }}</a>
+                <a href="{{ route('settings.index') }}" style="display:block;padding:8px;color:#fff;text-decoration:none">{{ __('settings.system_settings') }}</a>
                 <form id="avatarLogoutForm" action="{{ route('logout') }}" method="POST" style="margin:0;padding:8px;">
                     @csrf
-                    <button type="submit" class="btn btn-link text-white p-0" style="text-decoration:none">Logout</button>
+                    <button type="submit" class="btn btn-link text-white p-0" style="text-decoration:none">{{ __('Logout') }}</button>
                 </form>
             </div>
         </div>
@@ -173,23 +173,23 @@
             <div class="sub-lock-head">
                 <div class="sub-lock-icon sub-lock-avatar" aria-hidden="true">{{ $merchantInitials }}</div>
                 <div>
-                    <h3 id="subLockTitle" class="sub-lock-title">Subscription Ended</h3>
-                    <p class="sub-lock-subtitle">Access is temporarily locked until reactivation.</p>
+                    <h3 id="subLockTitle" class="sub-lock-title">{{ __('Subscription Ended') }}</h3>
+                    <p class="sub-lock-subtitle">{{ __('Access is temporarily locked until reactivation.') }}</p>
                 </div>
             </div>
 
             <div class="sub-lock-meta">
                 <div class="sub-lock-chip">
-                    <span>Merchant</span>
+                    <span>{{ __('Merchant') }}</span>
                     <strong>{{ $subscription_block_details['merchant'] ?? 'Unknown merchant' }}</strong>
                 </div>
                 <div class="sub-lock-chip">
-                    <span>Ended On</span>
+                    <span>{{ __('Ended On') }}</span>
                     <strong>{{ $subscription_block_details['expires_at'] ?? 'N/A' }}</strong>
                 </div>
                 <div class="sub-lock-chip sub-lock-chip-alert">
-                    <span>Status</span>
-                    <strong>Deactivated</strong>
+                    <span>{{ __('Status') }}</span>
+                    <strong>{{ __('Deactivated') }}</strong>
                 </div>
             </div>
 

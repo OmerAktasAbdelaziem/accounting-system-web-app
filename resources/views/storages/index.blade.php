@@ -74,7 +74,7 @@
                     </div>
                     <div class="mt-2 d-flex gap-2">
                         @feature('storages.view')
-                        <a href="{{ route('storages.items', $storage->id) }}" class="btn btn-sm btn-info"> <i class="bi bi-box"></i> </a>
+                        <a href="{{ route('storages.items', $storage->id) }}" class="btn btn-sm btn-info"><i class="bi bi-box"></i></a>
                         @endfeature
                     </div>
                 </div>

@@ -119,12 +119,12 @@
             <div class="card-body p-4 p-lg-5">
                 <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start gap-3">
                     <div>
-                        <div class="payroll-edit-chip mb-3">Payroll</div>
-                        <h1 class="mb-2 fw-bold" style="letter-spacing: -.04em;">{{ __('Edit Payroll') }}</h1>
-                        <p class="mb-0 payroll-edit-note">Adjust payroll values with a clearer, more readable layout.</p>
+                        <div class="payroll-edit-chip mb-3">{{ __('messages.payroll') }}</div>
+                        <h1 class="mb-2 fw-bold" style="letter-spacing: -.04em;">{{ __('messages.edit_payroll') }}</h1>
+                        <p class="mb-0 payroll-edit-note">{{ __('Adjust payroll values with a clearer, more readable layout.') }}</p>
                     </div>
                     <a href="{{ route('payroll.index') }}" class="btn btn-outline-light rounded-pill px-3">
-                        <i class="bi bi-arrow-left me-2"></i>{{ __('Cancel') }}
+                        <i class="bi bi-arrow-left me-2"></i>{{ __('messages.cancel') }}
                     </a>
                 </div>
             </div>
@@ -132,7 +132,7 @@
 
         <div class="card payroll-edit-card">
             <div class="payroll-edit-header">
-                <div class="small text-uppercase fw-semibold text-dark opacity-75">Current payroll</div>
+                <div class="small text-uppercase fw-semibold text-dark opacity-75">{{ __('Current payroll') }}</div>
                 <h5 class="mb-0 fw-bold">{{ $payroll->employee?->name }} · {{ $payroll->month }}/{{ $payroll->year }}</h5>
             </div>
 
@@ -143,57 +143,63 @@
 
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label payroll-edit-label">{{ __('Employee') }}</label>
+                            <label class="form-label payroll-edit-label">{{ __('messages.employee') }}</label>
                             <div class="payroll-readonly-box">
-                                <div class="small text-uppercase text-muted fw-semibold mb-1">Employee name</div>
+                                <div class="small text-uppercase text-muted fw-semibold mb-1">{{ __('Employee name') }}</div>
                                 <div class="value">{{ $payroll->employee?->name }}</div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label payroll-edit-label">{{ __('Month/Year') }}</label>
+                            <label class="form-label payroll-edit-label">{{ __('messages.month_year') }}</label>
                             <div class="payroll-readonly-box">
-                                <div class="small text-uppercase text-muted fw-semibold mb-1">Payroll period</div>
+                                <div class="small text-uppercase text-muted fw-semibold mb-1">{{ __('Payroll period') }}</div>
                                 <div class="value">{{ $payroll->month }}/{{ $payroll->year }}</div>
                             </div>
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label payroll-edit-label">{{ __('Basic Salary') }} <span class="text-danger">*</span></label>
+                            <label class="form-label payroll-edit-label">{{ __('messages.basic_salary') }} <span class="text-danger">*</span></label>
                             <input type="text" name="basic_salary" inputmode="numeric" class="form-control payroll-edit-field @error('basic_salary') is-invalid @enderror" value="{{ old('basic_salary', $payroll->basic_salary) }}" placeholder="Enter basic salary" required>
-                            @error('basic_salary')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            @error('basic_salary')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label payroll-edit-label">{{ __('Commission (Auto-Calculated)') }}</label>
+                            <label class="form-label payroll-edit-label">{{ __('messages.commission_auto_calculated') }}</label>
                             <div class="payroll-readonly-box">
-                                <div class="small text-uppercase text-muted fw-semibold mb-1">Auto-calculated from commission records</div>
+                                <div class="small text-uppercase text-muted fw-semibold mb-1">{{ __('Auto-calculated from commission records') }}</div>
                                 <div class="value">{{ $currencySymbol }}{{ number_format($payroll->calculated_commission ?? $payroll->commission, 2) }}</div>
                             </div>
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label payroll-edit-label">{{ __('Allowances') }}</label>
+                            <label class="form-label payroll-edit-label">{{ __('messages.allowances') }}</label>
                             <input type="text" name="allowances" inputmode="numeric" class="form-control payroll-edit-field @error('allowances') is-invalid @enderror" value="{{ old('allowances', $payroll->allowances ?? 0) }}">
-                            @error('allowances')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                            <div class="payroll-edit-help mt-1">Additional benefits or bonuses.</div>
+                            @error('allowances')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div class="payroll-edit-help mt-1">{{ __('Additional benefits or bonuses.') }}</div>
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label payroll-edit-label">{{ __('Deductions') }}</label>
+                            <label class="form-label payroll-edit-label">{{ __('messages.deductions') }}</label>
                             <input type="text" name="deductions" inputmode="numeric" class="form-control payroll-edit-field @error('deductions') is-invalid @enderror" value="{{ old('deductions', $payroll->deductions ?? 0) }}">
-                            @error('deductions')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                            <div class="payroll-edit-help mt-1">Manual deductions or advances.</div>
+                            @error('deductions')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div class="payroll-edit-help mt-1">{{ __('Manual deductions or advances.') }}</div>
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label payroll-edit-label">{{ __('Notes') }}</label>
+                            <label class="form-label payroll-edit-label">{{ __('messages.notes') }}</label>
                             <textarea name="notes" class="form-control payroll-edit-field" rows="4" placeholder="Add any payroll notes">{{ old('notes', $payroll->notes) }}</textarea>
                         </div>
                     </div>
 
                     <div class="payroll-edit-footer">
-                        <button class="btn btn-primary px-4">{{ __('Save') }}</button>
-                        <a href="{{ route('payroll.index') }}" class="btn btn-outline-secondary px-4">{{ __('Cancel') }}</a>
+                        <button class="btn btn-primary px-4">{{ __('messages.save') }}</button>
+                        <a href="{{ route('payroll.index') }}" class="btn btn-outline-secondary px-4">{{ __('messages.cancel') }}</a>
                     </div>
                 </form>
             </div>

@@ -16,11 +16,11 @@
     <div class="container-fluid">
         <div class="create-hero mb-4 d-flex flex-wrap justify-content-between align-items-start gap-3">
             <div>
-                <div class="text-uppercase text-white-50 small fw-semibold mb-2">System Administration</div>
-                <h1 class="mb-2 fw-bold" style="letter-spacing: -0.03em;">Create New System User</h1>
-                <p class="mb-0 text-white-50">Add a user with explicit access and a cleaner form experience.</p>
+                <div class="text-uppercase text-white-50 small fw-semibold mb-2">{{ __('System Administration') }}</div>
+                <h1 class="mb-2 fw-bold" style="letter-spacing: -0.03em;">{{ __('Create New System User') }}</h1>
+                <p class="mb-0 text-white-50">{{ __('Add a user with explicit access and a cleaner form experience.') }}</p>
             </div>
-            <a href="{{ route('super-admin.users.index') }}" class="btn btn-light rounded-pill px-3"><i class="bi bi-arrow-left me-2"></i>Back</a>
+            <a href="{{ route('super-admin.users.index') }}" class="btn btn-light rounded-pill px-3"><i class="bi bi-arrow-left me-2"></i>{{ __('Back') }}</a>
         </div>
 
         <div class="row g-4">
@@ -38,65 +38,65 @@
                         @endif
 
                         <form method="POST" action="{{ route('super-admin.users.store') }}" class="row g-3">
-                            @csrf
+                            {{ __('@csrf') }}
                             <div class="col-md-6">
-                                <label for="name" class="form-label fw-semibold">Full Name *</label>
+                                <label for="name" class="form-label fw-semibold">{{ __('Full Name *') }}</label>
                                 <input type="text" class="form-control create-field @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required>
-                                @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'name\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-md-6">
-                                <label for="email" class="form-label fw-semibold">Email *</label>
+                                <label for="email" class="form-label fw-semibold">{{ __('Email *') }}</label>
                                 <input type="email" class="form-control create-field @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required>
-                                @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'email\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-md-6">
-                                <label for="password" class="form-label fw-semibold">Password *</label>
+                                <label for="password" class="form-label fw-semibold">{{ __('Password *') }}</label>
                                 <input type="password" class="form-control create-field @error('password') is-invalid @enderror" id="password" name="password" required>
-                                @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'password\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-md-6">
-                                <label for="password_confirmation" class="form-label fw-semibold">Confirm Password *</label>
+                                <label for="password_confirmation" class="form-label fw-semibold">{{ __('Confirm Password *') }}</label>
                                 <input type="password" class="form-control create-field" id="password_confirmation" name="password_confirmation" required>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="user_type" class="form-label fw-semibold">User Type *</label>
+                                <label for="user_type" class="form-label fw-semibold">{{ __('User Type *') }}</label>
                                 <select class="form-select create-field @error('user_type') is-invalid @enderror" id="user_type" name="user_type" required onchange="updateMerchantField()">
-                                    <option value="">Select User Type</option>
-                                    <option value="super_admin" {{ old('user_type') === 'super_admin' ? 'selected' : '' }}>Super Admin</option>
-                                    <option value="merchant_admin" {{ old('user_type') === 'merchant_admin' ? 'selected' : '' }}>Merchant Admin</option>
-                                    <option value="employee" {{ old('user_type') === 'employee' ? 'selected' : '' }}>Employee</option>
-                                    <option value="viewer" {{ old('user_type') === 'viewer' ? 'selected' : '' }}>Viewer</option>
+                                    <option value="">{{ __('Select User Type') }}</option>
+                                    <option value="super_admin" {{ old('user_type') === 'super_admin' ? 'selected' : '' }}>{{ __('Super Admin') }}</option>
+                                    <option value="merchant_admin" {{ old('user_type') === 'merchant_admin' ? 'selected' : '' }}>{{ __('Merchant Admin') }}</option>
+                                    <option value="employee" {{ old('user_type') === 'employee' ? 'selected' : '' }}>{{ __('Employee') }}</option>
+                                    <option value="viewer" {{ old('user_type') === 'viewer' ? 'selected' : '' }}>{{ __('Viewer') }}</option>
                                 </select>
-                                @error('user_type')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'user_type\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-md-6" id="merchant_field" style="display:none;">
-                                <label for="merchant_id" class="form-label fw-semibold">Merchant *</label>
+                                <label for="merchant_id" class="form-label fw-semibold">{{ __('Merchant *') }}</label>
                                 <select class="form-select create-field @error('merchant_id') is-invalid @enderror" id="merchant_id" name="merchant_id">
-                                    <option value="">Select Merchant</option>
+                                    <option value="">{{ __('Select Merchant') }}</option>
                                     @foreach ($merchants as $merchant)
                                         <option value="{{ $merchant->id }}" {{ old('merchant_id') == $merchant->id ? 'selected' : '' }}>{{ $merchant->business_name ?? $merchant->name }}</option>
                                     @endforeach
                                 </select>
-                                @error('merchant_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'merchant_id\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-md-6">
-                                <label for="role_id" class="form-label fw-semibold">Role</label>
+                                <label for="role_id" class="form-label fw-semibold">{{ __('Role') }}</label>
                                 <select class="form-select create-field @error('role_id') is-invalid @enderror" id="role_id" name="role_id">
-                                    <option value="">Select Role</option>
+                                    <option value="">{{ __('Select Role') }}</option>
                                     @foreach ($roles as $role)
                                         <option value="{{ $role->id }}" data-description="{{ $role->description ?? 'No description available for this role.' }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
                                     @endforeach
                                 </select>
-                                @error('role_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'role_id\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                                 <div class="mt-2 p-3 rounded-4 border bg-light" id="roleDescriptionBox">
-                                    <div class="small text-muted text-uppercase fw-semibold mb-1">Role details</div>
-                                    <div id="roleDescriptionText" class="small text-secondary">Select a role to see what access it gives.</div>
+                                    <div class="small text-muted text-uppercase fw-semibold mb-1">{{ __('Role details') }}</div>
+                                    <div id="roleDescriptionText" class="small text-secondary">{{ __('Select a role to see what access it gives.') }}</div>
                                 </div>
                             </div>
 
@@ -104,50 +104,50 @@
                                 <div class="p-4 rounded-4 border bg-white">
                                     <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
                                         <div>
-                                            <label class="form-label fw-semibold mb-1">Branch access override</label>
-                                            <div class="text-muted small">Override the role's branch visibility for this user.</div>
+                                            <label class="form-label fw-semibold mb-1">{{ __('Branch access override') }}</label>
+                                            <div class="text-muted small">{{ __('Override the role\'s branch visibility for this user.') }}</div>
                                         </div>
                                         <div class="btn-group btn-group-sm" role="group" aria-label="Branch access mode">
                                             <input type="radio" class="btn-check" name="branch_access_mode" id="branch_access_mode_inherit" value="inherit" {{ old('branch_access_mode', 'inherit') === 'inherit' ? 'checked' : '' }}>
-                                            <label class="btn btn-outline-secondary" for="branch_access_mode_inherit">Inherit</label>
+                                            <label class="btn btn-outline-secondary" for="branch_access_mode_inherit">{{ __('Inherit') }}</label>
 
                                             <input type="radio" class="btn-check" name="branch_access_mode" id="branch_access_mode_custom" value="custom" {{ old('branch_access_mode') === 'custom' ? 'checked' : '' }}>
-                                            <label class="btn btn-outline-primary" for="branch_access_mode_custom">Custom</label>
+                                            <label class="btn btn-outline-primary" for="branch_access_mode_custom">{{ __('Custom') }}</label>
 
                                             <input type="radio" class="btn-check" name="branch_access_mode" id="branch_access_mode_all" value="all" {{ old('branch_access_mode') === 'all' ? 'checked' : '' }}>
-                                            <label class="btn btn-outline-success" for="branch_access_mode_all">All branches</label>
+                                            <label class="btn btn-outline-success" for="branch_access_mode_all">{{ __('All branches') }}</label>
                                         </div>
                                     </div>
 
                                     <div id="branchAccessCustomPanel" style="display:none;">
                                         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                                            <div class="text-muted small">Pick the branches this user can access. Only the selected merchant's branches will be shown.</div>
+                                            <div class="text-muted small">{{ __('Pick the branches this user can access. Only the selected merchant\'s branches will be shown.') }}</div>
                                         </div>
 
                                         <div class="accordion" id="userBranchAccessAccordion">
                                             @foreach ($merchants as $merchant)
-                                                <div class="accordion-item border-0 shadow-sm mb-3 rounded-4 overflow-hidden branch-access-merchant" data-merchant-branch-card="{{ $merchant->id }}">
+                                                <div class="accordion-item border-0 shadow-sm mb-3 rounded-4 overflow-hidden branch-access-merchant" data-merchant-branch-card="{{ $merchant->{{ __('id }}">') }}
                                                     <h2 class="accordion-header">
                                                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#user-merchant-branches-{{ $merchant->id }}">
                                                             {{ $merchant->name }}
                                                         </button>
                                                     </h2>
-                                                    <div id="user-merchant-branches-{{ $merchant->id }}" class="accordion-collapse collapse" data-bs-parent="#userBranchAccessAccordion">
+                                                    <div id="user-merchant-branches-{{ $merchant->{{ __('id }}" class="accordion-collapse collapse" data-bs-parent="#userBranchAccessAccordion">') }}
                                                         <div class="accordion-body bg-white">
                                                             <div class="row g-2">
                                                                 @forelse ($merchant->branches as $branch)
                                                                     <div class="col-md-6">
                                                                         <div class="form-check p-3 border rounded-4 h-100">
                                                                             <input class="form-check-input user-branch-checkbox" type="checkbox" name="branch_access_branch_ids[]" value="{{ $branch->id }}" id="user_branch_{{ $branch->id }}" {{ in_array($branch->id, old('branch_access_branch_ids', [])) ? 'checked' : '' }}>
-                                                                            <label class="form-check-label ms-2" for="user_branch_{{ $branch->id }}">
+                                                                            <label class="form-check-label ms-2" for="user_branch_{{ $branch->{{ __('id }}">') }}
                                                                                 <strong>{{ $branch->name }}</strong>
                                                                                 <small class="d-block text-muted">{{ $branch->city ?? $branch->address ?? 'Branch' }}</small>
                                                                             </label>
                                                                         </div>
                                                                     </div>
-                                                                @empty
-                                                                    <div class="col-12 text-muted">No branches found for this merchant.</div>
-                                                                @endforelse
+                                                                {{ __('@empty') }}
+                                                                    <div class="col-12 text-muted">{{ __('No branches found for this merchant.') }}</div>
+                                                                {{ __('@endforelse') }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -159,21 +159,21 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="phone" class="form-label fw-semibold">Phone</label>
+                                <label for="phone" class="form-label fw-semibold">{{ __('Phone') }}</label>
                                 <input type="text" class="form-control create-field @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}">
-                                @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'phone\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-12">
                                 <div class="form-check form-switch ps-0 d-flex align-items-center gap-2">
                                     <input type="checkbox" class="form-check-input ms-0" id="is_active" name="is_active" value="1" checked>
-                                    <label class="form-check-label fw-semibold" for="is_active">User is Active</label>
+                                    <label class="form-check-label fw-semibold" for="is_active">{{ __('User is Active') }}</label>
                                 </div>
                             </div>
 
                             <div class="col-12 d-flex gap-2 pt-2">
-                                <button type="submit" class="btn btn-primary px-4"><i class="bi bi-check-circle me-2"></i>Create User</button>
-                                <a href="{{ route('super-admin.users.index') }}" class="btn btn-outline-secondary px-4"><i class="bi bi-x-circle me-2"></i>Cancel</a>
+                                <button type="submit" class="btn btn-primary px-4"><i class="bi bi-check-circle me-2"></i>{{ __('Create User') }}</button>
+                                <a href="{{ route('super-admin.users.index') }}" class="btn btn-outline-secondary px-4"><i class="bi bi-x-circle me-2"></i>{{ __('Cancel') }}</a>
                             </div>
                         </form>
                     </div>
@@ -183,11 +183,11 @@
             <div class="col-xl-4">
                 <div class="card create-aside h-100">
                     <div class="card-body p-4 p-lg-5">
-                        <h5 class="fw-bold mb-3">Access rules</h5>
+                        <h5 class="fw-bold mb-3">{{ __('Access rules') }}</h5>
                         <div class="d-flex flex-column gap-3">
-                            <div class="d-flex gap-3"><i class="bi bi-shield-check mt-1"></i><div>Choose the user type first so the merchant field appears only when needed.</div></div>
-                            <div class="d-flex gap-3"><i class="bi bi-diagram-3 mt-1"></i><div>Role and merchant assignments stay visible in one clean workflow.</div></div>
-                            <div class="d-flex gap-3"><i class="bi bi-person-badge mt-1"></i><div>Keep the form concise enough for quick staff provisioning.</div></div>
+                            <div class="d-flex gap-3"><i class="bi bi-shield-check mt-1"></i><div>{{ __('Choose the user type first so the merchant field appears only when needed.') }}</div></div>
+                            <div class="d-flex gap-3"><i class="bi bi-diagram-3 mt-1"></i><div>{{ __('Role and merchant assignments stay visible in one clean workflow.') }}</div></div>
+                            <div class="d-flex gap-3"><i class="bi bi-person-badge mt-1"></i><div>{{ __('Keep the form concise enough for quick staff provisioning.') }}</div></div>
                         </div>
                     </div>
                 </div>

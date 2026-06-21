@@ -59,7 +59,7 @@
     <div class="d-flex justify-content-between mb-3 suppliers-hero">
         <h3>{{ __('messages.suppliers') }}</h3>
         @feature('suppliers.create')
-            <a href="{{ route('suppliers.create') }}" class="btn btn-primary">{{ __('Create') }}</a>
+            <a href="{{ route('suppliers.create') }}" class="btn btn-primary">{{ __('messages.create') }}</a>
         @endfeature
     </div>
 
@@ -125,7 +125,7 @@
         <div class="card-body suppliers-search">
             <form method="GET" action="{{ route('suppliers.index') }}" class="row g-2 align-items-end">
                 <div class="col-md-8">
-                    <label for="supplier-search" class="form-label">Search</label>
+                    <label for="supplier-search" class="form-label">{{ __('Search') }}</label>
                     <input
                         type="text"
                         id="supplier-search"
@@ -136,8 +136,8 @@
                     >
                 </div>
                 <div class="col-md-4 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">Search</button>
-                    <a href="{{ route('suppliers.index') }}" class="btn btn-outline-secondary">Reset</a>
+                    <button type="submit" class="btn btn-primary">{{ __('messages.search') }}</button>
+                    <a href="{{ route('suppliers.index') }}" class="btn btn-outline-secondary">{{ __('messages.reset') }}</a>
                 </div>
             </form>
         </div>
@@ -154,21 +154,21 @@
                     <div class="text-end fw-bold">{{ $currencySymbol }}{{ number_format(((float)($supplier->opening_balance ?? 0) + (float)($supplier->total_purchased ?? 0) - (float)($supplier->total_paid ?? 0)), 2) }}</div>
                 </div>
                 <div class="supplier-mobile-grid">
-                    <div class="bg-light rounded-4 p-2"><div class="text-muted small">Balance</div><strong>{{ $currencySymbol }}{{ number_format($supplier->opening_balance ?? 0,2) }}</strong></div>
-                    <div class="bg-light rounded-4 p-2"><div class="text-muted small">Outstanding</div><strong class="{{ (((float)($supplier->opening_balance ?? 0) + (float)($supplier->total_purchased ?? 0) - (float)($supplier->total_paid ?? 0)) > 0) ? 'text-danger' : 'text-success' }}">{{ $currencySymbol }}{{ number_format(((float)($supplier->opening_balance ?? 0) + (float)($supplier->total_purchased ?? 0) - (float)($supplier->total_paid ?? 0)), 2) }}</strong></div>
+                    <div class="bg-light rounded-4 p-2"><div class="text-muted small">{{ __('Balance') }}</div><strong>{{ $currencySymbol }}{{ number_format($supplier->opening_balance ?? 0,2) }}</strong></div>
+                    <div class="bg-light rounded-4 p-2"><div class="text-muted small">{{ __('Outstanding') }}</div><strong class="{{ (((float)($supplier->opening_balance ?? 0) + (float)($supplier->total_purchased ?? 0) - (float)($supplier->total_paid ?? 0)) > 0) ? 'text-danger' : 'text-success' }}">{{ $currencySymbol }}{{ number_format(((float)($supplier->opening_balance ?? 0) + (float)($supplier->total_purchased ?? 0) - (float)($supplier->total_paid ?? 0)), 2) }}</strong></div>
                 </div>
                 <div class="d-grid gap-2">
                     @feature('suppliers.view')
-                        <a href="{{ route('suppliers.show', $supplier) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
+                        <a href="{{ route('suppliers.show', $supplier) }}" class="btn btn-sm btn-outline-secondary">{{ __('messages.view') }}</a>
                     @endfeature
                     @feature('suppliers.edit')
-                        <a href="{{ route('suppliers.edit', $supplier) }}" class="btn btn-sm btn-outline-primary">{{ __('Edit') }}</a>
+                        <a href="{{ route('suppliers.edit', $supplier) }}" class="btn btn-sm btn-outline-primary">{{ __('messages.edit') }}</a>
                     @endfeature
                     @feature('suppliers.delete')
                         <form action="{{ route('suppliers.destroy', $supplier) }}" method="POST" class="m-0">
                             @csrf
                             @method('DELETE')
-                            <button class="btn btn-sm btn-outline-danger w-100" onclick="return confirm('{{ __('Are you sure?') }}')">{{ __('Delete') }}</button>
+                            <button class="btn btn-sm btn-outline-danger w-100" onclick="return confirm('{{ __('messages.confirm_delete') }}')">{{ __('messages.delete') }}</button>
                         </form>
                     @endfeature
                 </div>
@@ -183,11 +183,11 @@
                 <thead class="bg-light text-dark">
                     <tr>
                         <th>#</th>
-                        <th>{{ __('Name') }}</th>
-                        <th>{{ __('Balance') }}</th>
-                        <th>Purchased</th>
-                        <th>Paid</th>
-                        <th>Outstanding</th>
+                        <th>{{ __('messages.name') }}</th>
+                        <th>{{ __('messages.balance') }}</th>
+                        <th>{{ __('messages.purchased') }}</th>
+                        <th>{{ __('messages.paid') }}</th>
+                        <th>{{ __('messages.outstanding') }}</th>
                         <th>{{ __('messages.actions') }}</th>
                     </tr>
                 </thead>
@@ -204,18 +204,16 @@
                         </td>
                         <td class="action-buttons">
                             @feature('suppliers.view')
-                                <a href="{{ route('suppliers.show', $supplier) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
+                                <a href="{{ route('suppliers.show', $supplier) }}" class="btn btn-sm btn-outline-secondary">{{ __('messages.view') }}</a>
                             @endfeature
-
                             @feature('suppliers.edit')
-                                <a href="{{ route('suppliers.edit', $supplier) }}" class="btn btn-sm btn-outline-primary">{{ __('Edit') }}</a>
+                                <a href="{{ route('suppliers.edit', $supplier) }}" class="btn btn-sm btn-outline-primary">{{ __('messages.edit') }}</a>
                             @endfeature
-
                             @feature('suppliers.delete')
                                 <form action="{{ route('suppliers.destroy', $supplier) }}" method="POST" style="display:inline-block">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="btn btn-sm btn-outline-danger" onclick="return confirm('{{ __('Are you sure?') }}')">{{ __('Delete') }}</button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="return confirm('{{ __('messages.confirm_delete') }}')">{{ __('messages.delete') }}</button>
                                 </form>
                             @endfeature
                         </td>

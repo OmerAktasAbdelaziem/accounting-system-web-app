@@ -52,7 +52,7 @@
         <div class="row g-3">
             <div class="col-md-4">
                 <small class="text-muted d-block">{{ __('messages.date') }}</small>
-                <strong>{{ optional($sale->date)->format('M d, Y') }}</strong>
+                <strong>{{ optional($sale->date)->translatedFormat('M d, Y') }}</strong>
             </div>
             <div class="col-md-4">
                 <small class="text-muted d-block">{{ __('messages.reference') }}</small>
@@ -100,11 +100,11 @@
                         <td>{{ $item->debit > 0 ? number_format((float) $item->debit, 2) : '-' }}</td>
                         <td>{{ $item->credit > 0 ? number_format((float) $item->credit, 2) : '-' }}</td>
                     </tr>
-                @empty
+                {{ __('@empty') }}
                     <tr>
                         <td colspan="4" class="text-center text-muted">{{ __('messages.no_data') }}</td>
                     </tr>
-                @endforelse
+                {{ __('@endforelse') }}
             </tbody>
         </table>
     </div>

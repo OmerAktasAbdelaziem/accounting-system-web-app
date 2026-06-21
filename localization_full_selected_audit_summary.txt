@@ -1,0 +1,391 @@
+=== raw_refs ===
+FILE: audit-logs\index.blade.php (26)
+  3 | audit_logs.title | @section('title', __('audit_logs.title'))
+  11 | audit_logs.audit_logs | {{ __('audit_logs.audit_logs') }}
+  16 | audit_logs.export | <a href="{{ route('audit-logs.export', request()->query()) }}" class="btn btn-primary-modern btn-sm" title="{{ __('audit_logs.export') }}">
+  18 | audit_logs.export | {{ __('audit_logs.export') }}
+  59 | audit_logs.filter_by_date | {{ __('audit_logs.filter_by_date') }}
+  65 | audit_logs.from_date | <label for="date_from" class="form-label">{{ __('audit_logs.from_date') }}</label>
+  71 | audit_logs.to_date | <label for="date_to" class="form-label">{{ __('audit_logs.to_date') }}</label>
+  77 | audit_logs.user | <label for="user_id" class="form-label">{{ __('audit_logs.user') }}</label>
+  79 | audit_logs.filter_by_user | <option value="">{{ __('audit_logs.filter_by_user') }}</option>
+  89 | audit_logs.action | <label for="action" class="form-label">{{ __('audit_logs.action') }}</label>
+  91 | audit_logs.filter_by_action | <option value="">{{ __('audit_logs.filter_by_action') }}</option>
+  101 | audit_logs.model_type | <label for="model_type" class="form-label">{{ __('audit_logs.model_type') }}</label>
+  103 | audit_logs.filter_by_model | <option value="">{{ __('audit_logs.filter_by_model') }}</option>
+  117 | audit_logs.search | {{ __('audit_logs.search') }}
+  121 | audit_logs.clear_filters | {{ __('audit_logs.clear_filters') }}
+  135 | audit_logs.date | <th>{{ __('audit_logs.date') }}</th>
+  136 | audit_logs.time | <th>{{ __('audit_logs.time') }}</th>
+  137 | audit_logs.user | <th>{{ __('audit_logs.user') }}</th>
+  138 | audit_logs.action | <th>{{ __('audit_logs.action') }}</th>
+  139 | audit_logs.model_type | <th>{{ __('audit_logs.model_type') }}</th>
+  140 | audit_logs.model_id | <th>{{ __('audit_logs.model_id') }}</th>
+  141 | audit_logs.ip_address | <th>{{ __('audit_logs.ip_address') }}</th>
+  142 | actions.action | <th style="width: 100px;">{{ __('actions.action') }}</th>
+  190 | actions.view | <a href="{{ route('audit-logs.show', $log) }}" class="btn btn-sm btn-primary" title="{{ __('actions.view') }}">
+  192 | actions.view | <span class="visually-hidden">{{ __('actions.view') }}</span>
+  201 | audit_logs.no_logs_found | <p>{{ __('audit_logs.no_logs_found') }}</p>
+FILE: audit-logs\show.blade.php (16)
+  3 | audit_logs.details | @section('title', __('audit_logs.details'))
+  13 | audit_logs.details | {{ __('audit_logs.details') }}
+  17 | actions.back | {{ __('actions.back') }}
+  26 | audit_logs.user | <label class="form-label text-muted small">{{ __('audit_logs.user') }}</label>
+  38 | audit_logs.action | <label class="form-label text-muted small">{{ __('audit_logs.action') }}</label>
+  68 | audit_logs.model_type | <label class="form-label text-muted small">{{ __('audit_logs.model_type') }}</label>
+  75 | audit_logs.model_id | <label class="form-label text-muted small">{{ __('audit_logs.model_id') }}</label>
+  84 | audit_logs.date | <label class="form-label text-muted small">{{ __('audit_logs.date') }} & {{ __('audit_logs.time') }}</label>
+  84 | audit_logs.time | <label class="form-label text-muted small">{{ __('audit_logs.date') }} & {{ __('audit_logs.time') }}</label>
+  93 | audit_logs.ip_address | <label class="form-label text-muted small">{{ __('audit_logs.ip_address') }}</label>
+  106 | audit_logs.changes | {{ __('audit_logs.changes') }}
+  118 | audit_logs.new_value | {{ __('audit_logs.new_value') }}
+  120 | audit_logs.old_value | {{ __('audit_logs.old_value') }}
+  140 | audit_logs.old_value | {{ __('audit_logs.old_value') }}
+  158 | audit_logs.no_changes | {{ __('audit_logs.no_changes') }}
+  166 | audit_logs.user_agent | {{ __('audit_logs.user_agent') }}: {{ $auditLog->user_agent }}
+FILE: payroll\create.blade.php (11)
+  58 | Create Payroll | <h1 class="mb-2 fw-bold" style="letter-spacing: -0.03em;">{{ __('Create Payroll') }}</h1>
+  70 | Employee | <label class="form-label fw-semibold">{{ __('Employee') }}</label>
+  72 | Select employee | <option value="">{{ __('Select employee') }}</option>
+  81 | Year | <label class="form-label fw-semibold">{{ __('Year') }}</label>
+  86 | Month | <label class="form-label fw-semibold">{{ __('Month') }}</label>
+  97 | Basic Salary | <label class="form-label fw-semibold">{{ __('Basic Salary') }} <span class="text-danger">*</span></label>
+  103 | Allowances | <label class="form-label fw-semibold">{{ __('Allowances') }}</label>
+  110 | Deductions | <label class="form-label fw-semibold">{{ __('Deductions') }}</label>
+  117 | Notes | <label class="form-label fw-semibold">{{ __('Notes') }}</label>
+  122 | Save | <button class="btn btn-primary px-4">{{ __('Save') }}</button>
+  123 | Cancel | <a href="{{ route('payroll.index') }}" class="btn btn-outline-secondary px-4">{{ __('Cancel') }}</a>
+FILE: payroll\edit.blade.php (11)
+  123 | Edit Payroll | <h1 class="mb-2 fw-bold" style="letter-spacing: -.04em;">{{ __('Edit Payroll') }}</h1>
+  127 | Cancel | <i class="bi bi-arrow-left me-2"></i>{{ __('Cancel') }}
+  146 | Employee | <label class="form-label payroll-edit-label">{{ __('Employee') }}</label>
+  153 | Month/Year | <label class="form-label payroll-edit-label">{{ __('Month/Year') }}</label>
+  161 | Basic Salary | <label class="form-label payroll-edit-label">{{ __('Basic Salary') }} <span class="text-danger">*</span></label>
+  167 | Commission (Auto-Calculated) | <label class="form-label payroll-edit-label">{{ __('Commission (Auto-Calculated)') }}</label>
+  175 | Allowances | <label class="form-label payroll-edit-label">{{ __('Allowances') }}</label>
+  182 | Deductions | <label class="form-label payroll-edit-label">{{ __('Deductions') }}</label>
+  189 | Notes | <label class="form-label payroll-edit-label">{{ __('Notes') }}</label>
+  195 | Save | <button class="btn btn-primary px-4">{{ __('Save') }}</button>
+  196 | Cancel | <a href="{{ route('payroll.index') }}" class="btn btn-outline-secondary px-4">{{ __('Cancel') }}</a>
+FILE: payroll\index.blade.php (5)
+  839 | Pay Payroll | <h5 class="modal-title mb-1">{{ __('Pay Payroll') }}</h5>
+  853 | Safe | <label class="form-label fw-semibold">{{ __('Safe') }}</label>
+  855 | Select safe | <option value="">{{ __('Select safe') }}</option>
+  863 | Cancel | <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+  864 | Confirm Payment | <button type="submit" class="btn btn-success">{{ __('Confirm Payment') }}</button>
+FILE: payroll\show.blade.php (10)
+  266 | Date | <th>{{ __('Date') }}</th>
+  267 | Sale Amount | <th>{{ __('Sale Amount') }}</th>
+  268 | Commission Rate | <th>{{ __('Commission Rate') }}</th>
+  269 | Commission Amount | <th>{{ __('Commission Amount') }}</th>
+  270 | Reference | <th>{{ __('Reference') }}</th>
+  271 | Notes | <th>{{ __('Notes') }}</th>
+  327 | Date | <th>{{ __('Date') }}</th>
+  328 | Amount | <th>{{ __('Amount') }}</th>
+  329 | Description | <th>{{ __('Description') }}</th>
+  330 | Created By | <th>{{ __('Created By') }}</th>
+FILE: reports\financial.blade.php (6)
+  38 | Paid payrolls | <div class="text-muted small text-uppercase fw-semibold mb-2">{{ __('Paid payrolls') }}</div>
+  46 | Paid commissions | <div class="text-muted small text-uppercase fw-semibold mb-2">{{ __('Paid commissions') }}</div>
+  54 | Payroll safe payouts | <div class="text-muted small text-uppercase fw-semibold mb-2">{{ __('Payroll safe payouts') }}</div>
+  144 | Paid Payrolls | <strong>{{ __('Paid Payrolls') }}</strong>
+  194 | Paid Commissions | <strong>{{ __('Paid Commissions') }}</strong>
+  244 | Payroll Safe Payouts | <strong>{{ __('Payroll Safe Payouts') }}</strong>
+=== untranslated ===
+FILE: audit-logs\index.blade.php (1)
+  26 | Total Logs | <h6>Total Logs</h6>
+FILE: branches\create.blade.php (1)
+  33 | Create a branch with the details that matter first. | <p class="mb-0 text-white-50">Create a branch with the details that matter first.</p>
+FILE: branches\show.blade.php (19)
+  248 | Branch status | <div class="section-title mb-1">Branch status</div>
+  312 | Branch analytics | <div class="section-title mb-1">Branch analytics</div>
+  313 | Branch performance summary | <h3 class="h4 mb-1">Branch performance summary</h3>
+  323 | Branch analytics | <div class="section-title mb-1">Branch analytics</div>
+  324 | Sales trend | <h5 class="mb-0">Sales trend</h5>
+  336 | Branch analytics | <div class="section-title mb-1">Branch analytics</div>
+  353 | Overview | <button class="nav-link active" id="overview-tab" data-bs-toggle="pill" data-bs-target="#overview-pane" type="button" role="tab" aria-controls="overview-pane" aria-selected="true">Overview</button>
+  398 | Branch staffing | <h5 class="mb-0">Branch staffing</h5>
+  425 | Branch employees | <div class="small text-muted mb-2">Branch employees</div>
+  455 | Branch outstanding | <h5 class="mb-0">Branch outstanding</h5>
+  463 | Suppliers | <div class="text-muted small">Suppliers</div>
+  495 | Payroll records | <div class="section-title mb-1">Payroll records</div>
+  546 | Date | <th>Date</th>
+  548 | Amount | <th class="text-end">Amount</th>
+  573 | Supplier ledger | <div class="section-title mb-1">Supplier ledger</div>
+  574 | Branch suppliers | <h5 class="mb-0">Branch suppliers</h5>
+  584 | Supplier | <th>Supplier</th>
+  595 | Branch opening {{ $currencySymbol }}{{ number_format(((int) ($supplier->branch_id ?? 0) === (int) $branch->id || $supplier->branches()->whereKey($branch->id)->exists()) ? (float) ($supplier->opening_balance ?? 0) : 0, 2) }} | <div class="text-muted small">Branch opening {{ $currencySymbol }}{{ number_format(((int) ($supplier->branch_id ?? 0) === (int) $branch->id || $supplier->branches()->whereKey($branch->id)->exists()) ? (float) ($supplier->opening_balance ?? 0) : 0, 2) }}</div>
+  620 | Branch directory | <div class="section-title mb-1">Branch directory</div>
+FILE: categories\form.blade.php (4)
+  57 | 📊 Overview | <div class="sidebar-title">📊 Overview</div>
+  59 | Total Products | <span class="sidebar-stat-label">Total Products</span>
+  92 | 📝 Category Details | <div class="form-section-title">📝 Category Details</div>
+  111 | 📄 Description | <div class="form-section-title">📄 Description</div>
+FILE: categories\index.blade.php (4)
+  105 | Total products | <div class="products-mini-metric"><div><span class="label">Total products</span><span class="value">{{ $totalProducts }}</span></div><div class="tone"><i class="bi bi-box-seam"></i></div></div>
+  138 | Search categories... | <input id="searchInput" class="form-control" placeholder="Search categories...">
+  211 | Stock Value | <div class="bg-light rounded-3 p-2 flex-fill"><div class="small text-muted">Stock Value</div><strong>{{ $currencySymbol }}{{ number_format($category->total_stock_value ?? 0, 2) }}</strong></div>
+  212 | Avg Price | <div class="bg-light rounded-3 p-2 flex-fill"><div class="small text-muted">Avg Price</div><strong>{{ $currencySymbol }}{{ number_format($category->avg_price ?? 0, 2) }}</strong></div>
+FILE: categories\show.blade.php (3)
+  28 | Overview | <p class="categories-hero-panel-title">Overview</p>
+  32 | Stock Value | <div class="products-mini-metric"><div><span class="label">Stock Value</span><span class="value">{{ $currencySymbol }}{{ number_format($stats['total_stock_value'] ?? 0, 2) }}</span></div><div class="tone"><i class="bi bi-currency-dollar"></i></div></div>
+  33 | Avg Price | <div class="products-mini-metric"><div><span class="label">Avg Price</span><span class="value">{{ $currencySymbol }}{{ number_format($stats['avg_price'] ?? 0, 2) }}</span></div><div class="tone"><i class="bi bi-tag"></i></div></div>
+FILE: commissions\form.blade.php (3)
+  68 | {{ isset($commission) ? 'Edit an existing commission record.' : 'Use this only to create the first commission profile for an employee.' }} | <div class="opacity-75">{{ isset($commission) ? 'Edit an existing commission record.' : 'Use this only to create the first commission profile for an employee.' }}</div>
+  94 | Commission Details | <div class="commission-form-section-title">Commission Details</div>
+  117 | Financial Details | <div class="commission-form-section-title">Financial Details</div>
+FILE: commissions\index.blade.php (8)
+  123 | Total Commission | <small class="text-muted d-block mb-2">Total Commission</small>
+  181 | Create First Commission Profile | No commission profiles yet. Use <strong>Create First Commission Profile</strong> for the first record of an employee.
+  218 | Total Commission | <th>Total Commission</th>
+  219 | Details | <th>Details</th>
+  237 | View Details | <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+  250 | Paid Commissions History | <h5 class="mb-0 white-header"><i class="bi bi-clock-history"></i> Paid Commissions History</h5>
+  258 | Date | <th>Date</th>
+  260 | Sale Amount | <th>Sale Amount</th>
+FILE: commissions\show.blade.php (3)
+  236 | Add a new commission for this employee from here. The general create page is only for first-time commission profiles. | <p class="text-muted small mb-4">Add a new commission for this employee from here. The general create page is only for first-time commission profiles.</p>
+  315 | Edit | <span class="ms-1">Edit</span>
+  330 | Delete | <span class="ms-1">Delete</span>
+FILE: components\floating-chat.blade.php (2)
+  498 | Close chat | <button type="button" id="floatingChatClose" title="Close chat">
+  505 | Search chats... | <input type="text" class="floating-chat-search" id="floatingChatSearch" placeholder="Search chats..." autocomplete="off">
+FILE: components\top-navbar.blade.php (2)
+  29 | Search... (press Enter) | <input id="globalSearchInput" type="search" placeholder="Search... (press Enter)" aria-label="Search">
+  65 | System Settings | <a href="{{ route('settings.index') }}" style="display:block;padding:8px;color:#fff;text-decoration:none">System Settings</a>
+FILE: dashboard\index.blade.php (32)
+  960 | Reports | <a href="{{ route('reports.sales') }}" class="btn btn-outline-light">Reports</a>
+  969 | Today Sales | <div class="kpi-label">Today Sales</div>
+  974 | Total Balance | <div class="kpi-label">Total Balance</div>
+  984 | Low Stock | <div class="kpi-label">Low Stock</div>
+  1038 | Add Product | <div class="quick-action-text"><strong>Add Product</strong><span>Create inventory item</span></div>
+  1038 | Create inventory item | <div class="quick-action-text"><strong>Add Product</strong><span>Create inventory item</span></div>
+  1045 | Sales | <div class="quick-action-text"><strong>Sales</strong><span>Open sales list</span></div>
+  1052 | New Invoice | <div class="quick-action-text"><strong>New Invoice</strong><span>Create invoice</span></div>
+  1052 | Create invoice | <div class="quick-action-text"><strong>New Invoice</strong><span>Create invoice</span></div>
+  1059 | Add Employee | <div class="quick-action-text"><strong>Add Employee</strong><span>Register staff</span></div>
+  1066 | Add Supplier | <div class="quick-action-text"><strong>Add Supplier</strong><span>Register supplier</span></div>
+  1073 | Payroll | <div class="quick-action-text"><strong>Payroll</strong><span>Payroll entry</span></div>
+  1073 | Payroll entry | <div class="quick-action-text"><strong>Payroll</strong><span>Payroll entry</span></div>
+  1094 | Warehouse overview | <div class="quick-action-text"><strong>Storages</strong><span>Warehouse overview</span></div>
+  1101 | New Branch | <div class="quick-action-text"><strong>New Branch</strong><span>Expand locations</span></div>
+  1108 | Sales Report | <div class="quick-action-text"><strong>Sales Report</strong><span>View analytics</span></div>
+  1115 | Financial Report | <div class="quick-action-text"><strong>Financial Report</strong><span>Review accounts</span></div>
+  1147 | Sales | <span class="metric-label">Sales</span>
+  1160 | Employees | <span class="metric-label">Employees</span>
+  1200 | Safe Balance | <span class="metric-label">Safe Balance</span>
+  1239 | Sales and finance reports | <h2 class="section-title"><i class="bi bi-graph-up-arrow text-warning"></i>Sales and finance reports</h2>
+  1247 | Sales trend | <h3 class="section-title mb-0">Sales trend</h3>
+  1264 | Inventory health | <h3 class="section-title mb-0">Inventory health</h3>
+  1295 | Description | <th>Description</th>
+  1297 | Date | <th>Date</th>
+  1298 | Amount | <th>Amount</th>
+  1304 | {{ $transaction->description ?? 'Invoice' }} | <td>{{ $transaction->description ?? 'Invoice' }}</td>
+  1329 | {{ $transaction->description ?? 'Invoice' }} | <div class="fw-semibold">{{ $transaction->description ?? 'Invoice' }}</div>
+  1398 | Inventory | <a href="{{ route('products.index') }}" class="btn btn-sm btn-outline-secondary">Inventory</a>
+  1405 | Product | <th>Product</th>
+  1406 | Stock | <th>Stock</th>
+  1446 | Stock: {{ $product->current_stock ?? 0 }} | <small class="text-muted">Stock: {{ $product->current_stock ?? 0 }}</small>
+FILE: employees\form.blade.php (1)
+  139 | ⚙️ Settings | <div class="form-section-title">⚙️ Settings</div>
+FILE: employees\index.blade.php (1)
+  145 | View Details | <a href="{{ route('employees.show', $employee->id) }}" class="btn btn-sm btn-info me-1" title="View Details">
+FILE: employees\show.blade.php (5)
+  368 | Add Employee Advance | <h5 class="modal-title" id="addAdvanceModalLabel">Add Employee Advance</h5>
+  375 | Amount | <label for="advance_amount" class="form-label fw-bold">Amount</label>
+  381 | Advance Date | <label for="advance_date" class="form-label fw-bold">Advance Date</label>
+  386 | Description (Optional) | <label for="advance_description" class="form-label fw-bold">Description (Optional)</label>
+  393 | Cancel | <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+FILE: payroll\create.blade.php (1)
+  57 | Payroll | <div class="create-hero-chip mb-3">Payroll</div>
+FILE: payroll\edit.blade.php (3)
+  122 | Payroll | <div class="payroll-edit-chip mb-3">Payroll</div>
+  155 | Payroll period | <div class="small text-uppercase text-muted fw-semibold mb-1">Payroll period</div>
+  190 | Add any payroll notes | <textarea name="notes" class="form-control payroll-edit-field" rows="4" placeholder="Add any payroll notes">{{ old('notes', $payroll->notes) }}</textarea>
+FILE: payroll\index.blade.php (16)
+  405 | Payroll health | <div class="h6 mb-0">Payroll health</div>
+  458 | Total pending payout amount. | <div class="text-muted small mt-1">Total pending payout amount.</div>
+  485 | Search employee, month, safe, status, or payroll ID | <input type="search" id="payrollSearch" class="form-control" placeholder="Search employee, month, safe, status, or payroll ID">
+  545 | Safe source | <span class="label">Safe source</span>
+  549 | Payroll period | <span class="label">Payroll period</span>
+  571 | Edit | <a href="{{ route('payroll.edit', $payroll) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+  577 | Delete | <button type="submit" class="btn btn-sm btn-outline-danger w-100">Delete</button>
+  585 | Create payrolls or mark existing records as paid to populate this section. | <div class="small">Create payrolls or mark existing records as paid to populate this section.</div>
+  596 | Payroll period | <th>Payroll period</th>
+  636 | Edit | <a href="{{ route('payroll.edit', $payroll) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+  642 | Delete | <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+  665 | Create payrolls or mark existing records as paid to populate this section. | <div class="small">Create payrolls or mark existing records as paid to populate this section.</div>
+  723 | Safe | <span class="label">Safe</span>
+  746 | Delete | <button type="submit" class="btn btn-sm btn-outline-danger w-100">Delete</button>
+  765 | Safe | <th>Safe</th>
+  808 | Delete | <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+FILE: payroll\show.blade.php (5)
+  95 | Sales/performance bonus | <small class="text-muted">Sales/performance bonus</small>
+  120 | Payroll deductions and advances | <small class="text-muted">Payroll deductions and advances</small>
+  128 | Safe: | <div class="col-md-4"><strong>Safe:</strong> {{ $payroll->safe?->name ?? '-' }}</div>
+  139 | Total Before Deductions | <span class="fw-bold text-muted">Total Before Deductions</span>
+  171 | Total payable | <small class="text-muted fw-bold">Total payable</small>
+FILE: products\_table.blade.php (1)
+  20 | View Details | <a href="{{ route('products.show', $product->id) }}" class="btn btn-sm btn-info me-1" title="View Details">
+FILE: products\form.blade.php (4)
+  90 | Current Stock | <span class="sidebar-stat-label">Current Stock</span>
+  135 | Select Category | <option value="">Select Category</option>
+  171 | 📦 Inventory | <div class="form-section-title">📦 Inventory</div>
+  183 | ⚙️ Settings | <div class="form-section-title">⚙️ Settings</div>
+FILE: products\index.blade.php (6)
+  612 | Stock alerts | <div class="products-mini-metric"><div><span class="label">Stock alerts</span><span class="value">{{ $lowStockProductsCount }}</span></div><div class="tone"><i class="bi bi-exclamation-triangle"></i></div></div>
+  620 | Total products | <div class="products-stat-label">Total products</div>
+  660 | Search products by name... | <input type="text" class="form-control" id="searchInput" placeholder="Search products by name...">
+  735 | View Details | <a href="{{ route('products.show', $product->id) }}" class="btn btn-sm btn-info" title="View Details">
+  741 | Edit | <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-warning" title="Edit">
+  747 | Delete | <button onclick="deleteProduct({{ $product->id }})" class="btn btn-sm btn-danger" title="Delete">
+FILE: products\show.blade.php (2)
+  25 | Summary | <p class="products-hero-panel-title">Summary</p>
+  29 | Price | <div class="products-mini-metric"><div><span class="label">Price</span><span class="value">{{ $currencySymbol }}{{ number_format($product->selling_price, 2) }}</span></div><div class="tone"><i class="bi bi-tag"></i></div></div>
+FILE: safes\form.blade.php (3)
+  72 | 💰 Safe Info | <div class="sidebar-title">💰 Safe Info</div>
+  123 | 💳 Balance Settings | <div class="form-section-title">💳 Balance Settings</div>
+  148 | ⚙️ Settings | <div class="form-section-title">⚙️ Settings</div>
+FILE: safes\show.blade.php (47)
+  256 | Total Income: | <h6>Total Income: <span class="text-success fw-bold">{{ $currencySymbol }}{{ number_format($totalIncome, 2) }}</span></h6>
+  274 | Income PDF Export | data-export-title="Income PDF Export">Export PDF</button>
+  274 | Export PDF | data-export-title="Income PDF Export">Export PDF</button>
+  281 | Amount | <th style="position: sticky; top: 0; z-index: 2; background: #fff;">Amount</th>
+  283 | Date | <th style="position: sticky; top: 0; z-index: 2; background: #fff;">Date</th>
+  334 | Total Outcome: | <h6>Total Outcome: <span class="text-danger fw-bold">{{ $currencySymbol }}{{ number_format($totalOutcome, 2) }}</span></h6>
+  352 | Outcome PDF Export | data-export-title="Outcome PDF Export">Export PDF</button>
+  352 | Export PDF | data-export-title="Outcome PDF Export">Export PDF</button>
+  359 | Amount | <th style="position: sticky; top: 0; z-index: 2; background: #fff;">Amount</th>
+  360 | Description | <th style="position: sticky; top: 0; z-index: 2; background: #fff;">Description</th>
+  361 | Date | <th style="position: sticky; top: 0; z-index: 2; background: #fff;">Date</th>
+  389 | Supplier: {{ $outcome->supplier->name }} | <br><small class="text-danger">Supplier: {{ $outcome->supplier->name }}</small>
+  451 | Income Details | <h5 class="modal-title"><i class="bi bi-arrow-up-circle"></i> Income Details</h5>
+  460 | Amount | <label class="text-muted small">Amount</label>
+  470 | Date | <label class="text-muted small">Date</label>
+  488 | Close | <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+  509 | Amount * | <label class="form-label">Amount *</label>
+  531 | Invoice #, Check #, etc. | <input type="text" name="reference" class="form-control" placeholder="Invoice #, Check #, etc.">
+  539 | Cancel | <button type="button" class="btn btn-secondary" id="incomeEditCancelBtn">Cancel</button>
+  540 | Update Income | <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Update Income</button>
+  553 | Outcome Details | <h5 class="modal-title"><i class="bi bi-arrow-down-circle"></i> Outcome Details</h5>
+  562 | Amount | <label class="text-muted small">Amount</label>
+  566 | Date | <label class="text-muted small">Date</label>
+  576 | Supplier | <label class="text-muted small">Supplier</label>
+  581 | Description | <label class="text-muted small">Description</label>
+  590 | Close | <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+  611 | Amount * | <label class="form-label">Amount *</label>
+  624 | Description (Optional) | <label class="form-label">Description (Optional)</label>
+  629 | Invoice #, Reference, etc. | <input type="text" name="reference" class="form-control" placeholder="Invoice #, Reference, etc.">
+  633 | Cancel | <button type="button" class="btn btn-secondary" id="outcomeEditCancelBtn">Cancel</button>
+  634 | Update Outcome | <button type="submit" class="btn btn-warning"><i class="bi bi-check-circle"></i> Update Outcome</button>
+  646 | Add Income | <h5 class="modal-title"><i class="bi bi-arrow-up-circle"></i> Add Income</h5>
+  653 | Amount * | <label class="form-label">Amount *</label>
+  659 | Date | <label class="form-label">Date <span class="text-muted">(Optional)</span></label>
+  684 | Invoice #, Check #, etc. | <input type="text" name="reference" class="form-control" placeholder="Invoice #, Check #, etc.">
+  692 | Cancel | <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+  704 | Add Outcome | <h5 class="modal-title"><i class="bi bi-arrow-down-circle"></i> Add Outcome</h5>
+  720 | Amount * | <label class="form-label">Amount *</label>
+  722 | Note: Balance can go negative if withdrawal exceeds current balance | <small class="text-warning d-block mt-1"><i class="bi bi-exclamation-triangle"></i> Note: Balance can go negative if withdrawal exceeds current balance</small>
+  727 | Date | <label class="form-label">Date <span class="text-muted">(Optional)</span></label>
+  746 | Supplier | <option value="supplier">Supplier</option>
+  750 | Supplier (With Outstanding Balance) | <label class="form-label">Supplier (With Outstanding Balance)</label>
+  761 | Description (Optional) | <label class="form-label">Description (Optional)</label>
+  770 | Cancel | <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+  782 | Add Currency | <h5 class="modal-title"><i class="bi bi-currency-exchange"></i> Add Currency</h5>
+  799 | Cancel | <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+  800 | Add Currency | <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add Currency</button>
+FILE: sales\index.blade.php (43)
+  378 | Sales | <h2 class="fw-bold mb-2 text-white">Sales</h2>
+  422 | Branch | <label class="form-label fw-semibold">Branch</label>
+  431 | Sale Date | <label class="form-label fw-semibold">Sale Date</label>
+  435 | Total Amount Sold | <label class="form-label fw-semibold">Total Amount Sold</label>
+  440 | Amount Spent by Store | <label class="form-label fw-semibold">Amount Spent by Store <span class="text-muted">(Optional)</span></label>
+  441 | Amount the store spent | <input type="number" name="spent_amount" class="form-control form-control-lg" min="0" step="0.01" value="{{ old('spent_amount', 0) }}" placeholder="Amount the store spent">
+  445 | Employees Involved | <label class="form-label fw-semibold">Employees Involved</label>
+  462 | Amount Sold | <label class="form-label small text-muted mb-1">Amount Sold</label>
+  467 | Remove | <button type="button" class="btn btn-outline-danger btn-sm remove-employee-row">Remove</button>
+  475 | + Add Employee | <button type="button" class="btn btn-outline-secondary btn-sm add-employee-field mt-2">+ Add Employee</button>
+  479 | Description | <label class="form-label fw-semibold">Description</label>
+  480 | Add a description for the whole sale... | <textarea name="notes" class="form-control" rows="4" placeholder="Add a description for the whole sale...">{{ old('notes') }}</textarea>
+  497 | Amount Sold | <label class="form-label small text-muted mb-1">Amount Sold</label>
+  502 | Remove | <button type="button" class="btn btn-outline-danger btn-sm remove-employee-row">Remove</button>
+  508 | Save Sale | <button type="submit" class="btn btn-primary btn-lg px-4">Save Sale</button>
+  540 | Total sales recorded | <small class="text-muted d-block">Total sales recorded</small>
+  561 | Recent Sales | <h5 class="mb-1">Recent Sales</h5>
+  576 | Branch | <label class="form-label mb-0 small">Branch</label>
+  602 | Date | <th>Date</th>
+  603 | Branch | <th>Branch</th>
+  604 | Total Amount | <th>Total Amount</th>
+  607 | Description | <th>Description</th>
+  748 | Employees Involved | <h5 class="modal-title mb-0 fw-bold">Employees Involved</h5>
+  757 | Date | <span class="label">Date</span>
+  763 | Branch | <span class="label">Branch</span>
+  775 | Total Amount | <span class="label">Total Amount</span>
+  793 | Description | <div class="label mb-2">Description</div>
+  801 | Employees involved | <h6 class="mb-0">Employees involved</h6>
+  819 | Edit Sale | <h5 class="modal-title">Edit Sale</h5>
+  825 | Branch | <label class="form-label">Branch</label>
+  834 | Sale Date | <label class="form-label">Sale Date</label>
+  838 | Total Amount | <label class="form-label">Total Amount</label>
+  843 | Amount Spent by Store | <label class="form-label">Amount Spent by Store <span class="text-muted">(Optional)</span></label>
+  844 | Amount the store spent | <input type="number" name="spent_amount" class="form-control" step="0.01" min="0" placeholder="Amount the store spent">
+  847 | Employees Involved | <label class="form-label fw-semibold">Employees Involved</label>
+  848 | Add or change the employees linked to this sale and their sold amounts. | <div class="field-hint mb-2">Add or change the employees linked to this sale and their sold amounts.</div>
+  850 | + Add Employee | <button type="button" class="btn btn-outline-secondary btn-sm mt-2 add-edit-employee-field">+ Add Employee</button>
+  856 | Description | <label class="form-label">Description</label>
+  857 | Add a description for the whole sale... | <textarea name="notes" rows="4" class="form-control" placeholder="Add a description for the whole sale..."></textarea>
+  863 | Cancel | <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+  864 | Save changes | <button type="submit" class="btn btn-primary">Save changes</button>
+  884 | Amount Sold | <label class="form-label small text-muted mb-1">Amount Sold</label>
+  889 | Remove | <button type="button" class="btn btn-outline-danger btn-sm remove-employee-row">Remove</button>
+FILE: storages\form.blade.php (3)
+  104 | e.g., Warehouse, Shelf, Cabinet | <input type="text" class="form-control @error('storage_type') is-invalid @enderror" name="storage_type" value="{{ old('storage_type', $storage->storage_type ?? '') }}" placeholder="e.g., Warehouse, Shelf, Cabinet" required>
+  122 | 📄 Description | <div class="form-section-title">📄 Description</div>
+  133 | ⚙️ Settings | <div class="form-section-title">⚙️ Settings</div>
+FILE: storages\items.blade.php (33)
+  13 | id) }}" class="btn btn-outline-info">Transfer History | <a href="{{ route('storages.transferHistory', $storage->id) }}" class="btn btn-outline-info">Transfer History</a>
+  14 | Back | <a href="{{ route('storages.index') }}" class="btn btn-outline-secondary">Back</a>
+  15 | + Add Transaction | <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">+ Add Transaction</button>
+  31 | Total Quantity | <small class="text-muted d-block">Total Quantity</small>
+  39 | Total Weight | <small class="text-muted d-block">Total Weight</small>
+  47 | Total Value | <small class="text-muted d-block">Total Value</small>
+  60 | Product Name | <th>Product Name</th>
+  61 | Quantity | <th>Quantity</th>
+  63 | Unit Price | <th>Unit Price</th>
+  64 | Total Price | <th>Total Price</th>
+  101 | Edit | >Edit</button>
+  105 | Delete | <button class="btn btn-sm btn-outline-danger">Delete</button>
+  134 | Add Storage Transaction | <h5 class="modal-title">Add Storage Transaction</h5>
+  140 | Product Name | <label class="form-label">Product Name</label>
+  144 | Quantity | <label class="form-label">Quantity</label>
+  152 | Price of Product | <label class="form-label">Price of Product</label>
+  156 | Total Price | <label class="form-label">Total Price</label>
+  162 | Cancel | <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+  163 | Save Transaction | <button type="submit" class="btn btn-primary">Save Transaction</button>
+  177 | Edit Storage Transaction | <h5 class="modal-title">Edit Storage Transaction</h5>
+  183 | Product Name | <label class="form-label">Product Name</label>
+  187 | Quantity | <label class="form-label">Quantity</label>
+  195 | Price of Product | <label class="form-label">Price of Product</label>
+  199 | Total Price | <label class="form-label">Total Price</label>
+  205 | Cancel | <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+  206 | Save Changes | <button type="submit" class="btn btn-primary">Save Changes</button>
+  226 | Product Name | <label class="form-label">Product Name</label>
+  230 | Available Quantity | <label class="form-label">Available Quantity</label>
+  247 | Transfer Quantity | <label class="form-label">Transfer Quantity</label>
+  255 | Unit Price | <label class="form-label">Unit Price</label>
+  259 | Total Price | <label class="form-label">Total Price</label>
+  263 | Total price is calculated as transfer quantity x unit price. | <small class="text-muted">Total price is calculated as transfer quantity x unit price.</small>
+  269 | Cancel | <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+FILE: storages\transfer-history.blade.php (7)
+  9 | {{ $storage->name }} - Transfer History | <h3 class="mb-1">{{ $storage->name }} - Transfer History</h3>
+  12 | id) }}" class="btn btn-outline-secondary">Back | <a href="{{ route('storages.items', $storage->id) }}" class="btn btn-outline-secondary">Back</a>
+  40 | Product Name | <th>Product Name</th>
+  41 | Quantity | <th>Quantity</th>
+  43 | Unit Price | <th>Unit Price</th>
+  44 | Total Price | <th>Total Price</th>
+  47 | Date | <th>Date</th>
+FILE: suppliers\index.blade.php (2)
+  128 | Search | <label for="supplier-search" class="form-label">Search</label>
+  135 | Search by name or address | placeholder="Search by name or address"
+FILE: suppliers\show.blade.php (1)
+  434 | Remove | <td><button type="button" class="btn btn-outline-danger btn-sm remove-row">Remove</button></td>

@@ -85,18 +85,18 @@
             <div class="form-sidebar">
                 @if(isset($product) && $product)
                 <div class="sidebar-card">
-                    <div class="sidebar-title">📊 Statistics</div>
+                    <div class="sidebar-title">{{ __('📊 Statistics') }}</div>
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-label">Current Stock</span>
+                        <span class="sidebar-stat-label">{{ __('Current Stock') }}</span>
                         <span class="sidebar-stat-value">{{ $product->current_stock ?? 0 }}</span>
                     </div>
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-label">Created</span>
-                        <span class="sidebar-stat-value" style="font-size: 13px;">{{ $product->created_at?->format('M d, Y') ?? 'N/A' }}</span>
+                        <span class="sidebar-stat-label">{{ __('Created') }}</span>
+                        <span class="sidebar-stat-value" style="font-size: 13px;">{{ $product->created_at?->translatedFormat('M d, Y') ?? 'N/A' }}</span>
                     </div>
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-label">Last Updated</span>
-                        <span class="sidebar-stat-value" style="font-size: 13px;">{{ $product->updated_at?->format('M d, Y') ?? 'N/A' }}</span>
+                        <span class="sidebar-stat-label">{{ __('Last Updated') }}</span>
+                        <span class="sidebar-stat-value" style="font-size: 13px;">{{ $product->updated_at?->translatedFormat('M d, Y') ?? 'N/A' }}</span>
                     </div>
                 </div>
                 @endif
@@ -122,67 +122,67 @@
                     <div class="form-body">
                         <!-- Basic Information -->
                         <div class="form-section">
-                            <div class="form-section-title">📝 Basic Information</div>
+                            <div class="form-section-title">{{ __('📝 Basic Information') }}</div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.product_name') }} <span class="required">*</span></label>
-                                    <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $product->name ?? '') }}" placeholder="Enter product name" required>
-                                    @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $product->{{ __('name ?? \'\') }}" placeholder="Enter product name" required>
+                                    @error(\'name\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.category') }} <span class="required">*</span></label>
                                     <select class="form-select @error('category_id') is-invalid @enderror" name="category_id" required>
-                                        <option value="">Select Category</option>
+                                        <option value="">{{ __('Select Category') }}</option>
                                         @foreach($categories ?? [] as $category)
                                             <option value="{{ $category->id }}" {{ old('category_id', $product->category_id ?? '') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                         @endforeach
                                     </select>
-                                    @error('category_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    {{ __('@error(\'category_id\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                                 </div>
                             </div>
                             <div class="form-row" style="margin-bottom: 0;">
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.description') }}</label>
                                     <textarea class="form-control @error('description') is-invalid @enderror" name="description" placeholder="Enter product description">{{ old('description', $product->description ?? '') }}</textarea>
-                                    @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    {{ __('@error(\'description\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                                 </div>
                             </div>
                         </div>
 
                         <!-- Pricing -->
                         <div class="form-section">
-                            <div class="form-section-title">💰 Pricing</div>
+                            <div class="form-section-title">{{ __('💰 Pricing') }}</div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.purchase_price') }} <span class="required">*</span></label>
-                                    <input type="number" class="form-control @error('purchase_price') is-invalid @enderror" name="purchase_price" step="0.01" placeholder="0.00" value="{{ old('purchase_price', $product->purchase_price ?? '') }}" required>
-                                    @error('purchase_price')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    <input type="number" class="form-control @error('purchase_price') is-invalid @enderror" name="purchase_price" step="0.01" placeholder="0.00" value="{{ old('purchase_price', $product->{{ __('purchase_price ?? \'\') }}" required>
+                                    @error(\'purchase_price\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.price') }} <span class="required">*</span></label>
-                                    <input type="number" class="form-control @error('selling_price') is-invalid @enderror" name="selling_price" step="0.01" placeholder="0.00" value="{{ old('selling_price', $product->selling_price ?? '') }}" required>
-                                    @error('selling_price')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    <input type="number" class="form-control @error('selling_price') is-invalid @enderror" name="selling_price" step="0.01" placeholder="0.00" value="{{ old('selling_price', $product->{{ __('selling_price ?? \'\') }}" required>
+                                    @error(\'selling_price\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                                 </div>
                             </div>
                         </div>
 
                         <!-- Inventory -->
                         <div class="form-section">
-                            <div class="form-section-title">📦 Inventory</div>
+                            <div class="form-section-title">{{ __('📦 Inventory') }}</div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.quantity') }} <span class="required">*</span></label>
-                                    <input type="number" class="form-control @error('current_stock') is-invalid @enderror" name="current_stock" placeholder="0" value="{{ old('current_stock', $product->current_stock ?? 0) }}" required>
-                                    @error('current_stock')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    <input type="number" class="form-control @error('current_stock') is-invalid @enderror" name="current_stock" placeholder="0" value="{{ old('current_stock', $product->{{ __('current_stock ?? 0) }}" required>
+                                    @error(\'current_stock\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                                 </div>
                             </div>
                         </div>
 
                         <!-- Status & Branches -->
                         <div class="form-section">
-                            <div class="form-section-title">⚙️ Settings</div>
+                            <div class="form-section-title">{{ __('⚙️ Settings') }}</div>
                             <div class="form-checkbox">
-                                <input type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active', $product->is_active ?? true) ? 'checked' : '' }}>
+                                <input type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active', $product->{{ __('is_active ?? true) ? \'checked\' : \'\' }}>') }}
                                 <label for="is_active">{{ __('messages.is_active') }}</label>
                             </div>
                             <div style="margin-top: 24px;">

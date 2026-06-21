@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Admin Login</title>
+    <title>{{ __('System Admin Login') }}</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=noto-sans:400,500,600,700" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
+    {{ __('<style>
         * {
             margin: 0;
             padding: 0;
@@ -373,7 +373,7 @@
                 font-size: 11px;
             }
         }
-    </style>
+    </style>') }}
 </head>
 <body>
     <div class="admin-login-shell">
@@ -384,10 +384,10 @@
                     <div>
                         <div class="admin-login-pill">
                             <i class="bi bi-shield-lock"></i>
-                            System Administration
+                            {{ __('System Administration') }}
                         </div>
-                        <h1>Admin Portal</h1>
-                        <p>Secure access for system administrators and super users.</p>
+                        <h1>{{ __('Admin Portal') }}</h1>
+                        <p>{{ __('Secure access for system administrators and super users.') }}</p>
 
                         <div class="admin-login-features">
                             <div class="admin-login-feature">
@@ -395,8 +395,8 @@
                                     <i class="bi bi-shield-check"></i>
                                 </div>
                                 <div class="admin-login-feature-text">
-                                    <div class="admin-login-feature-title">Full system control</div>
-                                    <div class="admin-login-feature-desc">Complete administrative access</div>
+                                    <div class="admin-login-feature-title">{{ __('Full system control') }}</div>
+                                    <div class="admin-login-feature-desc">{{ __('Complete administrative access') }}</div>
                                 </div>
                             </div>
                             <div class="admin-login-feature">
@@ -404,8 +404,8 @@
                                     <i class="bi bi-lock"></i>
                                 </div>
                                 <div class="admin-login-feature-text">
-                                    <div class="admin-login-feature-title">Enhanced security</div>
-                                    <div class="admin-login-feature-desc">All access attempts are logged</div>
+                                    <div class="admin-login-feature-title">{{ __('Enhanced security') }}</div>
+                                    <div class="admin-login-feature-desc">{{ __('All access attempts are logged') }}</div>
                                 </div>
                             </div>
                         </div>
@@ -413,10 +413,10 @@
 
                     <div class="admin-login-footer">
                         <a href="{{ route('landing') }}">
-                            <i class="bi bi-house me-1"></i> Back to Home
+                            <i class="bi bi-house me-1"></i> {{ __('Back to Home') }}
                         </a>
                         <a href="{{ route('login') }}">
-                            Merchant Login <i class="bi bi-arrow-right ms-1"></i>
+                            {{ __('Merchant Login') }} <i class="bi bi-arrow-right ms-1"></i>
                         </a>
                     </div>
                 </div>
@@ -424,9 +424,9 @@
                 <!-- Form Section -->
                 <div class="admin-login-form-section">
                     <div class="admin-form-header">
-                        <span class="admin-form-header-badge">Administrator</span>
-                        <h2>System Admin Login</h2>
-                        <p>Enter your admin credentials to continue.</p>
+                        <span class="admin-form-header-badge">{{ __('Administrator') }}</span>
+                        <h2>{{ __('System Admin Login') }}</h2>
+                        <p>{{ __('Enter your admin credentials to continue.') }}</p>
                     </div>
 
                     @if($errors->any())
@@ -438,44 +438,44 @@
                     @endif
 
                     <form method="POST" action="{{ route('super-admin.login') }}">
-                        @csrf
+                        {{ __('@csrf') }}
 
                         <div class="admin-form-group">
-                            <label class="admin-form-label">Email Address</label>
+                            <label class="admin-form-label">{{ __('Email Address') }}</label>
                             <input type="email" name="email" class="admin-form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required autofocus placeholder="admin@system.local">
-                            @error('email')
+                            {{ __('@error(\'email\')') }}
                                 <span class="admin-invalid-feedback">{{ $message }}</span>
-                            @enderror
+                            {{ __('@enderror') }}
                         </div>
 
                         <div class="admin-form-group">
-                            <label class="admin-form-label">Password</label>
+                            <label class="admin-form-label">{{ __('Password') }}</label>
                             <input type="password" name="password" class="admin-form-control @error('password') is-invalid @enderror" required placeholder="••••••••">
-                            @error('password')
+                            {{ __('@error(\'password\')') }}
                                 <span class="admin-invalid-feedback">{{ $message }}</span>
-                            @enderror
+                            {{ __('@enderror') }}
                         </div>
 
                         <div class="admin-form-group">
                             <div class="admin-form-checkbox">
                                 <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                                <label for="remember">Remember me</label>
+                                <label for="remember">{{ __('Remember me') }}</label>
                             </div>
                         </div>
 
                         <button type="submit" class="admin-form-button">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+                            <i class="bi bi-box-arrow-in-right me-1"></i> {{ __('Sign In') }}
                         </button>
                     </form>
 
                     <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280;">
-                        <i class="bi bi-shield-check" style="color: #ff8c00;"></i> Secure admin login · All access logged
+                        <i class="bi bi-shield-check" style="color: #ff8c00;"></i> {{ __('Secure admin login · All access logged') }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {{ __('<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>') }}
 </body>
 </html>

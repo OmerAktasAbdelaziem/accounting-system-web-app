@@ -84,7 +84,7 @@
     @endphp
 
     <div class="sidebar-mobile-head">
-        <div class="sidebar-mobile-title">Menu</div>
+        <div class="sidebar-mobile-title">{{ __('messages.menu') }}</div>
         <button type="button" class="sidebar-mobile-close" aria-label="Close sidebar" onclick="return window.__toggleMobileSidebar(event)">
             <i class="bi bi-x-lg"></i>
         </button>
@@ -92,7 +92,7 @@
 
     @if($branchScope)
         <div class="sidebar-section">
-            <div class="sidebar-title">Branch scope</div>
+            <div class="sidebar-title">{{ __('messages.branch_scope') }}</div>
             <div class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill text-white" style="background: linear-gradient(135deg, rgba(255,140,0,0.92), rgba(255,179,71,0.92)); box-shadow: 0 10px 22px rgba(255,140,0,0.18);">
                 <i class="bi bi-diagram-3-fill"></i>
                 <span class="fw-semibold">{{ $resolveLabel($branchScope['label'] ?? '') }}</span>
@@ -102,12 +102,12 @@
 
     @if($isSuperAdmin)
         <div class="sidebar-section">
-            <div class="sidebar-title">Dashboard Tools</div>
+            <div class="sidebar-title">{{ __('messages.dashboard_tools') }}</div>
             <ul class="sidebar-menu main-menu">
                 <li>
                     <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
                         <i class="bi bi-speedometer2"></i>
-                        <span>Live Dashboard</span>
+                        <span>{{ __('messages.live_dashboard') }}</span>
                     </a>
                 </li>
                 {{-- Removed Feature Access and New Merchant per admin request --}}
@@ -141,7 +141,7 @@
 
     @if(!empty($menu['customers']))
         <div class="sidebar-section">
-            <div class="sidebar-title">Operations</div>
+            <div class="sidebar-title">{{ __('messages.operations') }}</div>
             <ul class="sidebar-menu customers-menu">
                 @foreach($menu['customers'] as $item)
                     @php
@@ -164,7 +164,7 @@
 
     @if(!empty($menu['systems']))
         <div class="sidebar-section">
-            <div class="sidebar-title">Systems Section</div>
+            <div class="sidebar-title">{{ __('messages.systems_section') }}</div>
             <ul class="sidebar-menu systems-menu">
                 @foreach($menu['systems'] as $item)
                     @php
@@ -187,7 +187,7 @@
 
     @if(!empty($menu['reports']))
         <div class="sidebar-section">
-            <div class="sidebar-title">Reports Section</div>
+            <div class="sidebar-title">{{ __('messages.reports_section') }}</div>
             <ul class="sidebar-menu reports-menu">
                 @foreach($menu['reports'] as $item)
                     @php
@@ -210,7 +210,7 @@
 
     @if(!empty($menu['admin']))
         <div class="sidebar-section">
-            <div class="sidebar-title">Admin User Section</div>
+            <div class="sidebar-title">{{ __('messages.admin_user_section') }}</div>
             <ul class="sidebar-menu admin-menu">
                 @foreach($menu['admin'] as $item)
                     @php

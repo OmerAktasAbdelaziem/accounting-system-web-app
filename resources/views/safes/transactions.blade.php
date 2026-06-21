@@ -27,7 +27,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="alert alert-info mb-0">
-                    Deposit and withdrawal actions were removed in favor of income and outcome tracking.
+                    {{ __('Deposit and withdrawal actions were removed in favor of income and outcome tracking.') }}
                 </div>
             </div>
         </div>
@@ -54,7 +54,7 @@
             <tbody>
                 @forelse($transactions ?? [] as $transaction)
                     <tr>
-                        <td>{{ $transaction->created_at->format('M d, Y H:i') }}</td>
+                        <td>{{ $transaction->created_at->translatedFormat('M d, Y H:i') }}</td>
                         <td>
                             @if($transaction->type === 'deposit')
                                 <span class="badge bg-success"><i class="bi bi-plus-circle"></i> {{ __('messages.deposit') }}</span>

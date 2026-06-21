@@ -32,25 +32,25 @@
                     @endif
 
                     <form action="{{ route('users.update', $user) }}" method="POST">
-                        @csrf
-                        @method('PUT')
+                        {{ __('@csrf
+                        @method(\'PUT\')') }}
 
                         <div class="mb-3">
                             <label for="name" class="form-label">{{ __('users.name') }} <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                   id="name" name="name" value="{{ old('name', $user->name) }}" required>
-                            @error('name')
+                                   id="name" name="name" value="{{ old('name', $user->{{ __('name) }}" required>
+                            @error(\'name\')') }}
                                 <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            {{ __('@enderror') }}
                         </div>
 
                         <div class="mb-3">
                             <label for="email" class="form-label">{{ __('users.email') }} <span class="text-danger">*</span></label>
                             <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                   id="email" name="email" value="{{ old('email', $user->email) }}" required>
-                            @error('email')
+                                   id="email" name="email" value="{{ old('email', $user->{{ __('email) }}" required>
+                            @error(\'email\')') }}
                                 <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            {{ __('@enderror') }}
                         </div>
 
                         <div class="row">
@@ -65,9 +65,9 @@
                                             </option>
                                         @endforeach
                                     </select>
-                                    @error('role_id')
+                                    {{ __('@error(\'role_id\')') }}
                                         <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    {{ __('@enderror') }}
                                 </div>
                             </div>
 
@@ -75,10 +75,10 @@
                                 <div class="mb-3">
                                     <label for="phone" class="form-label">{{ __('users.phone') }}</label>
                                     <input type="tel" class="form-control @error('phone') is-invalid @enderror" 
-                                           id="phone" name="phone" value="{{ old('phone', $user->phone) }}">
-                                    @error('phone')
+                                           id="phone" name="phone" value="{{ old('phone', $user->{{ __('phone) }}">
+                                    @error(\'phone\')') }}
                                         <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    {{ __('@enderror') }}
                                 </div>
                             </div>
                         </div>
@@ -86,7 +86,7 @@
                         <div class="mb-3">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="is_active" 
-                                       name="is_active" value="1" {{ old('is_active', $user->is_active) ? 'checked' : '' }}>
+                                       name="is_active" value="1" {{ old('is_active', $user->{{ __('is_active) ? \'checked\' : \'\' }}>') }}
                                 <label class="form-check-label" for="is_active">
                                     {{ __('users.active_user') }}
                                 </label>
@@ -98,7 +98,7 @@
                         <h5 class="mb-3">{{ __('users.change_password') }}</h5>
 
                         <form id="passwordForm" action="{{ route('users.resetPassword', $user) }}" method="POST" style="display: none;">
-                            @csrf
+                            {{ __('@csrf') }}
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">

@@ -9,14 +9,14 @@
             <h3 class="mb-1">{{ $storage->name }} - Transfer History</h3>
             <div class="text-muted">{{ $storage->location }}</div>
         </div>
-        <a href="{{ route('storages.items', $storage->id) }}" class="btn btn-outline-secondary">Back</a>
+        <a href="{{ route('storages.items', $storage->{{ __('id) }}" class="btn btn-outline-secondary">Back') }}</a>
     </div>
 
     <div class="row g-3 mb-4">
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <small class="text-muted d-block">Outgoing Transfers</small>
+                    <small class="text-muted d-block">{{ __('Outgoing Transfers') }}</small>
                     <h4 class="mb-0">{{ $transferStats['outgoing'] }}</h4>
                 </div>
             </div>
@@ -24,7 +24,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <small class="text-muted d-block">Incoming Transfers</small>
+                    <small class="text-muted d-block">{{ __('Incoming Transfers') }}</small>
                     <h4 class="mb-0">{{ $transferStats['incoming'] }}</h4>
                 </div>
             </div>
@@ -37,15 +37,15 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Product Name</th>
-                            <th>Quantity</th>
-                            <th>Weight</th>
-                            <th>Unit Price</th>
-                            <th>Total Price</th>
-                            <th>From</th>
-                            <th>To</th>
-                            <th>Date</th>
-                            <th>By</th>
+                            <th>{{ __('Product Name') }}</th>
+                            <th>{{ __('Quantity') }}</th>
+                            <th>{{ __('Weight') }}</th>
+                            <th>{{ __('Unit Price') }}</th>
+                            <th>{{ __('Total Price') }}</th>
+                            <th>{{ __('From') }}</th>
+                            <th>{{ __('To') }}</th>
+                            <th>{{ __('Date') }}</th>
+                            <th>{{ __('By') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -61,11 +61,11 @@
                                 <td>{{ $transfer->transfer_date?->format('Y-m-d H:i') }}</td>
                                 <td>{{ $transfer->transferredBy?->name ?? __('messages.system') }}</td>
                             </tr>
-                        @empty
+                        {{ __('@empty') }}
                             <tr>
-                                <td colspan="9" class="text-center text-muted py-5">No transfer records yet.</td>
+                                <td colspan="9" class="text-center text-muted py-5">{{ __('No transfer records yet.') }}</td>
                             </tr>
-                        @endforelse
+                        {{ __('@endforelse') }}
                     </tbody>
                 </table>
             </div>

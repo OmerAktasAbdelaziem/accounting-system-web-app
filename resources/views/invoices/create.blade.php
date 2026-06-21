@@ -118,9 +118,9 @@
     <div class="container-fluid">
         <div class="create-hero mb-4 d-flex flex-wrap justify-content-between align-items-start gap-3">
             <div>
-                <div class="text-uppercase text-white-50 small fw-semibold mb-2">Billing</div>
-                <h1 class="mb-2 fw-bold" style="letter-spacing: -0.03em;">{{ __('Create Invoice') }}</h1>
-                <p class="mb-0 text-white-50">Build invoice lines in a focused workspace with live totals.</p>
+                <div class="text-uppercase text-white-50 small fw-semibold mb-2">{{ __('messages.billing') }}</div>
+                <h1 class="mb-2 fw-bold" style="letter-spacing: -0.03em;">{{ __('messages.create_invoice') }}</h1>
+                <p class="mb-0 text-white-50">{{ __('messages.create_invoice_description') }}</p>
             </div>
         </div>
 
@@ -131,16 +131,16 @@
 
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">{{ __('Customer') }}</label>
+                            <label class="form-label fw-semibold">{{ __('messages.customer') }}</label>
                             <select name="customer_id" class="form-select create-field">
-                                <option value="">{{ __('Select customer') }}</option>
+                                <option value="">{{ __('messages.select_customer') }}</option>
                                 @foreach($customers as $id => $name)
                                     <option value="{{ $id }}">{{ $name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">{{ __('Date') }}</label>
+                            <label class="form-label fw-semibold">{{ __('messages.date') }}</label>
                             <input type="date" name="date" class="form-control create-field" value="{{ old('date', now()->toDateString()) }}">
                         </div>
 
@@ -151,23 +151,23 @@
                         <div class="col-12">
                             <div class="card border-0 rounded-4 bg-light">
                                 <div class="card-header bg-transparent border-0 pt-4 px-4">
-                                    <h5 class="card-title mb-0">{{ __('Line Items') }}</h5>
+                                    <h5 class="card-title mb-0">{{ __('messages.line_items') }}</h5>
                                 </div>
                                 <div class="card-body px-4 pb-4">
                                     <div class="table-responsive">
                                         <table class="table table-sm" id="itemsTable">
                                             <thead>
                                                 <tr>
-                                                    <th>{{ __('Product') }}</th>
-                                                    <th>{{ __('Quantity') }}</th>
-                                                    <th>{{ __('Unit Price') }}</th>
-                                                    <th>{{ __('Line Total') }}</th>
-                                                    <th>{{ __('Action') }}</th>
+                                                    <th>{{ __('messages.product') }}</th>
+                                                    <th>{{ __('messages.quantity') }}</th>
+                                                    <th>{{ __('messages.unit_price') }}</th>
+                                                    <th>{{ __('messages.line_total') }}</th>
+                                                    <th>{{ __('messages.action') }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="itemsBody">
                                                 <tr class="item-row" data-index="0">
-                                                    <td><input type="text" name="items[0][product_id]" class="form-control form-control-sm product-select create-field" placeholder="{{ __('Product') }}"></td>
+                                                    <td><input type="text" name="items[0][product_id]" class="form-control form-control-sm product-select create-field" placeholder="{{ __('messages.product') }}"></td>
                                                     <td><input type="number" name="items[0][quantity]" class="form-control form-control-sm quantity create-field" placeholder="0" min="1" value="1"></td>
                                                     <td><input type="number" step="0.01" name="items[0][unit_price]" class="form-control form-control-sm unit-price create-field" placeholder="0.00" min="0" value="0.00"></td>
                                                     <td><input type="number" step="0.01" class="form-control form-control-sm line-total create-field" readonly value="0.00"></td>
@@ -176,7 +176,7 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <button type="button" class="btn btn-sm btn-success" id="addItemBtn"><i class="bi bi-plus"></i> {{ __('Add Item') }}</button>
+                                    <button type="button" class="btn btn-sm btn-success" id="addItemBtn"><i class="bi bi-plus"></i> {{ __('messages.add_item') }}</button>
                                 </div>
                             </div>
                         </div>
@@ -184,19 +184,17 @@
                         <div class="col-lg-4 ms-lg-auto">
                             <div class="card border-0 rounded-4 shadow-sm">
                                 <div class="card-body">
-                                    <div class="row mb-2"><div class="col-6"><strong>{{ __('Sub Total:') }}</strong></div><div class="col-6 text-end"><span id="subTotal">0.00</span></div></div>
-                                    <div class="row mb-3"><div class="col-6"><strong>{{ __('Tax (15%):') }}</strong></div><div class="col-6 text-end"><span id="taxAmount">0.00</span></div></div>
+                                    <div class="row mb-2"><div class="col-6"><strong>{{ __('messages.sub_total') }}</strong></div><div class="col-6 text-end"><span id="subTotal">0.00</span></div></div>
+                                    <div class="row mb-3"><div class="col-6"><strong>{{ __('messages.tax_15_percent') }}</strong></div><div class="col-6 text-end"><span id="taxAmount">0.00</span></div></div>
                                     <hr>
-                                    <div class="row"><div class="col-6"><h5>{{ __('Total:') }}</h5></div><div class="col-6 text-end"><h5 id="totalAmount">0.00</h5></div></div>
+                                    <div class="row"><div class="col-6"><h5>{{ __('messages.total') }}</h5></div><div class="col-6 text-end"><h5 id="totalAmount">0.00</h5></div></div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-12 d-flex gap-2 pt-2">
-                            <button type="submit" class="btn btn-primary px-4">{{ __('Save Invoice') }}</button>
-                            <a href="{{ route('invoices.index') }}" class="btn btn-outline-secondary px-4">{{ __('Cancel') }}</a>
-                        </div>
-                    </div>
+                            <button type="submit" class="btn btn-primary px-4">{{ __('messages.save_invoice') }}</button>
+                            <a href="{{ route('invoices.index') }}" class="btn btn-outline-secondary px-4">{{ __('messages.cancel') }}</a>
                 </form>
             </div>
         </div>
@@ -231,7 +229,7 @@ document.getElementById('addItemBtn').addEventListener('click', function() {
     newRow.setAttribute('data-index', itemCount);
     newRow.innerHTML = `
         <td>
-            <input type="text" name="items[${itemCount}][product_id]" class="form-control form-control-sm product-select" placeholder="{{ __('Product') }}">
+            <input type="text" name="items[${itemCount}][product_id]" class="form-control form-control-sm product-select" placeholder="{{ __('messages.product') }}">
         </td>
         <td>
             <input type="number" name="items[${itemCount}][quantity]" class="form-control form-control-sm quantity" placeholder="0" min="1" value="1">

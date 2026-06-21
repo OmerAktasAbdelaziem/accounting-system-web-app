@@ -488,8 +488,8 @@
     <div class="floating-chat-window" id="floatingChatWindow">
         <div class="floating-chat-header">
             <div>
-                <div class="floating-chat-title" id="floatingChatConversationTitle">Live Chat</div>
-                <div class="floating-chat-subtitle" id="floatingChatConversationSubtitle">Choose a contact to start</div>
+                <div class="floating-chat-title" id="floatingChatConversationTitle">{{ __('Live Chat') }}</div>
+                <div class="floating-chat-subtitle" id="floatingChatConversationSubtitle">{{ __('Choose a contact to start') }}</div>
             </div>
             <div class="floating-chat-header-actions">
                 <button type="button" id="floatingChatEnableNotifications" title="Enable desktop notifications">
@@ -506,7 +506,7 @@
             </div>
             <div class="floating-chat-contacts" id="floatingChatContacts"></div>
             <div class="floating-chat-messages" id="floatingChatMessages">
-                <div class="floating-chat-empty">Choose a contact to start chatting.</div>
+                <div class="floating-chat-empty">{{ __('Choose a contact to start chatting.') }}</div>
             </div>
             <form class="floating-chat-input-wrap" id="floatingChatForm">
                 <input type="text" class="floating-chat-input" id="floatingChatInput" maxlength="2000" placeholder="Type your message..." autocomplete="off">

@@ -14,16 +14,16 @@
     <div class="container-fluid">
         <div class="create-hero mb-4 d-flex flex-wrap justify-content-between align-items-start gap-3">
             <div>
-                <div class="text-uppercase text-white-50 small fw-semibold mb-2">Subscription Plans</div>
+                <div class="text-uppercase text-white-50 small fw-semibold mb-2">{{ __('Subscription Plans') }}</div>
                 <h1 class="mb-2 fw-bold" style="letter-spacing: -0.03em;">{{ isset($package) ? 'Edit' : 'Create' }} Package</h1>
-                <p class="mb-0 text-white-50">Define pricing and features in a clearer workspace.</p>
+                <p class="mb-0 text-white-50">{{ __('Define pricing and features in a clearer workspace.') }}</p>
             </div>
-            <a href="{{ route('super-admin.packages.index') }}" class="btn btn-light rounded-pill px-3"><i class="bi bi-arrow-left me-2"></i>Back</a>
+            <a href="{{ route('super-admin.packages.index') }}" class="btn btn-light rounded-pill px-3"><i class="bi bi-arrow-left me-2"></i>{{ __('Back') }}</a>
         </div>
 
         @if ($errors->any())
             <div class="alert alert-danger border-0 rounded-4 mb-4">
-                <strong>Validation Errors:</strong>
+                <strong>{{ __('Validation Errors:') }}</strong>
                 <ul class="mb-0 mt-2">
                     @foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach
                 </ul>
@@ -38,55 +38,55 @@
                         <div class="card-body p-4 p-lg-5">
                             <div class="row g-3">
                                 <div class="col-12">
-                                    <label class="form-label fw-semibold">Package Name *</label>
-                                    <input type="text" name="name" class="form-control create-field @error('name') is-invalid @enderror" value="{{ old('name', $package->name ?? '') }}" required>
-                                    @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    <label class="form-label fw-semibold">{{ __('Package Name *') }}</label>
+                                    <input type="text" name="name" class="form-control create-field @error('name') is-invalid @enderror" value="{{ old('name', $package->{{ __('name ?? \'\') }}" required>
+                                    @error(\'name\')') }} <div class="invalid-feedback">{{ $message }}</div> {{ __('@enderror') }}
                                 </div>
 
                                 <div class="col-12">
-                                    <label class="form-label fw-semibold">Description</label>
+                                    <label class="form-label fw-semibold">{{ __('Description') }}</label>
                                     <textarea name="description" class="form-control create-field" rows="3">{{ old('description', $package->description ?? '') }}</textarea>
                                 </div>
 
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Price ($) *</label>
-                                    <input type="number" name="price" class="form-control create-field @error('price') is-invalid @enderror" value="{{ old('price', $package->price ?? '') }}" step="0.01" min="0" required>
-                                    @error('price') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    <input type="number" name="price" class="form-control create-field @error('price') is-invalid @enderror" value="{{ old('price', $package->{{ __('price ?? \'\') }}" step="0.01" min="0" required>
+                                    @error(\'price\')') }} <div class="invalid-feedback">{{ $message }}</div> {{ __('@enderror') }}
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Duration (days) *</label>
-                                    <input type="number" name="duration_days" class="form-control create-field @error('duration_days') is-invalid @enderror" value="{{ old('duration_days', $package->duration_days ?? '30') }}" min="1" required>
-                                    @error('duration_days') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    <label class="form-label fw-semibold">{{ __('Duration (days) *') }}</label>
+                                    <input type="number" name="duration_days" class="form-control create-field @error('duration_days') is-invalid @enderror" value="{{ old('duration_days', $package->{{ __('duration_days ?? \'30\') }}" min="1" required>
+                                    @error(\'duration_days\')') }} <div class="invalid-feedback">{{ $message }}</div> {{ __('@enderror') }}
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Max Employees (null = unlimited)</label>
-                                    <input type="number" name="max_employees" class="form-control create-field @error('max_employees') is-invalid @enderror" value="{{ old('max_employees', $package->max_employees ?? '') }}" min="1">
-                                    @error('max_employees') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    <label class="form-label fw-semibold">{{ __('Max Employees (null = unlimited)') }}</label>
+                                    <input type="number" name="max_employees" class="form-control create-field @error('max_employees') is-invalid @enderror" value="{{ old('max_employees', $package->{{ __('max_employees ?? \'\') }}" min="1">
+                                    @error(\'max_employees\')') }} <div class="invalid-feedback">{{ $message }}</div> {{ __('@enderror') }}
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Max Currencies *</label>
-                                    <input type="number" name="max_currencies" class="form-control create-field @error('max_currencies') is-invalid @enderror" value="{{ old('max_currencies', $package->max_currencies ?? '5') }}" min="1" max="20" required>
-                                    @error('max_currencies') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    <label class="form-label fw-semibold">{{ __('Max Currencies *') }}</label>
+                                    <input type="number" name="max_currencies" class="form-control create-field @error('max_currencies') is-invalid @enderror" value="{{ old('max_currencies', $package->{{ __('max_currencies ?? \'5\') }}" min="1" max="20" required>
+                                    @error(\'max_currencies\')') }} <div class="invalid-feedback">{{ $message }}</div> {{ __('@enderror') }}
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Max Languages *</label>
-                                    <input type="number" name="max_languages" class="form-control create-field @error('max_languages') is-invalid @enderror" value="{{ old('max_languages', $package->max_languages ?? '3') }}" min="1" max="10" required>
-                                    @error('max_languages') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    <label class="form-label fw-semibold">{{ __('Max Languages *') }}</label>
+                                    <input type="number" name="max_languages" class="form-control create-field @error('max_languages') is-invalid @enderror" value="{{ old('max_languages', $package->{{ __('max_languages ?? \'3\') }}" min="1" max="10" required>
+                                    @error(\'max_languages\')') }} <div class="invalid-feedback">{{ $message }}</div> {{ __('@enderror') }}
                                 </div>
 
                                 <div class="col-md-6 d-flex align-items-end">
                                     <div class="form-check form-switch ps-0 d-flex align-items-center gap-2">
-                                        <input type="checkbox" name="is_active" class="form-check-input ms-0" id="is_active" value="1" {{ old('is_active', $package->is_active ?? true) ? 'checked' : '' }}>
-                                        <label class="form-check-label fw-semibold" for="is_active">Active</label>
+                                        <input type="checkbox" name="is_active" class="form-check-input ms-0" id="is_active" value="1" {{ old('is_active', $package->{{ __('is_active ?? true) ? \'checked\' : \'\' }}>') }}
+                                        <label class="form-check-label fw-semibold" for="is_active">{{ __('Active') }}</label>
                                     </div>
                                 </div>
 
                                 <div class="col-12">
-                                    <label class="form-label fw-semibold">Features Included</label>
+                                    <label class="form-label fw-semibold">{{ __('Features Included') }}</label>
                                     <div class="border rounded-4 p-3 p-lg-4 bg-white">
                                         @php
                                             $allFeatures = ['invoicing' => 'Invoicing & Billing', 'payroll' => 'Payroll Management', 'inventory' => 'Inventory Management', 'basic_reporting' => 'Basic Reporting', 'advanced_reporting' => 'Advanced Reporting', 'multi_branch' => 'Multi-Branch Support', 'api_access' => 'API Access', 'custom_integration' => 'Custom Integration', 'dedicated_support' => 'Dedicated Support', 'backup_restore' => 'Backup & Restore', 'audit_logs' => 'Audit Logs', 'user_management' => 'User Management'];
@@ -109,7 +109,7 @@
 
                         <div class="card-footer bg-white border-0 p-4 p-lg-5 pt-0">
                             <button type="submit" class="btn btn-primary px-4">{{ isset($package) ? 'Update' : 'Create' }} Package</button>
-                            <a href="{{ route('super-admin.packages.index') }}" class="btn btn-outline-secondary px-4">Cancel</a>
+                            <a href="{{ route('super-admin.packages.index') }}" class="btn btn-outline-secondary px-4">{{ __('Cancel') }}</a>
                         </div>
                     </form>
                 </div>
@@ -118,11 +118,11 @@
             <div class="col-xl-4">
                 <div class="card create-aside h-100">
                     <div class="card-body p-4 p-lg-5">
-                        <h5 class="fw-bold mb-3">Plan guidance</h5>
+                        <h5 class="fw-bold mb-3">{{ __('Plan guidance') }}</h5>
                         <div class="d-flex flex-column gap-3">
-                            <div class="d-flex gap-3"><i class="bi bi-cash-coin mt-1"></i><div>Keep pricing and duration together so the plan reads like a single decision.</div></div>
-                            <div class="d-flex gap-3"><i class="bi bi-grid-1x2-fill mt-1"></i><div>Feature groups are displayed as cards to make the option scan faster.</div></div>
-                            <div class="d-flex gap-3"><i class="bi bi-lightning-charge mt-1"></i><div>Use this structure for both create and edit, so the experience stays consistent.</div></div>
+                            <div class="d-flex gap-3"><i class="bi bi-cash-coin mt-1"></i><div>{{ __('Keep pricing and duration together so the plan reads like a single decision.') }}</div></div>
+                            <div class="d-flex gap-3"><i class="bi bi-grid-1x2-fill mt-1"></i><div>{{ __('Feature groups are displayed as cards to make the option scan faster.') }}</div></div>
+                            <div class="d-flex gap-3"><i class="bi bi-lightning-charge mt-1"></i><div>{{ __('Use this structure for both create and edit, so the experience stays consistent.') }}</div></div>
                         </div>
                     </div>
                 </div>

@@ -69,17 +69,17 @@
             <div class="form-sidebar">
                 @if(isset($safe) && $safe)
                 <div class="sidebar-card">
-                    <div class="sidebar-title">💰 Safe Info</div>
+                    <div class="sidebar-title">{{ __('💰 Safe Info') }}</div>
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-label">Current Balance</span>
+                        <span class="sidebar-stat-label">{{ __('Current Balance') }}</span>
                         <span class="sidebar-stat-value">{{ $currencySymbol ?? '$' }}{{ number_format($safe->balance ?? 0, 2) }}</span>
                     </div>
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-label">Max Balance</span>
+                        <span class="sidebar-stat-label">{{ __('Max Balance') }}</span>
                         <span class="sidebar-stat-value">{{ $safe->max_balance ? $currencySymbol ?? '$' . number_format($safe->max_balance, 2) : 'Unlimited' }}</span>
                     </div>
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-label">Status</span>
+                        <span class="sidebar-stat-label">{{ __('Status') }}</span>
                         <span class="sidebar-stat-value" style="color: {{ $safe->is_active ? '#f59e0b' : '#ef4444' }};">{{ $safe->is_active ? 'Active' : 'Inactive' }}</span>
                     </div>
                 </div>
@@ -92,7 +92,7 @@
                         <h1><i class="bi bi-safe" style="margin-right: 12px; font-size: 36px;"></i>{{ isset($safe) ? __('messages.edit_safe') : __('messages.add_safe') }}</h1>
                     </div>
                     <a href="{{ route('safes.index') }}" class="btn btn-outline-light btn-sm" style="padding: 10px 20px; border-radius: 10px; border: 1.5px solid rgba(255, 255, 255, 0.4); color: white; text-decoration: none;">
-                        <i class="bi bi-arrow-left"></i> Back
+                        <i class="bi bi-arrow-left"></i> {{ __('Back') }}
                     </a>
                 </div>
 
@@ -104,23 +104,27 @@
 
                     <div class="form-body">
                         <div class="form-section">
-                            <div class="form-section-title">📍 Location Information</div>
+                            <div class="form-section-title">{{ __('📍 Location Information') }}</div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.safe_name') }} <span class="required">*</span></label>
                                     <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $safe->name ?? '') }}" placeholder="Enter safe name" required>
-                                    @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    @error('name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.location') }} <span class="required">*</span></label>
                                     <input type="text" class="form-control @error('location') is-invalid @enderror" name="location" value="{{ old('location', $safe->location ?? '') }}" placeholder="Enter location" required>
-                                    @error('location')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    @error('location')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-section">
-                            <div class="form-section-title">💳 Balance Settings</div>
+                            <div class="form-section-title">{{ __('💳 Balance Settings') }}</div>
                             @if(isset($safe) && $safe)
                             <div class="form-row">
                                 <div class="form-group">
@@ -130,7 +134,9 @@
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.max_balance') }}</label>
                                     <input type="number" class="form-control @error('max_balance') is-invalid @enderror" name="max_balance" step="0.01" min="0" placeholder="Leave empty for unlimited" value="{{ old('max_balance', $safe->max_balance ?? '') }}">
-                                    @error('max_balance')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    @error('max_balance')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                             @else
@@ -138,16 +144,18 @@
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.max_balance') }}</label>
                                     <input type="number" class="form-control @error('max_balance') is-invalid @enderror" name="max_balance" step="0.01" min="0" placeholder="Leave empty for unlimited" value="{{ old('max_balance') }}">
-                                    @error('max_balance')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    @error('max_balance')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                             @endif
                         </div>
 
                         <div class="form-section">
-                            <div class="form-section-title">⚙️ Settings</div>
+                            <div class="form-section-title">{{ __('⚙️ Settings') }}</div>
                             <div class="form-checkbox">
-                                <input type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active', isset($safe) && $safe ? $safe->is_active : true) ? 'checked' : '' }}>
+                                <input type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active', isset($safe) && $safe ? $safe->is_active : false) ? 'checked' : '' }}>
                                 <label for="is_active">{{ __('messages.is_active') }}</label>
                             </div>
                             <div style="margin-top: 24px;">

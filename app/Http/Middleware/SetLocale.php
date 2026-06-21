@@ -29,6 +29,7 @@ class SetLocale
 
         session(['locale' => $locale]);
         app()->setLocale($locale);
+        app('translator')->setFallback($locale);
         URL::defaults(['lang' => $locale]);
 
         if (

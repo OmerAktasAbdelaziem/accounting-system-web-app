@@ -8,9 +8,9 @@
         <div>
             <h1 class="page-title">
                 <i class="bi bi-toggles2"></i>
-                Feature Access Control
+                {{ __('Feature Access Control') }}
             </h1>
-            <p class="page-subtitle">Manage feature availability per role and merchant</p>
+            <p class="page-subtitle">{{ __('Manage feature availability per role and merchant') }}</p>
         </div>
     </div>
 </div>
@@ -29,12 +29,12 @@
 
 <!-- Merchant Selection -->
 <div class="form-section mb-4">
-    <h5 class="mb-3">Select Merchant</h5>
+    <h5 class="mb-3">{{ __('Select Merchant') }}</h5>
     <div class="row g-3">
         <div class="col-md-8">
             <form id="merchantForm" method="GET" action="{{ route('super-admin.feature-access.index') }}">
                 <select name="merchant_id" id="merchantSelect" class="form-select" required onchange="document.getElementById('merchantForm').submit();">
-                    <option value="">-- Choose a Merchant --</option>
+                    <option value="">{{ __('-- Choose a Merchant --') }}</option>
                     @foreach($merchants as $merchant)
                     <option value="{{ $merchant->id }}" {{ request('merchant_id') == $merchant->id ? 'selected' : '' }}>
                         {{ $merchant->name }}
@@ -46,14 +46,14 @@
         @if($selectedMerchant)
         <div class="col-md-4 d-flex gap-2">
             <form action="{{ route('super-admin.feature-access.reset') }}" method="POST" class="feature-access-reset-form" style="display:inline;">
-                @csrf
-                <input type="hidden" name="merchant_id" value="{{ $selectedMerchant->id }}">
+                {{ __('@csrf') }}
+                <input type="hidden" name="merchant_id" value="{{ $selectedMerchant->{{ __('id }}">') }}
                 <button type="submit" class="btn btn-outline-warning btn-sm" onclick="return confirm('Reset all features to package defaults?')">
-                    <i class="icon icon-refresh-cw"></i> Reset to Package Defaults
+                    <i class="icon icon-refresh-cw"></i> {{ __('Reset to Package Defaults') }}
                 </button>
             </form>
             <a href="{{ route('super-admin.merchants.show', $selectedMerchant) }}" class="btn btn-outline-info btn-sm">
-                <i class="icon icon-external-link"></i> View Merchant
+                <i class="icon icon-external-link"></i> {{ __('View Merchant') }}
             </a>
         </div>
         @endif
@@ -81,7 +81,7 @@
             <table class="table table-bordered table-hover mb-0" style="table-layout: fixed;">
                 <thead class="table-light sticky-top">
                     <tr>
-                        <th style="width: 200px;">Role / Feature</th>
+                        <th style="width: 200px;">{{ __('Role / Feature') }}</th>
                         @foreach($roles as $role)
                         <th class="text-center" style="width: 120px;">
                             <div class="text-truncate" title="{{ $role->name }}">{{ $role->name }}</div>
@@ -99,11 +99,11 @@
                         <td class="text-center">
                             @php $access = $featureAccess[$feature][$role->id] ?? false; @endphp
                             @if($access)
-                                <span class="badge bg-success">Enabled</span>
-                            @else
-                                <span class="badge bg-secondary">Disabled</span>
+                                <span class="badge bg-success">{{ __('Enabled') }}</span>
+                            {{ __('@else') }}
+                                <span class="badge bg-secondary">{{ __('Disabled') }}</span>
                             @endif
-                            <div class="mt-1"><small><a href="{{ route('roles.index') }}">Manage in Roles</a></small></div>
+                            <div class="mt-1"><small><a href="{{ route('roles.index') }}">{{ __('Manage in Roles') }}</a></small></div>
                         </td>
                         @endforeach
                     </tr>
@@ -115,13 +115,13 @@
         <div class="card-footer bg-light">
             <div class="row align-items-center">
                 <div class="col">
-                    <strong>Legend:</strong>
-                    <span class="badge bg-success ms-2">Enabled</span>
-                    <span class="badge bg-secondary ms-2">Disabled</span>
+                    <strong>{{ __('Legend:') }}</strong>
+                    <span class="badge bg-success ms-2">{{ __('Enabled') }}</span>
+                    <span class="badge bg-secondary ms-2">{{ __('Disabled') }}</span>
                 </div>
                 <div class="col-auto">
                     <small class="text-muted">
-                        Matrix updated: {{ now()->format('M d, Y H:i') }}
+                        Matrix updated: {{ now()->translatedFormat('M d, Y H:i') }}
                     </small>
                 </div>
             </div>
@@ -130,18 +130,18 @@
 
     <div class="card mt-4">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Merchant Employees</h5>
-            <small class="text-muted">Special access overrides for individual employees</small>
+            <h5 class="mb-0">{{ __('Merchant Employees') }}</h5>
+            <small class="text-muted">{{ __('Special access overrides for individual employees') }}</small>
         </div>
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Special Access</th>
-                        <th>Actions</th>
+                        <th>{{ __('Name') }}</th>
+                        <th>{{ __('Email') }}</th>
+                        <th>{{ __('Role') }}</th>
+                        <th>{{ __('Special Access') }}</th>
+                        <th>{{ __('Actions') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -151,7 +151,7 @@
                             $employeeGrantedFeatureKeys = $linkedUser ? ($employeeOverrides[$linkedUser->id] ?? collect())->where('is_enabled', true)->pluck('feature_key')->toArray() : [];
                             $employeeDeniedFeatureKeys = $linkedUser ? ($employeeOverrides[$linkedUser->id] ?? collect())->where('is_enabled', false)->pluck('feature_key')->toArray() : [];
                         @endphp
-                        <tr data-employee-row="{{ $linkedUser?->id ?? '' }}">
+                        <tr data-employee-row="{{ $linkedUser?->{{ __('id ?? \'\' }}">') }}
                             <td>{{ $employee->name }}</td>
                             <td>{{ $employee->email }}</td>
                             <td>{{ $linkedUser?->role?->name ?? $employee->position ?? '-' }}</td>
@@ -165,8 +165,8 @@
                                             <span class="badge bg-danger">Denied: {{ ucfirst(str_replace('_', ' ', $featureKey)) }}</span>
                                         @endforeach
                                     </div>
-                                @else
-                                    <span class="text-muted">No special access</span>
+                                {{ __('@else') }}
+                                    <span class="text-muted">{{ __('No special access') }}</span>
                                 @endif
                             </td>
                             <td>
@@ -181,7 +181,7 @@
                                             data-denied-feature-keys='@json($employeeDeniedFeatureKeys)'>
                                         Manage Access
                                     </button>
-                                @else
+                                {{ __('@else') }}
                                     <button type="button"
                                             class="btn btn-sm btn-outline-success create-employee-login-btn"
                                             data-bs-toggle="modal"
@@ -194,49 +194,49 @@
                                 @endif
                             </td>
                         </tr>
-                    @empty
+                    {{ __('@empty') }}
                         <tr>
-                            <td colspan="5" class="text-center text-muted py-4">No employees found for this merchant</td>
+                            <td colspan="5" class="text-center text-muted py-4">{{ __('No employees found for this merchant') }}</td>
                         </tr>
-                    @endforelse
+                    {{ __('@endforelse') }}
                 </tbody>
             </table>
         </div>
     </div>
 
     <div class="card mt-3">
-        <div class="card-header bg-light"><h5 class="mb-0">Feature Definitions</h5></div>
+        <div class="card-header bg-light"><h5 class="mb-0">{{ __('Feature Definitions') }}</h5></div>
         <div class="card-body">
             <div class="alert alert-warning py-2">
-                <strong>Note:</strong> employee-specific denies override role access for the selected pages.
+                <strong>{{ __('Note:') }}</strong> {{ __('employee-specific denies override role access for the selected pages.') }}
             </div>
             <div class="row">
                 <div class="col-md-6">
                     <ul class="mb-0">
-                        <li><strong>invoicing</strong> - Create and manage invoices</li>
-                        <li><strong>payroll</strong> - Employee payroll management</li>
-                        <li><strong>inventory</strong> - Inventory tracking and management</li>
-                        <li><strong>basic_reporting</strong> - Basic financial reports</li>
-                        <li><strong>advanced_reporting</strong> - Advanced analytics and custom reports</li>
+                        <li><strong>{{ __('invoicing') }}</strong> {{ __('- Create and manage invoices') }}</li>
+                        <li><strong>{{ __('payroll') }}</strong> {{ __('- Employee payroll management') }}</li>
+                        <li><strong>{{ __('inventory') }}</strong> {{ __('- Inventory tracking and management') }}</li>
+                        <li><strong>{{ __('basic_reporting') }}</strong> {{ __('- Basic financial reports') }}</li>
+                        <li><strong>{{ __('advanced_reporting') }}</strong> {{ __('- Advanced analytics and custom reports') }}</li>
                     </ul>
                 </div>
                 <div class="col-md-6">
                     <ul class="mb-0">
-                        <li><strong>multi_branch</strong> - Support for multiple branches</li>
-                        <li><strong>api_access</strong> - REST API access</li>
-                        <li><strong>custom_integration</strong> - Third-party integrations</li>
-                        <li><strong>dedicated_support</strong> - Priority support</li>
-                        <li><strong>backup_restore</strong> - Automated backups</li>
-                        <li><strong>live_chat_floating</strong> - Live chat floating launcher (show/hide floating chat widget)</li>
+                        <li><strong>{{ __('multi_branch') }}</strong> {{ __('- Support for multiple branches') }}</li>
+                        <li><strong>{{ __('api_access') }}</strong> {{ __('- REST API access') }}</li>
+                        <li><strong>{{ __('custom_integration') }}</strong> {{ __('- Third-party integrations') }}</li>
+                        <li><strong>{{ __('dedicated_support') }}</strong> {{ __('- Priority support') }}</li>
+                        <li><strong>{{ __('backup_restore') }}</strong> {{ __('- Automated backups') }}</li>
+                        <li><strong>{{ __('live_chat_floating') }}</strong> {{ __('- Live chat floating launcher (show/hide floating chat widget)') }}</li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
 
-    @else
+    {{ __('@else') }}
     <div class="alert alert-info">
-        <strong>Select a merchant to view their feature access matrix</strong>
+        <strong>{{ __('Select a merchant to view their feature access matrix') }}</strong>
     </div>
     @endif
 </div>
@@ -245,24 +245,24 @@
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <form method="POST" action="{{ route('super-admin.feature-access.employee.update') }}" id="employeeAccessForm">
-                @csrf
+                {{ __('@csrf') }}
                 <div class="modal-header">
-                    <h5 class="modal-title">Manage Employee Special Access</h5>
+                    <h5 class="modal-title">{{ __('Manage Employee Special Access') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="merchant_id" value="{{ $selectedMerchant?->id }}">
+                    <input type="hidden" name="merchant_id" value="{{ $selectedMerchant?->{{ __('id }}">') }}
                     <input type="hidden" name="user_id" id="employeeAccessUserId">
                     <div class="mb-3">
-                        <strong id="employeeAccessName">Employee</strong>
-                        <div class="text-muted small">Select the pages this employee should access in addition to their role access.</div>
+                        <strong id="employeeAccessName">{{ __('Employee') }}</strong>
+                        <div class="text-muted small">{{ __('Select the pages this employee should access in addition to their role access.') }}</div>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Action</label>
+                        <label class="form-label">{{ __('Action') }}</label>
                         <select name="decision" id="employeeAccessDecision" class="form-select" required>
-                            <option value="grant">Grant selected pages</option>
-                            <option value="deny">Deny selected pages</option>
+                            <option value="grant">{{ __('Grant selected pages') }}</option>
+                            <option value="deny">{{ __('Deny selected pages') }}</option>
                         </select>
                     </div>
 
@@ -281,8 +281,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary-orange">Save Access</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-primary-orange">{{ __('Save Access') }}</button>
                 </div>
             </form>
         </div>
@@ -293,43 +293,43 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <form method="POST" action="{{ route('super-admin.feature-access.employee.login') }}" id="employeeLoginForm">
-                @csrf
+                {{ __('@csrf') }}
                 <div class="modal-header">
-                    <h5 class="modal-title">Create Login User</h5>
+                    <h5 class="modal-title">{{ __('Create Login User') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="merchant_id" value="{{ $selectedMerchant?->id }}">
+                    <input type="hidden" name="merchant_id" value="{{ $selectedMerchant?->{{ __('id }}">') }}
                     <input type="hidden" name="employee_id" id="employeeLoginEmployeeId">
                     <div class="mb-3">
-                        <strong id="employeeLoginName">Employee</strong>
-                        <div class="text-muted small">This will create a login account for the selected employee.</div>
+                        <strong id="employeeLoginName">{{ __('Employee') }}</strong>
+                        <div class="text-muted small">{{ __('This will create a login account for the selected employee.') }}</div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Email</label>
+                        <label class="form-label">{{ __('Email') }}</label>
                         <input type="email" name="email" class="form-control" id="employeeLoginEmail" required>
-                        <small class="text-muted">This email will also be saved on the employee record so the account can be linked later.</small>
-                        <div id="employeeEmailWarning" class="small text-danger mt-1 d-none">This email already exists in the system.</div>
+                        <small class="text-muted">{{ __('This email will also be saved on the employee record so the account can be linked later.') }}</small>
+                        <div id="employeeEmailWarning" class="small text-danger mt-1 d-none">{{ __('This email already exists in the system.') }}</div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Password</label>
+                        <label class="form-label">{{ __('Password') }}</label>
                         <div class="input-group">
                             <input type="password" name="password" class="form-control" id="employeeLoginPassword" required>
-                            <button type="button" class="btn btn-outline-secondary" id="toggleEmployeePassword">Show</button>
+                            <button type="button" class="btn btn-outline-secondary" id="toggleEmployeePassword">{{ __('Show') }}</button>
                         </div>
-                        <small class="text-muted">Enter the password manually for the new login account.</small>
+                        <small class="text-muted">{{ __('Enter the password manually for the new login account.') }}</small>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Confirm Password</label>
+                        <label class="form-label">{{ __('Confirm Password') }}</label>
                         <div class="input-group">
                             <input type="password" name="password_confirmation" class="form-control" id="employeeLoginPasswordConfirmation" required>
-                            <button type="button" class="btn btn-outline-secondary" id="toggleEmployeePasswordConfirmation">Show</button>
+                            <button type="button" class="btn btn-outline-secondary" id="toggleEmployeePasswordConfirmation">{{ __('Show') }}</button>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Create Login User</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-success">{{ __('Create Login User') }}</button>
                 </div>
             </form>
         </div>

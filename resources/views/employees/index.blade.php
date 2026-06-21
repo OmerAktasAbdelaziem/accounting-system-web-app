@@ -91,12 +91,12 @@
         @forelse($employees ?? [] as $employee)
             <div class="employee-mobile-card">
                 <div class="top">
-                        <div>
-                            <strong>{{ $employee->name }}</strong>
-                            <div class="small text-muted">{{ $employee->position }}</div>
-                        </div>
-                    <div class="text-end fw-bold">{{ $currencySymbol }}{{ number_format($employee->base_salary, 2) }}</div>
+                    <div>
+                        <strong>{{ $employee->name }}</strong>
+                        <div class="small text-muted">{{ $employee->position }}</div>
                     </div>
+                    <div class="text-end fw-bold">{{ $currencySymbol }}{{ number_format($employee->base_salary, 2) }}</div>
+                </div>
                 <div class="meta">
                     <div class="bg-light rounded-4 p-2">
                         <div class="text-muted small">{{ __('messages.position') }}</div>
@@ -108,15 +108,15 @@
                     </div>
                 </div>
                 <div class="d-grid gap-2">
-                        @feature('employees.view')
-                            <a href="{{ route('employees.show', $employee->id) }}" class="btn btn-sm btn-info">{{ __('messages.view') }}</a>
-                        @endfeature
-                        @feature('employees.edit')
-                            <a href="{{ route('employees.edit', $employee->id) }}" class="btn btn-sm btn-warning">{{ __('messages.edit') }}</a>
-                        @endfeature
-                        @feature('employees.delete')
-                            <button onclick="deleteEmployee({{ $employee->id }})" class="btn btn-sm btn-danger">{{ __('messages.delete') }}</button>
-                        @endfeature
+                    @feature('employees.view')
+                        <a href="{{ route('employees.show', $employee->id) }}" class="btn btn-sm btn-info">{{ __('messages.view') }}</a>
+                    @endfeature
+                    @feature('employees.edit')
+                        <a href="{{ route('employees.edit', $employee->id) }}" class="btn btn-sm btn-warning">{{ __('messages.edit') }}</a>
+                    @endfeature
+                    @feature('employees.delete')
+                        <button onclick="deleteEmployee({{ $employee->id }})" class="btn btn-sm btn-danger">{{ __('messages.delete') }}</button>
+                    @endfeature
                 </div>
             </div>
         @empty
@@ -146,13 +146,11 @@
                                     <i class="bi bi-eye"></i>
                                 </a>
                             @endfeature
-
                             @feature('employees.edit')
                                 <a href="{{ route('employees.edit', $employee->id) }}" class="btn btn-sm btn-warning">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                             @endfeature
-
                             @feature('employees.delete')
                                 <button onclick="deleteEmployee({{ $employee->id }})" class="btn btn-sm btn-danger">
                                     <i class="bi bi-trash"></i>

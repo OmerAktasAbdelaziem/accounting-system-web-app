@@ -24,8 +24,10 @@
                 </label>
             </div>
         @empty
-            <p class="text-muted mb-0">No branches available</p>
+            <p class="text-muted mb-0">{{ __('No branches available') }}</p>
         @endforelse
     </div>
-    @error('branch_ids')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+    @error('branch_ids')
+        <div class="invalid-feedback d-block">{{ $message }}</div>
+    @enderror
 </div>

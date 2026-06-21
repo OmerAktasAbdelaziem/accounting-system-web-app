@@ -11,6 +11,7 @@ class LocaleController extends Controller
         if (in_array($locale, ['en', 'ar', 'tr'], true)) {
             session(['locale' => $locale]);
             app()->setLocale($locale);
+            app('translator')->setFallback($locale);
         } else {
             $locale = 'en';
         }

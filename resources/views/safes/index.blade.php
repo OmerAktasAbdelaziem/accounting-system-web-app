@@ -63,7 +63,7 @@
     </div>
 </div>
 </div>
-<style>
+    <style>
     .safes-title { color: #000 !important; }
 </style>
 

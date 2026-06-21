@@ -423,7 +423,7 @@
                         {{ __('messages.accounting_system') }}
                     </div>
                     <h1>{{ __('messages.login_to_continue') }}</h1>
-                    <p>Access merchant workflows, reporting, and operational screens from one place.</p>
+                    <p>{{ __('Access merchant workflows, reporting, and operational screens from one place.') }}</p>
 
                     <div class="merchant-login-features">
                         <div class="merchant-login-feature">
@@ -431,8 +431,8 @@
                                 <i class="bi bi-shield-check"></i>
                             </div>
                             <div class="merchant-login-feature-text">
-                                <div class="merchant-login-feature-title">Secure sign-in</div>
-                                <div class="merchant-login-feature-desc">Protected merchant workspace access</div>
+                                <div class="merchant-login-feature-title">{{ __('Secure sign-in') }}</div>
+                                <div class="merchant-login-feature-desc">{{ __('Protected merchant workspace access') }}</div>
                             </div>
                         </div>
                         <div class="merchant-login-feature">
@@ -440,8 +440,8 @@
                                 <i class="bi bi-diagram-3"></i>
                             </div>
                             <div class="merchant-login-feature-text">
-                                <div class="merchant-login-feature-title">Branch-aware data</div>
-                                <div class="merchant-login-feature-desc">Work with the data tied to your merchant</div>
+                                <div class="merchant-login-feature-title">{{ __('Branch-aware data') }}</div>
+                                <div class="merchant-login-feature-desc">{{ __('Work with the data tied to your merchant') }}</div>
                             </div>
                         </div>
                     </div>
@@ -449,10 +449,10 @@
 
                 <div class="merchant-login-footer">
                     <a href="{{ route('landing') }}">
-                        <i class="bi bi-house me-1"></i> Back to Home
+                        <i class="bi bi-house me-1"></i> {{ __('Back to Home') }}
                     </a>
                     <a href="{{ route('super-admin.login') }}">
-                        Admin Login <i class="bi bi-arrow-right ms-1"></i>
+                        {{ __('Admin Login') }} <i class="bi bi-arrow-right ms-1"></i>
                     </a>
                 </div>
             </div>
@@ -469,9 +469,9 @@
                 </a>
 
                 <div class="merchant-form-header">
-                    <span class="merchant-form-header-badge">Merchant Portal</span>
-                    <h2>Sign in to your workspace</h2>
-                    <p>Use your merchant credentials to continue.</p>
+                    <span class="merchant-form-header-badge">{{ __('Merchant Portal') }}</span>
+                    <h2>{{ __('Sign in to your workspace') }}</h2>
+                    <p>{{ __('Use your merchant credentials to continue.') }}</p>
                 </div>
 
                 @if($errors->any())
@@ -489,22 +489,22 @@
                 @endif
 
                 <form method="POST" action="{{ route('login') }}">
-                    @csrf
+                    {{ __('@csrf') }}
 
                     <div class="merchant-form-group">
                         <label class="merchant-form-label">{{ __('messages.email') }}</label>
                         <input type="email" name="email" class="merchant-form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required placeholder="admin@merchant.com">
-                        @error('email')
+                        {{ __('@error(\'email\')') }}
                             <span class="merchant-invalid-feedback">{{ $message }}</span>
-                        @enderror
+                        {{ __('@enderror') }}
                     </div>
 
                     <div class="merchant-form-group">
                         <label class="merchant-form-label">{{ __('messages.password') }}</label>
                         <input type="password" name="password" class="merchant-form-control @error('password') is-invalid @enderror" required placeholder="••••••••">
-                        @error('password')
+                        {{ __('@error(\'password\')') }}
                             <span class="merchant-invalid-feedback">{{ $message }}</span>
-                        @enderror
+                        {{ __('@enderror') }}
                     </div>
 
                     <div class="merchant-form-group">

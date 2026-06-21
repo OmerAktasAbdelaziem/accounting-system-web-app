@@ -28,9 +28,9 @@
     <div class="container-fluid">
         <div class="create-hero mb-4 d-flex flex-wrap justify-content-between align-items-start gap-3">
             <div>
-                <div class="text-uppercase text-white-50 small fw-semibold mb-2">Procurement</div>
-                <h1 class="mb-2 fw-bold" style="letter-spacing: -0.03em;">{{ __('Create Supplier') }}</h1>
-                <p class="mb-0 text-white-50">Capture supplier details in a cleaner, guided layout.</p>
+                <div class="text-uppercase text-white-50 small fw-semibold mb-2">{{ __('messages.procurement') }}</div>
+                <h1 class="mb-2 fw-bold" style="letter-spacing: -0.03em;">{{ __('messages.create_supplier') }}</h1>
+                <p class="mb-0 text-white-50">{{ __('messages.create_supplier_description') }}</p>
             </div>
         </div>
 
@@ -41,15 +41,15 @@
                         <form action="{{ route('suppliers.store') }}" method="POST" class="row g-3">
                             @csrf
                             <div class="col-12">
-                                <label class="form-label fw-semibold">{{ __('Name') }}</label>
+                                <label class="form-label fw-semibold">{{ __('messages.name') }}</label>
                                 <input type="text" name="name" class="form-control create-field" value="{{ old('name') }}" required>
                             </div>
                             <div class="col-12">
-                                <label class="form-label fw-semibold">{{ __('Address') }}</label>
+                                <label class="form-label fw-semibold">{{ __('messages.address') }}</label>
                                 <textarea name="address" class="form-control create-field" rows="3">{{ old('address') }}</textarea>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">{{ __('Opening Balance') }}</label>
+                                <label class="form-label fw-semibold">{{ __('messages.opening_balance') }}</label>
                                 <input type="number" step="0.01" name="opening_balance" class="form-control create-field" value="{{ old('opening_balance', 0) }}">
                             </div>
 
@@ -58,8 +58,8 @@
                             </div>
 
                             <div class="col-12 d-flex gap-2 pt-2">
-                                <button class="btn btn-primary px-4">{{ __('Save') }}</button>
-                                <a href="{{ route('suppliers.index') }}" class="btn btn-outline-secondary px-4">{{ __('Cancel') }}</a>
+                                <button class="btn btn-primary px-4">{{ __('messages.save') }}</button>
+                                <a href="{{ route('suppliers.index') }}" class="btn btn-outline-secondary px-4">{{ __('messages.cancel') }}</a>
                             </div>
                         </form>
                     </div>

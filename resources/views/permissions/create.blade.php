@@ -15,9 +15,9 @@
     <div class="container-fluid">
         <div class="create-hero mb-4 d-flex flex-wrap justify-content-between align-items-start gap-3">
             <div>
-                <div class="text-uppercase text-white-50 small fw-semibold mb-2">Access Control</div>
+                <div class="text-uppercase text-white-50 small fw-semibold mb-2">{{ __('Access Control') }}</div>
                 <h1 class="mb-2 fw-bold" style="letter-spacing: -0.03em;">{{ __('permissions.add_permission') }}</h1>
-                <p class="mb-0 text-white-50">Create a permission with a faster, cleaner workflow.</p>
+                <p class="mb-0 text-white-50">{{ __('Create a permission with a faster, cleaner workflow.') }}</p>
             </div>
             <a href="{{ route('permissions.index') }}" class="btn btn-light rounded-pill px-3"><i class="fas fa-arrow-left me-2"></i>{{ __('actions.back') }}</a>
         </div>
@@ -38,12 +38,12 @@
                         @endif
 
                         <form action="{{ route('permissions.store') }}" method="POST" class="row g-3">
-                            @csrf
+                            {{ __('@csrf') }}
 
                             <div class="col-12">
                                 <label for="name" class="form-label fw-semibold">{{ __('permissions.permission_name') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control create-field @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" placeholder="e.g., create_products" required>
-                                @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'name\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                                 <small class="text-muted d-block mt-1">{{ __('permissions.use_snake_case') }}</small>
                             </div>
 
@@ -55,13 +55,13 @@
                                         <option value="{{ $category }}">{{ ucfirst($category) }}</option>
                                     @endforeach
                                 </datalist>
-                                @error('category')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'category\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-12">
                                 <label for="description" class="form-label fw-semibold">{{ __('permissions.description') }}</label>
                                 <textarea class="form-control create-field @error('description') is-invalid @enderror" id="description" name="description" rows="3">{{ old('description') }}</textarea>
-                                @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                {{ __('@error(\'description\')') }}<div class="invalid-feedback">{{ $message }}</div>{{ __('@enderror') }}
                             </div>
 
                             <div class="col-12 d-flex gap-2 pt-2">

@@ -181,12 +181,12 @@
         @if($commission->status !== 'paid')
             <form method="POST" action="{{ route('commissions.pay', $commission) }}">
                 @csrf
-                <button type="submit" class="btn btn-success" onclick="return confirm('Mark this commission as paid? It will be hidden from the active list but stay in the database.')">
-                    <i class="bi bi-cash-coin"></i> Pay Commission
+                <button type="submit" class="btn btn-success" onclick="return confirm('{{ __('Mark this commission as paid? It will be hidden from the active list but stay in the database.') }}')">
+                    <i class="bi bi-cash-coin"></i> {{ __('Pay Commission') }}
                 </button>
             </form>
         @else
-            <span class="badge bg-success align-self-center">Paid</span>
+            <span class="badge bg-success align-self-center">{{ __('Paid') }}</span>
         @endif
     </div>
 </div>
@@ -233,7 +233,7 @@
                 <h5 class="mb-0"><i class="bi bi-plus-circle"></i> {{ __('messages.add_commission') }}</h5>
             </div>
             <div class="card-body">
-                <p class="text-muted small mb-4">Add a new commission for this employee from here. The general create page is only for first-time commission profiles.</p>
+                <p class="text-muted small mb-4">{{ __('Add a new commission for this employee from here. The general create page is only for first-time commission profiles.') }}</p>
 
                 <form method="POST" action="{{ route('commissions.append', $commission) }}">
                     @csrf
@@ -242,31 +242,41 @@
                     <div class="mb-3">
                         <label class="form-label fw-bold">{{ __('messages.commission_date') }} *</label>
                         <input type="date" class="form-control @error('commission_date') is-invalid @enderror" name="commission_date" value="{{ old('commission_date', now()->format('Y-m-d')) }}" required>
-                        @error('commission_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        @error('commission_date')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">{{ __('messages.sale_amount') }} *</label>
                         <input type="text" inputmode="decimal" class="form-control @error('sale_amount') is-invalid @enderror" name="sale_amount" value="{{ old('sale_amount') }}" placeholder="0.00" required>
-                        @error('sale_amount')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        @error('sale_amount')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">{{ __('messages.commission_rate') }} (%) *</label>
                         <input type="text" inputmode="decimal" class="form-control @error('commission_rate') is-invalid @enderror" name="commission_rate" value="{{ old('commission_rate', $employee->commission_rate ?? '') }}" placeholder="0" required>
-                        @error('commission_rate')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        @error('commission_rate')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">{{ __('messages.reference_type') }}</label>
                         <input type="text" class="form-control @error('reference_type') is-invalid @enderror" name="reference_type" value="{{ old('reference_type') }}" placeholder="Optional reference">
-                        @error('reference_type')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        @error('reference_type')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">{{ __('messages.notes') }}</label>
                         <textarea class="form-control @error('notes') is-invalid @enderror" name="notes" rows="3" placeholder="Optional notes">{{ old('notes') }}</textarea>
-                        @error('notes')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        @error('notes')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
@@ -304,7 +314,7 @@
                     <tbody>
                         @forelse($commissions as $item)
                             <tr>
-                                <td>{{ $item->commission_date?->format('M d, Y') ?? '-' }}</td>
+                                <td>{{ $item->commission_date?->translatedFormat('M d, Y') ?? '-' }}</td>
                                 <td>{{ $currencySymbol }}{{ number_format($item->sale_amount, 2) }}</td>
                                 <td>{{ number_format($item->commission_rate, 2) }}%</td>
                                 <td><strong>{{ $currencySymbol }}{{ number_format($item->commission_amount, 2) }}</strong></td>
@@ -312,29 +322,29 @@
                                     <div class="commission-mobile-actions commission-action-grid">
                                         <a href="{{ route('commissions.edit', $item) }}" class="btn btn-outline-warning btn-sm">
                                             <i class="bi bi-pencil"></i>
-                                            <span class="ms-1">Edit</span>
+                                            <span class="ms-1">{{ __('Edit') }}</span>
                                         </a>
                                         @if($item->status !== 'paid')
                                             <form method="POST" action="{{ route('commissions.pay', $item) }}">
                                                 @csrf
-                                                <button type="submit" class="btn btn-outline-success btn-sm" onclick="return confirm('Mark this commission as paid? It will disappear from the active list.')">
+                                                <button type="submit" class="btn btn-outline-success btn-sm" onclick="return confirm('{{ __('Mark this commission as paid? It will disappear from the active list.') }}')">
                                                     <i class="bi bi-cash-coin"></i>
-                                                    <span class="ms-1">Pay</span>
+                                                    <span class="ms-1">{{ __('Pay') }}</span>
                                                 </button>
                                             </form>
                                         @else
-                                            <span class="btn btn-outline-success disabled btn-sm"><i class="bi bi-check2-circle"></i><span class="ms-1">Paid</span></span>
+                                            <span class="btn btn-outline-success disabled btn-sm"><i class="bi bi-check2-circle"></i><span class="ms-1">{{ __('Paid') }}</span></span>
                                         @endif
                                         <button type="button" class="btn btn-outline-danger btn-sm" onclick="deleteCommission({{ $item->id }})">
                                             <i class="bi bi-trash"></i>
-                                            <span class="ms-1">Delete</span>
+                                            <span class="ms-1">{{ __('Delete') }}</span>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center text-muted py-4">No commissions recorded yet.</td>
+                                <td colspan="5" class="text-center text-muted py-4">{{ __('No commissions recorded yet.') }}</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -346,7 +356,7 @@
                     <div class="commission-mobile-card">
                         <div class="d-flex justify-content-between align-items-start gap-2">
                             <div>
-                                <div class="fw-bold">{{ $item->commission_date?->format('M d, Y') ?? '-' }}</div>
+                                <div class="fw-bold">{{ $item->commission_date?->translatedFormat('M d, Y') ?? '-' }}</div>
                                 <div class="text-muted small">{{ $currencySymbol }}{{ number_format($item->sale_amount, 2) }} sale · {{ number_format($item->commission_rate, 2) }}%</div>
                             </div>
                             <span class="badge {{ $item->status === 'paid' ? 'bg-success' : 'bg-warning text-dark' }}">{{ ucfirst($item->status ?? 'draft') }}</span>
@@ -354,35 +364,38 @@
 
                         <div class="meta">
                             <div class="meta-item">
-                                <span class="label">Commission</span>
+                                <span class="label">{{ __('Commission') }}</span>
                                 <span class="value">{{ $currencySymbol }}{{ number_format($item->commission_amount, 2) }}</span>
                             </div>
                             <div class="meta-item">
-                                <span class="label">Reference</span>
+                                <span class="label">{{ __('Reference') }}</span>
                                 <span class="value">{{ $item->reference_type ?? '-' }}</span>
                             </div>
                         </div>
 
                         <div class="commission-mobile-actions">
                             <a href="{{ route('commissions.edit', $item) }}" class="btn btn-outline-warning">
-                                <i class="bi bi-pencil"></i> Edit
+                                <i class="bi bi-pencil"></i> {{ __('Edit') }}
                             </a>
                             @if($item->status !== 'paid')
                                 <form method="POST" action="{{ route('commissions.pay', $item) }}">
                                     @csrf
-                                    <button type="submit" class="btn btn-outline-success" onclick="return confirm('Mark this commission as paid? It will disappear from the active list.')">
-                                        <i class="bi bi-cash-coin"></i> Pay
+                                    <button type="submit" class="btn btn-outline-success" onclick="return confirm('{{ __('Mark this commission as paid? It will disappear from the active list.') }}')">
+                                        <i class="bi bi-cash-coin"></i> {{ __('Pay') }}
                                     </button>
                                 </form>
                             @else
-                                <span class="btn btn-outline-success disabled"><i class="bi bi-check2-circle"></i> Paid</span>
+                                <span class="btn btn-outline-success disabled"><i class="bi bi-check2-circle"></i> {{ __('Paid') }}</span>
                             @endif
                             <button type="button" class="btn btn-outline-danger" onclick="deleteCommission({{ $item->id }})">
-                                <i class="bi bi-trash"></i> Delete
+                                <i class="bi bi-trash"></i> {{ __('Delete') }}
                             </button>
                         </div>
                     </div>
                 @empty
+                    <div class="commission-mobile-card text-center text-muted py-4">
+                        {{ __('No commissions recorded yet.') }}
+                    </div>
                 @endforelse
             </div>
         </div>
@@ -399,7 +412,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.commission_date') }}</label>
-                        <div class="text-muted">{{ $latestCommission?->commission_date?->format('M d, Y') ?? '-' }}</div>
+                        <div class="text-muted">{{ $latestCommission?->commission_date?->translatedFormat('M d, Y') ?? '-' }}</div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.sales_amount') }}</label>
@@ -410,7 +423,7 @@
                         <div class="text-muted">{{ $latestCommission?->reference_type ?? '-' }}</div>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Status</label>
+                        <label class="form-label fw-bold">{{ __('Status') }}</label>
                         <div>
                             <span class="badge {{ $commission->status === 'paid' ? 'bg-success' : 'bg-warning text-dark' }}">
                                 {{ ucfirst($commission->status) }}

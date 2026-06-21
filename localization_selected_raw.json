@@ -1,0 +1,2526 @@
+{
+  "raw_refs": {
+    "audit-logs\\index.blade.php": [
+      {
+        "type": "__",
+        "line": 3,
+        "text": "audit_logs.title",
+        "snippet": "@section('title', __('audit_logs.title'))"
+      },
+      {
+        "type": "__",
+        "line": 11,
+        "text": "audit_logs.audit_logs",
+        "snippet": "{{ __('audit_logs.audit_logs') }}"
+      },
+      {
+        "type": "__",
+        "line": 16,
+        "text": "audit_logs.export",
+        "snippet": "<a href=\"{{ route('audit-logs.export', request()->query()) }}\" class=\"btn btn-primary-modern btn-sm\" title=\"{{ __('audit_logs.export') }}\">"
+      },
+      {
+        "type": "__",
+        "line": 18,
+        "text": "audit_logs.export",
+        "snippet": "{{ __('audit_logs.export') }}"
+      },
+      {
+        "type": "__",
+        "line": 59,
+        "text": "audit_logs.filter_by_date",
+        "snippet": "{{ __('audit_logs.filter_by_date') }}"
+      },
+      {
+        "type": "__",
+        "line": 65,
+        "text": "audit_logs.from_date",
+        "snippet": "<label for=\"date_from\" class=\"form-label\">{{ __('audit_logs.from_date') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 71,
+        "text": "audit_logs.to_date",
+        "snippet": "<label for=\"date_to\" class=\"form-label\">{{ __('audit_logs.to_date') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 77,
+        "text": "audit_logs.user",
+        "snippet": "<label for=\"user_id\" class=\"form-label\">{{ __('audit_logs.user') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 79,
+        "text": "audit_logs.filter_by_user",
+        "snippet": "<option value=\"\">{{ __('audit_logs.filter_by_user') }}</option>"
+      },
+      {
+        "type": "__",
+        "line": 89,
+        "text": "audit_logs.action",
+        "snippet": "<label for=\"action\" class=\"form-label\">{{ __('audit_logs.action') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 91,
+        "text": "audit_logs.filter_by_action",
+        "snippet": "<option value=\"\">{{ __('audit_logs.filter_by_action') }}</option>"
+      },
+      {
+        "type": "__",
+        "line": 101,
+        "text": "audit_logs.model_type",
+        "snippet": "<label for=\"model_type\" class=\"form-label\">{{ __('audit_logs.model_type') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 103,
+        "text": "audit_logs.filter_by_model",
+        "snippet": "<option value=\"\">{{ __('audit_logs.filter_by_model') }}</option>"
+      },
+      {
+        "type": "__",
+        "line": 117,
+        "text": "audit_logs.search",
+        "snippet": "{{ __('audit_logs.search') }}"
+      },
+      {
+        "type": "__",
+        "line": 121,
+        "text": "audit_logs.clear_filters",
+        "snippet": "{{ __('audit_logs.clear_filters') }}"
+      },
+      {
+        "type": "__",
+        "line": 135,
+        "text": "audit_logs.date",
+        "snippet": "<th>{{ __('audit_logs.date') }}</th>"
+      },
+      {
+        "type": "__",
+        "line": 136,
+        "text": "audit_logs.time",
+        "snippet": "<th>{{ __('audit_logs.time') }}</th>"
+      },
+      {
+        "type": "__",
+        "line": 137,
+        "text": "audit_logs.user",
+        "snippet": "<th>{{ __('audit_logs.user') }}</th>"
+      },
+      {
+        "type": "__",
+        "line": 138,
+        "text": "audit_logs.action",
+        "snippet": "<th>{{ __('audit_logs.action') }}</th>"
+      },
+      {
+        "type": "__",
+        "line": 139,
+        "text": "audit_logs.model_type",
+        "snippet": "<th>{{ __('audit_logs.model_type') }}</th>"
+      },
+      {
+        "type": "__",
+        "line": 140,
+        "text": "audit_logs.model_id",
+        "snippet": "<th>{{ __('audit_logs.model_id') }}</th>"
+      },
+      {
+        "type": "__",
+        "line": 141,
+        "text": "audit_logs.ip_address",
+        "snippet": "<th>{{ __('audit_logs.ip_address') }}</th>"
+      },
+      {
+        "type": "__",
+        "line": 142,
+        "text": "actions.action",
+        "snippet": "<th style=\"width: 100px;\">{{ __('actions.action') }}</th>"
+      },
+      {
+        "type": "__",
+        "line": 190,
+        "text": "actions.view",
+        "snippet": "<a href=\"{{ route('audit-logs.show', $log) }}\" class=\"btn btn-sm btn-primary\" title=\"{{ __('actions.view') }}\">"
+      },
+      {
+        "type": "__",
+        "line": 192,
+        "text": "actions.view",
+        "snippet": "<span class=\"visually-hidden\">{{ __('actions.view') }}</span>"
+      },
+      {
+        "type": "__",
+        "line": 201,
+        "text": "audit_logs.no_logs_found",
+        "snippet": "<p>{{ __('audit_logs.no_logs_found') }}</p>"
+      }
+    ],
+    "audit-logs\\show.blade.php": [
+      {
+        "type": "__",
+        "line": 3,
+        "text": "audit_logs.details",
+        "snippet": "@section('title', __('audit_logs.details'))"
+      },
+      {
+        "type": "__",
+        "line": 13,
+        "text": "audit_logs.details",
+        "snippet": "{{ __('audit_logs.details') }}"
+      },
+      {
+        "type": "__",
+        "line": 17,
+        "text": "actions.back",
+        "snippet": "{{ __('actions.back') }}"
+      },
+      {
+        "type": "__",
+        "line": 26,
+        "text": "audit_logs.user",
+        "snippet": "<label class=\"form-label text-muted small\">{{ __('audit_logs.user') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 38,
+        "text": "audit_logs.action",
+        "snippet": "<label class=\"form-label text-muted small\">{{ __('audit_logs.action') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 68,
+        "text": "audit_logs.model_type",
+        "snippet": "<label class=\"form-label text-muted small\">{{ __('audit_logs.model_type') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 75,
+        "text": "audit_logs.model_id",
+        "snippet": "<label class=\"form-label text-muted small\">{{ __('audit_logs.model_id') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 84,
+        "text": "audit_logs.date",
+        "snippet": "<label class=\"form-label text-muted small\">{{ __('audit_logs.date') }} & {{ __('audit_logs.time') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 84,
+        "text": "audit_logs.time",
+        "snippet": "<label class=\"form-label text-muted small\">{{ __('audit_logs.date') }} & {{ __('audit_logs.time') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 93,
+        "text": "audit_logs.ip_address",
+        "snippet": "<label class=\"form-label text-muted small\">{{ __('audit_logs.ip_address') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 106,
+        "text": "audit_logs.changes",
+        "snippet": "{{ __('audit_logs.changes') }}"
+      },
+      {
+        "type": "__",
+        "line": 118,
+        "text": "audit_logs.new_value",
+        "snippet": "{{ __('audit_logs.new_value') }}"
+      },
+      {
+        "type": "__",
+        "line": 120,
+        "text": "audit_logs.old_value",
+        "snippet": "{{ __('audit_logs.old_value') }}"
+      },
+      {
+        "type": "__",
+        "line": 140,
+        "text": "audit_logs.old_value",
+        "snippet": "{{ __('audit_logs.old_value') }}"
+      },
+      {
+        "type": "__",
+        "line": 158,
+        "text": "audit_logs.no_changes",
+        "snippet": "{{ __('audit_logs.no_changes') }}"
+      },
+      {
+        "type": "__",
+        "line": 166,
+        "text": "audit_logs.user_agent",
+        "snippet": "{{ __('audit_logs.user_agent') }}: {{ $auditLog->user_agent }}"
+      }
+    ],
+    "payroll\\create.blade.php": [
+      {
+        "type": "__",
+        "line": 58,
+        "text": "Create Payroll",
+        "snippet": "<h1 class=\"mb-2 fw-bold\" style=\"letter-spacing: -0.03em;\">{{ __('Create Payroll') }}</h1>"
+      },
+      {
+        "type": "__",
+        "line": 70,
+        "text": "Employee",
+        "snippet": "<label class=\"form-label fw-semibold\">{{ __('Employee') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 72,
+        "text": "Select employee",
+        "snippet": "<option value=\"\">{{ __('Select employee') }}</option>"
+      },
+      {
+        "type": "__",
+        "line": 81,
+        "text": "Year",
+        "snippet": "<label class=\"form-label fw-semibold\">{{ __('Year') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 86,
+        "text": "Month",
+        "snippet": "<label class=\"form-label fw-semibold\">{{ __('Month') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 97,
+        "text": "Basic Salary",
+        "snippet": "<label class=\"form-label fw-semibold\">{{ __('Basic Salary') }} <span class=\"text-danger\">*</span></label>"
+      },
+      {
+        "type": "__",
+        "line": 103,
+        "text": "Allowances",
+        "snippet": "<label class=\"form-label fw-semibold\">{{ __('Allowances') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 110,
+        "text": "Deductions",
+        "snippet": "<label class=\"form-label fw-semibold\">{{ __('Deductions') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 117,
+        "text": "Notes",
+        "snippet": "<label class=\"form-label fw-semibold\">{{ __('Notes') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 122,
+        "text": "Save",
+        "snippet": "<button class=\"btn btn-primary px-4\">{{ __('Save') }}</button>"
+      },
+      {
+        "type": "__",
+        "line": 123,
+        "text": "Cancel",
+        "snippet": "<a href=\"{{ route('payroll.index') }}\" class=\"btn btn-outline-secondary px-4\">{{ __('Cancel') }}</a>"
+      }
+    ],
+    "payroll\\edit.blade.php": [
+      {
+        "type": "__",
+        "line": 123,
+        "text": "Edit Payroll",
+        "snippet": "<h1 class=\"mb-2 fw-bold\" style=\"letter-spacing: -.04em;\">{{ __('Edit Payroll') }}</h1>"
+      },
+      {
+        "type": "__",
+        "line": 127,
+        "text": "Cancel",
+        "snippet": "<i class=\"bi bi-arrow-left me-2\"></i>{{ __('Cancel') }}"
+      },
+      {
+        "type": "__",
+        "line": 146,
+        "text": "Employee",
+        "snippet": "<label class=\"form-label payroll-edit-label\">{{ __('Employee') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 153,
+        "text": "Month/Year",
+        "snippet": "<label class=\"form-label payroll-edit-label\">{{ __('Month/Year') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 161,
+        "text": "Basic Salary",
+        "snippet": "<label class=\"form-label payroll-edit-label\">{{ __('Basic Salary') }} <span class=\"text-danger\">*</span></label>"
+      },
+      {
+        "type": "__",
+        "line": 167,
+        "text": "Commission (Auto-Calculated)",
+        "snippet": "<label class=\"form-label payroll-edit-label\">{{ __('Commission (Auto-Calculated)') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 175,
+        "text": "Allowances",
+        "snippet": "<label class=\"form-label payroll-edit-label\">{{ __('Allowances') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 182,
+        "text": "Deductions",
+        "snippet": "<label class=\"form-label payroll-edit-label\">{{ __('Deductions') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 189,
+        "text": "Notes",
+        "snippet": "<label class=\"form-label payroll-edit-label\">{{ __('Notes') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 195,
+        "text": "Save",
+        "snippet": "<button class=\"btn btn-primary px-4\">{{ __('Save') }}</button>"
+      },
+      {
+        "type": "__",
+        "line": 196,
+        "text": "Cancel",
+        "snippet": "<a href=\"{{ route('payroll.index') }}\" class=\"btn btn-outline-secondary px-4\">{{ __('Cancel') }}</a>"
+      }
+    ],
+    "payroll\\index.blade.php": [
+      {
+        "type": "__",
+        "line": 839,
+        "text": "Pay Payroll",
+        "snippet": "<h5 class=\"modal-title mb-1\">{{ __('Pay Payroll') }}</h5>"
+      },
+      {
+        "type": "__",
+        "line": 853,
+        "text": "Safe",
+        "snippet": "<label class=\"form-label fw-semibold\">{{ __('Safe') }}</label>"
+      },
+      {
+        "type": "__",
+        "line": 855,
+        "text": "Select safe",
+        "snippet": "<option value=\"\">{{ __('Select safe') }}</option>"
+      },
+      {
+        "type": "__",
+        "line": 863,
+        "text": "Cancel",
+        "snippet": "<button type=\"button\" class=\"btn btn-outline-secondary\" data-bs-dismiss=\"modal\">{{ __('Cancel') }}</button>"
+      },
+      {
+        "type": "__",
+        "line": 864,
+        "text": "Confirm Payment",
+        "snippet": "<button type=\"submit\" class=\"btn btn-success\">{{ __('Confirm Payment') }}</button>"
+      }
+    ],
+    "payroll\\show.blade.php": [
+      {
+        "type": "__",
+        "line": 266,
+        "text": "Date",
+        "snippet": "<th>{{ __('Date') }}</th>"
+      },
+      {
+        "type": "__",
+        "line": 267,
+        "text": "Sale Amount",
+        "snippet": "<th>{{ __('Sale Amount') }}</th>"
+      },
+      {
+        "type": "__",
+        "line": 268,
+        "text": "Commission Rate",
+        "snippet": "<th>{{ __('Commission Rate') }}</th>"
+      },
+      {
+        "type": "__",
+        "line": 269,
+        "text": "Commission Amount",
+        "snippet": "<th>{{ __('Commission Amount') }}</th>"
+      },
+      {
+        "type": "__",
+        "line": 270,
+        "text": "Reference",
+        "snippet": "<th>{{ __('Reference') }}</th>"
+      },
+      {
+        "type": "__",
+        "line": 271,
+        "text": "Notes",
+        "snippet": "<th>{{ __('Notes') }}</th>"
+      },
+      {
+        "type": "__",
+        "line": 327,
+        "text": "Date",
+        "snippet": "<th>{{ __('Date') }}</th>"
+      },
+      {
+        "type": "__",
+        "line": 328,
+        "text": "Amount",
+        "snippet": "<th>{{ __('Amount') }}</th>"
+      },
+      {
+        "type": "__",
+        "line": 329,
+        "text": "Description",
+        "snippet": "<th>{{ __('Description') }}</th>"
+      },
+      {
+        "type": "__",
+        "line": 330,
+        "text": "Created By",
+        "snippet": "<th>{{ __('Created By') }}</th>"
+      }
+    ],
+    "reports\\financial.blade.php": [
+      {
+        "type": "__",
+        "line": 38,
+        "text": "Paid payrolls",
+        "snippet": "<div class=\"text-muted small text-uppercase fw-semibold mb-2\">{{ __('Paid payrolls') }}</div>"
+      },
+      {
+        "type": "__",
+        "line": 46,
+        "text": "Paid commissions",
+        "snippet": "<div class=\"text-muted small text-uppercase fw-semibold mb-2\">{{ __('Paid commissions') }}</div>"
+      },
+      {
+        "type": "__",
+        "line": 54,
+        "text": "Payroll safe payouts",
+        "snippet": "<div class=\"text-muted small text-uppercase fw-semibold mb-2\">{{ __('Payroll safe payouts') }}</div>"
+      },
+      {
+        "type": "__",
+        "line": 144,
+        "text": "Paid Payrolls",
+        "snippet": "<strong>{{ __('Paid Payrolls') }}</strong>"
+      },
+      {
+        "type": "__",
+        "line": 194,
+        "text": "Paid Commissions",
+        "snippet": "<strong>{{ __('Paid Commissions') }}</strong>"
+      },
+      {
+        "type": "__",
+        "line": 244,
+        "text": "Payroll Safe Payouts",
+        "snippet": "<strong>{{ __('Payroll Safe Payouts') }}</strong>"
+      }
+    ]
+  },
+  "raw_tokens": {
+    "audit-logs\\index.blade.php": [
+      {
+        "line": 26,
+        "text": "Total Logs",
+        "snippet": "<h6>Total Logs</h6>"
+      },
+      {
+        "line": 33,
+        "text": "Created",
+        "snippet": "<h6>Created</h6>"
+      },
+      {
+        "line": 40,
+        "text": "Updated",
+        "snippet": "<h6>Updated</h6>"
+      },
+      {
+        "line": 47,
+        "text": "Deleted",
+        "snippet": "<h6>Deleted</h6>"
+      }
+    ],
+    "branches\\create.blade.php": [
+      {
+        "line": 33,
+        "text": "Create a branch with the details that matter first.",
+        "snippet": "<p class=\"mb-0 text-white-50\">Create a branch with the details that matter first.</p>"
+      }
+    ],
+    "branches\\partials\\debts-content.blade.php": [
+      {
+        "line": 8,
+        "text": "{{ __('messages.total_suppliers') }}: {{ $branchSuppliers->count() }}",
+        "snippet": "<div class=\"text-muted small\">{{ __('messages.total_suppliers') }}: {{ $branchSuppliers->count() }}</div>"
+      },
+      {
+        "line": 9,
+        "text": "{{ __('messages.total_outstanding') }}: {{ $currencySymbol }}{{ number_format((float) ($branchOutstandingTotal ?? 0), 2) }}",
+        "snippet": "<div class=\"fw-bold text-danger\">{{ __('messages.total_outstanding') }}: {{ $currencySymbol }}{{ number_format((float) ($branchOutstandingTotal ?? 0), 2) }}</div>"
+      }
+    ],
+    "branches\\show.blade.php": [
+      {
+        "line": 248,
+        "text": "Branch status",
+        "snippet": "<div class=\"section-title mb-1\">Branch status</div>"
+      },
+      {
+        "line": 256,
+        "text": "Updated branch overview",
+        "snippet": "<div class=\"text-muted small\">Updated branch overview</div>"
+      },
+      {
+        "line": 261,
+        "text": "{{ $currencySymbol }}{{ number_format((float) ($branchOutstandingTotal ?? 0), 2) }}",
+        "snippet": "<span class=\"fw-bold text-danger\">{{ $currencySymbol }}{{ number_format((float) ($branchOutstandingTotal ?? 0), 2) }}</span>"
+      },
+      {
+        "line": 270,
+        "text": "{{ $branchPayrolls->total() ?? 0 }} payroll records",
+        "snippet": "<div><i class=\"bi bi-wallet2 me-2 text-warning\"></i>{{ $branchPayrolls->total() ?? 0 }} payroll records</div>"
+      },
+      {
+        "line": 312,
+        "text": "Branch analytics",
+        "snippet": "<div class=\"section-title mb-1\">Branch analytics</div>"
+      },
+      {
+        "line": 313,
+        "text": "Branch performance summary",
+        "snippet": "<h3 class=\"h4 mb-1\">Branch performance summary</h3>"
+      },
+      {
+        "line": 323,
+        "text": "Branch analytics",
+        "snippet": "<div class=\"section-title mb-1\">Branch analytics</div>"
+      },
+      {
+        "line": 324,
+        "text": "Sales trend",
+        "snippet": "<h5 class=\"mb-0\">Sales trend</h5>"
+      },
+      {
+        "line": 336,
+        "text": "Branch analytics",
+        "snippet": "<div class=\"section-title mb-1\">Branch analytics</div>"
+      },
+      {
+        "line": 353,
+        "text": "Overview",
+        "snippet": "<button class=\"nav-link active\" id=\"overview-tab\" data-bs-toggle=\"pill\" data-bs-target=\"#overview-pane\" type=\"button\" role=\"tab\" aria-controls=\"overview-pane\" aria-selected=\"true\">Overview</button>"
+      },
+      {
+        "line": 398,
+        "text": "Branch staffing",
+        "snippet": "<h5 class=\"mb-0\">Branch staffing</h5>"
+      },
+      {
+        "line": 425,
+        "text": "Branch employees",
+        "snippet": "<div class=\"small text-muted mb-2\">Branch employees</div>"
+      },
+      {
+        "line": 455,
+        "text": "Branch outstanding",
+        "snippet": "<h5 class=\"mb-0\">Branch outstanding</h5>"
+      },
+      {
+        "line": 458,
+        "text": "{{ $currencySymbol }}{{ number_format((float) ($branchOutstandingTotal ?? 0), 2) }}",
+        "snippet": "<div class=\"display-5 fw-bold text-danger mb-2\">{{ $currencySymbol }}{{ number_format((float) ($branchOutstandingTotal ?? 0), 2) }}</div>"
+      },
+      {
+        "line": 463,
+        "text": "Suppliers",
+        "snippet": "<div class=\"text-muted small\">Suppliers</div>"
+      },
+      {
+        "line": 464,
+        "text": "{{ $branchSuppliers->total() ?? 0 }}",
+        "snippet": "<div class=\"fw-bold fs-4\">{{ $branchSuppliers->total() ?? 0 }}</div>"
+      },
+      {
+        "line": 469,
+        "text": "Payrolls",
+        "snippet": "<div class=\"text-muted small\">Payrolls</div>"
+      },
+      {
+        "line": 470,
+        "text": "{{ $branchPayrolls->total() ?? 0 }}",
+        "snippet": "<div class=\"fw-bold fs-4\">{{ $branchPayrolls->total() ?? 0 }}</div>"
+      },
+      {
+        "line": 495,
+        "text": "Payroll records",
+        "snippet": "<div class=\"section-title mb-1\">Payroll records</div>"
+      },
+      {
+        "line": 498,
+        "text": "{{ $branchPayrolls->total() ?? 0 }}",
+        "snippet": "<span class=\"badge bg-light text-dark\">{{ $branchPayrolls->total() ?? 0 }}</span>"
+      },
+      {
+        "line": 524,
+        "text": "{{ $branchPayrolls->links() }}",
+        "snippet": "<div class=\"mt-3\">{{ $branchPayrolls->links() }}</div>"
+      },
+      {
+        "line": 546,
+        "text": "Date",
+        "snippet": "<th>Date</th>"
+      },
+      {
+        "line": 548,
+        "text": "Amount",
+        "snippet": "<th class=\"text-end\">Amount</th>"
+      },
+      {
+        "line": 573,
+        "text": "Supplier ledger",
+        "snippet": "<div class=\"section-title mb-1\">Supplier ledger</div>"
+      },
+      {
+        "line": 574,
+        "text": "Branch suppliers",
+        "snippet": "<h5 class=\"mb-0\">Branch suppliers</h5>"
+      },
+      {
+        "line": 576,
+        "text": "{{ $branchSuppliers->total() ?? 0 }}",
+        "snippet": "<span class=\"badge bg-light text-dark\">{{ $branchSuppliers->total() ?? 0 }}</span>"
+      },
+      {
+        "line": 584,
+        "text": "Supplier",
+        "snippet": "<th>Supplier</th>"
+      },
+      {
+        "line": 585,
+        "text": "Purchased",
+        "snippet": "<th class=\"text-end\">Purchased</th>"
+      },
+      {
+        "line": 595,
+        "text": "Branch opening {{ $currencySymbol }}{{ number_format(((int) ($supplier->branch_id ?? 0) === (int) $branch->id || $supplier->branches()->whereKey($branch->id)->exists()) ? (float) ($supplier->opening_balance ?? 0) : 0, 2) }}",
+        "snippet": "<div class=\"text-muted small\">Branch opening {{ $currencySymbol }}{{ number_format(((int) ($supplier->branch_id ?? 0) === (int) $branch->id || $supplier->branches()->whereKey($branch->id)->exists()) ? (float) ($supplier->opening_balance ?? 0) : 0, 2) }}</div>"
+      },
+      {
+        "line": 605,
+        "text": "{{ $branchSuppliers->links() }}",
+        "snippet": "<div class=\"mt-3\">{{ $branchSuppliers->links() }}</div>"
+      },
+      {
+        "line": 620,
+        "text": "Branch directory",
+        "snippet": "<div class=\"section-title mb-1\">Branch directory</div>"
+      },
+      {
+        "line": 632,
+        "text": "Created",
+        "snippet": "<th class=\"text-end\">Created</th>"
+      }
+    ],
+    "categories\\form.blade.php": [
+      {
+        "line": 57,
+        "text": "📊 Overview",
+        "snippet": "<div class=\"sidebar-title\">📊 Overview</div>"
+      },
+      {
+        "line": 59,
+        "text": "Total Products",
+        "snippet": "<span class=\"sidebar-stat-label\">Total Products</span>"
+      },
+      {
+        "line": 63,
+        "text": "Created",
+        "snippet": "<span class=\"sidebar-stat-label\">Created</span>"
+      },
+      {
+        "line": 92,
+        "text": "📝 Category Details",
+        "snippet": "<div class=\"form-section-title\">📝 Category Details</div>"
+      },
+      {
+        "line": 111,
+        "text": "📄 Description",
+        "snippet": "<div class=\"form-section-title\">📄 Description</div>"
+      },
+      {
+        "line": 123,
+        "text": "🏢 Branches",
+        "snippet": "<div class=\"form-section-title\">🏢 Branches</div>"
+      }
+    ],
+    "categories\\index.blade.php": [
+      {
+        "line": 105,
+        "text": "Total products",
+        "snippet": "<div class=\"products-mini-metric\"><div><span class=\"label\">Total products</span><span class=\"value\">{{ $totalProducts }}</span></div><div class=\"tone\"><i class=\"bi bi-box-seam\"></i></div></div>"
+      },
+      {
+        "line": 105,
+        "text": "{{ $totalProducts }}",
+        "snippet": "<div class=\"products-mini-metric\"><div><span class=\"label\">Total products</span><span class=\"value\">{{ $totalProducts }}</span></div><div class=\"tone\"><i class=\"bi bi-box-seam\"></i></div></div>"
+      },
+      {
+        "line": 106,
+        "text": "{{ $avgPerCategory }}",
+        "snippet": "<div class=\"products-mini-metric\"><div><span class=\"label\">Avg / category</span><span class=\"value\">{{ $avgPerCategory }}</span></div><div class=\"tone\"><i class=\"bi bi-graph-up\"></i></div></div>"
+      },
+      {
+        "line": 119,
+        "text": "{{ $totalProducts }}",
+        "snippet": "<div class=\"value\">{{ $totalProducts }}</div>"
+      },
+      {
+        "line": 124,
+        "text": "{{ $avgPerCategory }}",
+        "snippet": "<div class=\"value\">{{ $avgPerCategory }}</div>"
+      },
+      {
+        "line": 138,
+        "text": "Search categories...",
+        "snippet": "<input id=\"searchInput\" class=\"form-control\" placeholder=\"Search categories...\">"
+      },
+      {
+        "line": 211,
+        "text": "Stock Value",
+        "snippet": "<div class=\"bg-light rounded-3 p-2 flex-fill\"><div class=\"small text-muted\">Stock Value</div><strong>{{ $currencySymbol }}{{ number_format($category->total_stock_value ?? 0, 2) }}</strong></div>"
+      },
+      {
+        "line": 212,
+        "text": "Avg Price",
+        "snippet": "<div class=\"bg-light rounded-3 p-2 flex-fill\"><div class=\"small text-muted\">Avg Price</div><strong>{{ $currencySymbol }}{{ number_format($category->avg_price ?? 0, 2) }}</strong></div>"
+      }
+    ],
+    "categories\\show.blade.php": [
+      {
+        "line": 28,
+        "text": "Overview",
+        "snippet": "<p class=\"categories-hero-panel-title\">Overview</p>"
+      },
+      {
+        "line": 32,
+        "text": "Stock Value",
+        "snippet": "<div class=\"products-mini-metric\"><div><span class=\"label\">Stock Value</span><span class=\"value\">{{ $currencySymbol }}{{ number_format($stats['total_stock_value'] ?? 0, 2) }}</span></div><div class=\"tone\"><i class=\"bi bi-currency-dollar\"></i></div></div>"
+      },
+      {
+        "line": 33,
+        "text": "Avg Price",
+        "snippet": "<div class=\"products-mini-metric\"><div><span class=\"label\">Avg Price</span><span class=\"value\">{{ $currencySymbol }}{{ number_format($stats['avg_price'] ?? 0, 2) }}</span></div><div class=\"tone\"><i class=\"bi bi-tag\"></i></div></div>"
+      }
+    ],
+    "commissions\\form.blade.php": [
+      {
+        "line": 68,
+        "text": "{{ isset($commission) ? 'Edit an existing commission record.' : 'Use this only to create the first commission profile for an employee.' }}",
+        "snippet": "<div class=\"opacity-75\">{{ isset($commission) ? 'Edit an existing commission record.' : 'Use this only to create the first commission profile for an employee.' }}</div>"
+      },
+      {
+        "line": 94,
+        "text": "Commission Details",
+        "snippet": "<div class=\"commission-form-section-title\">Commission Details</div>"
+      },
+      {
+        "line": 117,
+        "text": "Financial Details",
+        "snippet": "<div class=\"commission-form-section-title\">Financial Details</div>"
+      },
+      {
+        "line": 133,
+        "text": "Additional Information",
+        "snippet": "<div class=\"commission-form-section-title\">Additional Information</div>"
+      },
+      {
+        "line": 149,
+        "text": "Branches",
+        "snippet": "<div class=\"commission-form-section-title\">Branches</div>"
+      }
+    ],
+    "commissions\\index.blade.php": [
+      {
+        "line": 123,
+        "text": "Total Commission",
+        "snippet": "<small class=\"text-muted d-block mb-2\">Total Commission</small>"
+      },
+      {
+        "line": 181,
+        "text": "Create First Commission Profile",
+        "snippet": "No commission profiles yet. Use <strong>Create First Commission Profile</strong> for the first record of an employee."
+      },
+      {
+        "line": 218,
+        "text": "Total Commission",
+        "snippet": "<th>Total Commission</th>"
+      },
+      {
+        "line": 219,
+        "text": "Details",
+        "snippet": "<th>Details</th>"
+      },
+      {
+        "line": 237,
+        "text": "View Details",
+        "snippet": "<a href=\"#\" class=\"btn btn-sm btn-outline-primary\">View Details</a>"
+      },
+      {
+        "line": 250,
+        "text": "Paid Commissions History",
+        "snippet": "<h5 class=\"mb-0 white-header\"><i class=\"bi bi-clock-history\"></i> Paid Commissions History</h5>"
+      },
+      {
+        "line": 258,
+        "text": "Date",
+        "snippet": "<th>Date</th>"
+      },
+      {
+        "line": 260,
+        "text": "Sale Amount",
+        "snippet": "<th>Sale Amount</th>"
+      }
+    ],
+    "commissions\\show.blade.php": [
+      {
+        "line": 207,
+        "text": "{{ $currencySymbol }}{{ number_format($totalSales, 2) }}",
+        "snippet": "<h3 class=\"mb-0\" style=\"color: #27ae60;\">{{ $currencySymbol }}{{ number_format($totalSales, 2) }}</h3>"
+      },
+      {
+        "line": 236,
+        "text": "Add a new commission for this employee from here. The general create page is only for first-time commission profiles.",
+        "snippet": "<p class=\"text-muted small mb-4\">Add a new commission for this employee from here. The general create page is only for first-time commission profiles.</p>"
+      },
+      {
+        "line": 315,
+        "text": "Edit",
+        "snippet": "<span class=\"ms-1\">Edit</span>"
+      },
+      {
+        "line": 330,
+        "text": "Delete",
+        "snippet": "<span class=\"ms-1\">Delete</span>"
+      }
+    ],
+    "dashboard\\index.blade.php": [
+      {
+        "line": 960,
+        "text": "Reports",
+        "snippet": "<a href=\"{{ route('reports.sales') }}\" class=\"btn btn-outline-light\">Reports</a>"
+      },
+      {
+        "line": 969,
+        "text": "Today Sales",
+        "snippet": "<div class=\"kpi-label\">Today Sales</div>"
+      },
+      {
+        "line": 974,
+        "text": "Total Balance",
+        "snippet": "<div class=\"kpi-label\">Total Balance</div>"
+      },
+      {
+        "line": 979,
+        "text": "Products",
+        "snippet": "<div class=\"kpi-label\">Products</div>"
+      },
+      {
+        "line": 984,
+        "text": "Low Stock",
+        "snippet": "<div class=\"kpi-label\">Low Stock</div>"
+      },
+      {
+        "line": 1038,
+        "text": "Add Product",
+        "snippet": "<div class=\"quick-action-text\"><strong>Add Product</strong><span>Create inventory item</span></div>"
+      },
+      {
+        "line": 1038,
+        "text": "Create inventory item",
+        "snippet": "<div class=\"quick-action-text\"><strong>Add Product</strong><span>Create inventory item</span></div>"
+      },
+      {
+        "line": 1045,
+        "text": "Sales",
+        "snippet": "<div class=\"quick-action-text\"><strong>Sales</strong><span>Open sales list</span></div>"
+      },
+      {
+        "line": 1052,
+        "text": "New Invoice",
+        "snippet": "<div class=\"quick-action-text\"><strong>New Invoice</strong><span>Create invoice</span></div>"
+      },
+      {
+        "line": 1052,
+        "text": "Create invoice",
+        "snippet": "<div class=\"quick-action-text\"><strong>New Invoice</strong><span>Create invoice</span></div>"
+      },
+      {
+        "line": 1059,
+        "text": "Add Employee",
+        "snippet": "<div class=\"quick-action-text\"><strong>Add Employee</strong><span>Register staff</span></div>"
+      },
+      {
+        "line": 1066,
+        "text": "Add Supplier",
+        "snippet": "<div class=\"quick-action-text\"><strong>Add Supplier</strong><span>Register supplier</span></div>"
+      },
+      {
+        "line": 1073,
+        "text": "Payroll",
+        "snippet": "<div class=\"quick-action-text\"><strong>Payroll</strong><span>Payroll entry</span></div>"
+      },
+      {
+        "line": 1073,
+        "text": "Payroll entry",
+        "snippet": "<div class=\"quick-action-text\"><strong>Payroll</strong><span>Payroll entry</span></div>"
+      },
+      {
+        "line": 1080,
+        "text": "Safes",
+        "snippet": "<div class=\"quick-action-text\"><strong>Safes</strong><span>Cash management</span></div>"
+      },
+      {
+        "line": 1087,
+        "text": "Review payouts",
+        "snippet": "<div class=\"quick-action-text\"><strong>Commissions</strong><span>Review payouts</span></div>"
+      },
+      {
+        "line": 1094,
+        "text": "Warehouse overview",
+        "snippet": "<div class=\"quick-action-text\"><strong>Storages</strong><span>Warehouse overview</span></div>"
+      },
+      {
+        "line": 1101,
+        "text": "New Branch",
+        "snippet": "<div class=\"quick-action-text\"><strong>New Branch</strong><span>Expand locations</span></div>"
+      },
+      {
+        "line": 1108,
+        "text": "Sales Report",
+        "snippet": "<div class=\"quick-action-text\"><strong>Sales Report</strong><span>View analytics</span></div>"
+      },
+      {
+        "line": 1115,
+        "text": "Financial Report",
+        "snippet": "<div class=\"quick-action-text\"><strong>Financial Report</strong><span>Review accounts</span></div>"
+      },
+      {
+        "line": 1115,
+        "text": "Review accounts",
+        "snippet": "<div class=\"quick-action-text\"><strong>Financial Report</strong><span>Review accounts</span></div>"
+      },
+      {
+        "line": 1134,
+        "text": "Products",
+        "snippet": "<span class=\"metric-label\">Products</span>"
+      },
+      {
+        "line": 1135,
+        "text": "{{ $totalProducts ?? 0 }}",
+        "snippet": "<div class=\"metric-value\" id=\"metric-total-products\">{{ $totalProducts ?? 0 }}</div>"
+      },
+      {
+        "line": 1139,
+        "text": "{{ $lowStockCount ?? 0 }}",
+        "snippet": "<div class=\"metric-note\"><i class=\"bi bi-exclamation-triangle\"></i><span id=\"metric-low-stock-count\">{{ $lowStockCount ?? 0 }}</span> low stock</div>"
+      },
+      {
+        "line": 1147,
+        "text": "Sales",
+        "snippet": "<span class=\"metric-label\">Sales</span>"
+      },
+      {
+        "line": 1148,
+        "text": "{{ $currencySymbol }}{{ number_format($totalSales ?? 0, 2) }}",
+        "snippet": "<div class=\"metric-value\" id=\"metric-total-sales\">{{ $currencySymbol }}{{ number_format($totalSales ?? 0, 2) }}</div>"
+      },
+      {
+        "line": 1160,
+        "text": "Employees",
+        "snippet": "<span class=\"metric-label\">Employees</span>"
+      },
+      {
+        "line": 1161,
+        "text": "{{ $totalEmployees ?? 0 }}",
+        "snippet": "<div class=\"metric-value\" id=\"metric-total-employees\">{{ $totalEmployees ?? 0 }}</div>"
+      },
+      {
+        "line": 1178,
+        "text": "{{ $currencySymbol }}{{ number_format($commissionAmount ?? 0, 2) }} pending",
+        "snippet": "<div class=\"metric-note\"><i class=\"bi bi-currency-dollar\"></i>{{ $currencySymbol }}{{ number_format($commissionAmount ?? 0, 2) }} pending</div>"
+      },
+      {
+        "line": 1200,
+        "text": "Safe Balance",
+        "snippet": "<span class=\"metric-label\">Safe Balance</span>"
+      },
+      {
+        "line": 1214,
+        "text": "{{ $currencySymbol }}{{ number_format($safeIncomeTotal ?? 0, 2) }}",
+        "snippet": "<div class=\"metric-value\" id=\"metric-safe-income\">{{ $currencySymbol }}{{ number_format($safeIncomeTotal ?? 0, 2) }}</div>"
+      },
+      {
+        "line": 1225,
+        "text": "{{ $currencySymbol }}{{ number_format($safeOutcomeTotal ?? 0, 2) }}",
+        "snippet": "<div class=\"metric-value\" id=\"metric-safe-outcome\">{{ $currencySymbol }}{{ number_format($safeOutcomeTotal ?? 0, 2) }}</div>"
+      },
+      {
+        "line": 1239,
+        "text": "Sales and finance reports",
+        "snippet": "<h2 class=\"section-title\"><i class=\"bi bi-graph-up-arrow text-warning\"></i>Sales and finance reports</h2>"
+      },
+      {
+        "line": 1247,
+        "text": "Sales trend",
+        "snippet": "<h3 class=\"section-title mb-0\">Sales trend</h3>"
+      },
+      {
+        "line": 1264,
+        "text": "Inventory health",
+        "snippet": "<h3 class=\"section-title mb-0\">Inventory health</h3>"
+      },
+      {
+        "line": 1295,
+        "text": "Description",
+        "snippet": "<th>Description</th>"
+      },
+      {
+        "line": 1297,
+        "text": "Date",
+        "snippet": "<th>Date</th>"
+      },
+      {
+        "line": 1298,
+        "text": "Amount",
+        "snippet": "<th>Amount</th>"
+      },
+      {
+        "line": 1304,
+        "text": "{{ $transaction->description ?? 'Invoice' }}",
+        "snippet": "<td>{{ $transaction->description ?? 'Invoice' }}</td>"
+      },
+      {
+        "line": 1329,
+        "text": "{{ $transaction->description ?? 'Invoice' }}",
+        "snippet": "<div class=\"fw-semibold\">{{ $transaction->description ?? 'Invoice' }}</div>"
+      },
+      {
+        "line": 1356,
+        "text": "Safes",
+        "snippet": "<a href=\"{{ route('safes.index') }}\" class=\"btn btn-sm btn-outline-secondary\">Safes</a>"
+      },
+      {
+        "line": 1398,
+        "text": "Inventory",
+        "snippet": "<a href=\"{{ route('products.index') }}\" class=\"btn btn-sm btn-outline-secondary\">Inventory</a>"
+      },
+      {
+        "line": 1405,
+        "text": "Product",
+        "snippet": "<th>Product</th>"
+      },
+      {
+        "line": 1406,
+        "text": "Stock",
+        "snippet": "<th>Stock</th>"
+      },
+      {
+        "line": 1446,
+        "text": "Stock: {{ $product->current_stock ?? 0 }}",
+        "snippet": "<small class=\"text-muted\">Stock: {{ $product->current_stock ?? 0 }}</small>"
+      }
+    ],
+    "employees\\form.blade.php": [
+      {
+        "line": 139,
+        "text": "⚙️ Settings",
+        "snippet": "<div class=\"form-section-title\">⚙️ Settings</div>"
+      }
+    ],
+    "employees\\index.blade.php": [
+      {
+        "line": 145,
+        "text": "View Details",
+        "snippet": "<a href=\"{{ route('employees.show', $employee->id) }}\" class=\"btn btn-sm btn-info me-1\" title=\"View Details\">"
+      }
+    ],
+    "employees\\show.blade.php": [
+      {
+        "line": 41,
+        "text": "{{ $currencySymbol }}{{ number_format($totalSales, 2) }}",
+        "snippet": "<h3>{{ $currencySymbol }}{{ number_format($totalSales, 2) }}</h3>"
+      },
+      {
+        "line": 322,
+        "text": "{{ $currencySymbol }}{{ number_format($totalSales, 2) }}",
+        "snippet": "<td class=\"text-end\">{{ $currencySymbol }}{{ number_format($totalSales, 2) }}</td>"
+      },
+      {
+        "line": 368,
+        "text": "Add Employee Advance",
+        "snippet": "<h5 class=\"modal-title\" id=\"addAdvanceModalLabel\">Add Employee Advance</h5>"
+      },
+      {
+        "line": 375,
+        "text": "Amount",
+        "snippet": "<label for=\"advance_amount\" class=\"form-label fw-bold\">Amount</label>"
+      },
+      {
+        "line": 381,
+        "text": "Advance Date",
+        "snippet": "<label for=\"advance_date\" class=\"form-label fw-bold\">Advance Date</label>"
+      },
+      {
+        "line": 382,
+        "text": "{{ now()->toDateString() }}",
+        "snippet": "<input type=\"date\" class=\"form-control\" id=\"advance_date\" name=\"advance_date\" value=\"{{ now()->toDateString() }}\" required>"
+      },
+      {
+        "line": 386,
+        "text": "Description (Optional)",
+        "snippet": "<label for=\"advance_description\" class=\"form-label fw-bold\">Description (Optional)</label>"
+      },
+      {
+        "line": 393,
+        "text": "Cancel",
+        "snippet": "<button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Cancel</button>"
+      }
+    ],
+    "payroll\\create.blade.php": [
+      {
+        "line": 57,
+        "text": "Payroll",
+        "snippet": "<div class=\"create-hero-chip mb-3\">Payroll</div>"
+      },
+      {
+        "line": 58,
+        "text": "{{ __('Create Payroll') }}",
+        "snippet": "<h1 class=\"mb-2 fw-bold\" style=\"letter-spacing: -0.03em;\">{{ __('Create Payroll') }}</h1>"
+      },
+      {
+        "line": 106,
+        "text": "Additional benefits/bonuses (optional)",
+        "snippet": "<small class=\"form-text text-muted\">Additional benefits/bonuses (optional)</small>"
+      },
+      {
+        "line": 117,
+        "text": "{{ __('Notes') }}",
+        "snippet": "<label class=\"form-label fw-semibold\">{{ __('Notes') }}</label>"
+      },
+      {
+        "line": 122,
+        "text": "{{ __('Save') }}",
+        "snippet": "<button class=\"btn btn-primary px-4\">{{ __('Save') }}</button>"
+      },
+      {
+        "line": 123,
+        "text": "{{ __('Cancel') }}",
+        "snippet": "<a href=\"{{ route('payroll.index') }}\" class=\"btn btn-outline-secondary px-4\">{{ __('Cancel') }}</a>"
+      }
+    ],
+    "payroll\\edit.blade.php": [
+      {
+        "line": 122,
+        "text": "Payroll",
+        "snippet": "<div class=\"payroll-edit-chip mb-3\">Payroll</div>"
+      },
+      {
+        "line": 123,
+        "text": "{{ __('Edit Payroll') }}",
+        "snippet": "<h1 class=\"mb-2 fw-bold\" style=\"letter-spacing: -.04em;\">{{ __('Edit Payroll') }}</h1>"
+      },
+      {
+        "line": 155,
+        "text": "Payroll period",
+        "snippet": "<div class=\"small text-uppercase text-muted fw-semibold mb-1\">Payroll period</div>"
+      },
+      {
+        "line": 178,
+        "text": "Additional benefits or bonuses.",
+        "snippet": "<div class=\"payroll-edit-help mt-1\">Additional benefits or bonuses.</div>"
+      },
+      {
+        "line": 189,
+        "text": "{{ __('Notes') }}",
+        "snippet": "<label class=\"form-label payroll-edit-label\">{{ __('Notes') }}</label>"
+      },
+      {
+        "line": 190,
+        "text": "Add any payroll notes",
+        "snippet": "<textarea name=\"notes\" class=\"form-control payroll-edit-field\" rows=\"4\" placeholder=\"Add any payroll notes\">{{ old('notes', $payroll->notes) }}</textarea>"
+      },
+      {
+        "line": 195,
+        "text": "{{ __('Save') }}",
+        "snippet": "<button class=\"btn btn-primary px-4\">{{ __('Save') }}</button>"
+      },
+      {
+        "line": 196,
+        "text": "{{ __('Cancel') }}",
+        "snippet": "<a href=\"{{ route('payroll.index') }}\" class=\"btn btn-outline-secondary px-4\">{{ __('Cancel') }}</a>"
+      }
+    ],
+    "payroll\\index.blade.php": [
+      {
+        "line": 405,
+        "text": "Payroll health",
+        "snippet": "<div class=\"h6 mb-0\">Payroll health</div>"
+      },
+      {
+        "line": 413,
+        "text": "{{ $unpaidPayrollCount ?? 0 }}",
+        "snippet": "<div class=\"snapshot-value\">{{ $unpaidPayrollCount ?? 0 }}</div>"
+      },
+      {
+        "line": 419,
+        "text": "{{ $currencySymbol }}{{ number_format($unpaidNetSalaryTotal ?? 0, 0) }}",
+        "snippet": "<div class=\"snapshot-value\">{{ $currencySymbol }}{{ number_format($unpaidNetSalaryTotal ?? 0, 0) }}</div>"
+      },
+      {
+        "line": 425,
+        "text": "{{ $paidPayrollCount ?? 0 }}",
+        "snippet": "<div class=\"snapshot-value\">{{ $paidPayrollCount ?? 0 }}</div>"
+      },
+      {
+        "line": 443,
+        "text": "{{ $unpaidPayrollCount ?? 0 }}",
+        "snippet": "<div class=\"metric-value\">{{ $unpaidPayrollCount ?? 0 }}</div>"
+      },
+      {
+        "line": 457,
+        "text": "{{ $currencySymbol }}{{ number_format($unpaidNetSalaryTotal ?? 0, 2) }}",
+        "snippet": "<div class=\"metric-value\">{{ $currencySymbol }}{{ number_format($unpaidNetSalaryTotal ?? 0, 2) }}</div>"
+      },
+      {
+        "line": 458,
+        "text": "Total pending payout amount.",
+        "snippet": "<div class=\"text-muted small mt-1\">Total pending payout amount.</div>"
+      },
+      {
+        "line": 471,
+        "text": "{{ $paidPayrollCount ?? 0 }}",
+        "snippet": "<div class=\"metric-value\">{{ $paidPayrollCount ?? 0 }}</div>"
+      },
+      {
+        "line": 485,
+        "text": "Search employee, month, safe, status, or payroll ID",
+        "snippet": "<input type=\"search\" id=\"payrollSearch\" class=\"form-control\" placeholder=\"Search employee, month, safe, status, or payroll ID\">"
+      },
+      {
+        "line": 531,
+        "text": "{{ \\Carbon\\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }} · ID #{{ $payroll->id }}",
+        "snippet": "<div class=\"payroll-mobile-subtitle\">{{ \\Carbon\\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }} · ID #{{ $payroll->id }}</div>"
+      },
+      {
+        "line": 538,
+        "text": "{{ $currencySymbol }}{{ number_format($netAmount, 2) }}",
+        "snippet": "<span class=\"value\">{{ $currencySymbol }}{{ number_format($netAmount, 2) }}</span>"
+      },
+      {
+        "line": 545,
+        "text": "Safe source",
+        "snippet": "<span class=\"label\">Safe source</span>"
+      },
+      {
+        "line": 549,
+        "text": "Payroll period",
+        "snippet": "<span class=\"label\">Payroll period</span>"
+      },
+      {
+        "line": 571,
+        "text": "Edit",
+        "snippet": "<a href=\"{{ route('payroll.edit', $payroll) }}\" class=\"btn btn-sm btn-outline-primary\">Edit</a>"
+      },
+      {
+        "line": 577,
+        "text": "Delete",
+        "snippet": "<button type=\"submit\" class=\"btn btn-sm btn-outline-danger w-100\">Delete</button>"
+      },
+      {
+        "line": 585,
+        "text": "Create payrolls or mark existing records as paid to populate this section.",
+        "snippet": "<div class=\"small\">Create payrolls or mark existing records as paid to populate this section.</div>"
+      },
+      {
+        "line": 596,
+        "text": "Payroll period",
+        "snippet": "<th>Payroll period</th>"
+      },
+      {
+        "line": 624,
+        "text": "{{ \\Carbon\\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}",
+        "snippet": "<span class=\"badge rounded-pill bg-light text-dark border\">{{ \\Carbon\\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}</span>"
+      },
+      {
+        "line": 626,
+        "text": "{{ $currencySymbol }}{{ number_format($netAmount, 2) }}",
+        "snippet": "<td class=\"fw-bold fs-6\">{{ $currencySymbol }}{{ number_format($netAmount, 2) }}</td>"
+      },
+      {
+        "line": 636,
+        "text": "Edit",
+        "snippet": "<a href=\"{{ route('payroll.edit', $payroll) }}\" class=\"btn btn-sm btn-outline-primary\">Edit</a>"
+      },
+      {
+        "line": 642,
+        "text": "Delete",
+        "snippet": "<button type=\"submit\" class=\"btn btn-sm btn-outline-danger\">Delete</button>"
+      },
+      {
+        "line": 665,
+        "text": "Create payrolls or mark existing records as paid to populate this section.",
+        "snippet": "<div class=\"small\">Create payrolls or mark existing records as paid to populate this section.</div>"
+      },
+      {
+        "line": 687,
+        "text": "Review settled payrolls, safe source, and payment time.",
+        "snippet": "<div class=\"small opacity-75\">Review settled payrolls, safe source, and payment time.</div>"
+      },
+      {
+        "line": 713,
+        "text": "{{ \\Carbon\\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }} · ID #{{ $payroll->id }}",
+        "snippet": "<div class=\"payroll-mobile-subtitle\">{{ \\Carbon\\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }} · ID #{{ $payroll->id }}</div>"
+      },
+      {
+        "line": 720,
+        "text": "{{ $currencySymbol }}{{ number_format($netAmount, 2) }}",
+        "snippet": "<span class=\"value text-success\">{{ $currencySymbol }}{{ number_format($netAmount, 2) }}</span>"
+      },
+      {
+        "line": 723,
+        "text": "Safe",
+        "snippet": "<span class=\"label\">Safe</span>"
+      },
+      {
+        "line": 746,
+        "text": "Delete",
+        "snippet": "<button type=\"submit\" class=\"btn btn-sm btn-outline-danger w-100\">Delete</button>"
+      },
+      {
+        "line": 765,
+        "text": "Safe",
+        "snippet": "<th>Safe</th>"
+      },
+      {
+        "line": 789,
+        "text": "{{ \\Carbon\\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}",
+        "snippet": "<div class=\"text-muted small\">{{ \\Carbon\\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}</div>"
+      },
+      {
+        "line": 794,
+        "text": "{{ $currencySymbol }}{{ number_format($netAmount, 2) }}",
+        "snippet": "<td class=\"fw-bold text-success\">{{ $currencySymbol }}{{ number_format($netAmount, 2) }}</td>"
+      },
+      {
+        "line": 808,
+        "text": "Delete",
+        "snippet": "<button type=\"submit\" class=\"btn btn-sm btn-outline-danger\">Delete</button>"
+      },
+      {
+        "line": 839,
+        "text": "{{ __('Pay Payroll') }}",
+        "snippet": "<h5 class=\"modal-title mb-1\">{{ __('Pay Payroll') }}</h5>"
+      },
+      {
+        "line": 853,
+        "text": "{{ __('Safe') }}",
+        "snippet": "<label class=\"form-label fw-semibold\">{{ __('Safe') }}</label>"
+      },
+      {
+        "line": 863,
+        "text": "{{ __('Cancel') }}",
+        "snippet": "<button type=\"button\" class=\"btn btn-outline-secondary\" data-bs-dismiss=\"modal\">{{ __('Cancel') }}</button>"
+      },
+      {
+        "line": 864,
+        "text": "{{ __('Confirm Payment') }}",
+        "snippet": "<button type=\"submit\" class=\"btn btn-success\">{{ __('Confirm Payment') }}</button>"
+      }
+    ],
+    "payroll\\show.blade.php": [
+      {
+        "line": 36,
+        "text": "{{ \\Carbon\\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}",
+        "snippet": "<p class=\"payroll-meta\">{{ \\Carbon\\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}</p>"
+      },
+      {
+        "line": 95,
+        "text": "Sales/performance bonus",
+        "snippet": "<small class=\"text-muted\">Sales/performance bonus</small>"
+      },
+      {
+        "line": 108,
+        "text": "Additional benefits",
+        "snippet": "<small class=\"text-muted\">Additional benefits</small>"
+      },
+      {
+        "line": 120,
+        "text": "Payroll deductions and advances",
+        "snippet": "<small class=\"text-muted\">Payroll deductions and advances</small>"
+      },
+      {
+        "line": 128,
+        "text": "Safe:",
+        "snippet": "<div class=\"col-md-4\"><strong>Safe:</strong> {{ $payroll->safe?->name ?? '-' }}</div>"
+      },
+      {
+        "line": 139,
+        "text": "Total Before Deductions",
+        "snippet": "<span class=\"fw-bold text-muted\">Total Before Deductions</span>"
+      },
+      {
+        "line": 171,
+        "text": "Total payable",
+        "snippet": "<small class=\"text-muted fw-bold\">Total payable</small>"
+      },
+      {
+        "line": 266,
+        "text": "{{ __('Date') }}",
+        "snippet": "<th>{{ __('Date') }}</th>"
+      },
+      {
+        "line": 267,
+        "text": "{{ __('Sale Amount') }}",
+        "snippet": "<th>{{ __('Sale Amount') }}</th>"
+      },
+      {
+        "line": 269,
+        "text": "{{ __('Commission Amount') }}",
+        "snippet": "<th>{{ __('Commission Amount') }}</th>"
+      },
+      {
+        "line": 271,
+        "text": "{{ __('Notes') }}",
+        "snippet": "<th>{{ __('Notes') }}</th>"
+      },
+      {
+        "line": 327,
+        "text": "{{ __('Date') }}",
+        "snippet": "<th>{{ __('Date') }}</th>"
+      },
+      {
+        "line": 328,
+        "text": "{{ __('Amount') }}",
+        "snippet": "<th>{{ __('Amount') }}</th>"
+      },
+      {
+        "line": 329,
+        "text": "{{ __('Description') }}",
+        "snippet": "<th>{{ __('Description') }}</th>"
+      },
+      {
+        "line": 330,
+        "text": "{{ __('Created By') }}",
+        "snippet": "<th>{{ __('Created By') }}</th>"
+      }
+    ],
+    "products\\_table.blade.php": [
+      {
+        "line": 20,
+        "text": "View Details",
+        "snippet": "<a href=\"{{ route('products.show', $product->id) }}\" class=\"btn btn-sm btn-info me-1\" title=\"View Details\">"
+      }
+    ],
+    "products\\form.blade.php": [
+      {
+        "line": 90,
+        "text": "Current Stock",
+        "snippet": "<span class=\"sidebar-stat-label\">Current Stock</span>"
+      },
+      {
+        "line": 94,
+        "text": "Created",
+        "snippet": "<span class=\"sidebar-stat-label\">Created</span>"
+      },
+      {
+        "line": 98,
+        "text": "Last Updated",
+        "snippet": "<span class=\"sidebar-stat-label\">Last Updated</span>"
+      },
+      {
+        "line": 135,
+        "text": "Select Category",
+        "snippet": "<option value=\"\">Select Category</option>"
+      },
+      {
+        "line": 171,
+        "text": "📦 Inventory",
+        "snippet": "<div class=\"form-section-title\">📦 Inventory</div>"
+      },
+      {
+        "line": 183,
+        "text": "⚙️ Settings",
+        "snippet": "<div class=\"form-section-title\">⚙️ Settings</div>"
+      }
+    ],
+    "products\\index.blade.php": [
+      {
+        "line": 608,
+        "text": "{{ $totalProducts }}",
+        "snippet": "<div class=\"products-hero-panel-value\"><span>{{ $totalProducts }}</span><small>products</small></div>"
+      },
+      {
+        "line": 612,
+        "text": "Stock alerts",
+        "snippet": "<div class=\"products-mini-metric\"><div><span class=\"label\">Stock alerts</span><span class=\"value\">{{ $lowStockProductsCount }}</span></div><div class=\"tone\"><i class=\"bi bi-exclamation-triangle\"></i></div></div>"
+      },
+      {
+        "line": 612,
+        "text": "{{ $lowStockProductsCount }}",
+        "snippet": "<div class=\"products-mini-metric\"><div><span class=\"label\">Stock alerts</span><span class=\"value\">{{ $lowStockProductsCount }}</span></div><div class=\"tone\"><i class=\"bi bi-exclamation-triangle\"></i></div></div>"
+      },
+      {
+        "line": 620,
+        "text": "Total products",
+        "snippet": "<div class=\"products-stat-label\">Total products</div>"
+      },
+      {
+        "line": 621,
+        "text": "{{ $totalProducts }}",
+        "snippet": "<div class=\"products-stat-value\">{{ $totalProducts }}</div>"
+      },
+      {
+        "line": 630,
+        "text": "{{ $activeProducts }}",
+        "snippet": "<div class=\"products-stat-value\">{{ $activeProducts }}</div>"
+      },
+      {
+        "line": 639,
+        "text": "{{ $lowStockProductsCount }}",
+        "snippet": "<div class=\"products-stat-value\">{{ $lowStockProductsCount }}</div>"
+      },
+      {
+        "line": 648,
+        "text": "{{ $currencySymbol }}{{ number_format($avgPrice, 2) }}",
+        "snippet": "<div class=\"products-stat-value\">{{ $currencySymbol }}{{ number_format($avgPrice, 2) }}</div>"
+      },
+      {
+        "line": 660,
+        "text": "Search products by name...",
+        "snippet": "<input type=\"text\" class=\"form-control\" id=\"searchInput\" placeholder=\"Search products by name...\">"
+      },
+      {
+        "line": 690,
+        "text": "{{ $totalProducts }} items loaded",
+        "snippet": "<div class=\"text-muted small\">{{ $totalProducts }} items loaded</div>"
+      },
+      {
+        "line": 735,
+        "text": "View Details",
+        "snippet": "<a href=\"{{ route('products.show', $product->id) }}\" class=\"btn btn-sm btn-info\" title=\"View Details\">"
+      },
+      {
+        "line": 741,
+        "text": "Edit",
+        "snippet": "<a href=\"{{ route('products.edit', $product->id) }}\" class=\"btn btn-sm btn-warning\" title=\"Edit\">"
+      },
+      {
+        "line": 747,
+        "text": "Delete",
+        "snippet": "<button onclick=\"deleteProduct({{ $product->id }})\" class=\"btn btn-sm btn-danger\" title=\"Delete\">"
+      }
+    ],
+    "products\\show.blade.php": [
+      {
+        "line": 25,
+        "text": "Summary",
+        "snippet": "<p class=\"products-hero-panel-title\">Summary</p>"
+      },
+      {
+        "line": 29,
+        "text": "Price",
+        "snippet": "<div class=\"products-mini-metric\"><div><span class=\"label\">Price</span><span class=\"value\">{{ $currencySymbol }}{{ number_format($product->selling_price, 2) }}</span></div><div class=\"tone\"><i class=\"bi bi-tag\"></i></div></div>"
+      }
+    ],
+    "reports\\financial.blade.php": [
+      {
+        "line": 24,
+        "text": "{{ $fromDate ?? request('from_date') }}",
+        "snippet": "<input type=\"hidden\" name=\"from_date\" value=\"{{ $fromDate ?? request('from_date') }}\">"
+      },
+      {
+        "line": 25,
+        "text": "{{ $toDate ?? request('to_date') }}",
+        "snippet": "<input type=\"hidden\" name=\"to_date\" value=\"{{ $toDate ?? request('to_date') }}\">"
+      },
+      {
+        "line": 54,
+        "text": "{{ __('Payroll safe payouts') }}",
+        "snippet": "<div class=\"text-muted small text-uppercase fw-semibold mb-2\">{{ __('Payroll safe payouts') }}</div>"
+      },
+      {
+        "line": 55,
+        "text": "{{ ($safePayrollOutcomes ?? collect())->count() }}",
+        "snippet": "<div class=\"display-6 fw-bold\">{{ ($safePayrollOutcomes ?? collect())->count() }}</div>"
+      },
+      {
+        "line": 66,
+        "text": "{{ $fromDate ?? request('from_date') }}",
+        "snippet": "<input type=\"date\" class=\"form-control\" name=\"from_date\" value=\"{{ $fromDate ?? request('from_date') }}\">"
+      },
+      {
+        "line": 70,
+        "text": "{{ $toDate ?? request('to_date') }}",
+        "snippet": "<input type=\"date\" class=\"form-control\" name=\"to_date\" value=\"{{ $toDate ?? request('to_date') }}\">"
+      },
+      {
+        "line": 144,
+        "text": "{{ __('Paid Payrolls') }}",
+        "snippet": "<strong>{{ __('Paid Payrolls') }}</strong>"
+      },
+      {
+        "line": 244,
+        "text": "{{ __('Payroll Safe Payouts') }}",
+        "snippet": "<strong>{{ __('Payroll Safe Payouts') }}</strong>"
+      }
+    ],
+    "reports\\sales.blade.php": [
+      {
+        "line": 80,
+        "text": "{{ $fromDate ?? request('from_date') }}",
+        "snippet": "<input type=\"hidden\" name=\"from_date\" value=\"{{ $fromDate ?? request('from_date') }}\">"
+      },
+      {
+        "line": 81,
+        "text": "{{ $toDate ?? request('to_date') }}",
+        "snippet": "<input type=\"hidden\" name=\"to_date\" value=\"{{ $toDate ?? request('to_date') }}\">"
+      },
+      {
+        "line": 91,
+        "text": "{{ $fromDate ?? request('from_date') }}",
+        "snippet": "<input type=\"hidden\" name=\"from_date\" value=\"{{ $fromDate ?? request('from_date') }}\">"
+      },
+      {
+        "line": 92,
+        "text": "{{ $toDate ?? request('to_date') }}",
+        "snippet": "<input type=\"hidden\" name=\"to_date\" value=\"{{ $toDate ?? request('to_date') }}\">"
+      },
+      {
+        "line": 106,
+        "text": "{{ $fromDate ?? request('from_date') }}",
+        "snippet": "<input type=\"date\" class=\"form-control\" name=\"from_date\" value=\"{{ $fromDate ?? request('from_date') }}\">"
+      },
+      {
+        "line": 110,
+        "text": "{{ $toDate ?? request('to_date') }}",
+        "snippet": "<input type=\"date\" class=\"form-control\" name=\"to_date\" value=\"{{ $toDate ?? request('to_date') }}\">"
+      }
+    ],
+    "safes\\form.blade.php": [
+      {
+        "line": 72,
+        "text": "💰 Safe Info",
+        "snippet": "<div class=\"sidebar-title\">💰 Safe Info</div>"
+      },
+      {
+        "line": 123,
+        "text": "💳 Balance Settings",
+        "snippet": "<div class=\"form-section-title\">💳 Balance Settings</div>"
+      },
+      {
+        "line": 148,
+        "text": "⚙️ Settings",
+        "snippet": "<div class=\"form-section-title\">⚙️ Settings</div>"
+      }
+    ],
+    "safes\\show.blade.php": [
+      {
+        "line": 256,
+        "text": "Total Income:",
+        "snippet": "<h6>Total Income: <span class=\"text-success fw-bold\">{{ $currencySymbol }}{{ number_format($totalIncome, 2) }}</span></h6>"
+      },
+      {
+        "line": 281,
+        "text": "Amount",
+        "snippet": "<th style=\"position: sticky; top: 0; z-index: 2; background: #fff;\">Amount</th>"
+      },
+      {
+        "line": 283,
+        "text": "Date",
+        "snippet": "<th style=\"position: sticky; top: 0; z-index: 2; background: #fff;\">Date</th>"
+      },
+      {
+        "line": 334,
+        "text": "Total Outcome:",
+        "snippet": "<h6>Total Outcome: <span class=\"text-danger fw-bold\">{{ $currencySymbol }}{{ number_format($totalOutcome, 2) }}</span></h6>"
+      },
+      {
+        "line": 359,
+        "text": "Amount",
+        "snippet": "<th style=\"position: sticky; top: 0; z-index: 2; background: #fff;\">Amount</th>"
+      },
+      {
+        "line": 360,
+        "text": "Description",
+        "snippet": "<th style=\"position: sticky; top: 0; z-index: 2; background: #fff;\">Description</th>"
+      },
+      {
+        "line": 361,
+        "text": "Date",
+        "snippet": "<th style=\"position: sticky; top: 0; z-index: 2; background: #fff;\">Date</th>"
+      },
+      {
+        "line": 389,
+        "text": "Supplier: {{ $outcome->supplier->name }}",
+        "snippet": "<br><small class=\"text-danger\">Supplier: {{ $outcome->supplier->name }}</small>"
+      },
+      {
+        "line": 451,
+        "text": "Income Details",
+        "snippet": "<h5 class=\"modal-title\"><i class=\"bi bi-arrow-up-circle\"></i> Income Details</h5>"
+      },
+      {
+        "line": 460,
+        "text": "Amount",
+        "snippet": "<label class=\"text-muted small\">Amount</label>"
+      },
+      {
+        "line": 470,
+        "text": "Date",
+        "snippet": "<label class=\"text-muted small\">Date</label>"
+      },
+      {
+        "line": 483,
+        "text": "Notes",
+        "snippet": "<label class=\"text-muted small\">Notes</label>"
+      },
+      {
+        "line": 488,
+        "text": "Close",
+        "snippet": "<button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Close</button>"
+      },
+      {
+        "line": 509,
+        "text": "Amount *",
+        "snippet": "<label class=\"form-label\">Amount *</label>"
+      },
+      {
+        "line": 531,
+        "text": "Invoice #, Check #, etc.",
+        "snippet": "<input type=\"text\" name=\"reference\" class=\"form-control\" placeholder=\"Invoice #, Check #, etc.\">"
+      },
+      {
+        "line": 534,
+        "text": "Notes (Optional)",
+        "snippet": "<label class=\"form-label\">Notes (Optional)</label>"
+      },
+      {
+        "line": 535,
+        "text": "Additional notes about this income...",
+        "snippet": "<textarea name=\"notes\" class=\"form-control\" rows=\"3\" placeholder=\"Additional notes about this income...\"></textarea>"
+      },
+      {
+        "line": 539,
+        "text": "Cancel",
+        "snippet": "<button type=\"button\" class=\"btn btn-secondary\" id=\"incomeEditCancelBtn\">Cancel</button>"
+      },
+      {
+        "line": 540,
+        "text": "Update Income",
+        "snippet": "<button type=\"submit\" class=\"btn btn-success\"><i class=\"bi bi-check-circle\"></i> Update Income</button>"
+      },
+      {
+        "line": 553,
+        "text": "Outcome Details",
+        "snippet": "<h5 class=\"modal-title\"><i class=\"bi bi-arrow-down-circle\"></i> Outcome Details</h5>"
+      },
+      {
+        "line": 562,
+        "text": "Amount",
+        "snippet": "<label class=\"text-muted small\">Amount</label>"
+      },
+      {
+        "line": 566,
+        "text": "Date",
+        "snippet": "<label class=\"text-muted small\">Date</label>"
+      },
+      {
+        "line": 576,
+        "text": "Supplier",
+        "snippet": "<label class=\"text-muted small\">Supplier</label>"
+      },
+      {
+        "line": 581,
+        "text": "Description",
+        "snippet": "<label class=\"text-muted small\">Description</label>"
+      },
+      {
+        "line": 590,
+        "text": "Close",
+        "snippet": "<button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Close</button>"
+      },
+      {
+        "line": 611,
+        "text": "Amount *",
+        "snippet": "<label class=\"form-label\">Amount *</label>"
+      },
+      {
+        "line": 624,
+        "text": "Description (Optional)",
+        "snippet": "<label class=\"form-label\">Description (Optional)</label>"
+      },
+      {
+        "line": 629,
+        "text": "Invoice #, Reference, etc.",
+        "snippet": "<input type=\"text\" name=\"reference\" class=\"form-control\" placeholder=\"Invoice #, Reference, etc.\">"
+      },
+      {
+        "line": 633,
+        "text": "Cancel",
+        "snippet": "<button type=\"button\" class=\"btn btn-secondary\" id=\"outcomeEditCancelBtn\">Cancel</button>"
+      },
+      {
+        "line": 634,
+        "text": "Update Outcome",
+        "snippet": "<button type=\"submit\" class=\"btn btn-warning\"><i class=\"bi bi-check-circle\"></i> Update Outcome</button>"
+      },
+      {
+        "line": 646,
+        "text": "Add Income",
+        "snippet": "<h5 class=\"modal-title\"><i class=\"bi bi-arrow-up-circle\"></i> Add Income</h5>"
+      },
+      {
+        "line": 653,
+        "text": "Amount *",
+        "snippet": "<label class=\"form-label\">Amount *</label>"
+      },
+      {
+        "line": 659,
+        "text": "Date",
+        "snippet": "<label class=\"form-label\">Date <span class=\"text-muted\">(Optional)</span></label>"
+      },
+      {
+        "line": 684,
+        "text": "Invoice #, Check #, etc.",
+        "snippet": "<input type=\"text\" name=\"reference\" class=\"form-control\" placeholder=\"Invoice #, Check #, etc.\">"
+      },
+      {
+        "line": 687,
+        "text": "Notes (Optional)",
+        "snippet": "<label class=\"form-label\">Notes (Optional)</label>"
+      },
+      {
+        "line": 688,
+        "text": "Additional notes about this income...",
+        "snippet": "<textarea name=\"notes\" class=\"form-control\" rows=\"3\" placeholder=\"Additional notes about this income...\"></textarea>"
+      },
+      {
+        "line": 692,
+        "text": "Cancel",
+        "snippet": "<button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Cancel</button>"
+      },
+      {
+        "line": 704,
+        "text": "Add Outcome",
+        "snippet": "<h5 class=\"modal-title\"><i class=\"bi bi-arrow-down-circle\"></i> Add Outcome</h5>"
+      },
+      {
+        "line": 720,
+        "text": "Amount *",
+        "snippet": "<label class=\"form-label\">Amount *</label>"
+      },
+      {
+        "line": 722,
+        "text": "Note: Balance can go negative if withdrawal exceeds current balance",
+        "snippet": "<small class=\"text-warning d-block mt-1\"><i class=\"bi bi-exclamation-triangle\"></i> Note: Balance can go negative if withdrawal exceeds current balance</small>"
+      },
+      {
+        "line": 727,
+        "text": "Date",
+        "snippet": "<label class=\"form-label\">Date <span class=\"text-muted\">(Optional)</span></label>"
+      },
+      {
+        "line": 746,
+        "text": "Supplier",
+        "snippet": "<option value=\"supplier\">Supplier</option>"
+      },
+      {
+        "line": 750,
+        "text": "Supplier (With Outstanding Balance)",
+        "snippet": "<label class=\"form-label\">Supplier (With Outstanding Balance)</label>"
+      },
+      {
+        "line": 761,
+        "text": "Description (Optional)",
+        "snippet": "<label class=\"form-label\">Description (Optional)</label>"
+      },
+      {
+        "line": 770,
+        "text": "Cancel",
+        "snippet": "<button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Cancel</button>"
+      },
+      {
+        "line": 782,
+        "text": "Add Currency",
+        "snippet": "<h5 class=\"modal-title\"><i class=\"bi bi-currency-exchange\"></i> Add Currency</h5>"
+      },
+      {
+        "line": 799,
+        "text": "Cancel",
+        "snippet": "<button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Cancel</button>"
+      },
+      {
+        "line": 800,
+        "text": "Add Currency",
+        "snippet": "<button type=\"submit\" class=\"btn btn-primary\"><i class=\"bi bi-plus-circle\"></i> Add Currency</button>"
+      }
+    ],
+    "sales\\index.blade.php": [
+      {
+        "line": 378,
+        "text": "Sales",
+        "snippet": "<h2 class=\"fw-bold mb-2 text-white\">Sales</h2>"
+      },
+      {
+        "line": 422,
+        "text": "Branch",
+        "snippet": "<label class=\"form-label fw-semibold\">Branch</label>"
+      },
+      {
+        "line": 431,
+        "text": "Sale Date",
+        "snippet": "<label class=\"form-label fw-semibold\">Sale Date</label>"
+      },
+      {
+        "line": 432,
+        "text": "{{ old('sale_date', now()->toDateString()) }}",
+        "snippet": "<input type=\"date\" name=\"sale_date\" class=\"form-control form-control-lg\" value=\"{{ old('sale_date', now()->toDateString()) }}\" required>"
+      },
+      {
+        "line": 435,
+        "text": "Total Amount Sold",
+        "snippet": "<label class=\"form-label fw-semibold\">Total Amount Sold</label>"
+      },
+      {
+        "line": 440,
+        "text": "Amount Spent by Store",
+        "snippet": "<label class=\"form-label fw-semibold\">Amount Spent by Store <span class=\"text-muted\">(Optional)</span></label>"
+      },
+      {
+        "line": 441,
+        "text": "Amount the store spent",
+        "snippet": "<input type=\"number\" name=\"spent_amount\" class=\"form-control form-control-lg\" min=\"0\" step=\"0.01\" value=\"{{ old('spent_amount', 0) }}\" placeholder=\"Amount the store spent\">"
+      },
+      {
+        "line": 445,
+        "text": "Employees Involved",
+        "snippet": "<label class=\"form-label fw-semibold\">Employees Involved</label>"
+      },
+      {
+        "line": 462,
+        "text": "Amount Sold",
+        "snippet": "<label class=\"form-label small text-muted mb-1\">Amount Sold</label>"
+      },
+      {
+        "line": 467,
+        "text": "Remove",
+        "snippet": "<button type=\"button\" class=\"btn btn-outline-danger btn-sm remove-employee-row\">Remove</button>"
+      },
+      {
+        "line": 475,
+        "text": "+ Add Employee",
+        "snippet": "<button type=\"button\" class=\"btn btn-outline-secondary btn-sm add-employee-field mt-2\">+ Add Employee</button>"
+      },
+      {
+        "line": 479,
+        "text": "Description",
+        "snippet": "<label class=\"form-label fw-semibold\">Description</label>"
+      },
+      {
+        "line": 480,
+        "text": "Add a description for the whole sale...",
+        "snippet": "<textarea name=\"notes\" class=\"form-control\" rows=\"4\" placeholder=\"Add a description for the whole sale...\">{{ old('notes') }}</textarea>"
+      },
+      {
+        "line": 497,
+        "text": "Amount Sold",
+        "snippet": "<label class=\"form-label small text-muted mb-1\">Amount Sold</label>"
+      },
+      {
+        "line": 502,
+        "text": "Remove",
+        "snippet": "<button type=\"button\" class=\"btn btn-outline-danger btn-sm remove-employee-row\">Remove</button>"
+      },
+      {
+        "line": 508,
+        "text": "Save Sale",
+        "snippet": "<button type=\"submit\" class=\"btn btn-primary btn-lg px-4\">Save Sale</button>"
+      },
+      {
+        "line": 540,
+        "text": "Total sales recorded",
+        "snippet": "<small class=\"text-muted d-block\">Total sales recorded</small>"
+      },
+      {
+        "line": 561,
+        "text": "Recent Sales",
+        "snippet": "<h5 class=\"mb-1\">Recent Sales</h5>"
+      },
+      {
+        "line": 576,
+        "text": "Branch",
+        "snippet": "<label class=\"form-label mb-0 small\">Branch</label>"
+      },
+      {
+        "line": 602,
+        "text": "Date",
+        "snippet": "<th>Date</th>"
+      },
+      {
+        "line": 603,
+        "text": "Branch",
+        "snippet": "<th>Branch</th>"
+      },
+      {
+        "line": 604,
+        "text": "Total Amount",
+        "snippet": "<th>Total Amount</th>"
+      },
+      {
+        "line": 607,
+        "text": "Description",
+        "snippet": "<th>Description</th>"
+      },
+      {
+        "line": 748,
+        "text": "Employees Involved",
+        "snippet": "<h5 class=\"modal-title mb-0 fw-bold\">Employees Involved</h5>"
+      },
+      {
+        "line": 749,
+        "text": "Review who contributed to the sale and the amounts they sold.",
+        "snippet": "<div class=\"field-hint\">Review who contributed to the sale and the amounts they sold.</div>"
+      },
+      {
+        "line": 757,
+        "text": "Date",
+        "snippet": "<span class=\"label\">Date</span>"
+      },
+      {
+        "line": 763,
+        "text": "Branch",
+        "snippet": "<span class=\"label\">Branch</span>"
+      },
+      {
+        "line": 775,
+        "text": "Total Amount",
+        "snippet": "<span class=\"label\">Total Amount</span>"
+      },
+      {
+        "line": 793,
+        "text": "Description",
+        "snippet": "<div class=\"label mb-2\">Description</div>"
+      },
+      {
+        "line": 801,
+        "text": "Employees involved",
+        "snippet": "<h6 class=\"mb-0\">Employees involved</h6>"
+      },
+      {
+        "line": 819,
+        "text": "Edit Sale",
+        "snippet": "<h5 class=\"modal-title\">Edit Sale</h5>"
+      },
+      {
+        "line": 825,
+        "text": "Branch",
+        "snippet": "<label class=\"form-label\">Branch</label>"
+      },
+      {
+        "line": 834,
+        "text": "Sale Date",
+        "snippet": "<label class=\"form-label\">Sale Date</label>"
+      },
+      {
+        "line": 838,
+        "text": "Total Amount",
+        "snippet": "<label class=\"form-label\">Total Amount</label>"
+      },
+      {
+        "line": 843,
+        "text": "Amount Spent by Store",
+        "snippet": "<label class=\"form-label\">Amount Spent by Store <span class=\"text-muted\">(Optional)</span></label>"
+      },
+      {
+        "line": 844,
+        "text": "Amount the store spent",
+        "snippet": "<input type=\"number\" name=\"spent_amount\" class=\"form-control\" step=\"0.01\" min=\"0\" placeholder=\"Amount the store spent\">"
+      },
+      {
+        "line": 847,
+        "text": "Employees Involved",
+        "snippet": "<label class=\"form-label fw-semibold\">Employees Involved</label>"
+      },
+      {
+        "line": 848,
+        "text": "Add or change the employees linked to this sale and their sold amounts.",
+        "snippet": "<div class=\"field-hint mb-2\">Add or change the employees linked to this sale and their sold amounts.</div>"
+      },
+      {
+        "line": 850,
+        "text": "+ Add Employee",
+        "snippet": "<button type=\"button\" class=\"btn btn-outline-secondary btn-sm mt-2 add-edit-employee-field\">+ Add Employee</button>"
+      },
+      {
+        "line": 856,
+        "text": "Description",
+        "snippet": "<label class=\"form-label\">Description</label>"
+      },
+      {
+        "line": 857,
+        "text": "Add a description for the whole sale...",
+        "snippet": "<textarea name=\"notes\" rows=\"4\" class=\"form-control\" placeholder=\"Add a description for the whole sale...\"></textarea>"
+      },
+      {
+        "line": 863,
+        "text": "Cancel",
+        "snippet": "<button type=\"button\" class=\"btn btn-outline-secondary\" data-bs-dismiss=\"modal\">Cancel</button>"
+      },
+      {
+        "line": 864,
+        "text": "Save changes",
+        "snippet": "<button type=\"submit\" class=\"btn btn-primary\">Save changes</button>"
+      },
+      {
+        "line": 884,
+        "text": "Amount Sold",
+        "snippet": "<label class=\"form-label small text-muted mb-1\">Amount Sold</label>"
+      },
+      {
+        "line": 889,
+        "text": "Remove",
+        "snippet": "<button type=\"button\" class=\"btn btn-outline-danger btn-sm remove-employee-row\">Remove</button>"
+      },
+      {
+        "line": 1098,
+        "text": "${escapeHtml(employee.name || 'Deleted employee')}",
+        "snippet": "<div class=\"employee-breakdown-name\">${escapeHtml(employee.name || 'Deleted employee')}</div>"
+      }
+    ],
+    "storages\\form.blade.php": [
+      {
+        "line": 104,
+        "text": "e.g., Warehouse, Shelf, Cabinet",
+        "snippet": "<input type=\"text\" class=\"form-control @error('storage_type') is-invalid @enderror\" name=\"storage_type\" value=\"{{ old('storage_type', $storage->storage_type ?? '') }}\" placeholder=\"e.g., Warehouse, Shelf, Cabinet\" required>"
+      },
+      {
+        "line": 122,
+        "text": "📄 Description",
+        "snippet": "<div class=\"form-section-title\">📄 Description</div>"
+      },
+      {
+        "line": 133,
+        "text": "⚙️ Settings",
+        "snippet": "<div class=\"form-section-title\">⚙️ Settings</div>"
+      }
+    ],
+    "storages\\items.blade.php": [
+      {
+        "line": 13,
+        "text": "id) }}\" class=\"btn btn-outline-info\">Transfer History",
+        "snippet": "<a href=\"{{ route('storages.transferHistory', $storage->id) }}\" class=\"btn btn-outline-info\">Transfer History</a>"
+      },
+      {
+        "line": 14,
+        "text": "Back",
+        "snippet": "<a href=\"{{ route('storages.index') }}\" class=\"btn btn-outline-secondary\">Back</a>"
+      },
+      {
+        "line": 15,
+        "text": "+ Add Transaction",
+        "snippet": "<button class=\"btn btn-primary\" data-bs-toggle=\"modal\" data-bs-target=\"#addItemModal\">+ Add Transaction</button>"
+      },
+      {
+        "line": 31,
+        "text": "Total Quantity",
+        "snippet": "<small class=\"text-muted d-block\">Total Quantity</small>"
+      },
+      {
+        "line": 39,
+        "text": "Total Weight",
+        "snippet": "<small class=\"text-muted d-block\">Total Weight</small>"
+      },
+      {
+        "line": 47,
+        "text": "Total Value",
+        "snippet": "<small class=\"text-muted d-block\">Total Value</small>"
+      },
+      {
+        "line": 60,
+        "text": "Product Name",
+        "snippet": "<th>Product Name</th>"
+      },
+      {
+        "line": 61,
+        "text": "Quantity",
+        "snippet": "<th>Quantity</th>"
+      },
+      {
+        "line": 63,
+        "text": "Unit Price",
+        "snippet": "<th>Unit Price</th>"
+      },
+      {
+        "line": 64,
+        "text": "Total Price",
+        "snippet": "<th>Total Price</th>"
+      },
+      {
+        "line": 101,
+        "text": "Edit",
+        "snippet": ">Edit</button>"
+      },
+      {
+        "line": 105,
+        "text": "Delete",
+        "snippet": "<button class=\"btn btn-sm btn-outline-danger\">Delete</button>"
+      },
+      {
+        "line": 134,
+        "text": "Add Storage Transaction",
+        "snippet": "<h5 class=\"modal-title\">Add Storage Transaction</h5>"
+      },
+      {
+        "line": 140,
+        "text": "Product Name",
+        "snippet": "<label class=\"form-label\">Product Name</label>"
+      },
+      {
+        "line": 144,
+        "text": "Quantity",
+        "snippet": "<label class=\"form-label\">Quantity</label>"
+      },
+      {
+        "line": 152,
+        "text": "Price of Product",
+        "snippet": "<label class=\"form-label\">Price of Product</label>"
+      },
+      {
+        "line": 156,
+        "text": "Total Price",
+        "snippet": "<label class=\"form-label\">Total Price</label>"
+      },
+      {
+        "line": 162,
+        "text": "Cancel",
+        "snippet": "<button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Cancel</button>"
+      },
+      {
+        "line": 163,
+        "text": "Save Transaction",
+        "snippet": "<button type=\"submit\" class=\"btn btn-primary\">Save Transaction</button>"
+      },
+      {
+        "line": 177,
+        "text": "Edit Storage Transaction",
+        "snippet": "<h5 class=\"modal-title\">Edit Storage Transaction</h5>"
+      },
+      {
+        "line": 183,
+        "text": "Product Name",
+        "snippet": "<label class=\"form-label\">Product Name</label>"
+      },
+      {
+        "line": 187,
+        "text": "Quantity",
+        "snippet": "<label class=\"form-label\">Quantity</label>"
+      },
+      {
+        "line": 195,
+        "text": "Price of Product",
+        "snippet": "<label class=\"form-label\">Price of Product</label>"
+      },
+      {
+        "line": 199,
+        "text": "Total Price",
+        "snippet": "<label class=\"form-label\">Total Price</label>"
+      },
+      {
+        "line": 205,
+        "text": "Cancel",
+        "snippet": "<button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Cancel</button>"
+      },
+      {
+        "line": 206,
+        "text": "Save Changes",
+        "snippet": "<button type=\"submit\" class=\"btn btn-primary\">Save Changes</button>"
+      },
+      {
+        "line": 226,
+        "text": "Product Name",
+        "snippet": "<label class=\"form-label\">Product Name</label>"
+      },
+      {
+        "line": 230,
+        "text": "Available Quantity",
+        "snippet": "<label class=\"form-label\">Available Quantity</label>"
+      },
+      {
+        "line": 247,
+        "text": "Transfer Quantity",
+        "snippet": "<label class=\"form-label\">Transfer Quantity</label>"
+      },
+      {
+        "line": 255,
+        "text": "Unit Price",
+        "snippet": "<label class=\"form-label\">Unit Price</label>"
+      },
+      {
+        "line": 259,
+        "text": "Total Price",
+        "snippet": "<label class=\"form-label\">Total Price</label>"
+      },
+      {
+        "line": 263,
+        "text": "Total price is calculated as transfer quantity x unit price.",
+        "snippet": "<small class=\"text-muted\">Total price is calculated as transfer quantity x unit price.</small>"
+      },
+      {
+        "line": 269,
+        "text": "Cancel",
+        "snippet": "<button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Cancel</button>"
+      }
+    ],
+    "storages\\transfer-history.blade.php": [
+      {
+        "line": 9,
+        "text": "{{ $storage->name }} - Transfer History",
+        "snippet": "<h3 class=\"mb-1\">{{ $storage->name }} - Transfer History</h3>"
+      },
+      {
+        "line": 12,
+        "text": "id) }}\" class=\"btn btn-outline-secondary\">Back",
+        "snippet": "<a href=\"{{ route('storages.items', $storage->id) }}\" class=\"btn btn-outline-secondary\">Back</a>"
+      },
+      {
+        "line": 40,
+        "text": "Product Name",
+        "snippet": "<th>Product Name</th>"
+      },
+      {
+        "line": 41,
+        "text": "Quantity",
+        "snippet": "<th>Quantity</th>"
+      },
+      {
+        "line": 43,
+        "text": "Unit Price",
+        "snippet": "<th>Unit Price</th>"
+      },
+      {
+        "line": 44,
+        "text": "Total Price",
+        "snippet": "<th>Total Price</th>"
+      },
+      {
+        "line": 47,
+        "text": "Date",
+        "snippet": "<th>Date</th>"
+      }
+    ],
+    "suppliers\\index.blade.php": [
+      {
+        "line": 78,
+        "text": "{{ $currencySymbol }}{{ number_format((float) ($allBranchDebtsTotal ?? 0), 2, '.', ',') }}",
+        "snippet": "<div class=\"debt-counter display-6 fw-bold text-danger\">{{ $currencySymbol }}{{ number_format((float) ($allBranchDebtsTotal ?? 0), 2, '.', ',') }}</div>"
+      },
+      {
+        "line": 99,
+        "text": "{{ $currencySymbol }}{{ number_format((float) ($totalPurchasedAcrossBranches ?? 0), 2, '.', ',') }}",
+        "snippet": "<div class=\"h5 fw-bold mb-0\">{{ $currencySymbol }}{{ number_format((float) ($totalPurchasedAcrossBranches ?? 0), 2, '.', ',') }}</div>"
+      },
+      {
+        "line": 105,
+        "text": "{{ $currencySymbol }}{{ number_format((float) ($totalPaidAcrossBranches ?? 0), 2, '.', ',') }}",
+        "snippet": "<div class=\"h5 fw-bold mb-0\">{{ $currencySymbol }}{{ number_format((float) ($totalPaidAcrossBranches ?? 0), 2, '.', ',') }}</div>"
+      },
+      {
+        "line": 128,
+        "text": "Search",
+        "snippet": "<label for=\"supplier-search\" class=\"form-label\">Search</label>"
+      },
+      {
+        "line": 135,
+        "text": "Search by name or address",
+        "snippet": "placeholder=\"Search by name or address\""
+      }
+    ],
+    "suppliers\\show.blade.php": [
+      {
+        "line": 67,
+        "text": "{{ __('messages.showing_branch', ['branch' => $selectedBranch->name]) }}",
+        "snippet": "<span class=\"badge bg-info text-dark\">{{ __('messages.showing_branch', ['branch' => $selectedBranch->name]) }}</span>"
+      },
+      {
+        "line": 116,
+        "text": "{{ $currencySymbol }}{{ number_format($totalPurchased, 2) }}",
+        "snippet": "<h4 class=\"mb-0 text-primary\">{{ $currencySymbol }}{{ number_format($totalPurchased, 2) }}</h4>"
+      },
+      {
+        "line": 147,
+        "text": "{{ $selectedBranchId }}",
+        "snippet": "<input type=\"hidden\" name=\"branch_id\" value=\"{{ $selectedBranchId }}\">"
+      },
+      {
+        "line": 151,
+        "text": "{{ old('purchase_date', now()->toDateString()) }}",
+        "snippet": "<input type=\"date\" name=\"purchase_date\" class=\"form-control\" value=\"{{ old('purchase_date', now()->toDateString()) }}\" required>"
+      },
+      {
+        "line": 199,
+        "text": "{{ $selectedBranchId }}",
+        "snippet": "<input type=\"hidden\" name=\"branch_id\" value=\"{{ $selectedBranchId }}\">"
+      },
+      {
+        "line": 202,
+        "text": "{{ old('payment_date', now()->toDateString()) }}",
+        "snippet": "<input type=\"date\" name=\"payment_date\" class=\"form-control\" value=\"{{ old('payment_date', now()->toDateString()) }}\" required>"
+      },
+      {
+        "line": 240,
+        "text": "{{ $selectedBranchId }}",
+        "snippet": "<input type=\"hidden\" name=\"branch_id\" value=\"{{ $selectedBranchId }}\">"
+      },
+      {
+        "line": 284,
+        "text": "{{ $selectedBranchId }}",
+        "snippet": "<input type=\"hidden\" name=\"branch_id\" value=\"{{ $selectedBranchId }}\">"
+      },
+      {
+        "line": 343,
+        "text": "{{ $selectedBranchId }}",
+        "snippet": "<input type=\"hidden\" name=\"branch_id\" value=\"{{ $selectedBranchId }}\">"
+      },
+      {
+        "line": 365,
+        "text": "{{ $selectedBranchId }}",
+        "snippet": "<input type=\"hidden\" name=\"branch_id\" value=\"{{ $selectedBranchId }}\">"
+      },
+      {
+        "line": 434,
+        "text": "Remove",
+        "snippet": "<td><button type=\"button\" class=\"btn btn-outline-danger btn-sm remove-row\">Remove</button></td>"
+      }
+    ],
+    "components\\top-navbar.blade.php": [
+      {
+        "line": 29,
+        "text": "Search... (press Enter)",
+        "snippet": "<input id=\"globalSearchInput\" type=\"search\" placeholder=\"Search... (press Enter)\" aria-label=\"Search\">"
+      },
+      {
+        "line": 65,
+        "text": "System Settings",
+        "snippet": "<a href=\"{{ route('settings.index') }}\" style=\"display:block;padding:8px;color:#fff;text-decoration:none\">System Settings</a>"
+      }
+    ]
+  }
+}

@@ -38,4 +38,5 @@ return [
     'bahrain' => 'Bahreyn',
     'oman' => 'Umman',
     'jordan' => 'Ürdün',
+    'turkey' => 'Türkiye',
 ];

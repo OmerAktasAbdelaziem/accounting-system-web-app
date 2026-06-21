@@ -73,41 +73,6 @@
                         <p class="text-muted">{{ $employee->position }}</p>
                     </div>
                 </div>
-                <style>
-                        .employee-white-header,
-                        .employee-white-header * {
-                            color: #fff !important;
-                        }
-
-                        .card-header.employee-white-header,
-                        .card-header.employee-white-header * {
-                            color: #fff !important;
-                        }
-
-                            .advances-text {
-                                color: #fff !important;
-                            }
-
-                    .employee-detail-header {
-                        color: #fff !important;
-                    }
-
-                    .employee-detail-header * {
-                        color: #fff !important;
-                    }
-
-                    .card-header {
-                        background: linear-gradient(135deg, #1a1a1a, #333) !important;
-                        color: #fff !important;
-                    }
-
-                    @media (max-width: 768px) {
-                        .card-header {
-                            background: linear-gradient(135deg, #ff8c00, #ffb347) !important;
-                        }
-                    }
-                </style>
-
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.salary') }}</label>
@@ -119,7 +84,7 @@
                             @forelse($employee->branches as $branch)
                                 <span class="badge bg-info text-dark me-1 mb-1">{{ $branch->name }}</span>
                             @empty
-                                <p class="text-muted mb-0">No branch assigned</p>
+                                <p class="text-muted mb-0">{{ __('No branch assigned') }}</p>
                             @endforelse
                         </div>
                     </div>
@@ -130,11 +95,11 @@
                 <div class="row">
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.created') }}</label>
-                        <p class="text-muted">{{ $employee->created_at->format('M d, Y H:i') }}</p>
+                        <p class="text-muted">{{ $employee->created_at->translatedFormat('M d, Y H:i') }}</p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.last_updated') }}</label>
-                        <p class="text-muted">{{ $employee->updated_at->format('M d, Y H:i') }}</p>
+                        <p class="text-muted">{{ $employee->updated_at->translatedFormat('M d, Y H:i') }}</p>
                     </div>
                 </div>
             </div>
@@ -158,7 +123,7 @@
                     <tbody>
                         @forelse($recentSales as $sale)
                             <tr>
-                                <td>{{ $sale->commission_date->format('M d, Y') }}</td>
+                                <td>{{ $sale->commission_date->translatedFormat('M d, Y') }}</td>
                                 <td>{{ $currencySymbol }}{{ number_format($sale->sale_amount, 2) }}</td>
                                 <td>{{ $sale->commission_rate }}%</td>
                                 <td><strong>{{ $currencySymbol }}{{ number_format($sale->commission_amount, 2) }}</strong></td>
@@ -192,7 +157,7 @@
                     <tbody>
                         @forelse($recentCommissions as $commission)
                             <tr>
-                                <td>{{ $commission->commission_date->format('M d, Y') }}</td>
+                                <td>{{ $commission->commission_date->translatedFormat('M d, Y') }}</td>
                                 <td>{{ $currencySymbol }}{{ number_format($commission->sale_amount, 2) }}</td>
                                 <td>{{ $commission->commission_rate }}%</td>
                                 <td><strong>{{ $currencySymbol }}{{ number_format($commission->commission_amount, 2) }}</strong></td>
@@ -235,7 +200,7 @@
                     <tbody>
                         @forelse($employee->advances()->orderByDesc('advance_date')->get() as $advance)
                             <tr>
-                                <td>{{ $advance->advance_date->format('M d, Y') }}</td>
+                                <td>{{ $advance->advance_date->translatedFormat('M d, Y') }}</td>
                                 <td><strong>{{ $currencySymbol }}{{ number_format($advance->amount, 2) }}</strong></td>
                                 <td>{{ $advance->description ?? '-' }}</td>
                                 <td>
@@ -250,7 +215,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center text-muted py-3">No advances recorded</td>
+                                <td colspan="4" class="text-center text-muted py-3">{{ __('No advances recorded') }}</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -365,34 +330,34 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addAdvanceModalLabel">Add Employee Advance</h5>
+                <h5 class="modal-title" id="addAdvanceModalLabel">{{ __('Add Employee Advance') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="{{ route('advances.store') }}" method="POST">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="advance_amount" class="form-label fw-bold">Amount</label>
+                        <label for="advance_amount" class="form-label fw-bold">{{ __('Amount') }}</label>
                         <input type="text" class="form-control" id="advance_amount" name="amount" inputmode="decimal" required>
-                        <small class="text-muted">Enter the advance amount</small>
+                        <small class="text-muted">{{ __('Enter the advance amount') }}</small>
                     </div>
 
                     <div class="mb-3">
-                        <label for="advance_date" class="form-label fw-bold">Advance Date</label>
+                        <label for="advance_date" class="form-label fw-bold">{{ __('Advance Date') }}</label>
                         <input type="date" class="form-control" id="advance_date" name="advance_date" value="{{ now()->toDateString() }}" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="advance_description" class="form-label fw-bold">Description (Optional)</label>
+                        <label for="advance_description" class="form-label fw-bold">{{ __('Description (Optional)') }}</label>
                         <textarea class="form-control" id="advance_description" name="description" rows="2" placeholder="e.g., Emergency advance, Medical expenses"></textarea>
                     </div>
 
                     <input type="hidden" name="employee_id" value="{{ $employee->id }}">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
                     <button type="submit" class="btn btn-success">
-                        <i class="bi bi-check-circle"></i> Record Advance
+                        <i class="bi bi-check-circle"></i> {{ __('Record Advance') }}
                     </button>
                 </div>
             </form>

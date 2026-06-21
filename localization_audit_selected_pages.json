@@ -1,0 +1,1863 @@
+{
+  "paths_count": 49,
+  "raw_translations": {
+    "audit-logs\\index.blade.php": [
+      {
+        "kind": "__",
+        "text": "audit_logs.title"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.audit_logs"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.export"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.export"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.filter_by_date"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.from_date"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.to_date"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.user"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.filter_by_user"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.action"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.filter_by_action"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.model_type"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.filter_by_model"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.search"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.clear_filters"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.date"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.time"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.user"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.action"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.model_type"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.model_id"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.ip_address"
+      },
+      {
+        "kind": "__",
+        "text": "actions.action"
+      },
+      {
+        "kind": "__",
+        "text": "actions.view"
+      },
+      {
+        "kind": "__",
+        "text": "actions.view"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.no_logs_found"
+      }
+    ],
+    "audit-logs\\show.blade.php": [
+      {
+        "kind": "__",
+        "text": "audit_logs.details"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.details"
+      },
+      {
+        "kind": "__",
+        "text": "actions.back"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.user"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.action"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.model_type"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.model_id"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.date"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.time"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.ip_address"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.changes"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.new_value"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.old_value"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.old_value"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.no_changes"
+      },
+      {
+        "kind": "__",
+        "text": "audit_logs.user_agent"
+      }
+    ],
+    "payroll\\create.blade.php": [
+      {
+        "kind": "__",
+        "text": "Create Payroll"
+      },
+      {
+        "kind": "__",
+        "text": "Employee"
+      },
+      {
+        "kind": "__",
+        "text": "Select employee"
+      },
+      {
+        "kind": "__",
+        "text": "Year"
+      },
+      {
+        "kind": "__",
+        "text": "Month"
+      },
+      {
+        "kind": "__",
+        "text": "Basic Salary"
+      },
+      {
+        "kind": "__",
+        "text": "Allowances"
+      },
+      {
+        "kind": "__",
+        "text": "Deductions"
+      },
+      {
+        "kind": "__",
+        "text": "Notes"
+      },
+      {
+        "kind": "__",
+        "text": "Save"
+      },
+      {
+        "kind": "__",
+        "text": "Cancel"
+      }
+    ],
+    "payroll\\edit.blade.php": [
+      {
+        "kind": "__",
+        "text": "Edit Payroll"
+      },
+      {
+        "kind": "__",
+        "text": "Cancel"
+      },
+      {
+        "kind": "__",
+        "text": "Employee"
+      },
+      {
+        "kind": "__",
+        "text": "Month/Year"
+      },
+      {
+        "kind": "__",
+        "text": "Basic Salary"
+      },
+      {
+        "kind": "__",
+        "text": "Commission (Auto-Calculated)"
+      },
+      {
+        "kind": "__",
+        "text": "Allowances"
+      },
+      {
+        "kind": "__",
+        "text": "Deductions"
+      },
+      {
+        "kind": "__",
+        "text": "Notes"
+      },
+      {
+        "kind": "__",
+        "text": "Save"
+      },
+      {
+        "kind": "__",
+        "text": "Cancel"
+      }
+    ],
+    "payroll\\index.blade.php": [
+      {
+        "kind": "__",
+        "text": "Pay Payroll"
+      },
+      {
+        "kind": "__",
+        "text": "Safe"
+      },
+      {
+        "kind": "__",
+        "text": "Select safe"
+      },
+      {
+        "kind": "__",
+        "text": "Cancel"
+      },
+      {
+        "kind": "__",
+        "text": "Confirm Payment"
+      }
+    ],
+    "payroll\\show.blade.php": [
+      {
+        "kind": "__",
+        "text": "Date"
+      },
+      {
+        "kind": "__",
+        "text": "Sale Amount"
+      },
+      {
+        "kind": "__",
+        "text": "Commission Rate"
+      },
+      {
+        "kind": "__",
+        "text": "Commission Amount"
+      },
+      {
+        "kind": "__",
+        "text": "Reference"
+      },
+      {
+        "kind": "__",
+        "text": "Notes"
+      },
+      {
+        "kind": "__",
+        "text": "Date"
+      },
+      {
+        "kind": "__",
+        "text": "Amount"
+      },
+      {
+        "kind": "__",
+        "text": "Description"
+      },
+      {
+        "kind": "__",
+        "text": "Created By"
+      }
+    ],
+    "reports\\financial.blade.php": [
+      {
+        "kind": "__",
+        "text": "Paid payrolls"
+      },
+      {
+        "kind": "__",
+        "text": "Paid commissions"
+      },
+      {
+        "kind": "__",
+        "text": "Payroll safe payouts"
+      },
+      {
+        "kind": "__",
+        "text": "Paid Payrolls"
+      },
+      {
+        "kind": "__",
+        "text": "Paid Commissions"
+      },
+      {
+        "kind": "__",
+        "text": "Payroll Safe Payouts"
+      }
+    ]
+  },
+  "untranslated": {
+    "audit-logs\\index.blade.php": [
+      {
+        "line": 26,
+        "text": "Total Logs"
+      },
+      {
+        "line": 33,
+        "text": "Created"
+      },
+      {
+        "line": 40,
+        "text": "Updated"
+      },
+      {
+        "line": 47,
+        "text": "Deleted"
+      }
+    ],
+    "branches\\create.blade.php": [
+      {
+        "line": 33,
+        "text": "Create a branch with the details that matter first."
+      }
+    ],
+    "branches\\show.blade.php": [
+      {
+        "line": 248,
+        "text": "Branch status"
+      },
+      {
+        "line": 256,
+        "text": "Updated branch overview"
+      },
+      {
+        "line": 261,
+        "text": "{{ $currencySymbol }}{{ number_format((float) ($branchOutstandingTotal ?? 0), 2) }}"
+      },
+      {
+        "line": 270,
+        "text": "{{ $branchPayrolls->total() ?? 0 }} payroll records"
+      },
+      {
+        "line": 312,
+        "text": "Branch analytics"
+      },
+      {
+        "line": 313,
+        "text": "Branch performance summary"
+      },
+      {
+        "line": 323,
+        "text": "Branch analytics"
+      },
+      {
+        "line": 324,
+        "text": "Sales trend"
+      },
+      {
+        "line": 336,
+        "text": "Branch analytics"
+      },
+      {
+        "line": 353,
+        "text": "Overview"
+      },
+      {
+        "line": 398,
+        "text": "Branch staffing"
+      },
+      {
+        "line": 425,
+        "text": "Branch employees"
+      },
+      {
+        "line": 455,
+        "text": "Branch outstanding"
+      },
+      {
+        "line": 458,
+        "text": "{{ $currencySymbol }}{{ number_format((float) ($branchOutstandingTotal ?? 0), 2) }}"
+      },
+      {
+        "line": 463,
+        "text": "Suppliers"
+      },
+      {
+        "line": 464,
+        "text": "{{ $branchSuppliers->total() ?? 0 }}"
+      },
+      {
+        "line": 469,
+        "text": "Payrolls"
+      },
+      {
+        "line": 470,
+        "text": "{{ $branchPayrolls->total() ?? 0 }}"
+      },
+      {
+        "line": 495,
+        "text": "Payroll records"
+      },
+      {
+        "line": 498,
+        "text": "{{ $branchPayrolls->total() ?? 0 }}"
+      },
+      {
+        "line": 524,
+        "text": "{{ $branchPayrolls->links() }}"
+      },
+      {
+        "line": 546,
+        "text": "Date"
+      },
+      {
+        "line": 548,
+        "text": "Amount"
+      },
+      {
+        "line": 573,
+        "text": "Supplier ledger"
+      },
+      {
+        "line": 574,
+        "text": "Branch suppliers"
+      },
+      {
+        "line": 576,
+        "text": "{{ $branchSuppliers->total() ?? 0 }}"
+      },
+      {
+        "line": 584,
+        "text": "Supplier"
+      },
+      {
+        "line": 585,
+        "text": "Purchased"
+      },
+      {
+        "line": 595,
+        "text": "Branch opening {{ $currencySymbol }}{{ number_format(((int) ($supplier->branch_id ?? 0) === (int) $branch->id || $supplier->branches()->whereKey($branch->id)->exists()) ? (float) ($supplier->opening_balance ?? 0) : 0, 2) }}"
+      },
+      {
+        "line": 605,
+        "text": "{{ $branchSuppliers->links() }}"
+      },
+      {
+        "line": 620,
+        "text": "Branch directory"
+      },
+      {
+        "line": 632,
+        "text": "Created"
+      }
+    ],
+    "categories\\form.blade.php": [
+      {
+        "line": 57,
+        "text": "📊 Overview"
+      },
+      {
+        "line": 59,
+        "text": "Total Products"
+      },
+      {
+        "line": 63,
+        "text": "Created"
+      },
+      {
+        "line": 92,
+        "text": "📝 Category Details"
+      },
+      {
+        "line": 111,
+        "text": "📄 Description"
+      },
+      {
+        "line": 123,
+        "text": "🏢 Branches"
+      }
+    ],
+    "categories\\index.blade.php": [
+      {
+        "line": 105,
+        "text": "Total products"
+      },
+      {
+        "line": 105,
+        "text": "{{ $totalProducts }}"
+      },
+      {
+        "line": 106,
+        "text": "{{ $avgPerCategory }}"
+      },
+      {
+        "line": 119,
+        "text": "{{ $totalProducts }}"
+      },
+      {
+        "line": 124,
+        "text": "{{ $avgPerCategory }}"
+      },
+      {
+        "line": 138,
+        "text": "Search categories..."
+      },
+      {
+        "line": 211,
+        "text": "Stock Value"
+      },
+      {
+        "line": 212,
+        "text": "Avg Price"
+      }
+    ],
+    "categories\\show.blade.php": [
+      {
+        "line": 28,
+        "text": "Overview"
+      },
+      {
+        "line": 32,
+        "text": "Stock Value"
+      },
+      {
+        "line": 33,
+        "text": "Avg Price"
+      }
+    ],
+    "commissions\\form.blade.php": [
+      {
+        "line": 68,
+        "text": "{{ isset($commission) ? 'Edit an existing commission record.' : 'Use this only to create the first commission profile for an employee.' }}"
+      },
+      {
+        "line": 94,
+        "text": "Commission Details"
+      },
+      {
+        "line": 117,
+        "text": "Financial Details"
+      },
+      {
+        "line": 133,
+        "text": "Additional Information"
+      },
+      {
+        "line": 149,
+        "text": "Branches"
+      }
+    ],
+    "commissions\\index.blade.php": [
+      {
+        "line": 123,
+        "text": "Total Commission"
+      },
+      {
+        "line": 181,
+        "text": "Create First Commission Profile"
+      },
+      {
+        "line": 218,
+        "text": "Total Commission"
+      },
+      {
+        "line": 219,
+        "text": "Details"
+      },
+      {
+        "line": 237,
+        "text": "View Details"
+      },
+      {
+        "line": 250,
+        "text": "Paid Commissions History"
+      },
+      {
+        "line": 258,
+        "text": "Date"
+      },
+      {
+        "line": 260,
+        "text": "Sale Amount"
+      }
+    ],
+    "commissions\\show.blade.php": [
+      {
+        "line": 207,
+        "text": "{{ $currencySymbol }}{{ number_format($totalSales, 2) }}"
+      },
+      {
+        "line": 236,
+        "text": "Add a new commission for this employee from here. The general create page is only for first-time commission profiles."
+      },
+      {
+        "line": 315,
+        "text": "Edit"
+      },
+      {
+        "line": 330,
+        "text": "Delete"
+      }
+    ],
+    "components\\floating-chat.blade.php": [
+      {
+        "line": 498,
+        "text": "Close chat"
+      },
+      {
+        "line": 505,
+        "text": "Search chats..."
+      }
+    ],
+    "components\\top-navbar.blade.php": [
+      {
+        "line": 29,
+        "text": "Search... (press Enter)"
+      },
+      {
+        "line": 65,
+        "text": "System Settings"
+      }
+    ],
+    "dashboard\\index.blade.php": [
+      {
+        "line": 960,
+        "text": "Reports"
+      },
+      {
+        "line": 969,
+        "text": "Today Sales"
+      },
+      {
+        "line": 974,
+        "text": "Total Balance"
+      },
+      {
+        "line": 979,
+        "text": "Products"
+      },
+      {
+        "line": 984,
+        "text": "Low Stock"
+      },
+      {
+        "line": 1038,
+        "text": "Add Product"
+      },
+      {
+        "line": 1038,
+        "text": "Create inventory item"
+      },
+      {
+        "line": 1045,
+        "text": "Sales"
+      },
+      {
+        "line": 1052,
+        "text": "New Invoice"
+      },
+      {
+        "line": 1052,
+        "text": "Create invoice"
+      },
+      {
+        "line": 1059,
+        "text": "Add Employee"
+      },
+      {
+        "line": 1066,
+        "text": "Add Supplier"
+      },
+      {
+        "line": 1073,
+        "text": "Payroll"
+      },
+      {
+        "line": 1073,
+        "text": "Payroll entry"
+      },
+      {
+        "line": 1080,
+        "text": "Safes"
+      },
+      {
+        "line": 1094,
+        "text": "Warehouse overview"
+      },
+      {
+        "line": 1101,
+        "text": "New Branch"
+      },
+      {
+        "line": 1108,
+        "text": "Sales Report"
+      },
+      {
+        "line": 1115,
+        "text": "Financial Report"
+      },
+      {
+        "line": 1134,
+        "text": "Products"
+      },
+      {
+        "line": 1135,
+        "text": "{{ $totalProducts ?? 0 }}"
+      },
+      {
+        "line": 1139,
+        "text": "{{ $lowStockCount ?? 0 }}"
+      },
+      {
+        "line": 1147,
+        "text": "Sales"
+      },
+      {
+        "line": 1148,
+        "text": "{{ $currencySymbol }}{{ number_format($totalSales ?? 0, 2) }}"
+      },
+      {
+        "line": 1160,
+        "text": "Employees"
+      },
+      {
+        "line": 1161,
+        "text": "{{ $totalEmployees ?? 0 }}"
+      },
+      {
+        "line": 1178,
+        "text": "{{ $currencySymbol }}{{ number_format($commissionAmount ?? 0, 2) }} pending"
+      },
+      {
+        "line": 1200,
+        "text": "Safe Balance"
+      },
+      {
+        "line": 1214,
+        "text": "{{ $currencySymbol }}{{ number_format($safeIncomeTotal ?? 0, 2) }}"
+      },
+      {
+        "line": 1225,
+        "text": "{{ $currencySymbol }}{{ number_format($safeOutcomeTotal ?? 0, 2) }}"
+      },
+      {
+        "line": 1239,
+        "text": "Sales and finance reports"
+      },
+      {
+        "line": 1247,
+        "text": "Sales trend"
+      },
+      {
+        "line": 1264,
+        "text": "Inventory health"
+      },
+      {
+        "line": 1295,
+        "text": "Description"
+      },
+      {
+        "line": 1297,
+        "text": "Date"
+      },
+      {
+        "line": 1298,
+        "text": "Amount"
+      },
+      {
+        "line": 1304,
+        "text": "{{ $transaction->description ?? 'Invoice' }}"
+      },
+      {
+        "line": 1329,
+        "text": "{{ $transaction->description ?? 'Invoice' }}"
+      },
+      {
+        "line": 1356,
+        "text": "Safes"
+      },
+      {
+        "line": 1398,
+        "text": "Inventory"
+      },
+      {
+        "line": 1405,
+        "text": "Product"
+      },
+      {
+        "line": 1406,
+        "text": "Stock"
+      },
+      {
+        "line": 1446,
+        "text": "Stock: {{ $product->current_stock ?? 0 }}"
+      }
+    ],
+    "employees\\form.blade.php": [
+      {
+        "line": 139,
+        "text": "⚙️ Settings"
+      }
+    ],
+    "employees\\index.blade.php": [
+      {
+        "line": 145,
+        "text": "View Details"
+      }
+    ],
+    "employees\\show.blade.php": [
+      {
+        "line": 41,
+        "text": "{{ $currencySymbol }}{{ number_format($totalSales, 2) }}"
+      },
+      {
+        "line": 322,
+        "text": "{{ $currencySymbol }}{{ number_format($totalSales, 2) }}"
+      },
+      {
+        "line": 368,
+        "text": "Add Employee Advance"
+      },
+      {
+        "line": 375,
+        "text": "Amount"
+      },
+      {
+        "line": 381,
+        "text": "Advance Date"
+      },
+      {
+        "line": 382,
+        "text": "{{ now()->toDateString() }}"
+      },
+      {
+        "line": 386,
+        "text": "Description (Optional)"
+      },
+      {
+        "line": 393,
+        "text": "Cancel"
+      }
+    ],
+    "payroll\\create.blade.php": [
+      {
+        "line": 57,
+        "text": "Payroll"
+      },
+      {
+        "line": 106,
+        "text": "Additional benefits/bonuses (optional)"
+      }
+    ],
+    "payroll\\edit.blade.php": [
+      {
+        "line": 122,
+        "text": "Payroll"
+      },
+      {
+        "line": 155,
+        "text": "Payroll period"
+      },
+      {
+        "line": 178,
+        "text": "Additional benefits or bonuses."
+      },
+      {
+        "line": 190,
+        "text": "Add any payroll notes"
+      }
+    ],
+    "payroll\\index.blade.php": [
+      {
+        "line": 405,
+        "text": "Payroll health"
+      },
+      {
+        "line": 413,
+        "text": "{{ $unpaidPayrollCount ?? 0 }}"
+      },
+      {
+        "line": 419,
+        "text": "{{ $currencySymbol }}{{ number_format($unpaidNetSalaryTotal ?? 0, 0) }}"
+      },
+      {
+        "line": 425,
+        "text": "{{ $paidPayrollCount ?? 0 }}"
+      },
+      {
+        "line": 443,
+        "text": "{{ $unpaidPayrollCount ?? 0 }}"
+      },
+      {
+        "line": 457,
+        "text": "{{ $currencySymbol }}{{ number_format($unpaidNetSalaryTotal ?? 0, 2) }}"
+      },
+      {
+        "line": 458,
+        "text": "Total pending payout amount."
+      },
+      {
+        "line": 471,
+        "text": "{{ $paidPayrollCount ?? 0 }}"
+      },
+      {
+        "line": 485,
+        "text": "Search employee, month, safe, status, or payroll ID"
+      },
+      {
+        "line": 531,
+        "text": "{{ \\Carbon\\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }} · ID #{{ $payroll->id }}"
+      },
+      {
+        "line": 538,
+        "text": "{{ $currencySymbol }}{{ number_format($netAmount, 2) }}"
+      },
+      {
+        "line": 545,
+        "text": "Safe source"
+      },
+      {
+        "line": 549,
+        "text": "Payroll period"
+      },
+      {
+        "line": 571,
+        "text": "Edit"
+      },
+      {
+        "line": 577,
+        "text": "Delete"
+      },
+      {
+        "line": 585,
+        "text": "Create payrolls or mark existing records as paid to populate this section."
+      },
+      {
+        "line": 596,
+        "text": "Payroll period"
+      },
+      {
+        "line": 624,
+        "text": "{{ \\Carbon\\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}"
+      },
+      {
+        "line": 626,
+        "text": "{{ $currencySymbol }}{{ number_format($netAmount, 2) }}"
+      },
+      {
+        "line": 636,
+        "text": "Edit"
+      },
+      {
+        "line": 642,
+        "text": "Delete"
+      },
+      {
+        "line": 665,
+        "text": "Create payrolls or mark existing records as paid to populate this section."
+      },
+      {
+        "line": 713,
+        "text": "{{ \\Carbon\\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }} · ID #{{ $payroll->id }}"
+      },
+      {
+        "line": 720,
+        "text": "{{ $currencySymbol }}{{ number_format($netAmount, 2) }}"
+      },
+      {
+        "line": 723,
+        "text": "Safe"
+      },
+      {
+        "line": 746,
+        "text": "Delete"
+      },
+      {
+        "line": 765,
+        "text": "Safe"
+      },
+      {
+        "line": 789,
+        "text": "{{ \\Carbon\\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}"
+      },
+      {
+        "line": 794,
+        "text": "{{ $currencySymbol }}{{ number_format($netAmount, 2) }}"
+      },
+      {
+        "line": 808,
+        "text": "Delete"
+      }
+    ],
+    "payroll\\show.blade.php": [
+      {
+        "line": 36,
+        "text": "{{ \\Carbon\\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}"
+      },
+      {
+        "line": 95,
+        "text": "Sales/performance bonus"
+      },
+      {
+        "line": 108,
+        "text": "Additional benefits"
+      },
+      {
+        "line": 120,
+        "text": "Payroll deductions and advances"
+      },
+      {
+        "line": 128,
+        "text": "Safe:"
+      },
+      {
+        "line": 139,
+        "text": "Total Before Deductions"
+      },
+      {
+        "line": 171,
+        "text": "Total payable"
+      }
+    ],
+    "products\\_table.blade.php": [
+      {
+        "line": 20,
+        "text": "View Details"
+      }
+    ],
+    "products\\form.blade.php": [
+      {
+        "line": 90,
+        "text": "Current Stock"
+      },
+      {
+        "line": 94,
+        "text": "Created"
+      },
+      {
+        "line": 98,
+        "text": "Last Updated"
+      },
+      {
+        "line": 135,
+        "text": "Select Category"
+      },
+      {
+        "line": 171,
+        "text": "📦 Inventory"
+      },
+      {
+        "line": 183,
+        "text": "⚙️ Settings"
+      }
+    ],
+    "products\\index.blade.php": [
+      {
+        "line": 608,
+        "text": "{{ $totalProducts }}"
+      },
+      {
+        "line": 612,
+        "text": "Stock alerts"
+      },
+      {
+        "line": 612,
+        "text": "{{ $lowStockProductsCount }}"
+      },
+      {
+        "line": 620,
+        "text": "Total products"
+      },
+      {
+        "line": 621,
+        "text": "{{ $totalProducts }}"
+      },
+      {
+        "line": 630,
+        "text": "{{ $activeProducts }}"
+      },
+      {
+        "line": 639,
+        "text": "{{ $lowStockProductsCount }}"
+      },
+      {
+        "line": 648,
+        "text": "{{ $currencySymbol }}{{ number_format($avgPrice, 2) }}"
+      },
+      {
+        "line": 660,
+        "text": "Search products by name..."
+      },
+      {
+        "line": 690,
+        "text": "{{ $totalProducts }} items loaded"
+      },
+      {
+        "line": 735,
+        "text": "View Details"
+      },
+      {
+        "line": 741,
+        "text": "Edit"
+      },
+      {
+        "line": 747,
+        "text": "Delete"
+      }
+    ],
+    "products\\show.blade.php": [
+      {
+        "line": 25,
+        "text": "Summary"
+      },
+      {
+        "line": 29,
+        "text": "Price"
+      }
+    ],
+    "reports\\financial.blade.php": [
+      {
+        "line": 24,
+        "text": "{{ $fromDate ?? request('from_date') }}"
+      },
+      {
+        "line": 25,
+        "text": "{{ $toDate ?? request('to_date') }}"
+      },
+      {
+        "line": 55,
+        "text": "{{ ($safePayrollOutcomes ?? collect())->count() }}"
+      },
+      {
+        "line": 66,
+        "text": "{{ $fromDate ?? request('from_date') }}"
+      },
+      {
+        "line": 70,
+        "text": "{{ $toDate ?? request('to_date') }}"
+      }
+    ],
+    "reports\\sales.blade.php": [
+      {
+        "line": 80,
+        "text": "{{ $fromDate ?? request('from_date') }}"
+      },
+      {
+        "line": 81,
+        "text": "{{ $toDate ?? request('to_date') }}"
+      },
+      {
+        "line": 91,
+        "text": "{{ $fromDate ?? request('from_date') }}"
+      },
+      {
+        "line": 92,
+        "text": "{{ $toDate ?? request('to_date') }}"
+      },
+      {
+        "line": 106,
+        "text": "{{ $fromDate ?? request('from_date') }}"
+      },
+      {
+        "line": 110,
+        "text": "{{ $toDate ?? request('to_date') }}"
+      }
+    ],
+    "safes\\form.blade.php": [
+      {
+        "line": 72,
+        "text": "💰 Safe Info"
+      },
+      {
+        "line": 123,
+        "text": "💳 Balance Settings"
+      },
+      {
+        "line": 148,
+        "text": "⚙️ Settings"
+      }
+    ],
+    "safes\\show.blade.php": [
+      {
+        "line": 256,
+        "text": "Total Income:"
+      },
+      {
+        "line": 281,
+        "text": "Amount"
+      },
+      {
+        "line": 283,
+        "text": "Date"
+      },
+      {
+        "line": 334,
+        "text": "Total Outcome:"
+      },
+      {
+        "line": 359,
+        "text": "Amount"
+      },
+      {
+        "line": 360,
+        "text": "Description"
+      },
+      {
+        "line": 361,
+        "text": "Date"
+      },
+      {
+        "line": 389,
+        "text": "Supplier: {{ $outcome->supplier->name }}"
+      },
+      {
+        "line": 451,
+        "text": "Income Details"
+      },
+      {
+        "line": 460,
+        "text": "Amount"
+      },
+      {
+        "line": 470,
+        "text": "Date"
+      },
+      {
+        "line": 483,
+        "text": "Notes"
+      },
+      {
+        "line": 488,
+        "text": "Close"
+      },
+      {
+        "line": 509,
+        "text": "Amount *"
+      },
+      {
+        "line": 531,
+        "text": "Invoice #, Check #, etc."
+      },
+      {
+        "line": 534,
+        "text": "Notes (Optional)"
+      },
+      {
+        "line": 535,
+        "text": "Additional notes about this income..."
+      },
+      {
+        "line": 539,
+        "text": "Cancel"
+      },
+      {
+        "line": 540,
+        "text": "Update Income"
+      },
+      {
+        "line": 553,
+        "text": "Outcome Details"
+      },
+      {
+        "line": 562,
+        "text": "Amount"
+      },
+      {
+        "line": 566,
+        "text": "Date"
+      },
+      {
+        "line": 576,
+        "text": "Supplier"
+      },
+      {
+        "line": 581,
+        "text": "Description"
+      },
+      {
+        "line": 590,
+        "text": "Close"
+      },
+      {
+        "line": 611,
+        "text": "Amount *"
+      },
+      {
+        "line": 624,
+        "text": "Description (Optional)"
+      },
+      {
+        "line": 629,
+        "text": "Invoice #, Reference, etc."
+      },
+      {
+        "line": 633,
+        "text": "Cancel"
+      },
+      {
+        "line": 634,
+        "text": "Update Outcome"
+      },
+      {
+        "line": 646,
+        "text": "Add Income"
+      },
+      {
+        "line": 653,
+        "text": "Amount *"
+      },
+      {
+        "line": 659,
+        "text": "Date"
+      },
+      {
+        "line": 684,
+        "text": "Invoice #, Check #, etc."
+      },
+      {
+        "line": 687,
+        "text": "Notes (Optional)"
+      },
+      {
+        "line": 688,
+        "text": "Additional notes about this income..."
+      },
+      {
+        "line": 692,
+        "text": "Cancel"
+      },
+      {
+        "line": 704,
+        "text": "Add Outcome"
+      },
+      {
+        "line": 720,
+        "text": "Amount *"
+      },
+      {
+        "line": 722,
+        "text": "Note: Balance can go negative if withdrawal exceeds current balance"
+      },
+      {
+        "line": 727,
+        "text": "Date"
+      },
+      {
+        "line": 746,
+        "text": "Supplier"
+      },
+      {
+        "line": 750,
+        "text": "Supplier (With Outstanding Balance)"
+      },
+      {
+        "line": 761,
+        "text": "Description (Optional)"
+      },
+      {
+        "line": 770,
+        "text": "Cancel"
+      },
+      {
+        "line": 782,
+        "text": "Add Currency"
+      },
+      {
+        "line": 799,
+        "text": "Cancel"
+      },
+      {
+        "line": 800,
+        "text": "Add Currency"
+      }
+    ],
+    "sales\\index.blade.php": [
+      {
+        "line": 378,
+        "text": "Sales"
+      },
+      {
+        "line": 422,
+        "text": "Branch"
+      },
+      {
+        "line": 431,
+        "text": "Sale Date"
+      },
+      {
+        "line": 432,
+        "text": "{{ old('sale_date', now()->toDateString()) }}"
+      },
+      {
+        "line": 435,
+        "text": "Total Amount Sold"
+      },
+      {
+        "line": 440,
+        "text": "Amount Spent by Store"
+      },
+      {
+        "line": 441,
+        "text": "Amount the store spent"
+      },
+      {
+        "line": 445,
+        "text": "Employees Involved"
+      },
+      {
+        "line": 462,
+        "text": "Amount Sold"
+      },
+      {
+        "line": 467,
+        "text": "Remove"
+      },
+      {
+        "line": 475,
+        "text": "+ Add Employee"
+      },
+      {
+        "line": 479,
+        "text": "Description"
+      },
+      {
+        "line": 480,
+        "text": "Add a description for the whole sale..."
+      },
+      {
+        "line": 497,
+        "text": "Amount Sold"
+      },
+      {
+        "line": 502,
+        "text": "Remove"
+      },
+      {
+        "line": 508,
+        "text": "Save Sale"
+      },
+      {
+        "line": 540,
+        "text": "Total sales recorded"
+      },
+      {
+        "line": 561,
+        "text": "Recent Sales"
+      },
+      {
+        "line": 576,
+        "text": "Branch"
+      },
+      {
+        "line": 578,
+        "text": "All branches"
+      },
+      {
+        "line": 602,
+        "text": "Date"
+      },
+      {
+        "line": 603,
+        "text": "Branch"
+      },
+      {
+        "line": 604,
+        "text": "Total Amount"
+      },
+      {
+        "line": 607,
+        "text": "Description"
+      },
+      {
+        "line": 748,
+        "text": "Employees Involved"
+      },
+      {
+        "line": 757,
+        "text": "Date"
+      },
+      {
+        "line": 763,
+        "text": "Branch"
+      },
+      {
+        "line": 775,
+        "text": "Total Amount"
+      },
+      {
+        "line": 793,
+        "text": "Description"
+      },
+      {
+        "line": 801,
+        "text": "Employees involved"
+      },
+      {
+        "line": 819,
+        "text": "Edit Sale"
+      },
+      {
+        "line": 825,
+        "text": "Branch"
+      },
+      {
+        "line": 834,
+        "text": "Sale Date"
+      },
+      {
+        "line": 838,
+        "text": "Total Amount"
+      },
+      {
+        "line": 843,
+        "text": "Amount Spent by Store"
+      },
+      {
+        "line": 844,
+        "text": "Amount the store spent"
+      },
+      {
+        "line": 847,
+        "text": "Employees Involved"
+      },
+      {
+        "line": 848,
+        "text": "Add or change the employees linked to this sale and their sold amounts."
+      },
+      {
+        "line": 850,
+        "text": "+ Add Employee"
+      },
+      {
+        "line": 856,
+        "text": "Description"
+      },
+      {
+        "line": 857,
+        "text": "Add a description for the whole sale..."
+      },
+      {
+        "line": 863,
+        "text": "Cancel"
+      },
+      {
+        "line": 864,
+        "text": "Save changes"
+      },
+      {
+        "line": 884,
+        "text": "Amount Sold"
+      },
+      {
+        "line": 889,
+        "text": "Remove"
+      },
+      {
+        "line": 1098,
+        "text": "${escapeHtml(employee.name || 'Deleted employee')}"
+      }
+    ],
+    "storages\\form.blade.php": [
+      {
+        "line": 104,
+        "text": "e.g., Warehouse, Shelf, Cabinet"
+      },
+      {
+        "line": 122,
+        "text": "📄 Description"
+      },
+      {
+        "line": 133,
+        "text": "⚙️ Settings"
+      }
+    ],
+    "storages\\items.blade.php": [
+      {
+        "line": 13,
+        "text": "id) }}\" class=\"btn btn-outline-info\">Transfer History"
+      },
+      {
+        "line": 14,
+        "text": "Back"
+      },
+      {
+        "line": 15,
+        "text": "+ Add Transaction"
+      },
+      {
+        "line": 31,
+        "text": "Total Quantity"
+      },
+      {
+        "line": 39,
+        "text": "Total Weight"
+      },
+      {
+        "line": 47,
+        "text": "Total Value"
+      },
+      {
+        "line": 60,
+        "text": "Product Name"
+      },
+      {
+        "line": 61,
+        "text": "Quantity"
+      },
+      {
+        "line": 63,
+        "text": "Unit Price"
+      },
+      {
+        "line": 64,
+        "text": "Total Price"
+      },
+      {
+        "line": 101,
+        "text": "Edit"
+      },
+      {
+        "line": 105,
+        "text": "Delete"
+      },
+      {
+        "line": 134,
+        "text": "Add Storage Transaction"
+      },
+      {
+        "line": 140,
+        "text": "Product Name"
+      },
+      {
+        "line": 144,
+        "text": "Quantity"
+      },
+      {
+        "line": 152,
+        "text": "Price of Product"
+      },
+      {
+        "line": 156,
+        "text": "Total Price"
+      },
+      {
+        "line": 162,
+        "text": "Cancel"
+      },
+      {
+        "line": 163,
+        "text": "Save Transaction"
+      },
+      {
+        "line": 177,
+        "text": "Edit Storage Transaction"
+      },
+      {
+        "line": 183,
+        "text": "Product Name"
+      },
+      {
+        "line": 187,
+        "text": "Quantity"
+      },
+      {
+        "line": 195,
+        "text": "Price of Product"
+      },
+      {
+        "line": 199,
+        "text": "Total Price"
+      },
+      {
+        "line": 205,
+        "text": "Cancel"
+      },
+      {
+        "line": 206,
+        "text": "Save Changes"
+      },
+      {
+        "line": 226,
+        "text": "Product Name"
+      },
+      {
+        "line": 230,
+        "text": "Available Quantity"
+      },
+      {
+        "line": 247,
+        "text": "Transfer Quantity"
+      },
+      {
+        "line": 255,
+        "text": "Unit Price"
+      },
+      {
+        "line": 259,
+        "text": "Total Price"
+      },
+      {
+        "line": 263,
+        "text": "Total price is calculated as transfer quantity x unit price."
+      },
+      {
+        "line": 269,
+        "text": "Cancel"
+      }
+    ],
+    "storages\\transfer-history.blade.php": [
+      {
+        "line": 9,
+        "text": "{{ $storage->name }} - Transfer History"
+      },
+      {
+        "line": 12,
+        "text": "id) }}\" class=\"btn btn-outline-secondary\">Back"
+      },
+      {
+        "line": 40,
+        "text": "Product Name"
+      },
+      {
+        "line": 41,
+        "text": "Quantity"
+      },
+      {
+        "line": 43,
+        "text": "Unit Price"
+      },
+      {
+        "line": 44,
+        "text": "Total Price"
+      },
+      {
+        "line": 47,
+        "text": "Date"
+      }
+    ],
+    "suppliers\\index.blade.php": [
+      {
+        "line": 78,
+        "text": "{{ $currencySymbol }}{{ number_format((float) ($allBranchDebtsTotal ?? 0), 2, '.', ',') }}"
+      },
+      {
+        "line": 99,
+        "text": "{{ $currencySymbol }}{{ number_format((float) ($totalPurchasedAcrossBranches ?? 0), 2, '.', ',') }}"
+      },
+      {
+        "line": 105,
+        "text": "{{ $currencySymbol }}{{ number_format((float) ($totalPaidAcrossBranches ?? 0), 2, '.', ',') }}"
+      },
+      {
+        "line": 128,
+        "text": "Search"
+      },
+      {
+        "line": 135,
+        "text": "Search by name or address"
+      }
+    ],
+    "suppliers\\show.blade.php": [
+      {
+        "line": 116,
+        "text": "{{ $currencySymbol }}{{ number_format($totalPurchased, 2) }}"
+      },
+      {
+        "line": 147,
+        "text": "{{ $selectedBranchId }}"
+      },
+      {
+        "line": 151,
+        "text": "{{ old('purchase_date', now()->toDateString()) }}"
+      },
+      {
+        "line": 199,
+        "text": "{{ $selectedBranchId }}"
+      },
+      {
+        "line": 202,
+        "text": "{{ old('payment_date', now()->toDateString()) }}"
+      },
+      {
+        "line": 240,
+        "text": "{{ $selectedBranchId }}"
+      },
+      {
+        "line": 284,
+        "text": "{{ $selectedBranchId }}"
+      },
+      {
+        "line": 343,
+        "text": "{{ $selectedBranchId }}"
+      },
+      {
+        "line": 365,
+        "text": "{{ $selectedBranchId }}"
+      },
+      {
+        "line": 434,
+        "text": "Remove"
+      }
+    ]
+  }
+}

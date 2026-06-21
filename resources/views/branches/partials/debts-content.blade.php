@@ -37,7 +37,7 @@
                 </tbody>
             </table>
         </div>
-    @else
+    {{ __('@else') }}
         <div class="text-center py-5 text-muted">
             {{ __('messages.no_branch_debts') }}
         </div>

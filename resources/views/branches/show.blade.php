@@ -5,42 +5,42 @@
 @section('content')
 @php
     $summaryCards = [
-        ['label' => 'Employees', 'count' => $branch->employees_count ?? 0, 'icon' => 'bi-people', 'tone' => 'primary'],
-        ['label' => 'Products', 'count' => $branch->products_count ?? 0, 'icon' => 'bi-box-seam', 'tone' => 'success'],
-        ['label' => 'Categories', 'count' => $branch->categories_count ?? 0, 'icon' => 'bi-tags', 'tone' => 'warning'],
-        ['label' => 'Customers', 'count' => $branch->customers_count ?? 0, 'icon' => 'bi-person-badge', 'tone' => 'info'],
-        ['label' => 'Suppliers', 'count' => $branch->suppliers_count ?? 0, 'icon' => 'bi-truck', 'tone' => 'secondary'],
-        ['label' => 'Invoices', 'count' => $branch->invoices_count ?? 0, 'icon' => 'bi-receipt', 'tone' => 'danger'],
-        ['label' => 'Storages', 'count' => $branch->storages_count ?? 0, 'icon' => 'bi-database', 'tone' => 'dark'],
-        ['label' => 'Safes', 'count' => $branch->safes_count ?? 0, 'icon' => 'bi-safe', 'tone' => 'success'],
+        ['label' => __('Employees'), 'count' => $branch->employees_count ?? 0, 'icon' => 'bi-people', 'tone' => 'primary'],
+        ['label' => __('Products'), 'count' => $branch->products_count ?? 0, 'icon' => 'bi-box-seam', 'tone' => 'success'],
+        ['label' => __('Categories'), 'count' => $branch->categories_count ?? 0, 'icon' => 'bi-tags', 'tone' => 'warning'],
+        ['label' => __('Customers'), 'count' => $branch->customers_count ?? 0, 'icon' => 'bi-person-badge', 'tone' => 'info'],
+        ['label' => __('Suppliers'), 'count' => $branch->suppliers_count ?? 0, 'icon' => 'bi-truck', 'tone' => 'secondary'],
+        ['label' => __('Invoices'), 'count' => $branch->invoices_count ?? 0, 'icon' => 'bi-receipt', 'tone' => 'danger'],
+        ['label' => __('Storages'), 'count' => $branch->storages_count ?? 0, 'icon' => 'bi-database', 'tone' => 'dark'],
+        ['label' => __('Safes'), 'count' => $branch->safes_count ?? 0, 'icon' => 'bi-safe', 'tone' => 'success'],
     ];
 
     $quickActions = [
-        ['label' => 'Employee', 'route' => 'employees.create', 'icon' => 'bi-people', 'class' => 'btn-primary'],
-        ['label' => 'Product', 'route' => 'products.create', 'icon' => 'bi-box-seam', 'class' => 'btn-success'],
-        ['label' => 'Category', 'route' => 'categories.create', 'icon' => 'bi-tags', 'class' => 'btn-warning'],
-        ['label' => 'Supplier', 'route' => 'suppliers.create', 'icon' => 'bi-truck', 'class' => 'btn-secondary'],
-        ['label' => 'Invoice', 'route' => 'invoices.create', 'icon' => 'bi-receipt', 'class' => 'btn-danger'],
-        ['label' => 'Safe', 'route' => 'safes.create', 'icon' => 'bi-safe', 'class' => 'btn-success'],
-        ['label' => 'Payroll', 'route' => 'payroll.create', 'icon' => 'bi-wallet2', 'class' => 'btn-dark'],
-        ['label' => 'Commission', 'route' => 'commissions.create', 'icon' => 'bi-graph-up', 'class' => 'btn-primary'],
+        ['label' => __('New Employee'), 'route' => 'employees.create', 'icon' => 'bi-people', 'class' => 'btn-primary'],
+        ['label' => __('New Product'), 'route' => 'products.create', 'icon' => 'bi-box-seam', 'class' => 'btn-success'],
+        ['label' => __('New Category'), 'route' => 'categories.create', 'icon' => 'bi-tags', 'class' => 'btn-warning'],
+        ['label' => __('New Supplier'), 'route' => 'suppliers.create', 'icon' => 'bi-truck', 'class' => 'btn-secondary'],
+        ['label' => __('New Invoice'), 'route' => 'invoices.create', 'icon' => 'bi-receipt', 'class' => 'btn-danger'],
+        ['label' => __('New Safe'), 'route' => 'safes.create', 'icon' => 'bi-safe', 'class' => 'btn-success'],
+        ['label' => __('New Payroll'), 'route' => 'payroll.create', 'icon' => 'bi-wallet2', 'class' => 'btn-dark'],
+        ['label' => __('New Commission'), 'route' => 'commissions.create', 'icon' => 'bi-graph-up', 'class' => 'btn-primary'],
     ];
 
     $overviewStats = [
-        ['label' => 'Branch outstanding', 'value' => $branchOutstandingTotal ?? 0, 'icon' => 'bi-cash-stack', 'tone' => 'danger', 'format' => 'money'],
-        ['label' => 'Payrolls', 'value' => $branchPayrolls->total() ?? count($branchPayrolls ?? []), 'icon' => 'bi-wallet2', 'tone' => 'warning', 'format' => 'count'],
-        ['label' => 'Commissions', 'value' => $branchCommissions->total() ?? count($branchCommissions ?? []), 'icon' => 'bi-graph-up', 'tone' => 'primary', 'format' => 'count'],
-        ['label' => 'Suppliers', 'value' => $branchSuppliers->total() ?? count($branchSuppliers ?? []), 'icon' => 'bi-truck', 'tone' => 'secondary', 'format' => 'count'],
+        ['label' => __('Branch outstanding'), 'value' => $branchOutstandingTotal ?? 0, 'icon' => 'bi-cash-stack', 'tone' => 'danger', 'format' => 'money'],
+        ['label' => __('Payrolls'), 'value' => $branchPayrolls->total() ?? count($branchPayrolls ?? []), 'icon' => 'bi-wallet2', 'tone' => 'warning', 'format' => 'count'],
+        ['label' => __('Commissions'), 'value' => $branchCommissions->total() ?? count($branchCommissions ?? []), 'icon' => 'bi-graph-up', 'tone' => 'primary', 'format' => 'count'],
+        ['label' => __('Suppliers'), 'value' => $branchSuppliers->total() ?? count($branchSuppliers ?? []), 'icon' => 'bi-truck', 'tone' => 'secondary', 'format' => 'count'],
     ];
 
     $directorySections = [
-        ['key' => 'employees', 'title' => 'Employees', 'items' => $recentEmployees ?? [], 'icon' => 'bi-people', 'tone' => 'primary', 'empty' => 'No employees are linked to this branch yet.'],
-        ['key' => 'products', 'title' => 'Products', 'items' => $recentProducts ?? [], 'icon' => 'bi-box-seam', 'tone' => 'success', 'empty' => 'No products are linked to this branch yet.'],
-        ['key' => 'categories', 'title' => 'Categories', 'items' => $recentCategories ?? [], 'icon' => 'bi-tags', 'tone' => 'warning', 'empty' => 'No categories are linked to this branch yet.'],
-        ['key' => 'customers', 'title' => 'Customers', 'items' => $recentCustomers ?? [], 'icon' => 'bi-person-badge', 'tone' => 'info', 'empty' => 'No customers are linked to this branch yet.'],
-        ['key' => 'invoices', 'title' => 'Invoices', 'items' => $recentInvoices ?? [], 'icon' => 'bi-receipt', 'tone' => 'danger', 'empty' => 'No invoices are linked to this branch yet.'],
-        ['key' => 'storages', 'title' => 'Storages', 'items' => $recentStorages ?? [], 'icon' => 'bi-database', 'tone' => 'dark', 'empty' => 'No storages are linked to this branch yet.'],
-        ['key' => 'safes', 'title' => 'Safes', 'items' => $recentSafes ?? [], 'icon' => 'bi-safe', 'tone' => 'success', 'empty' => 'No safes are linked to this branch yet.'],
+        ['key' => 'employees', 'title' => __('Employees'), 'items' => $recentEmployees ?? [], 'icon' => 'bi-people', 'tone' => 'primary', 'empty' => __('No employees are linked to this branch yet.')],
+        ['key' => 'products', 'title' => __('Products'), 'items' => $recentProducts ?? [], 'icon' => 'bi-box-seam', 'tone' => 'success', 'empty' => __('No products are linked to this branch yet.')],
+        ['key' => 'categories', 'title' => __('Categories'), 'items' => $recentCategories ?? [], 'icon' => 'bi-tags', 'tone' => 'warning', 'empty' => __('No categories are linked to this branch yet.')],
+        ['key' => 'customers', 'title' => __('Customers'), 'items' => $recentCustomers ?? [], 'icon' => 'bi-person-badge', 'tone' => 'info', 'empty' => __('No customers are linked to this branch yet.')],
+        ['key' => 'invoices', 'title' => __('Invoices'), 'items' => $recentInvoices ?? [], 'icon' => 'bi-receipt', 'tone' => 'danger', 'empty' => __('No invoices are linked to this branch yet.')],
+        ['key' => 'storages', 'title' => __('Storages'), 'items' => $recentStorages ?? [], 'icon' => 'bi-database', 'tone' => 'dark', 'empty' => __('No storages are linked to this branch yet.')],
+        ['key' => 'safes', 'title' => __('Safes'), 'items' => $recentSafes ?? [], 'icon' => 'bi-safe', 'tone' => 'success', 'empty' => __('No safes are linked to this branch yet.')],
     ];
 
     $selectedTab = 'overview';
@@ -204,10 +204,10 @@
                     <div class="col-xl-8">
                         <div class="hero-badge mb-3">
                             <i class="bi bi-diagram-3"></i>
-                            Branch workspace
+                            {{ __('Branch workspace') }}
                         </div>
                         <h1 class="display-5 fw-bold mb-2">{{ $branch->name }}</h1>
-                        <p class="lead text-white-75 mb-4">A focused control room for staffing, finance, inventory, and branch-specific supplier balances.</p>
+                        <p class="lead text-white-75 mb-4">{{ __('A focused control room for staffing, finance, inventory, and branch-specific supplier balances.') }}</p>
 
                         <div class="d-flex flex-wrap gap-2 mb-4">
                             <span class="glass-pill"><i class="bi bi-hash"></i>{{ $branch->code }}</span>
@@ -245,19 +245,19 @@
                         <div class="sticky-summary">
                             <div class="card panel-card mb-3">
                                 <div class="card-header panel-head py-3 px-4">
-                                    <div class="section-title mb-1">Branch status</div>
-                                    <h4 class="mb-0">Current state</h4>
+                                    <div class="section-title mb-1">{{ __('Branch status') }}</div>
+                                    <h4 class="mb-0">{{ __('Current state') }}</h4>
                                 </div>
                                 <div class="card-body p-4">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <span class="badge bg-{{ $branch->is_active ? 'success' : 'secondary' }} px-3 py-2">
                                             {{ $branch->is_active ? __('messages.active') : __('messages.inactive') }}
                                         </span>
-                                        <div class="text-muted small">Updated branch overview</div>
+                                        <div class="text-muted small">{{ __('Updated branch overview') }}</div>
                                     </div>
                                     <div class="mb-3">
                                         <div class="d-flex justify-content-between mb-2">
-                                            <span class="fw-semibold">Outstanding</span>
+                                            <span class="fw-semibold">{{ __('Outstanding') }}</span>
                                             <span class="fw-bold text-danger">{{ $currencySymbol }}{{ number_format((float) ($branchOutstandingTotal ?? 0), 2) }}</span>
                                         </div>
                                         <div class="progress" style="height: 10px;">
@@ -265,9 +265,9 @@
                                         </div>
                                     </div>
                                     <div class="d-flex flex-column gap-2 text-muted small">
-                                        <div><i class="bi bi-people me-2 text-primary"></i>{{ $branch->employees_count ?? 0 }} employees on this branch</div>
-                                        <div><i class="bi bi-truck me-2 text-secondary"></i>{{ $branch->suppliers_count ?? 0 }} suppliers linked</div>
-                                        <div><i class="bi bi-wallet2 me-2 text-warning"></i>{{ $branchPayrolls->total() ?? 0 }} payroll records</div>
+                                        <div><i class="bi bi-people me-2 text-primary"></i>{{ $branch->employees_count ?? 0 }} {{ __('employees on this branch') }}</div>
+                                        <div><i class="bi bi-truck me-2 text-secondary"></i>{{ $branch->suppliers_count ?? 0 }} {{ __('suppliers linked') }}</div>
+                                        <div><i class="bi bi-wallet2 me-2 text-warning"></i>{{ $branchPayrolls->total() ?? 0 }} {{ __('payroll records') }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -286,13 +286,13 @@
 
                                 @if($showQuickActions)
                                     <div class="card-body p-4">
-                                        <div class="section-title mb-3">Quick actions</div>
+                                        <div class="section-title mb-3">{{ __('Quick actions') }}</div>
                                         <div class="d-grid gap-2">
                                             @foreach($quickActions as $action)
                                                 @php $page = explode('.', $action['route'])[0] ?? null; @endphp
                                                 @feature($page . '.create')
                                                     <a class="btn {{ $action['class'] }} py-3" href="{{ route($action['route'], ['branch_ids' => [$branch->id]]) }}">
-                                                        <i class="bi {{ $action['icon'] }} me-2"></i> New {{ $action['label'] }}
+                                                        <i class="bi {{ $action['icon'] }} me-2"></i> {{ __($action['label']) }}
                                                     </a>
                                                 @endfeature
                                             @endforeach
@@ -309,9 +309,9 @@
         <div class="mb-4">
             <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
                 <div>
-                    <div class="section-title mb-1">Branch analytics</div>
-                    <h3 class="h4 mb-1">Branch performance summary</h3>
-                    <p class="text-muted mb-0">Monthly sales and cash flow metrics for this branch only.</p>
+                    <div class="section-title mb-1">{{ __('Branch analytics') }}</div>
+                    <h3 class="h4 mb-1">{{ __('Branch performance summary') }}</h3>
+                    <p class="text-muted mb-0">{{ __('Monthly sales and cash flow metrics for this branch only.') }}</p>
                 </div>
             </div>
         </div>
@@ -320,8 +320,8 @@
             <div class="col-xl-6">
                 <div class="card panel-card h-100">
                     <div class="card-header panel-head py-3 px-4">
-                        <div class="section-title mb-1">Branch analytics</div>
-                        <h5 class="mb-0">Sales trend</h5>
+                        <div class="section-title mb-1">{{ __('Branch analytics') }}</div>
+                        <h5 class="mb-0">{{ __('Sales trend') }}</h5>
                     </div>
                     <div class="card-body p-4">
                         <div class="chart-box" style="min-height: 320px;">
@@ -333,8 +333,8 @@
             <div class="col-xl-6">
                 <div class="card panel-card h-100">
                     <div class="card-header panel-head py-3 px-4">
-                        <div class="section-title mb-1">Branch analytics</div>
-                        <h5 class="mb-0">Income vs outcome</h5>
+                        <div class="section-title mb-1">{{ __('Branch analytics') }}</div>
+                        <h5 class="mb-0">{{ __('Income vs outcome') }}</h5>
                     </div>
                     <div class="card-body p-4">
                         <div class="chart-box" style="min-height: 320px;">
@@ -350,16 +350,16 @@
                 <div class="nav-surface">
                     <ul class="nav nav-pills nav-fill gap-2" id="branchDashboardTabs" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="overview-tab" data-bs-toggle="pill" data-bs-target="#overview-pane" type="button" role="tab" aria-controls="overview-pane" aria-selected="true">Overview</button>
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="pill" data-bs-target="#overview-pane" type="button" role="tab" aria-controls="overview-pane" aria-selected="true">{{ __('Overview') }}</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="operations-tab" data-bs-toggle="pill" data-bs-target="#operations-pane" type="button" role="tab" aria-controls="operations-pane" aria-selected="false">Operations</button>
+                            <button class="nav-link" id="operations-tab" data-bs-toggle="pill" data-bs-target="#operations-pane" type="button" role="tab" aria-controls="operations-pane" aria-selected="false">{{ __('Operations') }}</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="records-tab" data-bs-toggle="pill" data-bs-target="#records-pane" type="button" role="tab" aria-controls="records-pane" aria-selected="false">Records</button>
+                            <button class="nav-link" id="records-tab" data-bs-toggle="pill" data-bs-target="#records-pane" type="button" role="tab" aria-controls="records-pane" aria-selected="false">{{ __('Records') }}</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="directory-tab" data-bs-toggle="pill" data-bs-target="#directory-pane" type="button" role="tab" aria-controls="directory-pane" aria-selected="false">Directory</button>
+                            <button class="nav-link" id="directory-tab" data-bs-toggle="pill" data-bs-target="#directory-pane" type="button" role="tab" aria-controls="directory-pane" aria-selected="false">{{ __('Directory') }}</button>
                         </li>
                     </ul>
                 </div>
@@ -394,13 +394,13 @@
                             <div class="col-xl-6">
                                 <div class="card tab-block h-100">
                                     <div class="card-header panel-head py-3 px-4">
-                                        <div class="section-title mb-1">People</div>
-                                        <h5 class="mb-0">Branch staffing</h5>
+                                        <div class="section-title mb-1">{{ __('People') }}</div>
+                                        <h5 class="mb-0">{{ __('Branch staffing') }}</h5>
                                     </div>
                                     <div class="card-body p-4">
                                         <div class="row g-3">
                                             <div class="col-12">
-                                                <div class="small text-muted mb-2">Available employees</div>
+                                                <div class="small text-muted mb-2">{{ __('Available employees') }}</div>
                                                 @if(count($unassignedEmployees) > 0)
                                                     <div class="list-group list-group-flush border rounded-3 overflow-hidden">
                                                         @foreach($unassignedEmployees as $emp)
@@ -418,11 +418,11 @@
                                                         @endforeach
                                                     </div>
                                                 @else
-                                                    <div class="text-muted">No unassigned employees available.</div>
+                                                    <div class="text-muted">{{ __('No unassigned employees available.') }}</div>
                                                 @endif
                                             </div>
                                             <div class="col-12">
-                                                <div class="small text-muted mb-2">Branch employees</div>
+                                                <div class="small text-muted mb-2">{{ __('Branch employees') }}</div>
                                                 @if(count($recentEmployees) > 0)
                                                     <div class="list-group list-group-flush border rounded-3 overflow-hidden">
                                                         @foreach($recentEmployees as $emp)
@@ -434,13 +434,13 @@
                                                                 <form action="{{ route('branches.remove-employee', $branch) }}" method="POST">
                                                                     @csrf
                                                                     <input type="hidden" name="employee_id" value="{{ $emp->id }}">
-                                                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Remove {{ $emp->name }} from this branch?')"><i class="bi bi-x-lg"></i></button>
+                                                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('{{ addslashes(__('Remove :name from this branch?', ['name' => $emp->name])) }}')"><i class="bi bi-x-lg"></i></button>
                                                                 </form>
                                                             </div>
                                                         @endforeach
                                                     </div>
                                                 @else
-                                                    <div class="text-muted">No employees assigned to this branch yet.</div>
+                                                    <div class="text-muted">{{ __('No employees assigned to this branch yet.') }}</div>
                                                 @endif
                                             </div>
                                         </div>
@@ -451,28 +451,28 @@
                             <div class="col-xl-6">
                                 <div class="card tab-block h-100">
                                     <div class="card-header panel-head py-3 px-4">
-                                        <div class="section-title mb-1">Finance</div>
-                                        <h5 class="mb-0">Branch outstanding</h5>
+                                        <div class="section-title mb-1">{{ __('Finance') }}</div>
+                                        <h5 class="mb-0">{{ __('Branch outstanding') }}</h5>
                                     </div>
                                     <div class="card-body p-4">
                                         <div class="display-5 fw-bold text-danger mb-2">{{ $currencySymbol }}{{ number_format((float) ($branchOutstandingTotal ?? 0), 2) }}</div>
-                                        <p class="text-muted mb-4">This figure is calculated only from purchases and payments linked to this branch.</p>
+                                        <p class="text-muted mb-4">{{ __('This figure is calculated only from purchases and payments linked to this branch.') }}</p>
                                         <div class="row g-3">
                                             <div class="col-12 col-md-4">
                                                 <div class="p-3 rounded-4 bg-light h-100">
-                                                    <div class="text-muted small">Suppliers</div>
+                                                    <div class="text-muted small">{{ __('Suppliers') }}</div>
                                                     <div class="fw-bold fs-4">{{ $branchSuppliers->total() ?? 0 }}</div>
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-4">
                                                 <div class="p-3 rounded-4 bg-light h-100">
-                                                    <div class="text-muted small">Payrolls</div>
+                                                    <div class="text-muted small">{{ __('Payrolls') }}</div>
                                                     <div class="fw-bold fs-4">{{ $branchPayrolls->total() ?? 0 }}</div>
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-4">
                                                 <div class="p-3 rounded-4 bg-light h-100">
-                                                    <div class="text-muted small">Commissions</div>
+                                                    <div class="text-muted small">{{ __('Commissions') }}</div>
                                                     <div class="fw-bold fs-4">{{ $branchCommissions->total() ?? 0 }}</div>
                                                 </div>
                                             </div>
@@ -492,8 +492,8 @@
                             <div class="card tab-block" data-pagination-section="branch-payrolls" id="branch-payrolls-section">
                                 <div class="card-header panel-head py-3 px-4 d-flex justify-content-between align-items-center">
                                     <div>
-                                        <div class="section-title mb-1">Payroll records</div>
-                                        <h5 class="mb-0">Latest payrolls</h5>
+                                        <div class="section-title mb-1">{{ __('Payroll records') }}</div>
+                                        <h5 class="mb-0">{{ __('Latest payrolls') }}</h5>
                                     </div>
                                     <span class="badge bg-light text-dark">{{ $branchPayrolls->total() ?? 0 }}</span>
                                 </div>
@@ -503,10 +503,10 @@
                                             <table class="table table-sm table-tight align-middle mb-0">
                                                 <thead class="table-light">
                                                     <tr>
-                                                        <th>Employee</th>
-                                                        <th>Period</th>
-                                                        <th>Status</th>
-                                                        <th class="text-end">Net salary</th>
+                                                        <th>{{ __('Employee') }}</th>
+                                                        <th>{{ __('Period') }}</th>
+                                                        <th>{{ __('Status') }}</th>
+                                                        <th class="text-end">{{ __('Net salary') }}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -523,7 +523,7 @@
                                         </div>
                                         <div class="mt-3">{{ $branchPayrolls->links() }}</div>
                                     @else
-                                        <div class="text-muted">No payrolls found for this branch yet.</div>
+                                        <div class="text-muted">{{ __('No payrolls found for this branch yet.') }}</div>
                                     @endif
                                 </div>
                             </div>
@@ -531,8 +531,8 @@
                             <div class="card tab-block" data-pagination-section="branch-commissions" id="branch-commissions-section">
                                 <div class="card-header panel-head py-3 px-4 d-flex justify-content-between align-items-center">
                                     <div>
-                                        <div class="section-title mb-1">Commission records</div>
-                                        <h5 class="mb-0">Latest commissions</h5>
+                                        <div class="section-title mb-1">{{ __('Commission records') }}</div>
+                                        <h5 class="mb-0">{{ __('Latest commissions') }}</h5>
                                     </div>
                                     <span class="badge bg-light text-dark">{{ $branchCommissions->total() ?? 0 }}</span>
                                 </div>
@@ -542,17 +542,17 @@
                                             <table class="table table-sm table-tight align-middle mb-0">
                                                 <thead class="table-light">
                                                     <tr>
-                                                        <th>Employee</th>
-                                                        <th>Date</th>
-                                                        <th>Status</th>
-                                                        <th class="text-end">Amount</th>
+                                                        <th>{{ __('Employee') }}</th>
+                                                        <th>{{ __('Date') }}</th>
+                                                        <th>{{ __('Status') }}</th>
+                                                        <th class="text-end">{{ __('Amount') }}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     @foreach($branchCommissions as $commission)
                                                         <tr>
                                                             <td class="fw-semibold">{{ $commission->employee?->name ?? '-' }}</td>
-                                                            <td>{{ optional($commission->commission_date)->format('M d, Y') ?? '-' }}</td>
+                                                            <td>{{ optional($commission->commission_date)->translatedFormat('M d, Y') ?? '-' }}</td>
                                                             <td><span class="badge bg-{{ ($commission->status ?? 'pending') === 'paid' ? 'success' : 'secondary' }}">{{ strtoupper($commission->status ?? 'pending') }}</span></td>
                                                             <td class="text-end text-success">{{ $currencySymbol }}{{ number_format((float) ($commission->commission_amount ?? 0), 2) }}</td>
                                                         </tr>
@@ -562,7 +562,7 @@
                                         </div>
                                         <div class="mt-3">{{ $branchCommissions->links() }}</div>
                                     @else
-                                        <div class="text-muted">No commissions found for this branch yet.</div>
+                                        <div class="text-muted">{{ __('No commissions found for this branch yet.') }}</div>
                                     @endif
                                 </div>
                             </div>
@@ -570,8 +570,8 @@
                             <div class="card tab-block" data-pagination-section="branch-suppliers" id="branch-suppliers-section">
                                 <div class="card-header panel-head py-3 px-4 d-flex justify-content-between align-items-center">
                                     <div>
-                                        <div class="section-title mb-1">Supplier ledger</div>
-                                        <h5 class="mb-0">Branch suppliers</h5>
+                                        <div class="section-title mb-1">{{ __('Supplier ledger') }}</div>
+                                        <h5 class="mb-0">{{ __('Branch suppliers') }}</h5>
                                     </div>
                                     <span class="badge bg-light text-dark">{{ $branchSuppliers->total() ?? 0 }}</span>
                                 </div>
@@ -581,10 +581,10 @@
                                             <table class="table table-sm table-tight align-middle mb-0">
                                                 <thead class="table-light">
                                                     <tr>
-                                                        <th>Supplier</th>
-                                                        <th class="text-end">Purchased</th>
-                                                        <th class="text-end">Paid</th>
-                                                        <th class="text-end">Outstanding</th>
+                                                        <th>{{ __('Supplier') }}</th>
+                                                        <th class="text-end">{{ __('Purchased') }}</th>
+                                                        <th class="text-end">{{ __('Paid') }}</th>
+                                                        <th class="text-end">{{ __('Outstanding') }}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -592,7 +592,7 @@
                                                         <tr>
                                                             <td>
                                                                 <div class="fw-semibold">{{ $supplier->name }}</div>
-                                                                <div class="text-muted small">Branch opening {{ $currencySymbol }}{{ number_format(((int) ($supplier->branch_id ?? 0) === (int) $branch->id || $supplier->branches()->whereKey($branch->id)->exists()) ? (float) ($supplier->opening_balance ?? 0) : 0, 2) }}</div>
+                                                                <div class="text-muted small">{{ __('Branch opening') }} {{ $currencySymbol }}{{ number_format(((int) ($supplier->branch_id ?? 0) === (int) $branch->id || $supplier->branches()->whereKey($branch->id)->exists()) ? (float) ($supplier->opening_balance ?? 0) : 0, 2) }}</div>
                                                             </td>
                                                             <td class="text-end text-primary">{{ $currencySymbol }}{{ number_format((float) ($supplier->branch_total_purchased ?? 0), 2) }}</td>
                                                             <td class="text-end text-success">{{ $currencySymbol }}{{ number_format((float) ($supplier->branch_total_paid ?? 0), 2) }}</td>
@@ -604,7 +604,7 @@
                                         </div>
                                         <div class="mt-3">{{ $branchSuppliers->links() }}</div>
                                     @else
-                                        <div class="text-muted">No suppliers found for this branch yet.</div>
+                                        <div class="text-muted">{{ __('No suppliers found for this branch yet.') }}</div>
                                     @endif
                                 </div>
                             </div>
@@ -617,7 +617,7 @@
                                 <div class="card tab-block" data-pagination-section="branch-directory-{{ $section['key'] }}" id="branch-directory-{{ $section['key'] }}-section">
                                     <div class="card-header panel-head py-3 px-4 d-flex justify-content-between align-items-center">
                                         <div>
-                                            <div class="section-title mb-1">Branch directory</div>
+                                            <div class="section-title mb-1">{{ __('Branch directory') }}</div>
                                             <h5 class="mb-0"><i class="bi {{ $section['icon'] }} me-2 text-{{ $section['tone'] }}"></i>{{ $section['title'] }}</h5>
                                         </div>
                                         <span class="badge bg-light text-dark">{{ count($section['items']) }}</span>
@@ -628,8 +628,8 @@
                                                 <table class="table table-sm table-tight align-middle mb-0">
                                                     <thead class="table-light">
                                                         <tr>
-                                                            <th>Name</th>
-                                                            <th class="text-end">Created</th>
+                                                            <th>{{ __('Name') }}</th>
+                                                            <th class="text-end">{{ __('Created') }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -637,9 +637,9 @@
                                                             <tr>
                                                                 <td>
                                                                     <div class="fw-semibold">{{ $item->name ?? $item->reference ?? $item->invoice_number ?? $item->code ?? ('#' . $item->id) }}</div>
-                                                                    <div class="text-muted small">Record #{{ $item->id }}</div>
+                                                                    <div class="text-muted small">{{ __('Record #:id', ['id' => $item->id]) }}</div>
                                                                 </td>
-                                                                <td class="text-end text-muted">{{ optional($item->created_at)->format('M d, Y') ?? '-' }}</td>
+                                                                <td class="text-end text-muted">{{ optional($item->created_at)->translatedFormat('M d, Y') ?? '-' }}</td>
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
@@ -647,7 +647,7 @@
                                             </div>
                                             <div class="mt-3">{{ $section['items']->links() }}</div>
                                         @else
-                                            <div class="text-muted">{{ $section['empty'] }}</div>
+                                            <div class="text-muted">{{ __($section['empty']) }}</div>
                                         @endif
                                     </div>
                                 </div>
@@ -743,7 +743,7 @@ document.addEventListener('DOMContentLoaded', function () {
             data: {
                 labels: branchMonths,
                 datasets: [{
-                    label: 'Sales',
+                    label: '{{ __('Sales') }}',
                     data: branchSalesTrendData,
                     borderColor: '#0d6efd',
                     backgroundColor: 'rgba(13, 110, 253, 0.16)',
@@ -773,13 +773,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 labels: branchMonths,
                 datasets: [
                     {
-                        label: 'Income',
+                        label: '{{ __('Income') }}',
                         data: branchIncomeData,
                         backgroundColor: 'rgba(16, 185, 129, 0.85)',
                         borderRadius: 10,
                     },
                     {
-                        label: 'Outcome',
+                        label: '{{ __('Outcome') }}',
                         data: branchOutcomeData,
                         backgroundColor: 'rgba(220, 38, 38, 0.85)',
                         borderRadius: 10,

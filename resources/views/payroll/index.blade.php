@@ -380,20 +380,20 @@
                 <div class="flex-grow-1">
                     <div class="hero-kicker mb-3">
                         <i class="bi bi-stars"></i>
-                        Payroll command center
+                        {{ __('Payroll command center') }}
                     </div>
                     <h1 class="display-6 fw-black mb-3 text-white" style="font-weight: 900; letter-spacing: -.05em;">{{ __('messages.payroll') }}</h1>
                     <p class="hero-note mb-4">
-                        Track unsettled payrolls, settle payments from safes, and keep a clean history of every payroll movement in one place.
+                        {{ __('Track unsettled payrolls, settle payments from safes, and keep a clean history of every payroll movement in one place.') }}
                     </p>
                     <div class="d-flex flex-wrap gap-2 hero-buttons">
                         @feature('payroll')
                         <a href="{{ route('payroll.create') }}" class="btn btn-warning btn-lg">
-                            <i class="bi bi-plus-circle"></i> Create payroll
+                            <i class="bi bi-plus-circle"></i> {{ __('Create payroll') }}
                         </a>
                         @endfeature
                         <a href="#activePayrollPanel" class="btn btn-outline-light btn-lg">
-                            <i class="bi bi-grid-1x2"></i> Review active payrolls
+                            <i class="bi bi-grid-1x2"></i> {{ __('Review active payrolls') }}
                         </a>
                     </div>
                 </div>
@@ -401,27 +401,27 @@
                 <div class="soft-panel snapshot-panel" style="backdrop-filter: blur(18px);">
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <div>
-                            <div class="text-uppercase fw-semibold snapshot-title">Live snapshot</div>
-                            <div class="h6 mb-0">Payroll health</div>
+                            <div class="text-uppercase fw-semibold snapshot-title">{{ __('Live snapshot') }}</div>
+                            <div class="h6 mb-0">{{ __('Payroll health') }}</div>
                         </div>
-                        <span class="badge rounded-pill bg-success snapshot-chip">Dynamic</span>
+                        <span class="badge rounded-pill bg-success snapshot-chip">{{ __('Dynamic') }}</span>
                     </div>
                     <div class="row g-2">
                         <div class="col-4">
                             <div class="p-2 rounded-4 bg-white border border-slate-200 h-100 text-center">
-                                <div class="small mb-1">Unpaid</div>
+                                <div class="small mb-1">{{ __('Unpaid') }}</div>
                                 <div class="snapshot-value">{{ $unpaidPayrollCount ?? 0 }}</div>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="p-2 rounded-4 bg-white border border-slate-200 h-100 text-center">
-                                <div class="small mb-1">Need pay</div>
+                                <div class="small mb-1">{{ __('Need pay') }}</div>
                                 <div class="snapshot-value">{{ $currencySymbol }}{{ number_format($unpaidNetSalaryTotal ?? 0, 0) }}</div>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="p-2 rounded-4 bg-white border border-slate-200 h-100 text-center">
-                                <div class="small mb-1">Paid</div>
+                                <div class="small mb-1">{{ __('Paid') }}</div>
                                 <div class="snapshot-value">{{ $paidPayrollCount ?? 0 }}</div>
                             </div>
                         </div>
@@ -439,9 +439,9 @@
                         <i class="bi bi-hourglass-split"></i>
                     </div>
                     <div>
-                        <div class="text-muted small text-uppercase fw-semibold">Unpaid payrolls</div>
+                        <div class="text-muted small text-uppercase fw-semibold">{{ __('Unpaid payrolls') }}</div>
                         <div class="metric-value">{{ $unpaidPayrollCount ?? 0 }}</div>
-                        <div class="text-muted small mt-1">Waiting to be settled from a safe.</div>
+                        <div class="text-muted small mt-1">{{ __('Waiting to be settled from a safe.') }}</div>
                     </div>
                 </div>
             </div>
@@ -453,9 +453,9 @@
                         <i class="bi bi-cash-coin"></i>
                     </div>
                     <div>
-                        <div class="text-muted small text-uppercase fw-semibold">Unpaid net salaries</div>
+                        <div class="text-muted small text-uppercase fw-semibold">{{ __('Unpaid net salaries') }}</div>
                         <div class="metric-value">{{ $currencySymbol }}{{ number_format($unpaidNetSalaryTotal ?? 0, 2) }}</div>
-                        <div class="text-muted small mt-1">Total pending payout amount.</div>
+                        <div class="text-muted small mt-1">{{ __('Total pending payout amount.') }}</div>
                     </div>
                 </div>
             </div>
@@ -467,9 +467,9 @@
                         <i class="bi bi-check2-circle"></i>
                     </div>
                     <div>
-                        <div class="text-muted small text-uppercase fw-semibold">Paid payrolls</div>
+                        <div class="text-muted small text-uppercase fw-semibold">{{ __('Paid payrolls') }}</div>
                         <div class="metric-value">{{ $paidPayrollCount ?? 0 }}</div>
-                        <div class="text-muted small mt-1">Completed payroll records archived below.</div>
+                        <div class="text-muted small mt-1">{{ __('Completed payroll records archived below.') }}</div>
                     </div>
                 </div>
             </div>
@@ -479,17 +479,17 @@
     <div class="search-shell p-3 p-lg-4 mb-4">
         <div class="row g-3 align-items-center">
             <div class="col-lg-6">
-                <label class="form-label fw-semibold mb-2">Quick search</label>
+                <label class="form-label fw-semibold mb-2">{{ __('Quick search') }}</label>
                 <div class="input-group input-group-lg">
                     <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
                     <input type="search" id="payrollSearch" class="form-control" placeholder="Search employee, month, safe, status, or payroll ID">
                 </div>
             </div>
             <div class="col-lg-6 text-lg-end">
-                <label class="form-label fw-semibold mb-2 d-block">View mode</label>
+                <label class="form-label fw-semibold mb-2 d-block">{{ __('View mode') }}</label>
                 <div class="segment-bar" role="tablist" aria-label="Payroll sections">
-                    <a class="segment-pill active" href="#activePayrollPanel" data-payroll-tab="active">Active payrolls</a>
-                    <a class="segment-pill" href="#paidPayrollPanel" data-payroll-tab="paid">Paid history</a>
+                    <a class="segment-pill active" href="#activePayrollPanel" data-payroll-tab="active">{{ __('Active payrolls') }}</a>
+                    <a class="segment-pill" href="#paidPayrollPanel" data-payroll-tab="paid">{{ __('Paid history') }}</a>
                 </div>
             </div>
         </div>
@@ -501,11 +501,11 @@
                 <div class="card-header border-0 py-4 px-4" style="background: linear-gradient(135deg, #111827, #1f2937); color: #fff;">
                     <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
                         <div>
-                            <h5 class="mb-1 section-heading text-white">Active payrolls</h5>
-                            <div class="small opacity-75">Settle pending salaries from an available safe.</div>
+                            <h5 class="mb-1 section-heading text-white">{{ __('Active payrolls') }}</h5>
+                            <div class="small opacity-75">{{ __('Settle pending salaries from an available safe.') }}</div>
                         </div>
                         <div class="small opacity-75">
-                            <i class="bi bi-lightning-charge"></i> Payments update safe balances and history instantly.
+                            <i class="bi bi-lightning-charge"></i> {{ __('Payments update safe balances and history instantly.') }}
                         </div>
                     </div>
                 </div>
@@ -528,33 +528,31 @@
                                 <div class="payroll-mobile-top">
                                     <div>
                                         <div class="payroll-mobile-title">{{ $employeeName }}</div>
-                                        <div class="payroll-mobile-subtitle">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }} · ID #{{ $payroll->id }}</div>
+                                        <div class="payroll-mobile-subtitle">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->translatedFormat('F Y') }} · ID #{{ $payroll->id }}</div>
                                     </div>
                                     <span class="badge rounded-pill bg-warning text-dark">{{ strtoupper($payroll->status ?? 'draft') }}</span>
                                 </div>
                                 <div class="payroll-mobile-grid">
                                     <div class="payroll-mobile-pill">
-                                        <span class="label">Net salary</span>
+                                        <span class="label">{{ __('Net salary') }}</span>
                                         <span class="value">{{ $currencySymbol }}{{ number_format($netAmount, 2) }}</span>
                                     </div>
                                     <div class="payroll-mobile-pill">
-                                        <span class="label">Employee code</span>
+                                        <span class="label">{{ __('Employee code') }}</span>
                                         <span class="value">{{ $payroll->employee?->employee_code ?? 'N/A' }}</span>
                                     </div>
                                     <div class="payroll-mobile-pill">
-                                        <span class="label">Safe source</span>
+                                        <span class="label">{{ __('Safe source') }}</span>
                                         <span class="value">{{ $payroll->safe?->name ?? 'Not selected' }}</span>
                                     </div>
                                     <div class="payroll-mobile-pill">
-                                        <span class="label">Payroll period</span>
+                                        <span class="label">{{ __('Payroll period') }}</span>
                                         <span class="value">{{ $payroll->month }}/{{ $payroll->year }}</span>
                                     </div>
                                 </div>
                                 <div class="payroll-mobile-actions">
                                     @feature('payroll')
-                                    <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-sm btn-outline-secondary">View</a>
-                                    @endfeature
-                                    @feature('payroll')
+                                    <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
                                     <button
                                         type="button"
                                         class="btn btn-sm btn-success"
@@ -564,25 +562,21 @@
                                         data-pay-employee="{{ $employeeName }}"
                                         data-pay-amount="{{ number_format($netAmount, 2, '.', '') }}"
                                     >
-                                        Mark paid
+                                        {{ __('Mark paid') }}
                                     </button>
-                                    @endfeature
-                                    @feature('payroll')
-                                    <a href="{{ route('payroll.edit', $payroll) }}" class="btn btn-sm btn-outline-primary">Edit</a>
-                                    @endfeature
-                                    @feature('payroll')
+                                    <a href="{{ route('payroll.edit', $payroll) }}" class="btn btn-sm btn-outline-primary">{{ __('Edit') }}</a>
                                     <form action="{{ route('payroll.destroy', $payroll) }}" method="POST" class="m-0" onsubmit="return confirm('Delete this payroll? If it was paid, the linked payment will be reversed.');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">Delete</button>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">{{ __('Delete') }}</button>
                                     </form>
                                     @endfeature
                                 </div>
                             </div>
                         @empty
                             <div class="text-center text-muted py-4">
-                                <div class="fw-semibold mb-1">No unpaid payrolls found</div>
-                                <div class="small">Create payrolls or mark existing records as paid to populate this section.</div>
+                                <div class="fw-semibold mb-1">{{ __('No unpaid payrolls found') }}</div>
+                                <div class="small">{{ __('Create payrolls or mark existing records as paid to populate this section.') }}</div>
                             </div>
                         @endforelse
                     </div>
@@ -592,11 +586,11 @@
                             <thead>
                                 <tr>
                                     <th class="ps-4">#</th>
-                                    <th>Employee</th>
-                                    <th>Payroll period</th>
-                                    <th>Net salary</th>
-                                    <th>Status</th>
-                                    <th class="text-end pe-4">Actions</th>
+                                    <th>{{ __('Employee') }}</th>
+                                    <th>{{ __('Payroll period') }}</th>
+                                    <th>{{ __('Net salary') }}</th>
+                                    <th>{{ __('Status') }}</th>
+                                    <th class="text-end pe-4">{{ __('Actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -621,7 +615,7 @@
                                             <div class="text-muted small">Code: {{ $payroll->employee?->employee_code ?? 'N/A' }}</div>
                                         </td>
                                         <td>
-                                            <span class="badge rounded-pill bg-light text-dark border">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}</span>
+                                            <span class="badge rounded-pill bg-light text-dark border">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->translatedFormat('F Y') }}</span>
                                         </td>
                                         <td class="fw-bold fs-6">{{ $currencySymbol }}{{ number_format($netAmount, 2) }}</td>
                                         <td>
@@ -630,19 +624,13 @@
                                         <td class="text-end pe-4">
                                             <div class="payroll-action">
                                                 @feature('payroll')
-                                                <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-sm btn-outline-secondary">View</a>
-                                                @endfeature
-                                                @feature('payroll')
-                                                <a href="{{ route('payroll.edit', $payroll) }}" class="btn btn-sm btn-outline-primary">Edit</a>
-                                                @endfeature
-                                                @feature('payroll')
+                                                <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
+                                                <a href="{{ route('payroll.edit', $payroll) }}" class="btn btn-sm btn-outline-primary">{{ __('Edit') }}</a>
                                                 <form action="{{ route('payroll.destroy', $payroll) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this payroll? If it was paid, the linked payment will be reversed.');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">{{ __('Delete') }}</button>
                                                 </form>
-                                                @endfeature
-                                                @feature('payroll')
                                                 <button
                                                     type="button"
                                                     class="btn btn-sm btn-success"
@@ -652,7 +640,7 @@
                                                     data-pay-employee="{{ $employeeName }}"
                                                     data-pay-amount="{{ number_format($netAmount, 2, '.', '') }}"
                                                 >
-                                                    Paid
+                                                    {{ __('Paid') }}
                                                 </button>
                                                 @endfeature
                                             </div>
@@ -661,8 +649,8 @@
                                 @empty
                                     <tr>
                                         <td colspan="6" class="text-center py-5 text-muted">
-                                            <div class="fw-semibold mb-1">No unpaid payrolls found</div>
-                                            <div class="small">Create payrolls or mark existing records as paid to populate this section.</div>
+                                            <div class="fw-semibold mb-1">{{ __('No unpaid payrolls found') }}</div>
+                                            <div class="small">{{ __('Create payrolls or mark existing records as paid to populate this section.') }}</div>
                                         </td>
                                     </tr>
                                 @endforelse
@@ -683,11 +671,11 @@
                 <div class="card-header border-0 py-4 px-4" style="background: linear-gradient(135deg, #0f172a, #334155); color: #fff;">
                     <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
                         <div>
-                            <h5 class="mb-1 section-heading text-white">Paid payroll history</h5>
-                            <div class="small opacity-75">Review settled payrolls, safe source, and payment time.</div>
+                            <h5 class="mb-1 section-heading text-white">{{ __('Paid payroll history') }}</h5>
+                            <div class="small opacity-75">{{ __('Review settled payrolls, safe source, and payment time.') }}</div>
                         </div>
                         <div class="small opacity-75">
-                            <i class="bi bi-shield-check"></i> Closed payrolls remain editable only through deletion.
+                            <i class="bi bi-shield-check"></i> {{ __('Closed payrolls remain editable only through deletion.') }}
                         </div>
                     </div>
                 </div>
@@ -710,48 +698,46 @@
                                 <div class="payroll-mobile-top">
                                     <div>
                                         <div class="payroll-mobile-title">{{ $employeeName }}</div>
-                                        <div class="payroll-mobile-subtitle">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }} · ID #{{ $payroll->id }}</div>
+                                        <div class="payroll-mobile-subtitle">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->translatedFormat('F Y') }} · ID #{{ $payroll->id }}</div>
                                     </div>
-                                    <span class="badge rounded-pill bg-success">PAID</span>
+                                    <span class="badge rounded-pill bg-success">{{ __('PAID') }}</span>
                                 </div>
                                 <div class="payroll-mobile-grid">
                                     <div class="payroll-mobile-pill">
-                                        <span class="label">Net salary</span>
+                                        <span class="label">{{ __('Net salary') }}</span>
                                         <span class="value text-success">{{ $currencySymbol }}{{ number_format($netAmount, 2) }}</span>
                                     </div>
                                     <div class="payroll-mobile-pill">
-                                        <span class="label">Safe</span>
+                                        <span class="label">{{ __('Safe') }}</span>
                                         <span class="value">{{ $payroll->safe?->name ?? '-' }}</span>
                                     </div>
                                     <div class="payroll-mobile-pill">
-                                        <span class="label">Paid at</span>
+                                        <span class="label">{{ __('Paid at') }}</span>
                                         <span class="value">{{ optional($payroll->processed_at)->format('Y-m-d H:i') ?? '-' }}</span>
                                     </div>
                                     <div class="payroll-mobile-pill">
-                                        <span class="label">Code</span>
+                                        <span class="label">{{ __('Code') }}</span>
                                         <span class="value">{{ $payroll->employee?->employee_code ?? 'N/A' }}</span>
                                     </div>
                                 </div>
                                 <div class="payroll-mobile-actions">
                                     @feature('payroll')
-                                    <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-sm btn-outline-secondary">View</a>
-                                    @endfeature
+                                    <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
                                     @feature('downloads')
-                                    <a href="{{ route('payroll.payslip', $payroll) }}" class="btn btn-sm btn-outline-danger">PDF</a>
+                                    <a href="{{ route('payroll.payslip', $payroll) }}" class="btn btn-sm btn-outline-danger">{{ __('PDF') }}</a>
                                     @endfeature
-                                    @feature('payroll')
                                     <form action="{{ route('payroll.destroy', $payroll) }}" method="POST" class="m-0" onsubmit="return confirm('Delete this payroll? If it was paid, the linked payment will be reversed.');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">Delete</button>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">{{ __('Delete') }}</button>
                                     </form>
                                     @endfeature
                                 </div>
                             </div>
                         @empty
                             <div class="text-center text-muted py-4">
-                                <div class="fw-semibold mb-1">No paid payroll history found</div>
-                                <div class="small">Paid records will appear here after settlement.</div>
+                                <div class="fw-semibold mb-1">{{ __('No paid payroll history found') }}</div>
+                                <div class="small">{{ __('Paid records will appear here after settlement.') }}</div>
                             </div>
                         @endforelse
                     </div>
@@ -761,11 +747,11 @@
                             <thead>
                                 <tr>
                                     <th class="ps-4">#</th>
-                                    <th>Employee</th>
-                                    <th>Safe</th>
-                                    <th>Net salary</th>
-                                    <th>Paid at</th>
-                                    <th class="text-end pe-4">Actions</th>
+                                    <th>{{ __('Employee') }}</th>
+                                    <th>{{ __('Safe') }}</th>
+                                    <th>{{ __('Net salary') }}</th>
+                                    <th>{{ __('Paid at') }}</th>
+                                    <th class="text-end pe-4">{{ __('Actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -786,7 +772,7 @@
                                         <td class="ps-4 fw-semibold">{{ $payroll->id }}</td>
                                         <td>
                                             <div class="fw-semibold">{{ $employeeName }}</div>
-                                            <div class="text-muted small">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}</div>
+                                            <div class="text-muted small">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->translatedFormat('F Y') }}</div>
                                         </td>
                                         <td>
                                             <span class="badge rounded-pill bg-light text-dark border">{{ $payroll->safe?->name ?? '-' }}</span>
@@ -796,16 +782,14 @@
                                         <td class="text-end pe-4">
                                             <div class="payroll-action">
                                                 @feature('payroll')
-                                                <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-sm btn-outline-secondary">View</a>
-                                                @endfeature
+                                                <a href="{{ route('payroll.show', $payroll) }}" class="btn btn-sm btn-outline-secondary">{{ __('View') }}</a>
                                                 @feature('downloads')
-                                                    <a href="{{ route('payroll.payslip', $payroll) }}" class="btn btn-sm btn-outline-danger">PDF</a>
+                                                    <a href="{{ route('payroll.payslip', $payroll) }}" class="btn btn-sm btn-outline-danger">{{ __('PDF') }}</a>
                                                 @endfeature
-                                                @feature('payroll')
                                                 <form action="{{ route('payroll.destroy', $payroll) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this payroll? If it was paid, the linked payment will be reversed.');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">{{ __('Delete') }}</button>
                                                 </form>
                                                 @endfeature
                                             </div>
@@ -814,8 +798,8 @@
                                 @empty
                                     <tr>
                                         <td colspan="6" class="text-center py-5 text-muted">
-                                            <div class="fw-semibold mb-1">No paid payroll history found</div>
-                                            <div class="small">Paid records will appear here after settlement.</div>
+                                            <div class="fw-semibold mb-1">{{ __('No paid payroll history found') }}</div>
+                                            <div class="small">{{ __('Paid records will appear here after settlement.') }}</div>
                                         </td>
                                     </tr>
                                 @endforelse
@@ -836,8 +820,8 @@
         <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden;">
             <div class="modal-header" style="background: linear-gradient(135deg, #111827, #1f2937); color: #fff;">
                 <div>
-                    <h5 class="modal-title mb-1">{{ __('Pay Payroll') }}</h5>
-                    <div class="small opacity-75">Choose the safe that should be deducted for this payroll payment.</div>
+                    <h5 class="modal-title mb-1">{{ __('messages.pay_payroll') }}</h5>
+                    <div class="small opacity-75">{{ __('Choose the safe that should be deducted for this payroll payment.') }}</div>
                 </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -850,9 +834,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">{{ __('Safe') }}</label>
+                        <label class="form-label fw-semibold">{{ __('messages.safe') }}</label>
                         <select name="safe_id" class="form-select form-select-lg" required>
-                            <option value="">{{ __('Select safe') }}</option>
+                            <option value="">{{ __('messages.select_safe') }}</option>
                             @foreach($safes ?? [] as $safe)
                                 <option value="{{ $safe->id }}">{{ $safe->name }} - {{ $currencySymbol }}{{ number_format((float) $safe->balance, 2) }}</option>
                             @endforeach
@@ -860,8 +844,8 @@
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
-                    <button type="submit" class="btn btn-success">{{ __('Confirm Payment') }}</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                    <button type="submit" class="btn btn-success">{{ __('messages.confirm_payment') }}</button>
                 </div>
             </form>
         </div>

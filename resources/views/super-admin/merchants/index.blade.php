@@ -7,7 +7,7 @@
     <div class="merchant-header-row d-flex align-items-center justify-content-between mb-4">
         <div>
             <h1 class="page-title">
-        <style>
+        {{ __('<style>
             @media (max-width: 768px) {
                 .merchant-header-row {
                     flex-direction: column;
@@ -63,15 +63,15 @@
                     border-radius: 14px;
                 }
             }
-        </style>
+        </style>') }}
 
                 <i class="bi bi-building"></i>
-                Merchants Management
+                {{ __('Merchants Management') }}
             </h1>
-            <p class="page-subtitle">Manage your merchant/dealer accounts and subscriptions</p>
+            <p class="page-subtitle">{{ __('Manage your merchant/dealer accounts and subscriptions') }}</p>
         </div>
         <a href="{{ route('super-admin.merchants.create') }}" class="btn btn-primary-orange">
-            <i class="bi bi-plus-circle"></i> Add New Merchant
+            <i class="bi bi-plus-circle"></i> {{ __('Add New Merchant') }}
         </a>
     </div>
 </div>
@@ -91,19 +91,19 @@
         </div>
         <div class="col-md-3">
             <select name="status" class="form-select">
-                <option value="">All Status</option>
-                <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Active</option>
-                <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Inactive</option>
+                <option value="">{{ __('All Status') }}</option>
+                <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>{{ __('Active') }}</option>
+                <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>{{ __('Inactive') }}</option>
             </select>
         </div>
         <div class="col-md-2">
             <button type="submit" class="btn btn-primary-orange w-100">
-                <i class="bi bi-search"></i> Filter
+                <i class="bi bi-search"></i> {{ __('Filter') }}
             </button>
         </div>
         <div class="col-md-3">
             <a href="{{ route('super-admin.merchants.index') }}" class="btn btn-outline-orange w-100">
-                <i class="bi bi-arrow-clockwise"></i> Reset
+                <i class="bi bi-arrow-clockwise"></i> {{ __('Reset') }}
             </a>
         </div>
     </form>
@@ -114,12 +114,12 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>Merchant Name</th>
-                <th>Email</th>
-                <th>Package</th>
-                <th>Expires</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th>{{ __('Merchant Name') }}</th>
+                <th>{{ __('Email') }}</th>
+                <th>{{ __('Package') }}</th>
+                <th>{{ __('Expires') }}</th>
+                <th>{{ __('Status') }}</th>
+                <th>{{ __('Actions') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -139,41 +139,41 @@
                             <span class="badge-orange">
                                 {{ $activeSubscription->package->name }}
                             </span>
-                        @else
+                        {{ __('@else') }}
                             <span class="text-muted">-</span>
                         @endif
                     </td>
                     <td>
                         @if($merchant->subscription_expires_at)
-                            {{ $merchant->subscription_expires_at->format('M d, Y') }}
+                            {{ $merchant->subscription_expires_at->translatedFormat('M d, Y') }}
                         @else
                             <span class="text-muted">-</span>
                         @endif
                     </td>
                     <td>
                         @if($merchant->is_active)
-                            <span class="badge-success">Active</span>
-                        @else
-                            <span class="badge-warning">Inactive</span>
+                            <span class="badge-success">{{ __('Active') }}</span>
+                        {{ __('@else') }}
+                            <span class="badge-warning">{{ __('Inactive') }}</span>
                         @endif
                     </td>
                     <td>
                         <div class="btn-group" role="group">
-                            <a href="{{ route('super-admin.merchants.show', $merchant->id) }}" class="btn btn-sm btn-outline-orange" title="View">
+                            <a href="{{ route('super-admin.merchants.show', $merchant->{{ __('id) }}" class="btn btn-sm btn-outline-orange" title="View">') }}
                                 <i class="bi bi-eye"></i>
                             </a>
                             <form action="{{ route('super-admin.merchants.inspect', $merchant) }}" method="POST" style="display:inline;" title="Inspect (Login as Merchant)">
-                                @csrf
+                                {{ __('@csrf') }}
                                 <button type="submit" class="btn btn-sm btn-outline-info" title="Inspect merchant" onclick="return confirm('Login as this merchant?')">
                                     <i class="bi bi-search"></i>
                                 </button>
                             </form>
-                            <a href="{{ route('super-admin.merchants.edit', $merchant->id) }}" class="btn btn-sm btn-outline-orange" title="Edit">
+                            <a href="{{ route('super-admin.merchants.edit', $merchant->{{ __('id) }}" class="btn btn-sm btn-outline-orange" title="Edit">') }}
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <form action="{{ route('super-admin.merchants.destroy', $merchant->id) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('super-admin.merchants.destroy', $merchant->{{ __('id) }}" method="POST" style="display:inline;">
                                 @csrf
-                                @method('DELETE')
+                                @method(\'DELETE\')') }}
                                 <button type="submit" class="btn btn-sm btn-outline-orange" onclick="return confirm('Are you sure?')" title="Delete">
                                     <i class="bi bi-trash"></i>
                                 </button>
@@ -181,14 +181,14 @@
                         </div>
                     </td>
                 </tr>
-            @empty
+            {{ __('@empty') }}
                 <tr>
                     <td colspan="6" class="text-center py-4 text-muted">
                         <i class="bi bi-inbox" style="font-size: 32px; opacity: 0.3;"></i>
-                        <p class="mt-2">No merchants found</p>
+                        <p class="mt-2">{{ __('No merchants found') }}</p>
                     </td>
                 </tr>
-            @endforelse
+            {{ __('@endforelse') }}
         </tbody>
     </table>
 </div>

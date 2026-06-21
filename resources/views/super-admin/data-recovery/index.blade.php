@@ -8,9 +8,9 @@
         <div>
             <h1 class="page-title">
                 <i class="bi bi-arrow-repeat"></i>
-                Data Recovery
+                {{ __('Data Recovery') }}
             </h1>
-            <p class="page-subtitle">Move records that are missing merchant or branch linkage into the correct merchant branch.</p>
+            <p class="page-subtitle">{{ __('Move records that are missing merchant or branch linkage into the correct merchant branch.') }}</p>
         </div>
     </div>
 </div>
@@ -24,7 +24,7 @@
 
 @if ($errors->any())
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>Please fix the following:</strong>
+        <strong>{{ __('Please fix the following:') }}</strong>
         <ul class="mb-0 mt-2">
             @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
@@ -35,7 +35,7 @@
 @endif
 
 <div class="alert alert-info">
-    <strong>How it works:</strong> select the rows you want to recover, choose a merchant, then transfer them. For branch-based records, a branch will be used automatically or created if needed.
+    <strong>{{ __('How it works:') }}</strong> {{ __('select the rows you want to recover, choose a merchant, then transfer them. For branch-based records, a branch will be used automatically or created if needed.') }}
 </div>
 
 @foreach ($recoverySections as $section)
@@ -49,14 +49,14 @@
         </div>
         <div class="card-body">
             <form method="POST" action="{{ route('super-admin.data-recovery.transfer') }}" class="data-recovery-form">
-                @csrf
+                {{ __('@csrf') }}
                 <input type="hidden" name="group" value="{{ $section['key'] }}">
 
                 <div class="row g-3 align-items-end mb-3">
                     <div class="col-lg-6">
-                        <label class="form-label">Target Merchant</label>
+                        <label class="form-label">{{ __('Target Merchant') }}</label>
                         <select name="merchant_id" class="form-select" required>
-                            <option value="">Choose merchant...</option>
+                            <option value="">{{ __('Choose merchant...') }}</option>
                             @foreach ($merchants as $merchant)
                                 <option value="{{ $merchant->id }}">{{ $merchant->business_name ?? $merchant->name }}</option>
                             @endforeach
@@ -64,16 +64,16 @@
                     </div>
                     @if ($section['mode'] === 'branch')
                         <div class="col-lg-6">
-                            <label class="form-label">Target Branch</label>
+                            <label class="form-label">{{ __('Target Branch') }}</label>
                             <select name="branch_id" class="form-select">
-                                <option value="">Auto-pick/create branch</option>
+                                <option value="">{{ __('Auto-pick/create branch') }}</option>
                                 @foreach ($merchants as $merchant)
                                     <optgroup label="{{ $merchant->business_name ?? $merchant->name }}">
                                         @forelse ($merchant->branches as $branch)
                                             <option value="{{ $branch->id }}">{{ $branch->name }} ({{ $branch->code }})</option>
-                                        @empty
-                                            <option value="">No branch yet</option>
-                                        @endforelse
+                                        {{ __('@empty') }}
+                                            <option value="">{{ __('No branch yet') }}</option>
+                                        {{ __('@endforelse') }}
                                     </optgroup>
                                 @endforeach
                             </select>
@@ -88,16 +88,16 @@
                                 <th style="width: 44px;">
                                     <input type="checkbox" class="select-all" data-target="section-{{ $section['key'] }}">
                                 </th>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Details</th>
+                                <th>{{ __('ID') }}</th>
+                                <th>{{ __('Name') }}</th>
+                                <th>{{ __('Details') }}</th>
                             </tr>
                         </thead>
                         <tbody id="section-{{ $section['key'] }}">
                             @forelse ($section['records'] as $record)
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="ids[]" value="{{ $record->id }}" class="row-checkbox">
+                                        <input type="checkbox" name="ids[]" value="{{ $record->{{ __('id }}" class="row-checkbox">') }}
                                     </td>
                                     <td>{{ $record->id }}</td>
                                     <td>
@@ -139,20 +139,20 @@
                                         @endif
                                     </td>
                                 </tr>
-                            @empty
+                            {{ __('@empty') }}
                                 <tr>
                                     <td colspan="4" class="text-center text-muted py-4">
                                         {{ $section['emptyLabel'] }}
                                     </td>
                                 </tr>
-                            @endforelse
+                            {{ __('@endforelse') }}
                         </tbody>
                     </table>
                 </div>
 
                 <div class="d-flex justify-content-end mt-3">
-                    <button type="submit" class="btn btn-primary-orange" @disabled($section['records']->isEmpty())>
-                        Transfer selected
+                    <button type="submit" class="btn btn-primary-orange" @disabled($section['records']->{{ __('isEmpty())>
+                        Transfer selected') }}
                     </button>
                 </div>
             </form>

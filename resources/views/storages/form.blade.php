@@ -57,17 +57,17 @@
             <div class="form-sidebar">
                 @if(isset($storage) && $storage)
                 <div class="sidebar-card">
-                    <div class="sidebar-title">📊 Storage Info</div>
+                    <div class="sidebar-title">{{ __('📊 Storage Info') }}</div>
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-label">Capacity</span>
+                        <span class="sidebar-stat-label">{{ __('Capacity') }}</span>
                         <span class="sidebar-stat-value">{{ $storage->capacity ?? 0 }}</span>
                     </div>
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-label">Type</span>
+                        <span class="sidebar-stat-label">{{ __('Type') }}</span>
                         <span class="sidebar-stat-value" style="font-size: 13px;">{{ $storage->storage_type ?? 'N/A' }}</span>
                     </div>
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-label">Status</span>
+                        <span class="sidebar-stat-label">{{ __('Status') }}</span>
                         <span class="sidebar-stat-value" style="color: {{ $storage->is_active ? '#3b82f6' : '#ef4444' }};">{{ $storage->is_active ? 'Active' : 'Inactive' }}</span>
                     </div>
                 </div>
@@ -80,7 +80,7 @@
                         <h1><i class="bi bi-diagram-3" style="margin-right: 12px; font-size: 36px;"></i>{{ isset($storage) ? __('messages.edit_storage') : __('messages.add_storage') }}</h1>
                     </div>
                     <a href="{{ route('storages.index') }}" class="btn btn-outline-light btn-sm" style="padding: 10px 20px; border-radius: 10px; border: 1.5px solid rgba(255, 255, 255, 0.4); color: white; text-decoration: none;">
-                        <i class="bi bi-arrow-left"></i> Back
+                        <i class="bi bi-arrow-left"></i> {{ __('Back') }}
                     </a>
                 </div>
 
@@ -92,47 +92,55 @@
 
                     <div class="form-body">
                         <div class="form-section">
-                            <div class="form-section-title">📍 Location Information</div>
+                            <div class="form-section-title">{{ __('📍 Location Information') }}</div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.storage_name') }} <span class="required">*</span></label>
                                     <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $storage->name ?? '') }}" placeholder="Enter storage name" required>
-                                    @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    @error('name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.storage_type') }} <span class="required">*</span></label>
                                     <input type="text" class="form-control @error('storage_type') is-invalid @enderror" name="storage_type" value="{{ old('storage_type', $storage->storage_type ?? '') }}" placeholder="e.g., Warehouse, Shelf, Cabinet" required>
-                                    @error('storage_type')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    @error('storage_type')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-section">
-                            <div class="form-section-title">📦 Storage Configuration</div>
+                            <div class="form-section-title">{{ __('📦 Storage Configuration') }}</div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.capacity') }} <span class="required">*</span></label>
                                     <input type="number" class="form-control @error('capacity') is-invalid @enderror" name="capacity" placeholder="0" value="{{ old('capacity', $storage->capacity ?? '') }}" required>
-                                    @error('capacity')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    @error('capacity')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-section">
-                            <div class="form-section-title">📄 Description</div>
+                            <div class="form-section-title">{{ __('📄 Description') }}</div>
                             <div class="form-row" style="margin-bottom: 0;">
                                 <div class="form-group">
                                     <label class="form-label">{{ __('messages.description') }}</label>
                                     <textarea class="form-control @error('description') is-invalid @enderror" name="description" placeholder="Enter storage description">{{ old('description', $storage->description ?? '') }}</textarea>
-                                    @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    @error('description')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-section">
-                            <div class="form-section-title">⚙️ Settings</div>
+                            <div class="form-section-title">{{ __('⚙️ Settings') }}</div>
                             <div class="form-checkbox">
-                                <input type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active', isset($storage) && $storage ? $storage->is_active : true) ? 'checked' : '' }}>
+                                <input type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active', isset($storage) && $storage ? $storage->is_active : false) ? 'checked' : '' }}>
                                 <label for="is_active">{{ __('messages.is_active') }}</label>
                             </div>
                             <div style="margin-top: 24px;">

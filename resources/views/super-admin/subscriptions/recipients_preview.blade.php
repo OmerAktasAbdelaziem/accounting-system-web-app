@@ -10,9 +10,9 @@
                     @if(session('status'))
                         <div class="alert alert-success">{{ session('status') }}</div>
                     @endif
-                    <p>Recipients (merchant admins):</p>
+                    <p>{{ __('Recipients (merchant admins):') }}</p>
                     <table class="table table-striped">
-                        <thead><tr><th>Name</th><th>Email</th><th>Role</th></tr></thead>
+                        <thead><tr><th>{{ __('Name') }}</th><th>{{ __('Email') }}</th><th>{{ __('Role') }}</th></tr></thead>
                         <tbody>
                             @foreach($admins as $a)
                                 <tr>
@@ -24,14 +24,14 @@
                         </tbody>
                     </table>
 
-                    <form method="POST" action="{{ route('super-admin.subscriptions.recipients_preview.send', $merchant->id) }}">
-                        @csrf
+                    <form method="POST" action="{{ route('super-admin.subscriptions.recipients_preview.send', $merchant->{{ __('id) }}">
+                        @csrf') }}
                         <div class="mb-3">
-                            <label class="form-label">Preview Message</label>
-                            <textarea name="message" class="form-control" rows="3">This is a preview of subscription-related notifications.</textarea>
+                            <label class="form-label">{{ __('Preview Message') }}</label>
+                            <textarea name="message" class="form-control" rows="3">{{ __('This is a preview of subscription-related notifications.') }}</textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Send Preview Notification</button>
-                        <a href="{{ route('super-admin.subscriptions.index') }}" class="btn btn-secondary ms-2">Back</a>
+                        <button type="submit" class="btn btn-primary">{{ __('Send Preview Notification') }}</button>
+                        <a href="{{ route('super-admin.subscriptions.index') }}" class="btn btn-secondary ms-2">{{ __('Back') }}</a>
                     </form>
                 </div>
             </div>

@@ -126,7 +126,7 @@ class DashboardController extends Controller
 
         for ($offset = 5; $offset >= 0; $offset--) {
             $month = Carbon::now()->startOfMonth()->subMonths($offset);
-            $months[] = $month->format('M');
+            $months[] = $month->translatedFormat('M');
 
             $monthSalesQuery = EmployeeSale::query()
                 ->whereYear('sale_date', $month->year)
@@ -287,7 +287,7 @@ class DashboardController extends Controller
         for ($offset = 5; $offset >= 0; $offset--) {
             $month = Carbon::now()->startOfMonth()->subMonths($offset);
 
-            $months[] = $month->format('M Y');
+            $months[] = $month->translatedFormat('M Y');
             if ($canViewSales) {
                 $monthSalesQuery = EmployeeSale::whereYear('sale_date', $month->year)
                     ->whereMonth('sale_date', $month->month);

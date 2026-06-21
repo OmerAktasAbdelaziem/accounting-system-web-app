@@ -12,22 +12,26 @@
         @media (max-width:768px) { .products-hero { flex-direction:column; align-items:stretch } .products-hero .actions { width:100%; display:flex; gap:8px; justify-content:flex-end } }
     </style>
 
-    <x-section-hero :badge="'<i class=\"bi bi-box-seam\"></i> ' . __('messages.product')"
+    <x-section-hero badge="<i class='bi bi-box-seam'></i> {{ __('messages.product') }}"
                    title="<i class='bi bi-box-seam'></i> {{ $product->name }}"
-                   :description="e(Str::limit($product->description ?? __('messages.no_description'), 160))">
+                   description="{{ Illuminate\Support\Str::limit($product->description ?? __('messages.no_description'), 160) }}">
         <x-slot name="actions">
             <a href="{{ route('products.index') }}" class="btn btn-outline-secondary me-2"><i class="bi bi-arrow-left"></i> {{ __('messages.back') }}</a>
-            @feature('products.edit')<a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning"><i class="bi bi-pencil"></i> {{ __('messages.edit') }}</a>@endfeature
+            @if (\Illuminate\Support\Facades\Blade::check('feature', 'products.edit'))
+                <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> {{ __('messages.edit') }}
+                </a>
+            @endif
         </x-slot>
 
         <x-slot name="panel">
             <div class="products-hero-panel-top">
-                <p class="products-hero-panel-title">Summary</p>
-                <div class="products-hero-panel-value"><span>{{ $product->current_stock }}</span><small>in stock</small></div>
+                <p class="products-hero-panel-title">{{ __('Summary') }}</p>
+                <div class="products-hero-panel-value"><span>{{ $product->current_stock }}</span><small>{{ __('in stock') }}</small></div>
             </div>
             <div class="products-hero-panel-list">
-                <div class="products-mini-metric"><div><span class="label">Price</span><span class="value">{{ $currencySymbol }}{{ number_format($product->selling_price, 2) }}</span></div><div class="tone"><i class="bi bi-tag"></i></div></div>
-                <div class="products-mini-metric"><div><span class="label">Status</span><span class="value">{{ $product->is_active ? __('messages.active') : __('messages.inactive') }}</span></div><div class="tone"><i class="bi bi-info-circle"></i></div></div>
+                <div class="products-mini-metric"><div><span class="label">{{ __('Price') }}</span><span class="value">{{ $currencySymbol }}{{ number_format($product->selling_price, 2) }}</span></div><div class="tone"><i class="bi bi-tag"></i></div></div>
+                <div class="products-mini-metric"><div><span class="label">{{ __('Status') }}</span><span class="value">{{ $product->is_active ? __('messages.active') : __('messages.inactive') }}</span></div><div class="tone"><i class="bi bi-info-circle"></i></div></div>
             </div>
         </x-slot>
     </x-section-hero>
@@ -125,11 +129,11 @@
                 <div class="row">
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.created') }}</label>
-                        <p class="text-muted">{{ $product->created_at->format('M d, Y H:i') }}</p>
+                        <p class="text-muted">{{ $product->created_at->translatedFormat('M d, Y H:i') }}</p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.last_updated') }}</label>
-                        <p class="text-muted">{{ $product->updated_at->format('M d, Y H:i') }}</p>
+                        <p class="text-muted">{{ $product->updated_at->translatedFormat('M d, Y H:i') }}</p>
                     </div>
                 </div>
             </div>

@@ -12,7 +12,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Aktaš System')</title>
+    <title>{{ __('@yield(\'title\', \'Aktaš System\')') }}</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -25,13 +25,13 @@
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    {{ __('<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>') }}
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {{ __('<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>') }}
     <!-- html2pdf -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    {{ __('<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>') }}
     <!-- SheetJS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
+    {{ __('<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
     
     <style>
         :root {
@@ -383,15 +383,15 @@
         }
     </style>
 
-    @yield('css')
+    @yield(\'css\')') }}
 </head>
 <body>
-    @include('components.top-navbar')
+    {{ __('@include(\'components.top-navbar\')') }}
 
     <!-- Loading -->
     <div class="loading" id="loading">
         <div class="spinner-border text-light" role="status">
-            <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden">{{ __('Loading...') }}</span>
         </div>
     </div>
 
@@ -425,21 +425,21 @@
 
         @if (session('warning'))
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>Warning!</strong> {{ session('warning') }}
+                <strong>{{ __('Warning!') }}</strong> {{ session('warning') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
 
         @if (session('info'))
             <div class="alert alert-info alert-dismissible fade show" role="alert">
-                <strong>Info!</strong> {{ session('info') }}
+                <strong>{{ __('Info!') }}</strong> {{ session('info') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
 
         @if (session('status'))
             <div class="alert alert-primary alert-dismissible fade show" role="alert">
-                <strong>Status:</strong> {{ session('status') }}
+                <strong>{{ __('Status:') }}</strong> {{ session('status') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
@@ -451,13 +451,13 @@
                 </div>
             </div>
             <div class="col-lg-9 content-area">
-                @yield('content')
+                {{ __('@yield(\'content\')') }}
             </div>
         </div>
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {{ __('<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // CSRF Token for AJAX
         $.ajaxSetup({
@@ -497,6 +497,6 @@
         });
     </script>
 
-    @yield('js')
+    @yield(\'js\')') }}
 </body>
 </html>

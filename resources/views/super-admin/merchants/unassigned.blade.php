@@ -8,12 +8,12 @@
         <div>
             <h1 class="page-title">
                 <i class="bi bi-people"></i>
-                Users Without Merchant
+                {{ __('Users Without Merchant') }}
             </h1>
-            <p class="page-subtitle">Assign existing users to merchants</p>
+            <p class="page-subtitle">{{ __('Assign existing users to merchants') }}</p>
         </div>
         <a href="{{ route('super-admin.merchants.index') }}" class="btn btn-outline-orange">
-            <i class="bi bi-arrow-left"></i> Back to Merchants
+            <i class="bi bi-arrow-left"></i> {{ __('Back to Merchants') }}
         </a>
     </div>
 </div>
@@ -95,7 +95,7 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-header">
-                <strong>Merchants</strong>
+                <strong>{{ __('Merchants') }}</strong>
             </div>
             <div class="card-body p-0">
                 <ul class="list-group list-group-flush">
@@ -105,11 +105,11 @@
                                 <strong>{{ $merchant->business_name ?? $merchant->name }}</strong>
                                 <div class="text-muted small">{{ $merchant->admin_email }}</div>
                             </div>
-                            <a href="{{ route('super-admin.merchants.show', $merchant) }}" class="btn btn-sm btn-outline-orange">View</a>
+                            <a href="{{ route('super-admin.merchants.show', $merchant) }}" class="btn btn-sm btn-outline-orange">{{ __('View') }}</a>
                         </li>
-                    @empty
-                        <li class="list-group-item text-muted">No merchants found</li>
-                    @endforelse
+                    {{ __('@empty') }}
+                        <li class="list-group-item text-muted">{{ __('No merchants found') }}</li>
+                    {{ __('@endforelse') }}
                 </ul>
             </div>
         </div>
@@ -118,63 +118,63 @@
     <div class="col-md-8">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <strong>Unassigned Users</strong>
+                <strong>{{ __('Unassigned Users') }}</strong>
                 <form method="GET" class="d-flex" style="gap:8px;">
                     <input type="text" name="search" class="form-control form-control-sm" placeholder="Search users..." value="{{ request('search') }}">
-                    <button class="btn btn-sm btn-outline-orange">Search</button>
+                    <button class="btn btn-sm btn-outline-orange">{{ __('Search') }}</button>
                 </form>
             </div>
             <div class="card-body">
                 <form action="{{ route('super-admin.merchants.assignUser') }}" method="POST" id="bulk-assign-form">
-                    @csrf
+                    {{ __('@csrf') }}
                     <div class="table-responsive">
                         <table class="table table-hover">
                         <thead>
                             <tr>
                                     <th style="width:40px;"><input type="checkbox" id="select-all"></th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Type</th>
-                                    <th style="width:320px;">Actions</th>
+                                    <th>{{ __('Name') }}</th>
+                                    <th>{{ __('Email') }}</th>
+                                    <th>{{ __('Type') }}</th>
+                                    <th style="width:320px;">{{ __('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($unassignedUsers as $user)
                                 <tr>
-                                    <td><input type="checkbox" name="user_ids[]" value="{{ $user->id }}" class="user-checkbox"></td>
+                                    <td><input type="checkbox" name="user_ids[]" value="{{ $user->{{ __('id }}" class="user-checkbox">') }}</td>
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->user_type ?? '-' }}</td>
                                     <td>
                                         <div class="d-flex" style="gap:8px; align-items:center;">
-                                            <select name="row_merchant_{{ $user->id }}" class="form-select form-select-sm row-merchant-select">
-                                                <option value="">Select merchant...</option>
+                                            <select name="row_merchant_{{ $user->{{ __('id }}" class="form-select form-select-sm row-merchant-select">') }}
+                                                <option value="">{{ __('Select merchant...') }}</option>
                                                 @foreach($merchants as $merchant)
                                                     <option value="{{ $merchant->id }}">{{ $merchant->business_name ?? $merchant->name }} ({{ $merchant->admin_email }})</option>
                                                 @endforeach
                                             </select>
-                                            <button type="button" class="btn btn-sm btn-outline-orange assign-single" data-user-id="{{ $user->id }}">Assign</button>
+                                            <button type="button" class="btn btn-sm btn-outline-orange assign-single" data-user-id="{{ $user->{{ __('id }}">Assign') }}</button>
                                         </div>
                                     </td>
                                 </tr>
-                            @empty
+                            {{ __('@empty') }}
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted">No unassigned users found</td>
+                                    <td colspan="5" class="text-center text-muted">{{ __('No unassigned users found') }}</td>
                                 </tr>
-                            @endforelse
+                            {{ __('@endforelse') }}
                         </tbody>
                     </table>
                 </div>
 
                     <div class="d-flex align-items-center gap-2 mt-3">
                         <select name="merchant_id" class="form-select form-select-sm" style="max-width:320px;" required>
-                            <option value="">Assign selected to merchant...</option>
+                            <option value="">{{ __('Assign selected to merchant...') }}</option>
                             @foreach($merchants as $merchant)
                                 <option value="{{ $merchant->id }}">{{ $merchant->business_name ?? $merchant->name }} ({{ $merchant->admin_email }})</option>
                             @endforeach
                         </select>
-                        <button type="submit" class="btn btn-sm btn-primary-orange">Assign selected</button>
-                        <small class="text-muted ms-2">You can also assign individual users using the row controls.</small>
+                        <button type="submit" class="btn btn-sm btn-primary-orange">{{ __('Assign selected') }}</button>
+                        <small class="text-muted ms-2">{{ __('You can also assign individual users using the row controls.') }}</small>
                     </div>
 
                     <div class="mt-3 d-flex justify-content-center">
@@ -182,7 +182,7 @@
                     </div>
                 </form>
 
-                <script>
+                {{ __('<script>
                     // Select all toggle
                     document.getElementById('select-all')?.addEventListener('change', function(e){
                         document.querySelectorAll('.user-checkbox').forEach(cb => cb.checked = e.target.checked);
@@ -211,7 +211,7 @@
                             form.submit();
                         });
                     });
-                </script>
+                </script>') }}
             </div>
         </div>
     </div>

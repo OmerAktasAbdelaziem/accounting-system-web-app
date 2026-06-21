@@ -39,8 +39,8 @@
                     @endif
 
                     <form action="{{ route('roles.update', $role) }}" method="POST">
-                        @csrf
-                        @method('PUT')
+                        {{ __('@csrf
+                        @method(\'PUT\')') }}
 
                         <div class="mb-3">
                             <label for="name" class="form-label">{{ __('roles.role_name') }} <span class="text-danger">*</span></label>
@@ -49,7 +49,7 @@
                                    {{ in_array($role->name, ['Admin', 'System']) ? 'disabled' : '' }}>
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            {{ __('@enderror') }}
                         </div>
 
                         <div class="mb-3">
@@ -57,9 +57,9 @@
                             <textarea class="form-control @error('description') is-invalid @enderror" 
                                       id="description" name="description" rows="3"
                                       {{ in_array($role->name, ['Admin', 'System']) ? 'disabled' : '' }}>{{ old('description', $role->description) }}</textarea>
-                            @error('description')
+                            {{ __('@error(\'description\')') }}
                                 <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            {{ __('@enderror') }}
                         </div>
 
                         <!-- Permissions Selection -->
@@ -118,11 +118,11 @@
                         <div class="mb-3">
                             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
                                 <div>
-                                    <label class="form-label fw-semibold mb-1">Branch visibility</label>
-                                    <div class="text-muted small">Choose which branches this role can access. Leave everything empty to keep full visibility.</div>
+                                    <label class="form-label fw-semibold mb-1">{{ __('Branch visibility') }}</label>
+                                    <div class="text-muted small">{{ __('Choose which branches this role can access. Leave everything empty to keep full visibility.') }}</div>
                                 </div>
-                                <button type="button" class="btn btn-outline-primary btn-sm" id="selectAllRoleBranchesBtn" {{ in_array($role->name, ['Admin', 'System']) ? 'disabled' : '' }}>
-                                    <i class="fas fa-check-square me-1"></i>Select all branches
+                                <button type="button" class="btn btn-outline-primary btn-sm" id="selectAllRoleBranchesBtn" {{ in_array($role->{{ __('name, [\'Admin\', \'System\']) ? \'disabled\' : \'\' }}>') }}
+                                    <i class="fas fa-check-square me-1"></i>{{ __('Select all branches') }}
                                 </button>
                             </div>
 
@@ -134,22 +134,22 @@
                                                 {{ $merchant->name }}
                                             </button>
                                         </div>
-                                        <div id="edit-merchant-branches-{{ $merchant->id }}" class="collapse" data-bs-parent="#branchAccessAccordionEdit">
+                                        <div id="edit-merchant-branches-{{ $merchant->{{ __('id }}" class="collapse" data-bs-parent="#branchAccessAccordionEdit">') }}
                                             <div class="card-body">
                                                 <div class="row">
                                                     @forelse ($merchant->branches as $branch)
                                                         <div class="col-md-6 mb-2">
                                                             <div class="form-check">
                                                                 <input class="form-check-input" type="checkbox" name="branch_ids[]" value="{{ $branch->id }}" id="edit_branch_{{ $branch->id }}" {{ in_array($branch->id, $selectedBranchIds ?? []) ? 'checked' : '' }} {{ in_array($role->name, ['Admin', 'System']) ? 'disabled' : '' }}>
-                                                                <label class="form-check-label" for="edit_branch_{{ $branch->id }}">
+                                                                <label class="form-check-label" for="edit_branch_{{ $branch->{{ __('id }}">') }}
                                                                     <strong>{{ $branch->name }}</strong>
                                                                     <small class="d-block text-muted">{{ $branch->city ?? $branch->address ?? 'Branch' }}</small>
                                                                 </label>
                                                             </div>
                                                         </div>
-                                                    @empty
-                                                        <div class="col-12 text-muted">No branches found for this merchant.</div>
-                                                    @endforelse
+                                                    {{ __('@empty') }}
+                                                        <div class="col-12 text-muted">{{ __('No branches found for this merchant.') }}</div>
+                                                    {{ __('@endforelse') }}
                                                 </div>
                                             </div>
                                         </div>
@@ -159,8 +159,8 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Feature Toggles</label>
-                            <div class="small text-muted mb-2">Enable system features for this role (applies to all merchants).</div>
+                            <label class="form-label fw-semibold">{{ __('Feature Toggles') }}</label>
+                            <div class="small text-muted mb-2">{{ __('Enable system features for this role (applies to all merchants).') }}</div>
                             @php
                                 $features = $availableFeatures ?? [];
                                 $selected = $selectedFeatures ?? [];
@@ -169,7 +169,7 @@
                                 @foreach($features as $featureKey => $featureLabel)
                                     <div class="col-md-4">
                                         <div class="form-check p-3 border rounded-4 h-100">
-                                            <input class="form-check-input" type="checkbox" name="features[]" value="{{ $featureKey }}" id="feature_{{ $featureKey }}" {{ (old('features') && in_array($featureKey, old('features')) ) || in_array($featureKey, $selected) ? 'checked' : '' }} {{ in_array($role->name, ['Admin', 'System']) ? 'disabled' : '' }}>
+                                            <input class="form-check-input" type="checkbox" name="features[]" value="{{ $featureKey }}" id="feature_{{ $featureKey }}" {{ (old('features') && in_array($featureKey, old('features')) ) || in_array($featureKey, $selected) ? 'checked' : '' }} {{ in_array($role->{{ __('name, [\'Admin\', \'System\']) ? \'disabled\' : \'\' }}>') }}
                                             <label class="form-check-label ms-2" for="feature_{{ $featureKey }}">
                                                 <strong>{{ $featureLabel }}</strong>
                                             </label>
@@ -189,7 +189,7 @@
                                     {{ __('actions.cancel') }}
                                 </a>
                             </div>
-                        @else
+                        {{ __('@else') }}
                             <div class="pt-3">
                                 <a href="{{ route('roles.index') }}" class="btn btn-secondary">
                                     {{ __('actions.back') }}

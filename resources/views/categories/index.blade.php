@@ -98,12 +98,12 @@
 
             <x-slot name="panel">
                 <div class="categories-hero-panel-top">
-                    <p class="categories-hero-panel-title">Live snapshot</p>
-                    <div class="categories-hero-panel-value"><span>{{ $totalCategories }}</span><small>categories</small></div>
+                    <p class="categories-hero-panel-title">{{ __('Live snapshot') }}</p>
+                    <div class="categories-hero-panel-value"><span>{{ $totalCategories }}</span><small>{{ __('categories') }}</small></div>
                 </div>
                 <div class="products-hero-panel-list mt-2">
-                    <div class="products-mini-metric"><div><span class="label">Total products</span><span class="value">{{ $totalProducts }}</span></div><div class="tone"><i class="bi bi-box-seam"></i></div></div>
-                    <div class="products-mini-metric"><div><span class="label">Avg / category</span><span class="value">{{ $avgPerCategory }}</span></div><div class="tone"><i class="bi bi-graph-up"></i></div></div>
+                    <div class="products-mini-metric"><div><span class="label">{{ __('Total products') }}</span><span class="value">{{ $totalProducts }}</span></div><div class="tone"><i class="bi bi-box-seam"></i></div></div>
+                    <div class="products-mini-metric"><div><span class="label">{{ __('Avg / category') }}</span><span class="value">{{ $avgPerCategory }}</span></div><div class="tone"><i class="bi bi-graph-up"></i></div></div>
                 </div>
             </x-slot>
         </x-section-hero>
@@ -208,13 +208,19 @@
                         <span class="badge bg-primary">{{ $category->total_products }}</span>
                     </div>
                     <div class="d-flex gap-2 mb-2">
-                        <div class="bg-light rounded-3 p-2 flex-fill"><div class="small text-muted">Stock Value</div><strong>{{ $currencySymbol }}{{ number_format($category->total_stock_value ?? 0, 2) }}</strong></div>
-                        <div class="bg-light rounded-3 p-2 flex-fill"><div class="small text-muted">Avg Price</div><strong>{{ $currencySymbol }}{{ number_format($category->avg_price ?? 0, 2) }}</strong></div>
+                        <div class="bg-light rounded-3 p-2 flex-fill"><div class="small text-muted">{{ __('Stock Value') }}</div><strong>{{ $currencySymbol }}{{ number_format($category->total_stock_value ?? 0, 2) }}</strong></div>
+                        <div class="bg-light rounded-3 p-2 flex-fill"><div class="small text-muted">{{ __('Avg Price') }}</div><strong>{{ $currencySymbol }}{{ number_format($category->avg_price ?? 0, 2) }}</strong></div>
                     </div>
                     <div class="d-grid gap-2">
-                        @feature('categories.view')<a href="{{ route('categories.show', $category->id) }}" class="btn btn-sm btn-outline-secondary">{{ __('messages.view_details') }}</a>@endfeature
-                        @feature('categories.edit')<a href="{{ route('categories.edit', $category->id) }}" class="btn btn-sm btn-outline-primary">{{ __('messages.edit') }}</a>@endfeature
-                        @feature('categories.delete')<button onclick="deleteCategory({{ $category->id }})" class="btn btn-sm btn-outline-danger">{{ __('messages.delete') }}</button>@endfeature
+                        @feature('categories.view')
+                            <a href="{{ route('categories.show', $category->id) }}" class="btn btn-sm btn-outline-secondary">{{ __('messages.view_details') }}</a>
+                        @endfeature
+                        @feature('categories.edit')
+                            <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-sm btn-outline-primary">{{ __('messages.edit') }}</a>
+                        @endfeature
+                        @feature('categories.delete')
+                            <button onclick="deleteCategory({{ $category->id }})" class="btn btn-sm btn-outline-danger">{{ __('messages.delete') }}</button>
+                        @endfeature
                     </div>
                 </div>
             @empty

@@ -55,9 +55,9 @@
                                     </a>
 
                                     <form action="{{ route('permissions.destroy', $permission) }}" method="POST" style="display: inline;" onclick="return confirm('{{ __('permissions.confirm_delete') }}');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger" title="{{ __('actions.delete') }}" {{ $permission->roles()->exists() ? 'disabled' : '' }}>
+                                        {{ __('@csrf
+                                        @method(\'DELETE\')') }}
+                                        <button type="submit" class="btn btn-sm btn-danger" title="{{ __('actions.delete') }}" {{ $permission->{{ __('roles()->exists() ? \'disabled\' : \'\' }}>') }}
                                             <i class="fas fa-trash" aria-hidden="true"></i>
                                             <span class="visually-hidden">{{ __('actions.delete') }}</span>
                                         </button>
@@ -65,14 +65,14 @@
                                 </div>
                             </td>
                         </tr>
-                    @empty
+                    {{ __('@empty') }}
                         <tr>
                             <td colspan="5" class="text-center text-muted py-4">
                                 <i class="fas fa-inbox fa-2x mb-2"></i>
                                 <p>{{ __('permissions.no_permissions_found') }}</p>
                             </td>
                         </tr>
-                    @endforelse
+                    {{ __('@endforelse') }}
                 </tbody>
             </table>
         </div>

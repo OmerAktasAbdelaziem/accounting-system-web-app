@@ -72,8 +72,8 @@
                     <span class="badge bg-{{ $branch->is_active ? 'success' : 'secondary' }}">{{ $branch->is_active ? __('messages.active') : __('messages.inactive') }}</span>
                 </div>
                 <div class="branch-mobile-grid">
-                    <div class="bg-light rounded-4 p-2"><div class="text-muted small">Code</div><strong>{{ $branch->code }}</strong></div>
-                    <div class="bg-light rounded-4 p-2"><div class="text-muted small">Manager</div><strong>{{ $branch->manager_name }}</strong></div>
+                    <div class="bg-light rounded-4 p-2"><div class="text-muted small">{{ __('Code') }}</div><strong>{{ $branch->code }}</strong></div>
+                    <div class="bg-light rounded-4 p-2"><div class="text-muted small">{{ __('Manager') }}</div><strong>{{ $branch->manager_name }}</strong></div>
                 </div>
                 <div class="d-grid gap-2">
                     @feature('branches')

@@ -152,7 +152,7 @@
                                 </div>
                             @endif
                         </div>
-                    @else
+                    {{ __('@else') }}
                         <div class="alert alert-info mt-4">
                             <i class="fas fa-info-circle me-2"></i>
                             {{ __('audit_logs.no_changes') }}
