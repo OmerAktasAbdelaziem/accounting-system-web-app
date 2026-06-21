@@ -10,7 +10,7 @@
     <link href="https://fonts.bunny.net/css?family=noto-sans:400,500,600,700" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    {{ __('<style>
+    <style>
         :root {
             --primary-orange: #ff6b35;
             --dark-orange: #e55a2b;
@@ -215,7 +215,7 @@
                 padding: 30px 20px;
             }
         }
-    </style>') }}
+    </style>
 </head>
 <body>
     <div class="landing-container">
@@ -272,6 +272,6 @@
         </div>
     </div>
 
-    {{ __('<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>') }}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
