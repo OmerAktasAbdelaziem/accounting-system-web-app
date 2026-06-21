@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 @php
     $locale = session('locale');
-    if (!is_string($locale) || !in_array($locale, ['en', 'ar'], true)) {
+    if (!is_string($locale) || !in_array($locale, ['en', 'ar', 'tr'], true)) {
         $locale = config('app.locale', 'en');
     }
     $appCurrency = \App\Models\Currency::byCode((string) \App\Models\Setting::get('currency', 'AED'));
@@ -1189,7 +1189,7 @@
         function toggleLanguage() {
             const url = new URL(window.location.href);
             const locale = url.searchParams.get('lang') || '{{ app()->getLocale() }}';
-            const newLocale = locale === 'ar' ? 'en' : 'ar';
+            const newLocale = locale === 'en' ? 'ar' : (locale === 'ar' ? 'tr' : 'en');
             url.searchParams.set('lang', newLocale);
             window.location.href = url.toString();
         }

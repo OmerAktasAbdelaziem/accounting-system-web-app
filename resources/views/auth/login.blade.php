@@ -459,8 +459,13 @@
 
             <!-- Form Section -->
             <div class="merchant-login-form-section">
-                <a href="{{ app()->getLocale() === 'ar' ? route('locale.switch', 'en') : route('locale.switch', 'ar') }}" class="merchant-language-toggle">
-                    {{ app()->getLocale() === 'ar' ? 'EN' : 'العربية' }}
+                @php
+                    $currentLocale = app()->getLocale();
+                    $nextLocale = $currentLocale === 'en' ? 'ar' : ($currentLocale === 'ar' ? 'tr' : 'en');
+                    $nextLocaleLabel = $currentLocale === 'en' ? 'العربية' : ($currentLocale === 'ar' ? 'Türkçe' : 'EN');
+                @endphp
+                <a href="{{ route('locale.switch', $nextLocale) }}" class="merchant-language-toggle">
+                    {{ $nextLocaleLabel }}
                 </a>
 
                 <div class="merchant-form-header">

@@ -223,7 +223,8 @@
                                     <label for="language" class="form-label">{{ __('settings.default_language') }}</label>
                                     <select class="form-select @error('language') is-invalid @enderror" id="language" name="language" required>
                                         <option value="en" {{ old('language', $currentSettings['language']) === 'en' ? 'selected' : '' }}>English</option>
-                                        <option value="ar" {{ old('language', $currentSettings['language']) === 'ar' ? 'selected' : '' }}>???????</option>
+                                        <option value="ar" {{ old('language', $currentSettings['language']) === 'ar' ? 'selected' : '' }}>العربية</option>
+                                        <option value="tr" {{ old('language', $currentSettings['language']) === 'tr' ? 'selected' : '' }}>Türkçe</option>
                                     </select>
                                     @error('language')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>

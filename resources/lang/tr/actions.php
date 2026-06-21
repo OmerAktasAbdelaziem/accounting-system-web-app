@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'search' => 'Ara',
+    'save' => 'Kaydet',
+    'save_changes' => 'Değişiklikleri Kaydet',
+    'edit' => 'Düzenle',
+    'delete' => 'Sil',
+    'action' => 'İşlem',
+    'back' => 'Geri',
+    'cancel' => 'İptal',
+    'create' => 'Oluştur',
+    'update' => 'Güncelle',
+    'view' => 'Görüntüle',
+    'export' => 'Dışa Aktar',
+    'import' => 'İçe Aktar',
+    'filter' => 'Filtrele',
+    'clear' => 'Temizle',
+    'refresh' => 'Yenile',
+    'close' => 'Kapat',
+    'submit' => 'Gönder',
+    'reset' => 'Sıfırla',
+    'add' => 'Ekle',
+    'remove' => 'Kaldır',
+];

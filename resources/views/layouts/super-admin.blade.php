@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 @php
     $locale = session('locale');
-    if (!is_string($locale) || !in_array($locale, ['en', 'ar'], true)) {
+    if (!is_string($locale) || !in_array($locale, ['en', 'ar', 'tr'], true)) {
         $locale = config('app.locale', 'en');
     }
     $appCurrency = \App\Models\Currency::byCode((string) \App\Models\Setting::get('currency', 'AED'));
