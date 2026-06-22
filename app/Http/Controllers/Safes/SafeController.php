@@ -418,6 +418,23 @@ class SafeController extends Controller
                 'exported_at' => now()->toIso8601String(),
             ]);
 
+            try {
+                app(TelegramService::class)->sendMessage(
+                    "🧪 <b>Safe PDF Export Debug</b>\n" .
+                    "━━━━━━━━━━━━━━━━━━━━\n" .
+                    "📍 Safe: <code>{$safe->id} - {$safe->name}</code>\n" .
+                    "📦 Type: <code>{$type}</code>\n" .
+                    "📆 From: <code>{$from}</code>\n" .
+                    "📆 To: <code>{$to}</code>\n" .
+                    "👤 User: <code>" . (auth()->user()?->email ?? 'Guest') . "</code>\n" .
+                    "🌐 URL: <code>" . $request->fullUrl() . "</code>"
+                );
+            } catch (\Throwable $telegramError) {
+                Log::warning('Safe PDF export telegram debug failed', [
+                    'error' => $telegramError->getMessage(),
+                ]);
+            }
+
             if ($type === 'outcome') {
                 $items = SafeOutcome::withoutGlobalScopes()
                     ->with('currency', 'supplier')
