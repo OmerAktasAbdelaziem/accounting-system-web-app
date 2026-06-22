@@ -18,6 +18,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Support\SimplePdf;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class SafeController extends Controller
 {
@@ -555,7 +557,14 @@ class SafeController extends Controller
                 @unlink($tempPath);
             });
 
-            return response()->download($tempPath, $filename, $headers)->deleteFileAfterSend(true);
+            $response = new BinaryFileResponse($tempPath);
+            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename);
+            foreach ($headers as $name => $value) {
+                $response->headers->set($name, $value);
+            }
+            $response->deleteFileAfterSend(true);
+
+            return $response;
         } catch (\Throwable $e) {
             Log::error('Safe PDF export failed', [
                 'safe_id' => $safe->id,
