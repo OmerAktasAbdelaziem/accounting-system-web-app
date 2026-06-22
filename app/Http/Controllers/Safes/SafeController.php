@@ -548,7 +548,7 @@ class SafeController extends Controller
             }
 
             return response($pdf, 200, [
-                'Content-Type' => 'application/force-download',
+                'Content-Type' => 'application/octet-stream',
                 'Content-Disposition' => 'attachment; filename="' . $filename . '"',
                 'Content-Length' => (string) strlen($pdf),
                 'Content-Transfer-Encoding' => 'binary',
