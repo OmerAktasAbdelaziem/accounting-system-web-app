@@ -539,7 +539,10 @@ class SafeController extends Controller
                 ]);
             }
 
-            return response($pdf, 200, $headers);
+            $tempPath = tempnam(sys_get_temp_dir(), 'safe_pdf_');
+            file_put_contents($tempPath, $pdf);
+
+            return response()->download($tempPath, $filename, $headers)->deleteFileAfterSend(true);
         } catch (\Throwable $e) {
             Log::error('Safe PDF export failed', [
                 'safe_id' => $safe->id,
