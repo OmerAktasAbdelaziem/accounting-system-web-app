@@ -515,8 +515,10 @@ class SafeController extends Controller
                 'Content-Transfer-Encoding' => 'binary',
                 'Content-Length' => (string) strlen($pdf),
                 'Pragma' => 'public',
-                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+                'Cache-Control' => 'private, max-age=0, must-revalidate',
                 'Expires' => '0',
+                'Connection' => 'close',
+                'X-Accel-Buffering' => 'no',
             ];
 
             $telegramService = app(TelegramService::class);
