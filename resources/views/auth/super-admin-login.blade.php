@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=noto-sans:400,500,600,700" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    {{ __('<style>
+    <style>
         * {
             margin: 0;
             padding: 0;
@@ -373,7 +373,7 @@
                 font-size: 11px;
             }
         }
-    </style>') }}
+    </style>
 </head>
 <body>
     <div class="admin-login-shell">
@@ -438,22 +438,22 @@
                     @endif
 
                     <form method="POST" action="{{ route('super-admin.login') }}">
-                        {{ __('@csrf') }}
+                        @csrf
 
                         <div class="admin-form-group">
                             <label class="admin-form-label">{{ __('Email Address') }}</label>
                             <input type="email" name="email" class="admin-form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required autofocus placeholder="admin@system.local">
-                            {{ __('@error(\'email\')') }}
+                            @error('email')
                                 <span class="admin-invalid-feedback">{{ $message }}</span>
-                            {{ __('@enderror') }}
+                            @enderror
                         </div>
 
                         <div class="admin-form-group">
                             <label class="admin-form-label">{{ __('Password') }}</label>
                             <input type="password" name="password" class="admin-form-control @error('password') is-invalid @enderror" required placeholder="••••••••">
-                            {{ __('@error(\'password\')') }}
+                            @error('password')
                                 <span class="admin-invalid-feedback">{{ $message }}</span>
-                            {{ __('@enderror') }}
+                            @enderror
                         </div>
 
                         <div class="admin-form-group">
@@ -476,6 +476,6 @@
         </div>
     </div>
 
-    {{ __('<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>') }}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
