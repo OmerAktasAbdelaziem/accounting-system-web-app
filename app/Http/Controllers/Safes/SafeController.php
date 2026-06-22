@@ -415,25 +415,7 @@ class SafeController extends Controller
                 'to_date' => $to,
                 'user_id' => auth()->id(),
                 'user_email' => auth()->user()?->email,
-                'exported_at' => now()->toIso8601String(),
             ]);
-
-            try {
-                app(TelegramService::class)->sendMessage(
-                    "🧪 <b>Safe PDF Export Debug</b>\n" .
-                    "━━━━━━━━━━━━━━━━━━━━\n" .
-                    "📍 Safe: <code>{$safe->id} - {$safe->name}</code>\n" .
-                    "📦 Type: <code>{$type}</code>\n" .
-                    "📆 From: <code>{$from}</code>\n" .
-                    "📆 To: <code>{$to}</code>\n" .
-                    "👤 User: <code>" . (auth()->user()?->email ?? 'Guest') . "</code>\n" .
-                    "🌐 URL: <code>" . $request->fullUrl() . "</code>"
-                );
-            } catch (\Throwable $telegramError) {
-                Log::warning('Safe PDF export telegram debug failed', [
-                    'error' => $telegramError->getMessage(),
-                ]);
-            }
 
             if ($type === 'outcome') {
                 $items = SafeOutcome::withoutGlobalScopes()
@@ -522,26 +504,6 @@ class SafeController extends Controller
                 'Connection' => 'close',
                 'X-Accel-Buffering' => 'no',
             ];
-
-            $telegramService = app(TelegramService::class);
-
-            try {
-                $telegramService->sendMessage(
-                    "✅ <b>Safe PDF Export Completed</b>\n" .
-                    "━━━━━━━━━━━━━━━━━━━━\n" .
-                    "📍 Safe: <code>{$safe->id} - {$safe->name}</code>\n" .
-                    "📦 Type: <code>{$type}</code>\n" .
-                    "📄 File: <code>{$filename}</code>\n" .
-                    "📝 Size: <code>" . number_format(strlen($pdf)) . " bytes</code>\n" .
-                    "⏱ Completed At: <code>" . now()->format('Y-m-d H:i:s') . "</code>"
-                );
-            } catch (\Throwable $telegramError) {
-                Log::warning('Safe PDF export completion telegram debug failed', [
-                    'error' => $telegramError->getMessage(),
-                    'safe_id' => $safe->id,
-                    'filename' => $filename,
-                ]);
-            }
 
             while (ob_get_level() > 0) {
                 ob_end_clean();
