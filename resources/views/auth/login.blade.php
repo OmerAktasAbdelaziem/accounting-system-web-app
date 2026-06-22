@@ -489,22 +489,22 @@
                 @endif
 
                 <form method="POST" action="{{ route('login') }}">
-                    {{ __('@csrf') }}
+                    @csrf
 
                     <div class="merchant-form-group">
                         <label class="merchant-form-label">{{ __('messages.email') }}</label>
                         <input type="email" name="email" class="merchant-form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required placeholder="admin@merchant.com">
-                        {{ __('@error(\'email\')') }}
+                        @error('email')
                             <span class="merchant-invalid-feedback">{{ $message }}</span>
-                        {{ __('@enderror') }}
+                        @enderror
                     </div>
 
                     <div class="merchant-form-group">
                         <label class="merchant-form-label">{{ __('messages.password') }}</label>
                         <input type="password" name="password" class="merchant-form-control @error('password') is-invalid @enderror" required placeholder="••••••••">
-                        {{ __('@error(\'password\')') }}
+                        @error('password')
                             <span class="merchant-invalid-feedback">{{ $message }}</span>
-                        {{ __('@enderror') }}
+                        @enderror
                     </div>
 
                     <div class="merchant-form-group">
