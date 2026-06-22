@@ -831,7 +831,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('İptal') }}</button>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" id="exportPdfSubmitBtn" class="btn btn-primary">
                         <i class="bi bi-download"></i> {{ __('PDF İndir') }}
                     </button>
                 </div>
@@ -1073,8 +1073,26 @@
         syncExportModal(outcomeExportBtn);
     });
 
-    // Form submission will be handled by backend validation
-    // Backend requires both dates and provides error messages
+    const exportPdfForm = document.getElementById('exportPdfForm');
+    const exportPdfSubmitBtn = document.getElementById('exportPdfSubmitBtn');
+
+    if (exportPdfForm && exportPdfSubmitBtn) {
+        exportPdfForm.addEventListener('submit', function (event) {
+            const fromDate = document.getElementById('exportPdfFromDate');
+            const toDate = document.getElementById('exportPdfToDate');
+
+            if (!fromDate.value || !toDate.value) {
+                event.preventDefault();
+                alert('{{ __('Başlangıç ve Bitiş tarihi seçin') }}');
+                return;
+            }
+
+            // Force GET submission to the correct action
+            exportPdfForm.method = 'GET';
+            exportPdfForm.action = '{{ route('safes.export', $safe->id) }}';
+        });
+    }
+
 })();
 </script>
 @endsection
