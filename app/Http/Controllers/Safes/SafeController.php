@@ -499,9 +499,7 @@ class SafeController extends Controller
                 'Content-Length' => (string) strlen($pdf),
             ];
 
-            return response()->streamDownload(function () use ($pdf) {
-                echo $pdf;
-            }, $filename, $headers);
+            return response($pdf, 200, $headers);
         } catch (\Throwable $e) {
             Log::error('Safe PDF export failed', [
                 'safe_id' => $safe->id,
