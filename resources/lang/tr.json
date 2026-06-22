@@ -241,6 +241,8 @@
     "Expiry Date": "Son kullanma tarihi",
     "Export": "İhracat",
     "Export PDF": "PDF'yi dışa aktar",
+    "Income PDF Export": "Gelir PDF Dışa Aktar",
+    "Outcome PDF Export": "Gider PDF Dışa Aktar",
     "Export CSV": "CSV'yi dışa aktar",
     "Failed to load branch debts. Please try again.": "Şube borçları yüklenemedi.",
     "Fast access to the most used admin, sales, and finance flows.": "En çok kullanılan yönetici, satış ve finans akışlarına hızlı erişim.",

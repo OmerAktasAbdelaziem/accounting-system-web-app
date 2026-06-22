@@ -248,6 +248,8 @@
     "Expiry Date": "تاريخ انتهاء الصلاحية",
     "Export": "يصدّر",
     "Export PDF": "تصدير PDF",
+    "Income PDF Export": "تصدير PDF للدخل",
+    "Outcome PDF Export": "تصدير PDF للمصروفات",
     "Export CSV": "تصدير CSV",
     "Failed to load branch debts. Please try again.": "فشل في تحميل ديون الفرع.",
     "Fast access to the most used admin, sales, and finance flows.": "الوصول السريع إلى التدفقات الإدارية والمبيعات والمالية الأكثر استخدامًا.",
