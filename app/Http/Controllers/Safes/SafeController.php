@@ -516,26 +516,26 @@ class SafeController extends Controller
 
             $telegramService = app(TelegramService::class);
 
-            return response()->streamDownload(function () use ($pdf, $safe, $type, $filename, $telegramService) {
-                echo $pdf;
+            try {
+                $telegramService->sendMessage(
+                    "✅ <b>Safe PDF Export Completed</b>\n" .
+                    "━━━━━━━━━━━━━━━━━━━━\n" .
+                    "📍 Safe: <code>{$safe->id} - {$safe->name}</code>\n" .
+                    "📦 Type: <code>{$type}</code>\n" .
+                    "📄 File: <code>{$filename}</code>\n" .
+                    "📝 Size: <code>" . number_format(strlen($pdf)) . " bytes</code>\n" .
+                    "⏱ Completed At: <code>" . now()->format('Y-m-d H:i:s') . "</code>"
+                );
+            } catch (\Throwable $telegramError) {
+                Log::warning('Safe PDF export completion telegram debug failed', [
+                    'error' => $telegramError->getMessage(),
+                    'safe_id' => $safe->id,
+                    'filename' => $filename,
+                ]);
+            }
 
-                try {
-                    $telegramService->sendMessage(
-                        "✅ <b>Safe PDF Export Completed</b>\n" .
-                        "━━━━━━━━━━━━━━━━━━━━\n" .
-                        "📍 Safe: <code>{$safe->id} - {$safe->name}</code>\n" .
-                        "📦 Type: <code>{$type}</code>\n" .
-                        "📄 File: <code>{$filename}</code>\n" .
-                        "📝 Size: <code>" . number_format(strlen($pdf)) . " bytes</code>\n" .
-                        "⏱ Completed At: <code>" . now()->format('Y-m-d H:i:s') . "</code>"
-                    );
-                } catch (\Throwable $telegramError) {
-                    Log::warning('Safe PDF export completion telegram debug failed', [
-                        'error' => $telegramError->getMessage(),
-                        'safe_id' => $safe->id,
-                        'filename' => $filename,
-                    ]);
-                }
+            return response()->streamDownload(function () use ($pdf) {
+                echo $pdf;
             }, $filename, $headers);
         } catch (\Throwable $e) {
             Log::error('Safe PDF export failed', [
