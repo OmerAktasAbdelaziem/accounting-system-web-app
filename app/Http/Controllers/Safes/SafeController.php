@@ -555,9 +555,7 @@ class SafeController extends Controller
                 @unlink($tempPath);
             });
 
-            return response()->stream(function () use ($tempPath) {
-                readfile($tempPath);
-            }, 200, $headers);
+            return response()->download($tempPath, $filename, $headers)->deleteFileAfterSend(true);
         } catch (\Throwable $e) {
             Log::error('Safe PDF export failed', [
                 'safe_id' => $safe->id,
