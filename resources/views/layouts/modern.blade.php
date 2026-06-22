@@ -1158,14 +1158,15 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
-
-        @yield('content')
-    </div>
-            </main>
-        </div>
     @endauth
 
+    @yield('content')
+
     @auth
+        </div>
+            </main>
+        </div>
+
         @if(auth()->user()?->canViewMenuItem('live_chat_floating'))
             @include('components.floating-chat')
         @endif
