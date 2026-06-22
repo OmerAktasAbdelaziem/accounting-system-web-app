@@ -1077,19 +1077,67 @@
     const exportPdfSubmitBtn = document.getElementById('exportPdfSubmitBtn');
 
     if (exportPdfForm && exportPdfSubmitBtn) {
-        exportPdfForm.addEventListener('submit', function (event) {
+        exportPdfForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
             const fromDate = document.getElementById('exportPdfFromDate');
             const toDate = document.getElementById('exportPdfToDate');
 
             if (!fromDate.value || !toDate.value) {
-                event.preventDefault();
                 alert('{{ __('Başlangıç ve Bitiş tarihi seçin') }}');
                 return;
             }
 
-            // Force GET submission to the correct action
-            exportPdfForm.method = 'GET';
-            exportPdfForm.action = '{{ route('safes.export', $safe->id) }}';
+            const type = document.getElementById('exportPdfType').value;
+            const url = new URL('{{ route('safes.export', $safe->id) }}', window.location.origin);
+            url.searchParams.append('type', type);
+            url.searchParams.append('from_date', fromDate.value);
+            url.searchParams.append('to_date', toDate.value);
+            url.searchParams.append('lang', '{{ app()->getLocale() }}');
+
+            try {
+                exportPdfSubmitBtn.disabled = true;
+                exportPdfSubmitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> {{ __('Downloading...') }}';
+
+                const response = await fetch(url.toString(), {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/octet-stream',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const blob = await response.blob();
+
+                if (blob.size === 0) {
+                    throw new Error('{{ __('Downloaded file is empty') }}');
+                }
+
+                const blobUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = url.searchParams.get('type') + '-' + fromDate.value + '-' + toDate.value + '.pdf';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                setTimeout(() => {
+                    URL.revokeObjectURL(blobUrl);
+                }, 5000);
+
+                const modal = bootstrap.Modal.getInstance(document.getElementById('exportPdfModal'));
+                if (modal) modal.hide();
+
+            } catch (error) {
+                console.error('Export error:', error);
+                alert('{{ __('Download failed') }}: ' + error.message);
+            } finally {
+                exportPdfSubmitBtn.disabled = false;
+                exportPdfSubmitBtn.innerHTML = '<i class="bi bi-download"></i> {{ __('PDF İndir') }}';
+            }
         });
     }
 
