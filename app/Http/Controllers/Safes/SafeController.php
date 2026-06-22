@@ -511,7 +511,12 @@ class SafeController extends Controller
 
             $headers = [
                 'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
                 'Content-Transfer-Encoding' => 'binary',
+                'Content-Length' => (string) strlen($pdf),
+                'Pragma' => 'public',
+                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+                'Expires' => '0',
             ];
 
             $telegramService = app(TelegramService::class);
@@ -534,9 +539,7 @@ class SafeController extends Controller
                 ]);
             }
 
-            return response()->streamDownload(function () use ($pdf) {
-                echo $pdf;
-            }, $filename, $headers);
+            return response($pdf, 200, $headers);
         } catch (\Throwable $e) {
             Log::error('Safe PDF export failed', [
                 'safe_id' => $safe->id,
