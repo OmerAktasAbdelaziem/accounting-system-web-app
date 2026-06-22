@@ -510,11 +510,13 @@ class SafeController extends Controller
             ]);
 
             $headers = [
-                'Content-Type' => 'application/pdf',
+                'Content-Type' => 'application/octet-stream',
                 'Content-Disposition' => 'attachment; filename="' . $filename . '"',
                 'Content-Transfer-Encoding' => 'binary',
                 'Content-Length' => (string) strlen($pdf),
-                'Pragma' => 'public',
+                'Content-Description' => 'File Transfer',
+                'Accept-Ranges' => 'bytes',
+                'Pragma' => 'private',
                 'Cache-Control' => 'private, max-age=0, must-revalidate',
                 'Expires' => '0',
                 'Connection' => 'close',
@@ -549,7 +551,13 @@ class SafeController extends Controller
             }
             flush();
 
-            return response()->download($tempPath, $filename, $headers)->deleteFileAfterSend(true);
+            register_shutdown_function(function () use ($tempPath) {
+                @unlink($tempPath);
+            });
+
+            return response()->stream(function () use ($tempPath) {
+                readfile($tempPath);
+            }, 200, $headers);
         } catch (\Throwable $e) {
             Log::error('Safe PDF export failed', [
                 'safe_id' => $safe->id,
