@@ -18,8 +18,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Support\SimplePdf;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class SafeController extends Controller
 {
@@ -545,26 +543,20 @@ class SafeController extends Controller
                 ]);
             }
 
-            $tempPath = tempnam(sys_get_temp_dir(), 'safe_pdf_');
-            file_put_contents($tempPath, $pdf);
-
             while (ob_get_level() > 0) {
                 ob_end_clean();
             }
-            flush();
 
-            register_shutdown_function(function () use ($tempPath) {
-                @unlink($tempPath);
-            });
-
-            $response = new BinaryFileResponse($tempPath);
-            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename);
-            foreach ($headers as $name => $value) {
-                $response->headers->set($name, $value);
-            }
-            $response->deleteFileAfterSend(true);
-
-            return $response;
+            return response($pdf, 200, [
+                'Content-Type' => 'application/force-download',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                'Content-Length' => (string) strlen($pdf),
+                'Content-Transfer-Encoding' => 'binary',
+                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+                'Pragma' => 'public',
+                'Connection' => 'close',
+                'Expires' => '0',
+            ]);
         } catch (\Throwable $e) {
             Log::error('Safe PDF export failed', [
                 'safe_id' => $safe->id,
