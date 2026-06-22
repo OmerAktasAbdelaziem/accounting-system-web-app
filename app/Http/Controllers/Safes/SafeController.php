@@ -492,10 +492,16 @@ class SafeController extends Controller
                 'filename' => $filename,
             ]);
 
-            return response($pdf, 200, [
+            $headers = [
                 'Content-Type' => 'application/pdf',
                 'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-            ]);
+                'Content-Transfer-Encoding' => 'binary',
+                'Content-Length' => (string) strlen($pdf),
+            ];
+
+            return response()->streamDownload(function () use ($pdf) {
+                echo $pdf;
+            }, $filename, $headers);
         } catch (\Throwable $e) {
             Log::error('Safe PDF export failed', [
                 'safe_id' => $safe->id,
