@@ -700,7 +700,7 @@
                         @csrf
 
                         <div class="modal-header">
-                            <h5 class="modal-title"><i class="bi bi-file-earmark-pdf"></i> {{ __('Satış PDF İndir') }}</h5>
+                            <h5 class="modal-title"><i class="bi bi-download"></i> {{ __('Satış Verisini İndir') }}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
 
@@ -733,9 +733,13 @@
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('İptal') }}</button>
-                            <button type="submit" class="btn btn-danger btn-lg">
-                                <i class="bi bi-download"></i>
+                            <button type="submit" class="btn btn-danger btn-lg" formaction="{{ route('sales.export-pdf') }}">
+                                <i class="bi bi-file-pdf"></i>
                                 {{ __('PDF İndir') }}
+                            </button>
+                            <button type="submit" class="btn btn-info btn-lg" formaction="{{ route('sales.export-excel') }}">
+                                <i class="bi bi-file-earmark-spreadsheet"></i>
+                                {{ __('Excel İndir') }}
                             </button>
                         </div>
                     </form>
