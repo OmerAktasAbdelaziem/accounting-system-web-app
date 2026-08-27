@@ -5,7 +5,7 @@ namespace App\Support;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Font;
-use PhpOffice\PhpSpreadsheet\Style\PatternFill;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Color;
@@ -39,7 +39,7 @@ class SimpleExcel
         
         $titleStyle = $sheet->getStyle('A' . $currentRow);
         $titleStyle->getFont()->setBold(true)->setSize(14)->setColor(new Color('FFFFFF'));
-        $titleStyle->getFill()->setFillType(PatternFill::FILL_SOLID)->setStartColor(new Color('366092'));
+        $titleStyle->getFill()->setFillType(Fill::FILL_SOLID)->setStartColor(new Color('366092'));
         $titleStyle->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)->setVertical(Alignment::VERTICAL_CENTER);
         $sheet->getRowDimensions($currentRow)->setRowHeight(25);
         
