@@ -5,7 +5,7 @@ namespace App\Support;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Font;
-use PhpOffice\PhpSpreadsheet\Style\PatternFill;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Color;
@@ -39,7 +39,7 @@ class SimpleExcel
         
         $titleStyle = $sheet->getStyle('A' . $currentRow);
         $titleStyle->getFont()->setBold(true)->setSize(14)->setColor(new Color('FFFFFF'));
-        $titleStyle->getFill()->setFillType(PatternFill::FILL_SOLID)->setStartColor(new Color('366092'));
+        $titleStyle->getFill()->setFillType(Fill::FILL_SOLID)->setStartColor(new Color('366092'));
         $titleStyle->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)->setVertical(Alignment::VERTICAL_CENTER);
         $sheet->getRowDimensions($currentRow)->setRowHeight(25);
         
@@ -69,7 +69,7 @@ class SimpleExcel
             
             $headerStyle = $sheet->getStyle($colLetter . $headerRow);
             $headerStyle->getFont()->setBold(true)->setColor(new Color('FFFFFF'));
-            $headerStyle->getFill()->setFillType(PatternFill::FILL_SOLID)->setStartColor(new Color('4472C4'));
+            $headerStyle->getFill()->setFillType(Fill::FILL_SOLID)->setStartColor(new Color('4472C4'));
             $headerStyle->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)->setVertical(Alignment::VERTICAL_CENTER)->setWrapText(true);
             $headerStyle->getBorder()->setStyle(Border::BORDER_THIN);
         }
@@ -91,7 +91,7 @@ class SimpleExcel
                 
                 // Alternate row colors for better readability
                 if ($rowIndex % 2 === 0) {
-                    $cellStyle->getFill()->setFillType(PatternFill::FILL_SOLID)->setStartColor(new Color('F2F2F2'));
+                    $cellStyle->getFill()->setFillType(Fill::FILL_SOLID)->setStartColor(new Color('F2F2F2'));
                 }
             }
         }
