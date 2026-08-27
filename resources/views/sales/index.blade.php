@@ -1275,6 +1275,89 @@
                 editModalEl.removeAttribute('aria-hidden');
             }
         });
+
+        // Excel export form handling with Fetch API
+        const excelExportForm = document.getElementById('sales-excel-export-form');
+        if (excelExportForm) {
+            excelExportForm.addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const fromDateInput = excelExportForm.querySelector('input[name="from_date"]');
+                const toDateInput = excelExportForm.querySelector('input[name="to_date"]');
+                const branchIdInput = excelExportForm.querySelector('select[name="branch_id"]');
+
+                if (!fromDateInput.value || !toDateInput.value) {
+                    alert('{{ __('Başlangıç ve Bitiş tarihi seçin') }}');
+                    return;
+                }
+
+                const submitBtn = excelExportForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+
+                try {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> {{ __('İndiriliyor...') }}';
+
+                    const formData = new FormData();
+                    formData.append('from_date', fromDateInput.value);
+                    formData.append('to_date', toDateInput.value);
+                    if (branchIdInput.value) {
+                        formData.append('branch_id', branchIdInput.value);
+                    }
+                    formData.append('_token', document.querySelector('input[name="_token"]').value);
+
+                    const response = await fetch('{{ route('sales.export-excel') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        },
+                        body: formData,
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const blob = await response.blob();
+
+                    if (blob.size === 0) {
+                        throw new Error('{{ __('İndirilen dosya boş') }}');
+                    }
+
+                    // Check if response is actually an error page (HTML)
+                    const contentType = response.headers.get('content-type') || '';
+                    if (contentType.includes('text/html')) {
+                        throw new Error('{{ __('Sunucu bir hata döndürdü') }}');
+                    }
+
+                    const blobUrl = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = blobUrl;
+                    link.download = 'sales-export-' + fromDateInput.value + '-' + toDateInput.value + '.xlsx';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    setTimeout(() => {
+                        URL.revokeObjectURL(blobUrl);
+                    }, 5000);
+
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('salesExcelExportModal'));
+                    if (modal) modal.hide();
+
+                    // Reset form
+                    excelExportForm.reset();
+
+                } catch (error) {
+                    console.error('Export error:', error);
+                    alert('{{ __('İndirme başarısız') }}: ' + error.message);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            });
+        }
     });
 })();
 </script>
