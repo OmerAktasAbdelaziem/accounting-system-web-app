@@ -71,11 +71,6 @@ class SimpleExcel
             $headerStyle->getFont()->setBold(true)->setColor(new Color('FFFFFF'));
             $headerStyle->getFill()->setFillType(Fill::FILL_SOLID)->setStartColor(new Color('4472C4'));
             $headerStyle->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)->setVertical(Alignment::VERTICAL_CENTER)->setWrapText(true);
-            $border = $headerStyle->getBorder();
-            $border->getTop()->setStyle(Border::BORDER_THIN);
-            $border->getRight()->setStyle(Border::BORDER_THIN);
-            $border->getBottom()->setStyle(Border::BORDER_THIN);
-            $border->getLeft()->setStyle(Border::BORDER_THIN);
         }
         
         $sheet->getRowDimension($headerRow)->setRowHeight(20);
@@ -91,11 +86,6 @@ class SimpleExcel
                 
                 $cellStyle = $sheet->getStyle($colLetter . $excelRow);
                 $cellStyle->getAlignment()->setVertical(Alignment::VERTICAL_TOP)->setWrapText(true);
-                $border = $cellStyle->getBorder();
-                $border->getTop()->setStyle(Border::BORDER_THIN)->setColor(new Color('D3D3D3'));
-                $border->getRight()->setStyle(Border::BORDER_THIN)->setColor(new Color('D3D3D3'));
-                $border->getBottom()->setStyle(Border::BORDER_THIN)->setColor(new Color('D3D3D3'));
-                $border->getLeft()->setStyle(Border::BORDER_THIN)->setColor(new Color('D3D3D3'));
                 
                 // Alternate row colors for better readability
                 if ($rowIndex % 2 === 0) {
@@ -244,11 +234,6 @@ class SimpleExcel
                     $headerStyle->getFont()->setBold(true)->setColor(new Color('FFFFFF'));
                     $headerStyle->getFill()->setFillType(Fill::FILL_SOLID)->setStartColor(new Color('4472C4'));
                     $headerStyle->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)->setWrapText(true);
-                    $border = $headerStyle->getBorder();
-                    $border->getTop()->setStyle(Border::BORDER_THIN);
-                    $border->getRight()->setStyle(Border::BORDER_THIN);
-                    $border->getBottom()->setStyle(Border::BORDER_THIN);
-                    $border->getLeft()->setStyle(Border::BORDER_THIN);
                 }
                 $sheet->getRowDimension($headerRow)->setRowHeight(20);
                 $currentRow++;
@@ -265,11 +250,6 @@ class SimpleExcel
                         
                         $cellStyle = $sheet->getStyle($colLetter . $excelRow);
                         $cellStyle->getAlignment()->setVertical(Alignment::VERTICAL_TOP)->setWrapText(true);
-                        $border = $cellStyle->getBorder();
-                        $border->getTop()->setStyle(Border::BORDER_THIN)->setColor(new Color('D3D3D3'));
-                        $border->getRight()->setStyle(Border::BORDER_THIN)->setColor(new Color('D3D3D3'));
-                        $border->getBottom()->setStyle(Border::BORDER_THIN)->setColor(new Color('D3D3D3'));
-                        $border->getLeft()->setStyle(Border::BORDER_THIN)->setColor(new Color('D3D3D3'));
                         
                         if ($rowIndex % 2 === 0) {
                             $cellStyle->getFill()->setFillType(Fill::FILL_SOLID)->setStartColor(new Color('F2F2F2'));
