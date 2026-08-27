@@ -563,9 +563,13 @@
                 </div>
                 <div class="d-flex align-items-center gap-2">
                     @feature('downloads')
-                    <button type="button" id="open-sales-export-modal" class="btn btn-outline-danger btn-sm">
+                    <button type="button" id="open-sales-pdf-export-modal" class="btn btn-outline-danger btn-sm">
                         <i class="bi bi-file-earmark-pdf"></i>
                         {{ __('Download PDF') }}
+                    </button>
+                    <button type="button" id="open-sales-excel-export-modal" class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-file-earmark-spreadsheet"></i>
+                        {{ __('Download Excel') }}
                     </button>
                     @endfeature
                     <span class="badge text-bg-light border">{{ $sales->total() }} results</span>
@@ -693,14 +697,15 @@
         </div>
 
         @feature('downloads')
-        <div class="modal fade" id="salesExportModal" tabindex="-1" aria-hidden="true">
+        <!-- PDF Export Modal -->
+        <div class="modal fade" id="salesPdfExportModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                    <form id="sales-export-form" method="POST" action="{{ route('sales.export-pdf') }}">
+                    <form id="sales-pdf-export-form" method="POST" action="{{ route('sales.export-pdf') }}">
                         @csrf
 
                         <div class="modal-header">
-                            <h5 class="modal-title"><i class="bi bi-download"></i> {{ __('Satış Verisini İndir') }}</h5>
+                            <h5 class="modal-title"><i class="bi bi-file-earmark-pdf"></i> {{ __('PDF olarak indir') }}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
 
@@ -733,11 +738,58 @@
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('İptal') }}</button>
-                            <button type="submit" class="btn btn-danger btn-lg" formaction="{{ route('sales.export-pdf') }}">
+                            <button type="submit" class="btn btn-danger btn-lg">
                                 <i class="bi bi-file-pdf"></i>
                                 {{ __('PDF İndir') }}
                             </button>
-                            <button type="submit" class="btn btn-info btn-lg" formaction="{{ route('sales.export-excel') }}">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Excel Export Modal -->
+        <div class="modal fade" id="salesExcelExportModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form id="sales-excel-export-form" method="POST" action="{{ route('sales.export-excel') }}">
+                        @csrf
+
+                        <div class="modal-header">
+                            <h5 class="modal-title"><i class="bi bi-file-earmark-spreadsheet"></i> {{ __('Excel olarak indir') }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="alert alert-info mb-3">
+                                <small><i class="bi bi-info-circle"></i> <strong>{{ __('Başlangıç ve Bitiş tarihi seçin') }}</strong> {{ __('(ör: 1 Mayıs - 31 Mayıs). Sistem tüm veriyi bu tarih aralığında indirecektir.') }}</small>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">{{ __('Başlangıç Tarihi') }} <span class="text-danger">*</span></label>
+                                    <input type="date" name="from_date" class="form-control form-control-lg" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">{{ __('Bitiş Tarihi') }} <span class="text-danger">*</span></label>
+                                    <input type="date" name="to_date" class="form-control form-control-lg" required>
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <label class="form-label fw-semibold">{{ __('Şube (Opsiyonel)') }}</label>
+                                <select name="branch_id" class="form-select form-select-lg">
+                                    <option value="">{{ __('Tüm şubeler') }}</option>
+                                    @foreach($branches as $branch)
+                                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('İptal') }}</button>
+                            <button type="submit" class="btn btn-info btn-lg">
                                 <i class="bi bi-file-earmark-spreadsheet"></i>
                                 {{ __('Excel İndir') }}
                             </button>
@@ -1029,10 +1081,12 @@
     document.addEventListener('DOMContentLoaded', function () {
         const editModalEl = document.getElementById('editSaleModal');
         const saleDetailsModalEl = document.getElementById('saleDetailsModal');
-        const exportModalEl = document.getElementById('salesExportModal');
+        const pdfExportModalEl = document.getElementById('salesPdfExportModal');
+        const excelExportModalEl = document.getElementById('salesExcelExportModal');
         let editModal = null;
         let saleDetailsModal = null;
-        let exportModal = null;
+        let pdfExportModal = null;
+        let excelExportModal = null;
         if (editModalEl) {
             if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
                 try { editModal = new bootstrap.Modal(editModalEl); } catch (err) { editModal = null; }
@@ -1043,19 +1097,35 @@
                 try { saleDetailsModal = new bootstrap.Modal(saleDetailsModalEl); } catch (err) { saleDetailsModal = null; }
             }
         }
-        if (exportModalEl) {
+        if (pdfExportModalEl) {
             if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                try { exportModal = new bootstrap.Modal(exportModalEl); } catch (err) { exportModal = null; }
+                try { pdfExportModal = new bootstrap.Modal(pdfExportModalEl); } catch (err) { pdfExportModal = null; }
+            }
+        }
+        if (excelExportModalEl) {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                try { excelExportModal = new bootstrap.Modal(excelExportModalEl); } catch (err) { excelExportModal = null; }
             }
         }
 
-        // Open export modal when button is clicked
-        const openExportBtn = document.getElementById('open-sales-export-modal');
-        if (openExportBtn) {
-            openExportBtn.addEventListener('click', function (e) {
+        // Open PDF export modal when button is clicked
+        const openPdfExportBtn = document.getElementById('open-sales-pdf-export-modal');
+        if (openPdfExportBtn) {
+            openPdfExportBtn.addEventListener('click', function (e) {
                 e.preventDefault();
-                if (exportModal) {
-                    exportModal.show();
+                if (pdfExportModal) {
+                    pdfExportModal.show();
+                }
+            });
+        }
+
+        // Open Excel export modal when button is clicked
+        const openExcelExportBtn = document.getElementById('open-sales-excel-export-modal');
+        if (openExcelExportBtn) {
+            openExcelExportBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (excelExportModal) {
+                    excelExportModal.show();
                 }
             });
         }
