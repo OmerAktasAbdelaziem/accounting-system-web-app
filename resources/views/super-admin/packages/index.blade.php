@@ -8,12 +8,12 @@
         <div>
             <h1 class="page-title">
                 <i class="bi bi-box-seam"></i>
-                Subscription Packages
+                {{ __('Subscription Packages') }}
             </h1>
-            <p class="page-subtitle">Create and manage subscription plans for your merchants</p>
+            <p class="page-subtitle">{{ __('Create and manage subscription plans for your merchants') }}</p>
         </div>
         <a href="{{ route('super-admin.packages.create') }}" class="btn btn-primary-orange">
-            <i class="bi bi-plus-circle"></i> Create Package
+            <i class="bi bi-plus-circle"></i> {{ __('Create Package') }}
         </a>
     </div>
 </div>
@@ -29,13 +29,13 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>Package Name</th>
-                <th>Price</th>
-                <th>Duration</th>
-                <th>Features</th>
-                <th>Max Employees</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th>{{ __('Package Name') }}</th>
+                <th>{{ __('Price') }}</th>
+                <th>{{ __('Duration') }}</th>
+                <th>{{ __('Features') }}</th>
+                <th>{{ __('Max Employees') }}</th>
+                <th>{{ __('Status') }}</th>
+                <th>{{ __('Actions') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -62,7 +62,7 @@
                             <i class="bi bi-pencil"></i>
                         </a>
                         <form action="{{ route('super-admin.packages.destroy', $package) }}" method="POST" style="display:inline;">
-                            @csrf @method('DELETE')
+                            {{ __('@csrf @method(\'DELETE\')') }}
                             <button type="submit" class="btn btn-sm btn-outline-orange" onclick="return confirm('Are you sure?')">
                                 <i class="bi bi-trash"></i>
                             </button>
@@ -70,14 +70,14 @@
                     </div>
                 </td>
             </tr>
-            @empty
+            {{ __('@empty') }}
             <tr>
                 <td colspan="7" class="text-center py-4 text-muted">
                     <i class="bi bi-inbox" style="font-size: 32px; opacity: 0.3;"></i>
-                    <p class="mt-2">No packages created yet</p>
+                    <p class="mt-2">{{ __('No packages created yet') }}</p>
                 </td>
             </tr>
-            @endforelse
+            {{ __('@endforelse') }}
         </tbody>
     </table>
 </div>

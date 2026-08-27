@@ -3,11 +3,19 @@
 @section('title', __('messages.financial_report'))
 
 @section('content')
+@feature('financial_report')
+<style>
+    @media (max-width: 768px) {
+        .financial-mobile-list { display: block; }
+        .table { display: none !important; }
+    }
+</style>
 <div class="row mb-4">
     <div class="col-md-6">
         <h2>{{ __('messages.financial_report') }}</h2>
     </div>
     <div class="col-md-6 text-end">
+        @feature('downloads')
         <form action="{{ route('reports.generate-pdf') }}" method="POST" class="d-inline">
             @csrf
             <input type="hidden" name="report" value="financial">
@@ -16,9 +24,48 @@
             <input type="hidden" name="from_date" value="{{ $fromDate ?? request('from_date') }}">
             <input type="hidden" name="to_date" value="{{ $toDate ?? request('to_date') }}">
             <button type="submit" class="btn btn-danger">
-                <i class="bi bi-file-pdf"></i> PDF
+                <i class="bi bi-file-pdf"></i> {{ __('PDF') }}
             </button>
         </form>
+        <form action="{{ route('reports.generate-pdf') }}" method="POST" class="d-inline ms-2">
+            @csrf
+            <input type="hidden" name="report" value="financial">
+            <input type="hidden" name="format" value="excel">
+            <input type="hidden" name="branch_id" value="{{ $branchId ?? request('branch_id') }}">
+            <input type="hidden" name="from_date" value="{{ $fromDate ?? request('from_date') }}">
+            <input type="hidden" name="to_date" value="{{ $toDate ?? request('to_date') }}">
+            <button type="submit" class="btn btn-info">
+                <i class="bi bi-file-earmark-spreadsheet"></i> {{ __('Excel') }}
+            </button>
+        </form>
+        @endfeature
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase fw-semibold mb-2">{{ __('messages.paid_payrolls') }}</div>
+                <div class="display-6 fw-bold">{{ ($payrollSettlements ?? collect())->count() }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase fw-semibold mb-2">{{ __('messages.paid_commissions_2') }}</div>
+                <div class="display-6 fw-bold">{{ ($commissionSettlements ?? collect())->count() }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase fw-semibold mb-2">{{ __('messages.payroll_safe_payouts_2') }}</div>
+                <div class="display-6 fw-bold">{{ ($safePayrollOutcomes ?? collect())->count() }}</div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -42,6 +89,31 @@
             </div>
         </form>
     </div>
+    <!-- Mobile entries list -->
+    <div class="financial-mobile-list entries-mobile-list d-md-none">
+        @forelse($entries ?? [] as $entry)
+            @foreach($entry->items ?? [] as $item)
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <div class="small text-muted">{{ $entry->date->translatedFormat('M d, Y') }}</div>
+                                <strong>{{ $item->account->name ?? 'N/A' }}</strong>
+                                <div class="small text-muted">{{ $item->description ?? $entry->description }}</div>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-success">{{ $item->debit > 0 ? $currencySymbol . number_format($item->debit, 2) : '-' }}</div>
+                                <div class="text-danger">{{ $item->credit > 0 ? $currencySymbol . number_format($item->credit, 2) : '-' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        @empty
+            <div class="card mb-2"><div class="card-body text-center text-muted">{{ __('messages.no_data') }}</div></div>
+        @endforelse
+    </div>
+
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>
@@ -57,7 +129,7 @@
                 @forelse($entries ?? [] as $entry)
                     @forelse($entry->items ?? [] as $item)
                         <tr>
-                            <td>{{ $entry->date->format('M d, Y') }}</td>
+                            <td>{{ $entry->date->translatedFormat('M d, Y') }}</td>
                             <td><strong>{{ $item->account->name ?? 'N/A' }}</strong></td>
                             <td class="text-success">{{ $item->debit > 0 ? $currencySymbol . number_format($item->debit, 2) : '-' }}</td>
                             <td class="text-danger">{{ $item->credit > 0 ? $currencySymbol . number_format($item->credit, 2) : '-' }}</td>
@@ -77,4 +149,155 @@
         </table>
     </div>
 </div>
+
+<div class="card mt-4">
+    <div class="card-header bg-white">
+        <strong>{{ __('messages.paid_payrolls') }}</strong>
+    </div>
+    <!-- Mobile payroll list -->
+    <div class="financial-mobile-list payroll-mobile-list d-md-none">
+        @forelse($payrollSettlements ?? [] as $payroll)
+            <div class="card mb-2">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-muted">{{ optional($payroll->processed_at)->translatedFormat('M d, Y') ?? '-' }}</div>
+                        <strong>{{ $payroll->employee?->name ?? '-' }}</strong>
+                    </div>
+                    <div class="text-end">
+                        <div class="text-success">{{ $currencySymbol }}{{ number_format((float) $payroll->net_salary, 2) }}</div>
+                        <div class="small text-muted">{{ $payroll->safe?->name ?? '-' }}</div>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="card mb-2"><div class="card-body text-center text-muted">{{ __('messages.no_data') }}</div></div>
+        @endforelse
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>{{ __('messages.date') }}</th>
+                    <th>{{ __('messages.employee') }}</th>
+                    <th>{{ __('messages.safe') }}</th>
+                    <th>{{ __('messages.net_salary') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($payrollSettlements ?? [] as $payroll)
+                    <tr>
+                        <td>{{ optional($payroll->processed_at)->translatedFormat('M d, Y') ?? '-' }}</td>
+                        <td>{{ $payroll->employee?->name ?? '-' }}</td>
+                        <td>{{ $payroll->safe?->name ?? '-' }}</td>
+                        <td class="text-success">{{ $currencySymbol }}{{ number_format((float) $payroll->net_salary, 2) }}</td>
+                    </tr>
+                @empty
+                    <tr><td colspan="4" class="text-center text-muted">{{ __('messages.no_data') }}</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header bg-white">
+        <strong>{{ __('messages.paid_commissions') }}</strong>
+    </div>
+    <!-- Mobile commissions list -->
+    <div class="financial-mobile-list commissions-mobile-list d-md-none">
+        @forelse($commissionSettlements ?? [] as $commission)
+            <div class="card mb-2">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-muted">{{ optional($commission->updated_at)->translatedFormat('M d, Y') ?? '-' }}</div>
+                        <strong>{{ $commission->employee?->name ?? '-' }}</strong>
+                    </div>
+                    <div class="text-end">
+                        <div class="text-success">{{ $currencySymbol }}{{ number_format((float) $commission->commission_amount, 2) }}</div>
+                        <div class="small text-muted">{{ strtoupper($commission->status ?? 'paid') }}</div>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="card mb-2"><div class="card-body text-center text-muted">{{ __('messages.no_data') }}</div></div>
+        @endforelse
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>{{ __('messages.date') }}</th>
+                    <th>{{ __('messages.employee') }}</th>
+                    <th>{{ __('messages.commission') }}</th>
+                    <th>{{ __('messages.status') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($commissionSettlements ?? [] as $commission)
+                    <tr>
+                        <td>{{ optional($commission->updated_at)->translatedFormat('M d, Y') ?? '-' }}</td>
+                        <td>{{ $commission->employee?->name ?? '-' }}</td>
+                        <td class="text-success">{{ $currencySymbol }}{{ number_format((float) $commission->commission_amount, 2) }}</td>
+                        <td><span class="badge bg-success">{{ strtoupper($commission->status ?? 'paid') }}</span></td>
+                    </tr>
+                @empty
+                    <tr><td colspan="4" class="text-center text-muted">{{ __('messages.no_data') }}</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card mt-4 mb-4">
+    <div class="card-header bg-white">
+        <strong>{{ __('messages.payroll_safe_payouts') }}</strong>
+    </div>
+    <!-- Mobile payouts list -->
+    <div class="financial-mobile-list payouts-mobile-list d-md-none">
+        @forelse($safePayrollOutcomes ?? [] as $outcome)
+            <div class="card mb-2">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-muted">{{ optional($outcome->created_at)->translatedFormat('M d, Y') ?? '-' }}</div>
+                        <strong>{{ $outcome->safe?->name ?? '-' }}</strong>
+                    </div>
+                    <div class="text-end">
+                        <div class="text-danger">{{ $currencySymbol }}{{ number_format((float) $outcome->amount, 2) }}</div>
+                        <div class="small text-muted">{{ $outcome->description ?? '-' }}</div>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="card mb-2"><div class="card-body text-center text-muted">{{ __('messages.no_data') }}</div></div>
+        @endforelse
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>{{ __('messages.date') }}</th>
+                    <th>{{ __('messages.safe') }}</th>
+                    <th>{{ __('messages.amount') }}</th>
+                    <th>{{ __('messages.description') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($safePayrollOutcomes ?? [] as $outcome)
+                    <tr>
+                        <td>{{ optional($outcome->created_at)->translatedFormat('M d, Y') ?? '-' }}</td>
+                        <td>{{ $outcome->safe?->name ?? '-' }}</td>
+                        <td class="text-danger">{{ $currencySymbol }}{{ number_format((float) $outcome->amount, 2) }}</td>
+                        <td>{{ $outcome->description ?? '-' }}</td>
+                    </tr>
+                @empty
+                    <tr><td colspan="4" class="text-center text-muted">{{ __('messages.no_data') }}</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+@endfeature
 @endsection

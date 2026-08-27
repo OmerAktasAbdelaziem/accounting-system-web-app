@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accounting System</title>
+    <title>{{ __('Accounting System') }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=noto-sans:400,500,600,700" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -21,10 +25,32 @@
             box-sizing: border-box;
         }
 
+        html,
+        body,
+        button,
+        input,
+        select,
+        textarea,
+        table,
+        th,
+        td,
+        .btn,
+        .nav,
+        .navbar,
+        .dropdown-menu,
+        .card,
+        .modal,
+        .form-control,
+        .form-select,
+        .alert,
+        .badge {
+            font-family: 'Noto Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        }
+
         html, body {
             height: 100%;
             background: linear-gradient(135deg, var(--primary-black) 0%, #2a2a2a 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 500;
         }
 
         .landing-container {
@@ -199,13 +225,13 @@
                     <i class="bi bi-graph-up"></i>
                 </div>
                 <div class="logo-text">
-                    <h1>Accounting System</h1>
-                    <p>Professional Financial Management Platform</p>
+                    <h1>{{ __('Accounting System') }}</h1>
+                    <p>{{ __('Professional Financial Management Platform') }}</p>
                 </div>
             </div>
 
             <p style="color: #ccc; margin-bottom: 30px; font-size: 15px;">
-                Select your login type to get started
+                {{ __('Select your login type to get started') }}
             </p>
 
             <div class="login-options">
@@ -214,13 +240,13 @@
                     <div class="card-icon">
                         <i class="bi bi-person-circle"></i>
                     </div>
-                    <h3 class="card-title">Merchant</h3>
+                    <h3 class="card-title">{{ __('Merchant') }}</h3>
                     <p class="card-description">
-                        Access your business dashboard and manage your operations
+                        {{ __('Access your business dashboard and manage your operations') }}
                     </p>
                     <button type="button" class="card-button">
                         <i class="bi bi-box-arrow-in-right"></i>
-                        Login as Merchant
+                        {{ __('Login as Merchant') }}
                     </button>
                 </a>
 
@@ -229,19 +255,19 @@
                     <div class="card-icon">
                         <i class="bi bi-shield-lock"></i>
                     </div>
-                    <h3 class="card-title">System Admin</h3>
+                    <h3 class="card-title">{{ __('System Admin') }}</h3>
                     <p class="card-description">
-                        Exclusive access for system administrators and super users
+                        {{ __('Exclusive access for system administrators and super users') }}
                     </p>
                     <button type="button" class="card-button">
                         <i class="bi bi-box-arrow-in-right"></i>
-                        Admin Login
+                        {{ __('Admin Login') }}
                     </button>
                 </a>
             </div>
 
             <div class="footer-info">
-                <p>🔒 Secure Platform • 🛡️ Enterprise Grade • 📊 Real-time Analytics</p>
+                <p>{{ __('🔒 Secure Platform • 🛡️ Enterprise Grade • 📊 Real-time Analytics') }}</p>
             </div>
         </div>
     </div>

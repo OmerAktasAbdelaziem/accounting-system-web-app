@@ -39,8 +39,8 @@
                     @endif
 
                     <form action="{{ route('roles.update', $role) }}" method="POST">
-                        @csrf
-                        @method('PUT')
+                        {{ __('@csrf
+                        @method(\'PUT\')') }}
 
                         <div class="mb-3">
                             <label for="name" class="form-label">{{ __('roles.role_name') }} <span class="text-danger">*</span></label>
@@ -49,7 +49,7 @@
                                    {{ in_array($role->name, ['Admin', 'System']) ? 'disabled' : '' }}>
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            {{ __('@enderror') }}
                         </div>
 
                         <div class="mb-3">
@@ -57,9 +57,9 @@
                             <textarea class="form-control @error('description') is-invalid @enderror" 
                                       id="description" name="description" rows="3"
                                       {{ in_array($role->name, ['Admin', 'System']) ? 'disabled' : '' }}>{{ old('description', $role->description) }}</textarea>
-                            @error('description')
+                            {{ __('@error(\'description\')') }}
                                 <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            {{ __('@enderror') }}
                         </div>
 
                         <!-- Permissions Selection -->
@@ -67,27 +67,27 @@
                             <label class="form-label">{{ __('roles.assign_permissions') }}</label>
                             
                             @php
-                                $groupedPermissions = $permissions->groupBy('category');
+                                use Illuminate\Support\Str;
+
+                                $groupedPermissions = $permissions->groupBy(function($permission) {
+                                    $name = $permission->name;
+                                    if (Str::contains($name, '.')) return Str::before($name, '.');
+                                    if (Str::contains($name, '_')) return Str::before($name, '_');
+                                    return $name;
+                                });
                             @endphp
 
-                            @foreach ($groupedPermissions as $category => $categoryPermissions)
+                            @foreach ($groupedPermissions as $group => $groupPermissions)
                                 <div class="card mb-3">
                                     <div class="card-header">
                                         <h6 class="mb-0">
                                             <i class="fas fa-folder me-2"></i>
-                                            @php
-                                                $catKey = 'permissions.categories.' . \Illuminate\Support\Str::slug($category ?? 'Other', '_');
-                                            @endphp
-                                            @if(\Illuminate\Support\Facades\Lang::has($catKey))
-                                                {{ __($catKey) }}
-                                            @else
-                                                {{ ucfirst($category ?? 'Other') }}
-                                            @endif
+                                            {{ ucfirst(str_replace(['_', '.'], ' ', $group)) }}
                                         </h6>
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
-                                            @foreach ($categoryPermissions as $permission)
+                                            @foreach ($groupPermissions as $permission)
                                                 <div class="col-md-6 mb-2">
                                                     <div class="form-check">
                                                         <input class="form-check-input" type="checkbox" 
@@ -96,11 +96,13 @@
                                                                {{ in_array($permission->id, $selectedPermissions) ? 'checked' : '' }}
                                                                {{ in_array($role->name, ['Admin', 'System']) ? 'disabled' : '' }}>
                                                         <label class="form-check-label" for="permission_{{ $permission->id }}">
-                                                            @if (\Illuminate\Support\Facades\Lang::has('permissions.' . $permission->name))
-                                                                {{ __('permissions.' . $permission->name) }}
-                                                            @else
-                                                                {{ $permission->name }}
-                                                            @endif
+                                                            @php
+                                                                $label = $permission->name;
+                                                                if (Str::contains($label, '.')) $label = Str::after($label, '.');
+                                                                if (Str::contains($label, '_')) $label = Str::after($label, '_');
+                                                                $label = ucfirst(str_replace(['_', '.'], ' ', $label));
+                                                            @endphp
+                                                            {{ $label }}
                                                             @if ($permission->description && app()->getLocale() === 'en')
                                                                 <small class="d-block text-muted">{{ $permission->description }}</small>
                                                             @endif
@@ -113,6 +115,69 @@
                                 </div>
                             @endforeach
                         </div>
+                        <div class="mb-3">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                                <div>
+                                    <label class="form-label fw-semibold mb-1">{{ __('Branch visibility') }}</label>
+                                    <div class="text-muted small">{{ __('Choose which branches this role can access. Leave everything empty to keep full visibility.') }}</div>
+                                </div>
+                                <button type="button" class="btn btn-outline-primary btn-sm" id="selectAllRoleBranchesBtn" {{ in_array($role->{{ __('name, [\'Admin\', \'System\']) ? \'disabled\' : \'\' }}>') }}
+                                    <i class="fas fa-check-square me-1"></i>{{ __('Select all branches') }}
+                                </button>
+                            </div>
+
+                            <div class="accordion" id="branchAccessAccordionEdit">
+                                @foreach ($merchants as $merchant)
+                                    <div class="card mb-3 border-0 shadow-sm">
+                                        <div class="card-header bg-white">
+                                            <button class="btn btn-link text-decoration-none p-0 fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#edit-merchant-branches-{{ $merchant->id }}">
+                                                {{ $merchant->name }}
+                                            </button>
+                                        </div>
+                                        <div id="edit-merchant-branches-{{ $merchant->{{ __('id }}" class="collapse" data-bs-parent="#branchAccessAccordionEdit">') }}
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    @forelse ($merchant->branches as $branch)
+                                                        <div class="col-md-6 mb-2">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" name="branch_ids[]" value="{{ $branch->id }}" id="edit_branch_{{ $branch->id }}" {{ in_array($branch->id, $selectedBranchIds ?? []) ? 'checked' : '' }} {{ in_array($role->name, ['Admin', 'System']) ? 'disabled' : '' }}>
+                                                                <label class="form-check-label" for="edit_branch_{{ $branch->{{ __('id }}">') }}
+                                                                    <strong>{{ $branch->name }}</strong>
+                                                                    <small class="d-block text-muted">{{ $branch->city ?? $branch->address ?? 'Branch' }}</small>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    {{ __('@empty') }}
+                                                        <div class="col-12 text-muted">{{ __('No branches found for this merchant.') }}</div>
+                                                    {{ __('@endforelse') }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">{{ __('Feature Toggles') }}</label>
+                            <div class="small text-muted mb-2">{{ __('Enable system features for this role (applies to all merchants).') }}</div>
+                            @php
+                                $features = $availableFeatures ?? [];
+                                $selected = $selectedFeatures ?? [];
+                            @endphp
+                            <div class="row g-2">
+                                @foreach($features as $featureKey => $featureLabel)
+                                    <div class="col-md-4">
+                                        <div class="form-check p-3 border rounded-4 h-100">
+                                            <input class="form-check-input" type="checkbox" name="features[]" value="{{ $featureKey }}" id="feature_{{ $featureKey }}" {{ (old('features') && in_array($featureKey, old('features')) ) || in_array($featureKey, $selected) ? 'checked' : '' }} {{ in_array($role->{{ __('name, [\'Admin\', \'System\']) ? \'disabled\' : \'\' }}>') }}
+                                            <label class="form-check-label ms-2" for="feature_{{ $featureKey }}">
+                                                <strong>{{ $featureLabel }}</strong>
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
 
                         @if (!in_array($role->name, ['Admin', 'System']))
                             <div class="d-flex gap-2 pt-3">
@@ -124,7 +189,7 @@
                                     {{ __('actions.cancel') }}
                                 </a>
                             </div>
-                        @else
+                        {{ __('@else') }}
                             <div class="pt-3">
                                 <a href="{{ route('roles.index') }}" class="btn btn-secondary">
                                     {{ __('actions.back') }}
@@ -137,4 +202,26 @@
         </div>
     </div>
 </div>
+
+<script>
+document.getElementById('selectAllRoleBranchesBtn').addEventListener('click', function () {
+    document.querySelectorAll('input[name="branch_ids[]"]:not(:disabled)').forEach(function (checkbox) {
+        checkbox.checked = true;
+    });
+});
+</script>
+<script>
+// Confirmation when saving role with zero permissions & features
+const rolesEditForm = document.querySelector('form[action="{{ route('roles.update', $role) }}"]');
+if (rolesEditForm) {
+    rolesEditForm.addEventListener('submit', function (e) {
+        const anyPermission = document.querySelectorAll('input[name="permissions[]"]:checked').length > 0;
+        const anyFeature = document.querySelectorAll('input[name="features[]"]:checked').length > 0;
+        if (!anyPermission && !anyFeature) {
+            const ok = confirm('You are about to save this role without any permissions or features. Users assigned this role will have no access to pages. Do you want to continue?');
+            if (!ok) e.preventDefault();
+        }
+    });
+}
+</script>
 @endsection

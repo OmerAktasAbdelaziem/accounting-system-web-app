@@ -1,0 +1,779 @@
+{
+  "selected_pages": [
+    "audit-logs\\index.blade.php",
+    "audit-logs\\show.blade.php",
+    "branches\\create.blade.php",
+    "branches\\edit.blade.php",
+    "branches\\index.blade.php",
+    "branches\\partials\\debts-content.blade.php",
+    "branches\\partials\\debts-modal.blade.php",
+    "branches\\partials\\multi-select.blade.php",
+    "branches\\show.blade.php",
+    "categories\\form.blade.php",
+    "categories\\index.blade.php",
+    "categories\\show.blade.php",
+    "commissions\\form.blade.php",
+    "commissions\\index.blade.php",
+    "commissions\\show.blade.php",
+    "dashboard\\index.blade.php",
+    "employees\\form.blade.php",
+    "employees\\index.blade.php",
+    "employees\\show.blade.php",
+    "invoices\\create.blade.php",
+    "invoices\\edit.blade.php",
+    "invoices\\index.blade.php",
+    "invoices\\pdf.blade.php",
+    "invoices\\show.blade.php",
+    "payroll\\create.blade.php",
+    "payroll\\edit.blade.php",
+    "payroll\\index.blade.php",
+    "payroll\\show.blade.php",
+    "products\\_table.blade.php",
+    "products\\form.blade.php",
+    "products\\index.blade.php",
+    "products\\show.blade.php",
+    "reports\\financial.blade.php",
+    "reports\\inventory.blade.php",
+    "reports\\sales-show.blade.php",
+    "reports\\sales.blade.php",
+    "safes\\form.blade.php",
+    "safes\\index.blade.php",
+    "safes\\show.blade.php",
+    "safes\\transactions.blade.php",
+    "sales\\index.blade.php",
+    "storages\\form.blade.php",
+    "storages\\index.blade.php",
+    "storages\\items.blade.php",
+    "storages\\transfer-history.blade.php",
+    "suppliers\\create.blade.php",
+    "suppliers\\edit.blade.php",
+    "suppliers\\index.blade.php",
+    "suppliers\\show.blade.php",
+    "components\\ajax-list.blade.php",
+    "components\\floating-chat.blade.php",
+    "components\\section-hero.blade.php",
+    "components\\sidebar.blade.php",
+    "components\\top-navbar.blade.php"
+  ],
+  "usage_count": {
+    "audit-logs\\index.blade.php": 21,
+    "audit-logs\\show.blade.php": 14,
+    "branches\\create.blade.php": 10,
+    "branches\\edit.blade.php": 9,
+    "branches\\index.blade.php": 15,
+    "branches\\partials\\debts-content.blade.php": 10,
+    "branches\\partials\\debts-modal.blade.php": 3,
+    "branches\\partials\\multi-select.blade.php": 1,
+    "branches\\show.blade.php": 5,
+    "categories\\form.blade.php": 12,
+    "categories\\index.blade.php": 24,
+    "categories\\show.blade.php": 24,
+    "commissions\\form.blade.php": 12,
+    "commissions\\index.blade.php": 2,
+    "commissions\\show.blade.php": 20,
+    "dashboard\\index.blade.php": 1,
+    "employees\\form.blade.php": 9,
+    "employees\\index.blade.php": 12,
+    "employees\\show.blade.php": 36,
+    "invoices\\create.blade.php": 18,
+    "invoices\\edit.blade.php": 16,
+    "invoices\\index.blade.php": 12,
+    "invoices\\pdf.blade.php": 6,
+    "invoices\\show.blade.php": 13,
+    "payroll\\create.blade.php": 11,
+    "payroll\\edit.blade.php": 10,
+    "payroll\\index.blade.php": 6,
+    "payroll\\show.blade.php": 26,
+    "products\\_table.blade.php": 3,
+    "products\\form.blade.php": 13,
+    "products\\index.blade.php": 17,
+    "products\\show.blade.php": 34,
+    "reports\\financial.blade.php": 24,
+    "reports\\inventory.blade.php": 12,
+    "reports\\sales-show.blade.php": 11,
+    "reports\\sales.blade.php": 15,
+    "safes\\form.blade.php": 10,
+    "safes\\index.blade.php": 20,
+    "safes\\show.blade.php": 24,
+    "safes\\transactions.blade.php": 14,
+    "storages\\form.blade.php": 10,
+    "storages\\index.blade.php": 22,
+    "storages\\items.blade.php": 3,
+    "storages\\transfer-history.blade.php": 2,
+    "suppliers\\create.blade.php": 8,
+    "suppliers\\edit.blade.php": 5,
+    "suppliers\\index.blade.php": 22,
+    "suppliers\\show.blade.php": 46,
+    "components\\sidebar.blade.php": 9
+  },
+  "missing_keys": {
+    "tr_messages": 115,
+    "en_messages": 42
+  },
+  "missing_details": {
+    "tr_messages": [
+      {
+        "file": "branches\\create.blade.php",
+        "key": "messages.address"
+      },
+      {
+        "file": "branches\\partials\\debts-content.blade.php",
+        "key": "messages.supplier"
+      },
+      {
+        "file": "categories\\form.blade.php",
+        "key": "messages.max_characters_1000"
+      },
+      {
+        "file": "categories\\show.blade.php",
+        "key": "messages.back_to_products"
+      },
+      {
+        "file": "categories\\show.blade.php",
+        "key": "messages.total_stock_value"
+      },
+      {
+        "file": "categories\\show.blade.php",
+        "key": "messages.category_overview"
+      },
+      {
+        "file": "categories\\show.blade.php",
+        "key": "messages.no_description"
+      },
+      {
+        "file": "commissions\\form.blade.php",
+        "key": "messages.employee"
+      },
+      {
+        "file": "commissions\\index.blade.php",
+        "key": "messages.commissions_management"
+      },
+      {
+        "file": "commissions\\index.blade.php",
+        "key": "messages.commission_management"
+      },
+      {
+        "file": "commissions\\show.blade.php",
+        "key": "messages.commission_details"
+      },
+      {
+        "file": "commissions\\show.blade.php",
+        "key": "messages.no_notes"
+      },
+      {
+        "file": "commissions\\show.blade.php",
+        "key": "messages.total_commissions"
+      },
+      {
+        "file": "commissions\\show.blade.php",
+        "key": "messages.sales_amount"
+      },
+      {
+        "file": "commissions\\show.blade.php",
+        "key": "messages.rate"
+      },
+      {
+        "file": "commissions\\show.blade.php",
+        "key": "messages.view_employee"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.total_advances"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.advances"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.pending_advances"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.last_updated"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.add"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.statistics"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.back_to_list"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.personal_information"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.recent_sales"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.commission_count"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.average_commission_rate"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.compensation"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.base_salary"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.average_commission"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.tax_15_percent"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.customer"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.create_invoice"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.billing"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.select_customer"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.line_items"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.sub_total"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.save_invoice"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.create_invoice_description"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.action"
+      },
+      {
+        "file": "invoices\\edit.blade.php",
+        "key": "messages.edit_invoice"
+      },
+      {
+        "file": "invoices\\index.blade.php",
+        "key": "messages.invoices"
+      },
+      {
+        "file": "invoices\\index.blade.php",
+        "key": "messages.invoice_number"
+      },
+      {
+        "file": "invoices\\index.blade.php",
+        "key": "messages.pdf"
+      },
+      {
+        "file": "invoices\\pdf.blade.php",
+        "key": "messages.tax"
+      },
+      {
+        "file": "invoices\\show.blade.php",
+        "key": "messages.no_line_items"
+      },
+      {
+        "file": "invoices\\show.blade.php",
+        "key": "messages.vat"
+      },
+      {
+        "file": "payroll\\show.blade.php",
+        "key": "messages.download_pdf"
+      },
+      {
+        "file": "payroll\\show.blade.php",
+        "key": "messages.employee_information"
+      },
+      {
+        "file": "payroll\\show.blade.php",
+        "key": "messages.salary_breakdown"
+      },
+      {
+        "file": "payroll\\show.blade.php",
+        "key": "messages.commission"
+      },
+      {
+        "file": "payroll\\show.blade.php",
+        "key": "messages.period"
+      },
+      {
+        "file": "payroll\\show.blade.php",
+        "key": "messages.code"
+      },
+      {
+        "file": "products\\show.blade.php",
+        "key": "messages.update_stock"
+      },
+      {
+        "file": "products\\show.blade.php",
+        "key": "messages.stock_level_good"
+      },
+      {
+        "file": "products\\show.blade.php",
+        "key": "messages.product_information"
+      },
+      {
+        "file": "products\\show.blade.php",
+        "key": "messages.low_stock_warning"
+      },
+      {
+        "file": "products\\show.blade.php",
+        "key": "messages.stock_status"
+      },
+      {
+        "file": "products\\show.blade.php",
+        "key": "messages.cost_value"
+      },
+      {
+        "file": "products\\show.blade.php",
+        "key": "messages.new_quantity"
+      },
+      {
+        "file": "products\\show.blade.php",
+        "key": "messages.total_profit_potential"
+      },
+      {
+        "file": "products\\show.blade.php",
+        "key": "messages.selling_price"
+      },
+      {
+        "file": "products\\show.blade.php",
+        "key": "messages.reason"
+      },
+      {
+        "file": "products\\show.blade.php",
+        "key": "messages.profit_margin"
+      },
+      {
+        "file": "products\\show.blade.php",
+        "key": "messages.current_stock"
+      },
+      {
+        "file": "products\\show.blade.php",
+        "key": "messages.adjust_stock"
+      },
+      {
+        "file": "reports\\sales-show.blade.php",
+        "key": "messages.details"
+      },
+      {
+        "file": "reports\\sales-show.blade.php",
+        "key": "messages.created_by"
+      },
+      {
+        "file": "safes\\form.blade.php",
+        "key": "messages.location"
+      },
+      {
+        "file": "safes\\index.blade.php",
+        "key": "messages.safe_management"
+      },
+      {
+        "file": "safes\\index.blade.php",
+        "key": "messages.delete_safe_confirm"
+      },
+      {
+        "file": "safes\\index.blade.php",
+        "key": "messages.total_balance"
+      },
+      {
+        "file": "safes\\index.blade.php",
+        "key": "messages.no_safes_found"
+      },
+      {
+        "file": "safes\\index.blade.php",
+        "key": "messages.new_safe"
+      },
+      {
+        "file": "safes\\index.blade.php",
+        "key": "messages.all_safes"
+      },
+      {
+        "file": "safes\\index.blade.php",
+        "key": "messages.total_safes"
+      },
+      {
+        "file": "safes\\show.blade.php",
+        "key": "messages.good_capacity"
+      },
+      {
+        "file": "safes\\show.blade.php",
+        "key": "messages.net_change"
+      },
+      {
+        "file": "safes\\show.blade.php",
+        "key": "messages.plenty_space"
+      },
+      {
+        "file": "safes\\show.blade.php",
+        "key": "messages.safe_information"
+      },
+      {
+        "file": "safes\\show.blade.php",
+        "key": "messages.today"
+      },
+      {
+        "file": "safes\\show.blade.php",
+        "key": "messages.near_capacity_message"
+      },
+      {
+        "file": "safes\\show.blade.php",
+        "key": "messages.moderate_capacity"
+      },
+      {
+        "file": "safes\\show.blade.php",
+        "key": "messages.near_capacity"
+      },
+      {
+        "file": "safes\\show.blade.php",
+        "key": "messages.safe_available_percent"
+      },
+      {
+        "file": "safes\\show.blade.php",
+        "key": "messages.no_max_balance_set"
+      },
+      {
+        "file": "safes\\transactions.blade.php",
+        "key": "messages.no_transactions_found"
+      },
+      {
+        "file": "safes\\transactions.blade.php",
+        "key": "messages.safe_transactions"
+      },
+      {
+        "file": "safes\\transactions.blade.php",
+        "key": "messages.transaction_history"
+      },
+      {
+        "file": "storages\\form.blade.php",
+        "key": "messages.capacity"
+      },
+      {
+        "file": "storages\\form.blade.php",
+        "key": "messages.storage_name"
+      },
+      {
+        "file": "storages\\index.blade.php",
+        "key": "messages.total_storages"
+      },
+      {
+        "file": "storages\\index.blade.php",
+        "key": "messages.delete_storage_confirm"
+      },
+      {
+        "file": "storages\\index.blade.php",
+        "key": "messages.all_storages"
+      },
+      {
+        "file": "storages\\index.blade.php",
+        "key": "messages.active_storages"
+      },
+      {
+        "file": "storages\\index.blade.php",
+        "key": "messages.storage_management"
+      },
+      {
+        "file": "storages\\index.blade.php",
+        "key": "messages.new_storage"
+      },
+      {
+        "file": "storages\\index.blade.php",
+        "key": "messages.no_storages_found"
+      },
+      {
+        "file": "storages\\items.blade.php",
+        "key": "messages."
+      },
+      {
+        "file": "suppliers\\create.blade.php",
+        "key": "messages.create_supplier_description"
+      },
+      {
+        "file": "suppliers\\create.blade.php",
+        "key": "messages.procurement"
+      },
+      {
+        "file": "suppliers\\create.blade.php",
+        "key": "messages.create_supplier"
+      },
+      {
+        "file": "suppliers\\edit.blade.php",
+        "key": "messages.edit_supplier"
+      },
+      {
+        "file": "suppliers\\index.blade.php",
+        "key": "messages.balance"
+      },
+      {
+        "file": "suppliers\\index.blade.php",
+        "key": "messages.suppliers"
+      },
+      {
+        "file": "suppliers\\index.blade.php",
+        "key": "messages.purchased"
+      },
+      {
+        "file": "suppliers\\index.blade.php",
+        "key": "messages.reset"
+      },
+      {
+        "file": "components\\sidebar.blade.php",
+        "key": "messages.menu"
+      },
+      {
+        "file": "components\\sidebar.blade.php",
+        "key": "messages.branch_scope"
+      },
+      {
+        "file": "components\\sidebar.blade.php",
+        "key": "messages.systems_section"
+      },
+      {
+        "file": "components\\sidebar.blade.php",
+        "key": "messages.dashboard_tools"
+      },
+      {
+        "file": "components\\sidebar.blade.php",
+        "key": "messages.admin_user_section"
+      },
+      {
+        "file": "components\\sidebar.blade.php",
+        "key": "messages.operations"
+      },
+      {
+        "file": "components\\sidebar.blade.php",
+        "key": "messages.reports_section"
+      },
+      {
+        "file": "components\\sidebar.blade.php",
+        "key": "messages.live_dashboard"
+      }
+    ],
+    "en_messages": [
+      {
+        "file": "categories\\show.blade.php",
+        "key": "messages.back_to_products"
+      },
+      {
+        "file": "categories\\show.blade.php",
+        "key": "messages.category_overview"
+      },
+      {
+        "file": "commissions\\show.blade.php",
+        "key": "messages.rate"
+      },
+      {
+        "file": "commissions\\show.blade.php",
+        "key": "messages.view_employee"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.total_advances"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.advances"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.pending_advances"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.add"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.commission_count"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.average_commission_rate"
+      },
+      {
+        "file": "employees\\show.blade.php",
+        "key": "messages.average_commission"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.tax_15_percent"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.create_invoice"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.billing"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.select_customer"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.line_items"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.save_invoice"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.create_invoice_description"
+      },
+      {
+        "file": "invoices\\create.blade.php",
+        "key": "messages.action"
+      },
+      {
+        "file": "invoices\\show.blade.php",
+        "key": "messages.no_line_items"
+      },
+      {
+        "file": "invoices\\show.blade.php",
+        "key": "messages.vat"
+      },
+      {
+        "file": "payroll\\show.blade.php",
+        "key": "messages.salary_breakdown"
+      },
+      {
+        "file": "payroll\\show.blade.php",
+        "key": "messages.code"
+      },
+      {
+        "file": "reports\\sales-show.blade.php",
+        "key": "messages.details"
+      },
+      {
+        "file": "reports\\sales-show.blade.php",
+        "key": "messages.created_by"
+      },
+      {
+        "file": "safes\\show.blade.php",
+        "key": "messages.no_max_balance_set"
+      },
+      {
+        "file": "storages\\form.blade.php",
+        "key": "messages.capacity"
+      },
+      {
+        "file": "storages\\items.blade.php",
+        "key": "messages."
+      },
+      {
+        "file": "suppliers\\create.blade.php",
+        "key": "messages.create_supplier_description"
+      },
+      {
+        "file": "suppliers\\create.blade.php",
+        "key": "messages.procurement"
+      },
+      {
+        "file": "suppliers\\create.blade.php",
+        "key": "messages.create_supplier"
+      },
+      {
+        "file": "suppliers\\index.blade.php",
+        "key": "messages.balance"
+      },
+      {
+        "file": "suppliers\\index.blade.php",
+        "key": "messages.purchased"
+      },
+      {
+        "file": "suppliers\\index.blade.php",
+        "key": "messages.reset"
+      },
+      {
+        "file": "components\\sidebar.blade.php",
+        "key": "messages.menu"
+      },
+      {
+        "file": "components\\sidebar.blade.php",
+        "key": "messages.branch_scope"
+      },
+      {
+        "file": "components\\sidebar.blade.php",
+        "key": "messages.systems_section"
+      },
+      {
+        "file": "components\\sidebar.blade.php",
+        "key": "messages.dashboard_tools"
+      },
+      {
+        "file": "components\\sidebar.blade.php",
+        "key": "messages.admin_user_section"
+      },
+      {
+        "file": "components\\sidebar.blade.php",
+        "key": "messages.operations"
+      },
+      {
+        "file": "components\\sidebar.blade.php",
+        "key": "messages.reports_section"
+      },
+      {
+        "file": "components\\sidebar.blade.php",
+        "key": "messages.live_dashboard"
+      }
+    ]
+  },
+  "untranslated_counts": {
+    "audit-logs\\index.blade.php": 1,
+    "branches\\create.blade.php": 1,
+    "branches\\show.blade.php": 18,
+    "categories\\form.blade.php": 3,
+    "categories\\index.blade.php": 3,
+    "categories\\show.blade.php": 1,
+    "commissions\\form.blade.php": 4,
+    "commissions\\index.blade.php": 8,
+    "commissions\\show.blade.php": 3,
+    "dashboard\\index.blade.php": 33,
+    "employees\\form.blade.php": 1,
+    "employees\\index.blade.php": 1,
+    "employees\\show.blade.php": 4,
+    "payroll\\create.blade.php": 1,
+    "payroll\\edit.blade.php": 2,
+    "payroll\\index.blade.php": 21,
+    "payroll\\show.blade.php": 5,
+    "products\\_table.blade.php": 1,
+    "products\\form.blade.php": 2,
+    "products\\index.blade.php": 5,
+    "products\\show.blade.php": 1,
+    "safes\\form.blade.php": 3,
+    "safes\\show.blade.php": 37,
+    "sales\\index.blade.php": 37,
+    "storages\\form.blade.php": 4,
+    "storages\\items.blade.php": 32,
+    "storages\\transfer-history.blade.php": 6,
+    "suppliers\\index.blade.php": 2,
+    "components\\floating-chat.blade.php": 1,
+    "components\\top-navbar.blade.php": 4
+  }
+}

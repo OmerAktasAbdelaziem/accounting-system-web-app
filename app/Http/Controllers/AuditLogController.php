@@ -72,6 +72,8 @@ class AuditLogController extends Controller
      */
     public function export(Request $request)
     {
+        $this->authorizeDownloads($request);
+
         $query = AuditLog::with('user')
             ->orderBy('created_at', 'desc');
 

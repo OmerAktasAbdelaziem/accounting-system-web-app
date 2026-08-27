@@ -8,12 +8,12 @@
         <div>
             <h1 class="page-title">
                 <i class="bi bi-bookmark-check"></i>
-                Subscriptions
+                {{ __('Subscriptions') }}
             </h1>
-            <p class="page-subtitle">Manage merchant subscriptions and licenses</p>
+            <p class="page-subtitle">{{ __('Manage merchant subscriptions and licenses') }}</p>
         </div>
         <a href="{{ route('super-admin.subscriptions.create') }}" class="btn btn-primary-orange">
-            <i class="bi bi-plus-circle"></i> New Subscription
+            <i class="bi bi-plus-circle"></i> {{ __('New Subscription') }}
         </a>
     </div>
 </div>
@@ -33,15 +33,15 @@
         </div>
         <div class="col-md-4">
             <select id="statusFilter" class="form-select">
-                <option value="">All Status</option>
-                <option value="active">Active</option>
-                <option value="expired">Expired</option>
-                <option value="expiring_soon">Expiring Soon (7 days)</option>
+                <option value="">{{ __('All Status') }}</option>
+                <option value="active">{{ __('Active') }}</option>
+                <option value="expired">{{ __('Expired') }}</option>
+                <option value="expiring_soon">{{ __('Expiring Soon (7 days)') }}</option>
             </select>
         </div>
         <div class="col-md-4">
             <select id="packageFilter" class="form-select">
-                <option value="">All Packages</option>
+                <option value="">{{ __('All Packages') }}</option>
                 @foreach(\App\Models\Package::where('is_active', true)->get() as $pkg)
                 <option value="{{ $pkg->id }}">{{ $pkg->name }}</option>
                 @endforeach
@@ -54,13 +54,13 @@
     <table class="table table-hover" id="subscriptionsTable">
         <thead>
             <tr>
-                <th>Merchant</th>
-                <th>Package</th>
-                <th>Started</th>
-                <th>Expires</th>
-                <th>Days Left</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th>{{ __('Merchant') }}</th>
+                <th>{{ __('Package') }}</th>
+                <th>{{ __('Started') }}</th>
+                <th>{{ __('Expires') }}</th>
+                <th>{{ __('Days Left') }}</th>
+                <th>{{ __('Status') }}</th>
+                <th>{{ __('Actions') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -70,8 +70,8 @@
                     <strong>{{ $subscription->merchant->name }}</strong>
                 </td>
                 <td>{{ $subscription->package->name }}</td>
-                <td>{{ $subscription->start_date->format('M d, Y') }}</td>
-                <td>{{ $subscription->expires_at->format('M d, Y') }}</td>
+                <td>{{ $subscription->start_date->translatedFormat('M d, Y') }}</td>
+                <td>{{ $subscription->expires_at->translatedFormat('M d, Y') }}</td>
                 <td>
                     @php $daysLeft = now()->diff($subscription->expires_at)->days; @endphp
                     <span class="badge {{ $daysLeft < 0 ? 'bg-danger' : ($daysLeft <= 7 ? 'bg-warning' : 'bg-success') }}">
@@ -88,28 +88,41 @@
                         <a href="{{ route('super-admin.subscriptions.show', $subscription) }}" class="btn btn-sm btn-outline-orange" title="View">
                             <i class="bi bi-eye"></i>
                         </a>
-                        @if($subscription->is_active && $subscription->expires_at < now()->addDays(30))
+                        
+                        <a href="{{ route('super-admin.subscriptions.recipients_preview', $subscription->{{ __('merchant->id) }}" class="btn btn-sm btn-outline-secondary" title="Preview Recipients">') }}
+                            <i class="bi bi-people"></i>
+                        </a>
+                        @if($subscription->is_active && $subscription->expires_at < now()->{{ __('addDays(30))') }}
                         <a href="{{ route('super-admin.subscriptions.show', $subscription) }}" class="btn btn-sm btn-outline-orange" title="Renew">
                             <i class="bi bi-arrow-clockwise"></i>
                         </a>
                         @endif
-                        <form method="POST" action="{{ route('super-admin.subscriptions.destroy', $subscription) }}" style="display:inline;">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-outline-orange" title="Cancel" onclick="return confirm('Cancel this subscription?')">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </form>
+                        @if($subscription->is_active)
+                            <form method="POST" action="{{ route('super-admin.subscriptions.destroy', $subscription) }}" style="display:inline;">
+                                {{ __('@csrf @method(\'DELETE\')') }}
+                                <button type="submit" class="btn btn-sm btn-outline-orange" title="Deactivate" onclick="return confirm('Deactivate this subscription? Merchant users will be locked until reactivated.')">
+                                    <i class="bi bi-pause-circle"></i>
+                                </button>
+                            </form>
+                        {{ __('@else') }}
+                            <form method="POST" action="{{ route('super-admin.subscriptions.reactivate', $subscription) }}" style="display:inline;">
+                                {{ __('@csrf') }}
+                                <button type="submit" class="btn btn-sm btn-outline-success" title="Reactivate" onclick="return confirm('Reactivate this subscription and restore merchant access?')">
+                                    <i class="bi bi-play-circle"></i>
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 </td>
             </tr>
-            @empty
+            {{ __('@empty') }}
             <tr>
                 <td colspan="7" class="text-center py-4 text-muted">
                     <i class="bi bi-inbox" style="font-size: 32px; opacity: 0.3;"></i>
-                    <p class="mt-2">No subscriptions found</p>
+                    <p class="mt-2">{{ __('No subscriptions found') }}</p>
                 </td>
             </tr>
-            @endforelse
+            {{ __('@endforelse') }}
         </tbody>
     </table>
 </div>

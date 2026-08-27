@@ -20,7 +20,6 @@ class EmployeeDeduction extends Model
         'amount',
         'description',
         'description_ar',
-        'status',
         'deducted_at',
     ];
 
@@ -35,40 +34,6 @@ class EmployeeDeduction extends Model
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class);
-    }
-
-    /**
-     * Mark as deducted
-     */
-    public function markAsDeducted(): void
-    {
-        $this->status = 'deducted';
-        $this->deducted_at = now();
-        $this->save();
-    }
-
-    /**
-     * Scope to get pending deductions
-     */
-    public function scopePending($query)
-    {
-        return $query->where('status', 'pending');
-    }
-
-    /**
-     * Scope to get approved deductions
-     */
-    public function scopeApproved($query)
-    {
-        return $query->where('status', 'approved');
-    }
-
-    /**
-     * Scope to get deducted deductions
-     */
-    public function scopeDeducted($query)
-    {
-        return $query->where('status', 'deducted');
     }
 
     /**

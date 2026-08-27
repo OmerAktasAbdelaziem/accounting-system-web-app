@@ -43,26 +43,6 @@ class EmployeeCommission extends Model
     }
 
     /**
-     * Approve the commission
-     */
-    public function approve(): void
-    {
-        $this->status = 'approved';
-        $this->approved_at = now();
-        $this->save();
-    }
-
-    /**
-     * Mark as paid
-     */
-    public function markAsPaid(): void
-    {
-        $this->status = 'paid';
-        $this->paid_at = now();
-        $this->save();
-    }
-
-    /**
      * Get total amount (commission + bonus)
      */
     public function getTotalAmountAttribute(): float
@@ -70,25 +50,6 @@ class EmployeeCommission extends Model
         return $this->commission_earned + $this->bonus;
     }
 
-    /**
-     * Scope to get pending commissions
-     */
-    public function scopePending($query)
-    {
-        return $query->where('status', 'pending');
-    }
-
-    /**
-     * Scope to get approved commissions
-     */
-    public function scopeApproved($query)
-    {
-        return $query->where('status', 'approved');
-    }
-
-    /**
-     * Scope to get paid commissions
-     */
     public function scopePaid($query)
     {
         return $query->where('status', 'paid');

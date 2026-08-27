@@ -23,6 +23,8 @@ class StoreStorageRequest extends FormRequest
             'capacity' => 'nullable|numeric|min:0|max:999999.99',
             'storage_type' => 'required|string|max:50|in:warehouse,shelf,cabinet,room',
             'is_active' => 'nullable|boolean',
+            'branch_ids' => 'nullable|array',
+            'branch_ids.*' => 'exists:branches,id',
         ];
     }
 

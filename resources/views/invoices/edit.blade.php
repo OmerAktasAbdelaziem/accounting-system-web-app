@@ -2,18 +2,18 @@
 
 @section('content')
 <div class="container">
-    <h3>{{ __('Edit Invoice') }}</h3>
+    <h3>{{ __('messages.edit_invoice') }}</h3>
 
     <form action="{{ route('invoices.update', $invoice) }}" method="POST" id="invoiceForm">
-        @csrf
-        @method('PUT')
+        {{ __('@csrf
+        @method(\'PUT\')') }}
         
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-3">
-                    <label class="form-label">{{ __('Customer') }}</label>
+                    <label class="form-label">{{ __('messages.customer') }}</label>
                     <select name="customer_id" class="form-control">
-                        <option value="">{{ __('Select customer') }}</option>
+                        <option value="">{{ __('messages.select_customer') }}</option>
                         @foreach($customers as $id => $name)
                         <option value="{{ $id }}" {{ $invoice->customer_id == $id ? 'selected' : '' }}>{{ $name }}</option>
                         @endforeach
@@ -22,42 +22,44 @@
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
-                    <label class="form-label">{{ __('Date') }}</label>
-                    <input type="date" name="date" class="form-control" value="{{ old('date', $invoice->date?->format('Y-m-d')) }}">
+                    <label class="form-label">{{ __('messages.date') }}</label>
+                    <input type="date" name="date" class="form-control" value="{{ old('date', $invoice->{{ __('date?->format(\'Y-m-d\')) }}">') }}
                 </div>
             </div>
         </div>
 
+        @include('branches.partials.multi-select', ['branches' => $branches ?? [], 'selectedBranchIds' => $selectedBranchIds ?? []])
+
         <!-- Line Items Section -->
         <div class="card mb-4">
             <div class="card-header">
-                <h5 class="card-title mb-0">{{ __('Line Items') }}</h5>
+                <h5 class="card-title mb-0">{{ __('messages.line_items') }}</h5>
             </div>
             <div class="card-body">
                 <table class="table table-sm" id="itemsTable">
                     <thead>
                         <tr>
-                            <th>{{ __('Product') }}</th>
-                            <th>{{ __('Quantity') }}</th>
-                            <th>{{ __('Unit Price') }}</th>
-                            <th>{{ __('Line Total') }}</th>
-                            <th>{{ __('Action') }}</th>
+                            <th>{{ __('messages.product') }}</th>
+                            <th>{{ __('messages.quantity') }}</th>
+                            <th>{{ __('messages.unit_price') }}</th>
+                            <th>{{ __('messages.line_total') }}</th>
+                            <th>{{ __('messages.action') }}</th>
                         </tr>
                     </thead>
                     <tbody id="itemsBody">
                         @forelse($invoice->items as $index => $item)
                         <tr class="item-row" data-index="{{ $index }}">
                             <td>
-                                <input type="text" name="items[{{ $index }}][product_id]" class="form-control form-control-sm product-select" placeholder="{{ __('Product') }}" value="{{ $item->product_id }}">
+                                <input type="text" name="items[{{ $index }}][product_id]" class="form-control form-control-sm product-select" placeholder="{{ __('messages.product') }}" value="{{ $item->{{ __('product_id }}">') }}
                             </td>
                             <td>
-                                <input type="number" name="items[{{ $index }}][quantity]" class="form-control form-control-sm quantity" placeholder="0" min="1" value="{{ $item->quantity }}">
+                                <input type="number" name="items[{{ $index }}][quantity]" class="form-control form-control-sm quantity" placeholder="0" min="1" value="{{ $item->{{ __('quantity }}">') }}
                             </td>
                             <td>
-                                <input type="number" step="0.01" name="items[{{ $index }}][unit_price]" class="form-control form-control-sm unit-price" placeholder="0.00" min="0" value="{{ $item->unit_price }}">
+                                <input type="number" step="0.01" name="items[{{ $index }}][unit_price]" class="form-control form-control-sm unit-price" placeholder="0.00" min="0" value="{{ $item->{{ __('unit_price }}">') }}
                             </td>
                             <td>
-                                <input type="number" step="0.01" class="form-control form-control-sm line-total" readonly value="{{ $item->line_total }}">
+                                <input type="number" step="0.01" class="form-control form-control-sm line-total" readonly value="{{ $item->{{ __('line_total }}">') }}
                             </td>
                             <td>
                                 <button type="button" class="btn btn-sm btn-danger remove-item">
@@ -65,10 +67,10 @@
                                 </button>
                             </td>
                         </tr>
-                        @empty
+                        {{ __('@empty') }}
                         <tr class="item-row" data-index="0">
                             <td>
-                                <input type="text" name="items[0][product_id]" class="form-control form-control-sm product-select" placeholder="{{ __('Product') }}">
+                                <input type="text" name="items[0][product_id]" class="form-control form-control-sm product-select" placeholder="{{ __('messages.product') }}">
                             </td>
                             <td>
                                 <input type="number" name="items[0][quantity]" class="form-control form-control-sm quantity" placeholder="0" min="1" value="1">
@@ -85,11 +87,11 @@
                                 </button>
                             </td>
                         </tr>
-                        @endforelse
+                        {{ __('@endforelse') }}
                     </tbody>
                 </table>
                 <button type="button" class="btn btn-sm btn-success" id="addItemBtn">
-                    <i class="bi bi-plus"></i> {{ __('Add Item') }}
+                    <i class="bi bi-plus"></i> {{ __('messages.add_item') }}
                 </button>
             </div>
         </div>
@@ -100,16 +102,16 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row mb-2">
-                            <div class="col-6"><strong>{{ __('Sub Total:') }}</strong></div>
+                            <div class="col-6"><strong>{{ __('messages.sub_total') }}:</strong></div>
                             <div class="col-6 text-end"><span id="subTotal">{{ number_format($invoice->sub_total, 2) }}</span></div>
                         </div>
                         <div class="row mb-3">
-                            <div class="col-6"><strong>{{ __('Tax (15%):') }}</strong></div>
+                            <div class="col-6"><strong>{{ __('messages.tax_15_percent') }}</strong></div>
                             <div class="col-6 text-end"><span id="taxAmount">{{ number_format($invoice->tax, 2) }}</span></div>
                         </div>
                         <hr>
                         <div class="row">
-                            <div class="col-6"><h5>{{ __('Total:') }}</h5></div>
+                            <div class="col-6"><h5>{{ __('messages.total') }}:</h5></div>
                             <div class="col-6 text-end"><h5 id="totalAmount">{{ number_format($invoice->total, 2) }}</h5></div>
                         </div>
                     </div>
@@ -118,8 +120,8 @@
         </div>
 
         <div class="mt-4">
-            <button type="submit" class="btn btn-primary">{{ __('Save Invoice') }}</button>
-            <a href="{{ route('invoices.index') }}" class="btn btn-secondary">{{ __('Cancel') }}</a>
+            <button type="submit" class="btn btn-primary">{{ __('messages.save_invoice') }}</button>
+            <a href="{{ route('invoices.index') }}" class="btn btn-secondary">{{ __('messages.cancel') }}</a>
         </div>
     </form>
 </div>
@@ -152,7 +154,7 @@ document.getElementById('addItemBtn').addEventListener('click', function() {
     newRow.setAttribute('data-index', itemCount);
     newRow.innerHTML = `
         <td>
-            <input type="text" name="items[${itemCount}][product_id]" class="form-control form-control-sm product-select" placeholder="{{ __('Product') }}">
+            <input type="text" name="items[${itemCount}][product_id]" class="form-control form-control-sm product-select" placeholder="{{ __('messages.product') }}">
         </td>
         <td>
             <input type="number" name="items[${itemCount}][quantity]" class="form-control form-control-sm quantity" placeholder="0" min="1" value="1">

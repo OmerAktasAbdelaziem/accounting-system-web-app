@@ -21,6 +21,8 @@ class UpdateSafeRequest extends FormRequest
             'location' => 'required|string|max:255',
             'max_balance' => 'nullable|numeric|min:0|max:999999.99',
             'is_active' => 'nullable|boolean',
+            'branch_ids' => 'nullable|array',
+            'branch_ids.*' => 'exists:branches,id',
         ];
     }
 

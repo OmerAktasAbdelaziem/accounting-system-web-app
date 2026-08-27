@@ -6,8 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Merchant;
 use App\Models\Package;
 use App\Models\Subscription;
+use App\Models\AuditLog;
+use App\Notifications\SubscriptionEndedNotification;
+use App\Notifications\SubscriptionReactivatedNotification;
 use App\Services\MerchantService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class SubscriptionController extends Controller
 {
@@ -25,7 +29,13 @@ class SubscriptionController extends Controller
         $subscriptions = Subscription::query()
             ->with(['merchant', 'package'])
             ->when($request->status, function ($q) use ($request) {
-                $q->where('status', $request->status);
+                if ($request->status === 'active') {
+                    $q->where('is_active', true)->where('expires_at', '>', now());
+                } elseif ($request->status === 'inactive') {
+                    $q->where('is_active', false);
+                } elseif ($request->status === 'expired') {
+                    $q->where('is_active', true)->where('expires_at', '<=', now());
+                }
             })
             ->when($request->merchant_id, function ($q) use ($request) {
                 $q->where('merchant_id', $request->merchant_id);
@@ -125,11 +135,11 @@ class SubscriptionController extends Controller
             $days = (int) $request->custom_days;
         } else {
             $months = (int) ($validated['renewal_option'] ?? 1);
-            $days = $subscription->package->duration_days * $months;
+            $days = (int) $subscription->package->duration_days * $months;
         }
 
         $oldExpiry = $subscription->expires_at;
-        $subscription->expires_at = $oldExpiry->addDays($days);
+        $subscription->expires_at = $oldExpiry->addDays((int) $days);
         $subscription->save();
 
         if ($request->send_confirmation) {
@@ -161,11 +171,30 @@ class SubscriptionController extends Controller
         $this->authorize('delete', $subscription);
 
         $merchant = $subscription->merchant;
-        $subscription->update(['is_active' => false]);
-        $subscription->delete();
+
+        // Deactivate instead of deleting to preserve history
+        $subscription->update([
+            'is_active' => false,
+            'ended_notified_at' => now(),
+        ]);
+
+        // Keep merchant expiry in sync for UI/analytics
+        $merchant->update([
+            'subscription_expires_at' => $subscription->expires_at,
+        ]);
+
+        // Notify only merchant admins about deactivation
+        try {
+            $admins = $merchant->users()->whereHas('role', function ($q) {
+                $q->where('name', 'merchant_admin');
+            })->get();
+            Notification::send($admins, new SubscriptionEndedNotification($subscription));
+        } catch (\Throwable $e) {
+            // Do not block deactivation if notification fails
+        }
 
         return redirect()->route('super-admin.subscriptions.index')
-            ->with('success', "Subscription for {$merchant->name} has been cancelled.");
+            ->with('success', "Subscription for {$merchant->name} has been deactivated.");
     }
 
     /**
@@ -180,7 +209,7 @@ class SubscriptionController extends Controller
         ]);
 
         $oldExpiry = $subscription->expires_at;
-        $subscription->expires_at = $oldExpiry->addDays($validated['days']);
+        $subscription->expires_at = $oldExpiry->addDays((int) $validated['days']);
         $subscription->save();
 
         return redirect()->route('super-admin.subscriptions.show', $subscription)
@@ -208,5 +237,65 @@ class SubscriptionController extends Controller
 
         return redirect()->route('super-admin.subscriptions.show', $subscription)
             ->with('success', 'Subscription marked as expired');
+    }
+
+    /**
+     * Reactivate subscription in one click
+     */
+    public function reactivate(Request $request, Subscription $subscription)
+    {
+        $this->authorize('update', $subscription);
+
+        $merchant = $subscription->merchant;
+        $oldState = [
+            'is_active' => (bool) $subscription->is_active,
+            'expires_at' => optional($subscription->expires_at)?->toDateTimeString(),
+        ];
+
+        $newExpiry = $subscription->expires_at;
+        if (!$newExpiry || $newExpiry->lte(now())) {
+            $duration = (int) ($subscription->package->duration_days ?? 30);
+            $newExpiry = now()->addDays($duration > 0 ? $duration : 30);
+        }
+
+        $subscription->update([
+            'is_active' => true,
+            'expires_at' => $newExpiry,
+            'ended_notified_at' => null,
+        ]);
+
+        $merchant->update([
+            'subscription_expires_at' => $newExpiry,
+        ]);
+
+        try {
+            $admins = $merchant->users()->whereHas('role', function ($q) {
+                $q->where('name', 'merchant_admin');
+            })->get();
+            Notification::send($admins, new SubscriptionReactivatedNotification($subscription->fresh('package')));
+        } catch (\Throwable $e) {
+            // ignore notification errors for reactivation flow
+        }
+
+        try {
+            AuditLog::logAction(
+                'reactivated_subscription',
+                Subscription::class,
+                $subscription->id,
+                [
+                    'before' => $oldState,
+                    'after' => [
+                        'is_active' => true,
+                        'expires_at' => optional($newExpiry)?->toDateTimeString(),
+                    ],
+                ],
+                $request->user()
+            );
+        } catch (\Throwable $e) {
+            // ignore audit failures
+        }
+
+        return redirect()->route('super-admin.subscriptions.show', $subscription)
+            ->with('success', "Subscription for {$merchant->name} has been reactivated.");
     }
 }

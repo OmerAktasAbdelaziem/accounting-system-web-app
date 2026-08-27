@@ -61,6 +61,14 @@
         opacity: .8;
     }
 
+    @media (max-width: 768px) {
+        .settings-hero-title,
+        .settings-summary .summary-card h6 {
+            color: #fff !important;
+            opacity: 1;
+        }
+    }
+
     .settings-summary .summary-card strong {
         display: block;
         font-size: 18px;
@@ -84,6 +92,13 @@
         color: #fff;
         border: none;
         padding: 18px 22px;
+    }
+
+    .settings-panel .card-header h4,
+    .settings-side .card-header h5,
+    .settings-panel .card-header h4 *,
+    .settings-side .card-header h5 * {
+        color: #fff !important;
     }
 
     .settings-panel .card-body,
@@ -137,6 +152,11 @@
     @media (max-width: 991px) {
         .settings-summary { grid-template-columns: 1fr; }
     }
+    @media (max-width: 768px) {
+        .settings-actions .btn { width: 100%; }
+        .settings-summary { grid-template-columns: 1fr; }
+        .settings-hero { padding: 18px; border-radius: 14px; }
+    }
 </style>
 @endsection
 
@@ -145,22 +165,22 @@
     <div class="settings-hero">
         <span class="eyebrow"><i class="fas fa-cog"></i> {{ __('settings.system_settings') }}</span>
         <div class="mt-3">
-            <h2 class="fw-bold mb-2">Business settings, branding, and system controls</h2>
+            <h2 class="fw-bold mb-2 settings-hero-title">{{ __('Business settings, branding, and system controls') }}</h2>
             <p class="mb-0" style="max-width: 720px; opacity: .9;">
-                Keep the merchant identity, financial defaults, and feature switches in one place. The application name here also drives the left-top navbar.
+                {{ __('Keep the merchant identity, financial defaults, and feature switches in one place. The application name here also drives the left-top navbar.') }}
             </p>
         </div>
         <div class="settings-summary">
             <div class="summary-card">
-                <h6>Brand Name</h6>
+                <h6>{{ __('Brand Name') }}</h6>
                 <strong>{{ $currentSettings['app_name'] }}</strong>
             </div>
             <div class="summary-card">
-                <h6>Language</h6>
+                <h6>{{ __('Language') }}</h6>
                 <strong>{{ strtoupper($currentSettings['language']) }}</strong>
             </div>
             <div class="summary-card">
-                <h6>Currency</h6>
+                <h6>{{ __('Currency') }}</h6>
                 <strong>{{ $currentSettings['currency'] }}</strong>
             </div>
         </div>
@@ -183,7 +203,7 @@
             <div class="settings-panel card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0"><i class="fas fa-sliders-h me-2"></i>{{ __('settings.application_settings') }}</h4>
-                    <span class="settings-badge"><i class="fas fa-bolt"></i> Live branding</span>
+                    <span class="settings-badge"><i class="fas fa-bolt"></i> {{ __('Live branding') }}</span>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('settings.update') }}" method="POST">
@@ -191,21 +211,26 @@
                         @method('PUT')
 
                         <div class="settings-section">
-                            <div class="section-title"><i class="fas fa-building text-primary"></i> Business identity</div>
+                            <div class="section-title"><i class="fas fa-building text-primary"></i> {{ __('Business identity') }}</div>
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label for="app_name" class="form-label">Business Name / Application Name</label>
+                                    <label for="app_name" class="form-label">{{ __('Business Name / Application Name') }}</label>
                                     <input type="text" class="form-control @error('app_name') is-invalid @enderror" id="app_name" name="app_name" value="{{ old('app_name', $currentSettings['app_name']) }}" required>
-                                    <span class="settings-help">This value appears in the top-left navbar and on invoices/reports that use the app title.</span>
-                                    @error('app_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    <span class="settings-help">{{ __('This value appears in the top-left navbar and on invoices/reports that use the app title.') }}</span>
+                                    @error('app_name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <label for="language" class="form-label">{{ __('settings.default_language') }}</label>
                                     <select class="form-select @error('language') is-invalid @enderror" id="language" name="language" required>
-                                        <option value="en" {{ old('language', $currentSettings['language']) === 'en' ? 'selected' : '' }}>English</option>
-                                        <option value="ar" {{ old('language', $currentSettings['language']) === 'ar' ? 'selected' : '' }}>???????</option>
+                                        <option value="en" {{ old('language', $currentSettings['language']) === 'en' ? 'selected' : '' }}>{{ __('English') }}</option>
+                                        <option value="ar" {{ old('language', $currentSettings['language']) === 'ar' ? 'selected' : '' }}>العربية</option>
+                                        <option value="tr" {{ old('language', $currentSettings['language']) === 'tr' ? 'selected' : '' }}>{{ __('Türkçe') }}</option>
                                     </select>
-                                    @error('language')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    @error('language')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <label for="timezone" class="form-label">{{ __('settings.timezone') }}</label>
@@ -215,7 +240,9 @@
                                             <option value="{{ $tz }}" {{ old('timezone', $currentSettings['timezone']) === $tz ? 'selected' : '' }}>{{ $tz }}</option>
                                         @endforeach
                                     </select>
-                                    @error('timezone')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    @error('timezone')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <label for="date_format" class="form-label">{{ __('settings.date_format') }}</label>
@@ -225,13 +252,15 @@
                                         <option value="m/d/Y" {{ old('date_format', $currentSettings['date_format']) === 'm/d/Y' ? 'selected' : '' }}>04/30/2026</option>
                                         <option value="d-m-Y" {{ old('date_format', $currentSettings['date_format']) === 'd-m-Y' ? 'selected' : '' }}>30-04-2026</option>
                                     </select>
-                                    @error('date_format')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    @error('date_format')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
 
                         <div class="settings-section">
-                            <div class="section-title"><i class="fas fa-coins text-primary"></i> Financial defaults</div>
+                            <div class="section-title"><i class="fas fa-coins text-primary"></i> {{ __('Financial defaults') }}</div>
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="currency" class="form-label">{{ __('settings.currency') }}</label>
@@ -247,30 +276,38 @@
                                         <option value="JOD" {{ old('currency', $currentSettings['currency']) === 'JOD' ? 'selected' : '' }}>JOD - {{ __('settings.jordan') }}</option>
                                         <option value="TRY" {{ old('currency', $currentSettings['currency']) === 'TRY' ? 'selected' : '' }}>TRY - {{ __('settings.turkey') }}</option>
                                     </select>
-                                    @error('currency')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    @error('currency')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <label for="decimal_places" class="form-label">{{ __('settings.decimal_places') }}</label>
                                     <input type="number" class="form-control @error('decimal_places') is-invalid @enderror" id="decimal_places" name="decimal_places" value="{{ old('decimal_places', $currentSettings['decimal_places']) }}" min="0" max="4" required>
                                     <small class="settings-help">{{ __('settings.decimal_places_help') }}</small>
-                                    @error('decimal_places')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    @error('decimal_places')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <label for="financial_year_start" class="form-label">{{ __('settings.financial_year_start') }}</label>
                                     <input type="text" class="form-control @error('financial_year_start') is-invalid @enderror" id="financial_year_start" name="financial_year_start" value="{{ old('financial_year_start', $currentSettings['financial_year_start']) }}" placeholder="MM-DD" maxlength="5" required>
                                     <small class="settings-help">{{ __('settings.financial_year_start_help') }}</small>
-                                    @error('financial_year_start')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    @error('financial_year_start')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <label for="tax_rate" class="form-label">{{ __('settings.tax_rate') }} (%)</label>
                                     <input type="number" class="form-control @error('tax_rate') is-invalid @enderror" id="tax_rate" name="tax_rate" value="{{ old('tax_rate', $currentSettings['tax_rate']) }}" min="0" max="100" step="0.01" required>
-                                    @error('tax_rate')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    @error('tax_rate')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
 
                         <div class="settings-section mb-0">
-                            <div class="section-title"><i class="fas fa-shield-alt text-primary"></i> System features</div>
+                            <div class="section-title"><i class="fas fa-shield-alt text-primary"></i> {{ __('System features') }}</div>
                             <div class="row g-4">
                                 <div class="col-md-6">
                                     <div class="form-check form-switch">
@@ -303,26 +340,26 @@
         <div class="col-lg-4">
             <div class="settings-side card mb-4">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-eye me-2"></i> Preview</h5>
+                    <h5 class="mb-0"><i class="fas fa-eye me-2"></i> {{ __('Preview') }}</h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted mb-2">How the current branding will appear in the interface:</p>
+                    <p class="text-muted mb-2">{{ __('How the current branding will appear in the interface:') }}</p>
                     <div class="p-3 rounded-4" style="background: linear-gradient(135deg, #f8f9fb 0%, #eef2f7 100%); border: 1px solid #e8edf3;">
                         <div class="fw-bold mb-1">{{ $currentSettings['app_name'] }}</div>
-                        <div class="small text-muted">Top-left navbar brand</div>
+                        <div class="small text-muted">{{ __('Top-left navbar brand') }}</div>
                     </div>
                 </div>
             </div>
 
             <div class="settings-side card">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-circle-info me-2"></i> Notes</h5>
+                    <h5 class="mb-0"><i class="fas fa-circle-info me-2"></i> {{ __('Notes') }}</h5>
                 </div>
                 <div class="card-body">
                     <ul class="mb-0 ps-3 text-muted">
-                        <li>Merchant accounts can use this page to rename their business branding.</li>
-                        <li>The same name is shown in the top navbar across the app.</li>
-                        <li>Audit logs can be disabled here if a merchant does not need them.</li>
+                        <li>{{ __('Merchant accounts can use this page to rename their business branding.') }}</li>
+                        <li>{{ __('The same name is shown in the top navbar across the app.') }}</li>
+                        <li>{{ __('Audit logs can be disabled here if a merchant does not need them.') }}</li>
                     </ul>
                 </div>
             </div>

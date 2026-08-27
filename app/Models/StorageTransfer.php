@@ -12,15 +12,21 @@ class StorageTransfer extends Model
     protected $fillable = [
         'from_storage_id',
         'to_storage_id',
-        'product_id',
+        'product_name',
         'quantity',
-        'description',
+        'weight',
+        'unit_price',
+        'total_price',
         'transfer_date',
         'transferred_by',
     ];
 
     protected $casts = [
         'transfer_date' => 'datetime',
+        'quantity' => 'decimal:2',
+        'weight' => 'decimal:2',
+        'unit_price' => 'decimal:2',
+        'total_price' => 'decimal:2',
     ];
 
     public function fromStorage()
@@ -31,11 +37,6 @@ class StorageTransfer extends Model
     public function toStorage()
     {
         return $this->belongsTo(Storage::class, 'to_storage_id');
-    }
-
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
     }
 
     public function transferredBy()

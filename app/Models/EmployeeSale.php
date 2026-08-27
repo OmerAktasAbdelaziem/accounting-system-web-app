@@ -5,11 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class EmployeeSale extends Model
 {
     use HasFactory, SoftDeletes;
+    use \App\Models\Concerns\HasBranches;
 
     protected $fillable = [
         'employee_id',
@@ -17,16 +19,19 @@ class EmployeeSale extends Model
         'quantity',
         'unit_price',
         'total_amount',
+        'spent_amount',
         'sale_date',
         'sale_reference',
         'notes',
         'notes_ar',
+        'branch_id',
     ];
 
     protected $casts = [
         'sale_date' => 'date',
         'unit_price' => 'decimal:2',
         'total_amount' => 'decimal:2',
+        'spent_amount' => 'decimal:2',
     ];
 
     /**
@@ -34,7 +39,7 @@ class EmployeeSale extends Model
      */
     public function employee(): BelongsTo
     {
-        return $this->belongsTo(Employee::class);
+        return $this->belongsTo(Employee::class)->withTrashed();
     }
 
     /**
@@ -43,6 +48,30 @@ class EmployeeSale extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * Get the branch
+     */
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    /**
+     * Get all employee participation records for the sale.
+     */
+    public function employeeSaleDetails(): HasMany
+    {
+        return $this->hasMany(EmployeeSaleDetail::class);
+    }
+
+    /**
+     * Net income after store spend.
+     */
+    public function getNetIncomeAttribute(): float
+    {
+        return (float) ($this->total_amount - ($this->spent_amount ?? 0));
     }
 
     /**

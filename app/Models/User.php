@@ -28,11 +28,14 @@ class User extends Authenticatable
         'user_type',
         'subscription_id',
         'role_id',
+        'branch_access_mode',
+        'branch_access_branch_ids',
         'is_active',
         'phone',
         'address',
         'notes',
         'profile_photo_path',
+        'last_seen_at',
         'last_login',
         'api_token',
         'api_token_expires_at',
@@ -59,6 +62,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'branch_access_branch_ids' => 'array',
+            'last_seen_at' => 'datetime',
             'last_login' => 'datetime',
             'api_token_expires_at' => 'datetime',
         ];
@@ -148,6 +153,83 @@ class User extends Authenticatable
             return false;
         }
         return $this->role->name === $roleName;
+    }
+
+    /**
+     * Check whether the user can see a sidebar item controlled by feature access and/or permissions.
+     */
+    public function canViewMenuItem(?string $featureKey = null, ?string $permissionName = null): bool
+    {
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        if ($featureKey) {
+            return \App\Traits\ChecksFeatureAccess::hasFeatureAccess($featureKey);
+        }
+
+        if ($permissionName && !$this->hasPermission($permissionName)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get branch IDs this user can access.
+     * Return null when the user is unrestricted.
+     */
+    public function accessibleBranchIds(): ?array
+    {
+        if ($this->isSuperAdmin() || $this->isMerchantAdmin() || !$this->merchant_id) {
+            return null;
+        }
+
+        if ($this->branch_access_mode === 'all') {
+            return null;
+        }
+
+        if ($this->branch_access_mode === 'custom') {
+            return array_values(array_unique(array_map(
+                'intval',
+                is_array($this->branch_access_branch_ids) ? $this->branch_access_branch_ids : []
+            )));
+        }
+
+        if (!$this->role_id) {
+            return null;
+        }
+
+        $branchIds = BranchAccess::accessibleBranchIdsFor((int) $this->merchant_id, (int) $this->role_id);
+
+        return empty($branchIds) ? null : $branchIds;
+    }
+
+    /**
+     * Check whether the current user can access a specific branch.
+     */
+    public function canAccessBranch(int $branchId): bool
+    {
+        $branchIds = $this->accessibleBranchIds();
+
+        if ($branchIds === null) {
+            return true;
+        }
+
+        return in_array($branchId, $branchIds, true);
+    }
+
+    public function branchAccessSummary(): array
+    {
+        $branchIds = $this->accessibleBranchIds();
+
+        if ($branchIds === null) {
+            return ['label' => 'All branches', 'tone' => 'success'];
+        }
+
+        $count = count($branchIds);
+
+        return ['label' => $count . ' branch' . ($count === 1 ? '' : 'es'), 'tone' => $count > 0 ? 'warning' : 'danger'];
     }
 
     /**

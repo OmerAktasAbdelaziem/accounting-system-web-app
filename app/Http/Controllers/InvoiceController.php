@@ -2,16 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Branch;
 use App\Models\Invoice;
 use App\Models\Customer;
 use App\Models\ChartOfAccount;
 use App\Models\JournalEntry;
 use App\Support\SimplePdf;
+use App\Support\SimpleExcel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class InvoiceController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (!\App\Traits\ChecksFeatureAccess::hasFeatureAccess('invoicing')) {
+                abort(403);
+            }
+
+            return $next($request);
+        });
+    }
+
     public function index()
     {
         $invoices = Invoice::latest()->paginate(20);
@@ -21,7 +34,9 @@ class InvoiceController extends Controller
     public function create()
     {
         $customers = Customer::pluck('name', 'id');
-        return view('invoices.create', compact('customers'));
+        $branches = Branch::orderBy('name')->get();
+        $selectedBranchIds = request()->input('branch_ids', []);
+        return view('invoices.create', compact('customers', 'branches', 'selectedBranchIds'));
     }
 
     public function store(Request $request)
@@ -33,6 +48,8 @@ class InvoiceController extends Controller
             'tax' => 'nullable|numeric',
             'total' => 'nullable|numeric',
             'branch_id' => 'nullable|integer',
+            'branch_ids' => 'nullable|array',
+            'branch_ids.*' => 'exists:branches,id',
             'items' => 'nullable|array',
             'items.*.product_id' => 'nullable|exists:products,id',
             'items.*.quantity' => 'required_with:items|integer|min:1',
@@ -42,6 +59,7 @@ class InvoiceController extends Controller
         $data['invoice_number'] = strtoupper('INV-' . Str::random(6));
 
         $invoice = Invoice::create($data);
+        $invoice->syncBranches($data['branch_ids'] ?? []);
 
         // Add line items if provided
         if (!empty($data['items'])) {
@@ -70,7 +88,6 @@ class InvoiceController extends Controller
                     'reference_id' => $invoice->id,
                     'branch_id' => $invoice->branch_id,
                     'created_by' => auth()->id(),
-                    'status' => 'draft',
                 ]);
 
                 $journalEntry->addItem($accountsReceivable->id, $invoice->total, 0, 'Accounts Receivable');
@@ -94,7 +111,9 @@ class InvoiceController extends Controller
     {
         $customers = Customer::pluck('name', 'id');
         $invoice->load('items');
-        return view('invoices.edit', compact('invoice', 'customers'));
+        $branches = Branch::orderBy('name')->get();
+        $selectedBranchIds = $invoice->branches()->pluck('branches.id')->all();
+        return view('invoices.edit', compact('invoice', 'customers', 'branches', 'selectedBranchIds'));
     }
 
     public function update(Request $request, Invoice $invoice)
@@ -118,8 +137,10 @@ class InvoiceController extends Controller
         return redirect()->route('invoices.index')->with('success', __('messages.deleted'));
     }
 
-    public function downloadPdf(Invoice $invoice)
+    public function downloadPdf(Request $request, Invoice $invoice)
     {
+        $this->authorizeDownloads($request);
+
         $invoice->load('items.product');
 
         $lines = [
@@ -150,6 +171,47 @@ class InvoiceController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="' . $invoice->invoice_number . '.pdf"',
+        ]);
+    }
+
+    public function downloadExcel(Request $request, Invoice $invoice)
+    {
+        $this->authorizeDownloads($request);
+
+        $invoice->load('items.product');
+
+        $headers = ['Product', 'Quantity', 'Unit Price', 'Line Total'];
+        $rows = [];
+
+        foreach ($invoice->items as $item) {
+            $rows[] = [
+                $item->product?->name ?? 'Item ' . $item->id,
+                $item->quantity,
+                number_format((float) $item->unit_price, 2),
+                number_format((float) $item->line_total, 2),
+            ];
+        }
+
+        // Add totals as additional rows
+        $rows[] = ['', '', 'Sub Total', number_format((float) $invoice->sub_total, 2)];
+        $rows[] = ['', '', 'Tax', number_format((float) $invoice->tax, 2)];
+        $rows[] = ['', '', 'Total', number_format((float) $invoice->total, 2)];
+
+        $metadata = [
+            'Invoice Number' => $invoice->invoice_number,
+            'Customer' => $invoice->customer?->name ?? '-',
+            'Date' => $invoice->date ? $invoice->date->format('Y-m-d') : now()->toDateString(),
+        ];
+
+        $excel = SimpleExcel::createFromTable('Invoice ' . $invoice->invoice_number, $headers, $rows, $metadata);
+
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
+        return response($excel, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="' . $invoice->invoice_number . '.xlsx"',
         ]);
     }
 }

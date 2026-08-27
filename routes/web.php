@@ -14,14 +14,18 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\Commissions\CommissionController;
+use App\Http\Controllers\AdvanceController;
 use App\Http\Controllers\Storages\StorageController;
 use App\Http\Controllers\Safes\SafeController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PayrollController;
+use App\Http\Controllers\SalesController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\SuperAdmin\SuperAdminDashboardController;
 use App\Http\Controllers\SuperAdmin\MerchantController;
+use App\Http\Controllers\SuperAdmin\DataRecoveryController;
 use App\Http\Controllers\SuperAdmin\PackageController;
 use App\Http\Controllers\SuperAdmin\SubscriptionController;
 use App\Http\Controllers\SuperAdmin\FeatureAccessController;
@@ -61,6 +65,11 @@ Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/home', [DashboardController::class, 'index'])->name('home');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // AJAX utilities: search and notifications
+    Route::get('search', [\App\Http\Controllers\SearchController::class, 'index'])->name('search');
+    Route::get('notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('notifications/mark-read', [\App\Http\Controllers\NotificationController::class, 'markRead'])->name('notifications.markRead');
+    Route::get('dashboard/analytics', [DashboardController::class, 'analytics'])->name('dashboard.analytics');
     Route::get('system-dashboard-fix', [DashboardController::class, 'index'])->name('system.dashboard');
 
     // Products
@@ -100,15 +109,41 @@ Route::middleware('auth')->group(function () {
         Route::get('export', [EmployeeController::class, 'export'])->name('export');
     });
 
+    // Sales
+    Route::prefix('sales')->name('sales.')->group(function () {
+        Route::get('/', [SalesController::class, 'index'])->name('index');
+        Route::post('/', [SalesController::class, 'store'])->name('store');
+        Route::post('export-pdf', [SalesController::class, 'exportPdf'])->name('export-pdf');
+        Route::post('export-excel', [SalesController::class, 'exportExcel'])->name('export-excel');
+        Route::get('{sale}/edit', [SalesController::class, 'edit'])->name('edit');
+        Route::put('{sale}', [SalesController::class, 'update'])->name('update');
+    });
+
+    // Chat
+    Route::prefix('chat')->name('chat.')->group(function () {
+        Route::get('contacts', [ChatController::class, 'contacts'])->name('contacts');
+        Route::get('messages/{contact}', [ChatController::class, 'messages'])->name('messages');
+        Route::post('messages', [ChatController::class, 'send'])->name('send');
+        Route::post('mark-read', [ChatController::class, 'markRead'])->name('markRead');
+        Route::post('typing', [ChatController::class, 'typing'])->name('typing');
+    });
+
     // Suppliers
     Route::prefix('suppliers')->name('suppliers.')->group(function () {
         Route::get('/', [SupplierController::class, 'index'])->name('index');
         Route::get('create', [SupplierController::class, 'create'])->name('create');
         Route::post('/', [SupplierController::class, 'store'])->name('store');
         Route::get('{supplier}', [SupplierController::class, 'show'])->name('show');
+        Route::get('{supplier}/statement-pdf', [SupplierController::class, 'statementPdf'])->name('statement-pdf');
         Route::get('{supplier}/edit', [SupplierController::class, 'edit'])->name('edit');
         Route::put('{supplier}', [SupplierController::class, 'update'])->name('update');
         Route::delete('{supplier}', [SupplierController::class, 'destroy'])->name('destroy');
+        Route::post('{supplier}/purchases', [SupplierController::class, 'storePurchase'])->name('purchases.store');
+        Route::put('{supplier}/purchases/{purchase}', [SupplierController::class, 'updatePurchase'])->name('purchases.update');
+        Route::delete('{supplier}/purchases/{purchase}', [SupplierController::class, 'destroyPurchase'])->name('purchases.destroy');
+        Route::post('{supplier}/payments', [SupplierController::class, 'storePayment'])->name('payments.store');
+        Route::put('{supplier}/payments/{payment}', [SupplierController::class, 'updatePayment'])->name('payments.update');
+        Route::delete('{supplier}/payments/{payment}', [SupplierController::class, 'destroyPayment'])->name('payments.destroy');
     });
 
     // Invoices
@@ -121,6 +156,7 @@ Route::middleware('auth')->group(function () {
         Route::put('{invoice}', [InvoiceController::class, 'update'])->name('update');
         Route::delete('{invoice}', [InvoiceController::class, 'destroy'])->name('destroy');
         Route::get('{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])->name('pdf');
+        Route::get('{invoice}/excel', [InvoiceController::class, 'downloadExcel'])->name('excel');
     });
     // Payroll
     Route::prefix('payroll')->name('payroll.')->group(function () {
@@ -130,9 +166,10 @@ Route::middleware('auth')->group(function () {
         Route::get('{payroll}', [PayrollController::class, 'show'])->name('show');
         Route::get('{payroll}/edit', [PayrollController::class, 'edit'])->name('edit');
         Route::put('{payroll}', [PayrollController::class, 'update'])->name('update');
+        Route::post('{payroll}/pay', [PayrollController::class, 'pay'])->name('pay');
         Route::delete('{payroll}', [PayrollController::class, 'destroy'])->name('destroy');
-        Route::post('{payroll}/process', [PayrollController::class, 'process'])->name('process');
         Route::get('{payroll}/payslip', [PayrollController::class, 'downloadPayslip'])->name('payslip');
+        Route::get('{payroll}/payslip-excel', [PayrollController::class, 'downloadPayslipExcel'])->name('payslip-excel');
     });
 
     // Branches
@@ -141,14 +178,19 @@ Route::middleware('auth')->group(function () {
         Route::get('create', [BranchController::class, 'create'])->name('create');
         Route::post('/', [BranchController::class, 'store'])->name('store');
         Route::get('{branch}', [BranchController::class, 'show'])->name('show');
+        Route::get('{branch}/debts', [BranchController::class, 'debts'])->name('debts');
         Route::get('{branch}/edit', [BranchController::class, 'edit'])->name('edit');
         Route::put('{branch}', [BranchController::class, 'update'])->name('update');
         Route::delete('{branch}', [BranchController::class, 'destroy'])->name('destroy');
+        Route::post('{branch}/assign-employee', [BranchController::class, 'assignEmployee'])->name('assign-employee');
+        Route::post('{branch}/remove-employee', [BranchController::class, 'removeEmployee'])->name('remove-employee');
     });
 
     // Reports
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('sales', [ReportController::class, 'sales'])->name('sales');
+        Route::get('sales/{sale}', [ReportController::class, 'showSale'])->name('sales.show');
+        Route::delete('sales/{sale}', [ReportController::class, 'destroySale'])->name('sales.destroy');
         Route::get('inventory', [ReportController::class, 'inventory'])->name('inventory');
         Route::get('financial', [ReportController::class, 'financial'])->name('financial');
         Route::post('generate-pdf', [ReportController::class, 'generatePdf'])->name('generate-pdf');
@@ -160,11 +202,19 @@ Route::middleware('auth')->group(function () {
         Route::get('create', [CommissionController::class, 'create'])->name('create');
         Route::post('/', [CommissionController::class, 'store'])->name('store');
         Route::get('{commission}', [CommissionController::class, 'show'])->name('show');
+        Route::post('{commission}/append', [CommissionController::class, 'append'])->name('append');
+        Route::post('{commission}/pay', [CommissionController::class, 'pay'])->name('pay');
         Route::get('{commission}/edit', [CommissionController::class, 'edit'])->name('edit');
         Route::put('{commission}', [CommissionController::class, 'update'])->name('update');
         Route::delete('{commission}', [CommissionController::class, 'destroy'])->name('destroy');
         Route::post('{commission}/approve', [CommissionController::class, 'approve'])->name('approve');
         Route::post('{commission}/reject', [CommissionController::class, 'reject'])->name('reject');
+    });
+
+    // Employee Advances
+    Route::prefix('advances')->name('advances.')->group(function () {
+        Route::post('/', [AdvanceController::class, 'store'])->name('store');
+        Route::delete('{advance}', [AdvanceController::class, 'destroy'])->name('destroy');
     });
 
     // Storages
@@ -192,9 +242,16 @@ Route::middleware('auth')->group(function () {
         Route::get('{safe}/edit', [SafeController::class, 'edit'])->name('edit');
         Route::put('{safe}', [SafeController::class, 'update'])->name('update');
         Route::delete('{safe}', [SafeController::class, 'destroy'])->name('destroy');
-        Route::post('{safe}/deposit', [SafeController::class, 'deposit'])->name('deposit');
-        Route::post('{safe}/withdraw', [SafeController::class, 'withdraw'])->name('withdraw');
         Route::get('{safe}/transactions', [SafeController::class, 'transactions'])->name('transactions');
+        Route::post('{safe}/add-income', [SafeController::class, 'addIncome'])->name('add-income');
+        Route::put('{safe}/income/{income}', [SafeController::class, 'updateIncome'])->name('income.update');
+        Route::delete('{safe}/income/{income}', [SafeController::class, 'deleteIncome'])->name('income.delete');
+        Route::post('{safe}/add-outcome', [SafeController::class, 'addOutcome'])->name('add-outcome');
+        Route::put('{safe}/outcome/{outcome}', [SafeController::class, 'updateOutcome'])->name('outcome.update');
+        Route::delete('{safe}/outcome/{outcome}', [SafeController::class, 'deleteOutcome'])->name('outcome.delete');
+        Route::post('{safe}/add-currency', [SafeController::class, 'addCurrency'])->name('add-currency');
+        Route::get('{safe}/export', [SafeController::class, 'exportPdf'])->name('export');
+        Route::get('{safe}/export-excel', [SafeController::class, 'exportExcel'])->name('export-excel');
     });
 
     // Profile & Settings
@@ -232,6 +289,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('super_admin')->prefix('super-admin')->name('super-admin.')->group(function () {
         // Dashboard
         Route::get('/', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('dashboard/analytics', [SuperAdminDashboardController::class, 'analytics'])->name('dashboard.analytics');
 
         // System Users Management (above Merchants)
         Route::prefix('users')->name('users.')->group(function () {
@@ -245,6 +303,8 @@ Route::middleware('auth')->group(function () {
         });
 
         // Merchants Management
+        Route::get('merchants/unassigned', [MerchantController::class, 'unassigned'])->name('merchants.unassigned');
+        Route::post('merchants/assign-user', [MerchantController::class, 'assignUser'])->name('merchants.assignUser');
         Route::resource('merchants', MerchantController::class);
         Route::post('merchants/{merchant}/inspect', [SystemUserController::class, 'inspectMerchant'])->name('merchants.inspect');
         Route::post('merchants/{merchant}/currencies', [MerchantController::class, 'addCurrency'])->name('merchants.addCurrency');
@@ -256,11 +316,19 @@ Route::middleware('auth')->group(function () {
         Route::resource('packages', PackageController::class);
         Route::get('packages/{package}/features', [PackageController::class, 'features'])->name('packages.features');
 
+        // Data Recovery
+        Route::get('data-recovery', [DataRecoveryController::class, 'index'])->name('data-recovery.index');
+        Route::post('data-recovery/transfer', [DataRecoveryController::class, 'transfer'])->name('data-recovery.transfer');
+
         // Subscriptions Management
         Route::resource('subscriptions', SubscriptionController::class);
         Route::get('subscriptions/{subscription}/renew', [SubscriptionController::class, 'renewForm'])->name('subscriptions.renew');
         Route::post('subscriptions/{subscription}/renew', [SubscriptionController::class, 'renewStore'])->name('subscriptions.renew.store');
         Route::get('subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
+        Route::post('subscriptions/{subscription}/reactivate', [SubscriptionController::class, 'reactivate'])->name('subscriptions.reactivate');
+        // Preview recipients and send test notification
+        Route::get('subscriptions/{merchant}/recipients-preview', [\App\Http\Controllers\SuperAdmin\SubscriptionNotificationPreviewController::class, 'index'])->name('subscriptions.recipients_preview');
+        Route::post('subscriptions/{merchant}/recipients-preview/send', [\App\Http\Controllers\SuperAdmin\SubscriptionNotificationPreviewController::class, 'send'])->name('subscriptions.recipients_preview.send');
 
         // VAT Rate Management
         Route::resource('vat-rates', VatRateController::class, ['except' => ['create', 'edit', 'show']]);
@@ -269,6 +337,8 @@ Route::middleware('auth')->group(function () {
         Route::prefix('feature-access')->name('feature-access.')->group(function () {
             Route::get('/', [FeatureAccessController::class, 'index'])->name('index');
             Route::post('/update', [FeatureAccessController::class, 'update'])->name('update');
+            Route::post('/employee-login', [FeatureAccessController::class, 'createEmployeeLogin'])->name('employee.login');
+            Route::post('/employee-update', [FeatureAccessController::class, 'updateEmployeeAccess'])->name('employee.update');
             Route::post('/reset', [FeatureAccessController::class, 'reset'])->name('reset');
         });
 

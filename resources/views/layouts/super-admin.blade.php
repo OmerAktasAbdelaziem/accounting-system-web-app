@@ -1,27 +1,33 @@
 <!DOCTYPE html>
-<html lang="{{ session('locale', 'en') }}" dir="{{ session('locale') === 'ar' ? 'rtl' : 'ltr' }}">
+@php
+    $locale = session('locale');
+    if (!is_string($locale) || !in_array($locale, ['en', 'ar', 'tr'], true)) {
+        $locale = config('app.locale', 'en');
+    }
+    $appCurrency = \App\Models\Currency::byCode((string) \App\Models\Setting::get('currency', 'AED'));
+    $currencySymbol = $appCurrency?->symbol ?? '$';
+@endphp
+<html lang="{{ $locale }}" dir="{{ $locale === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
-    @php
-        $appCurrency = \App\Models\Currency::byCode((string) \App\Models\Setting::get('currency', 'AED'));
-        $currencySymbol = $appCurrency?->symbol ?? '$';
-    @endphp
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Super Admin - Aktaš System')</title>
+    <title>{{ __('@yield(\'title\', \'Super Admin - Aktaš System\')') }}</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap RTL CSS -->
-    @if(session('locale') === 'ar')
+    @if($locale === 'ar')
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     @endif
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=noto-sans:400,500,600,700" rel="stylesheet" />
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    {{ __('<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>') }}
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {{ __('<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
     <style>
         :root {
@@ -40,10 +46,32 @@
             box-sizing: border-box;
         }
 
+        html,
+        body,
+        button,
+        input,
+        select,
+        textarea,
+        table,
+        th,
+        td,
+        .btn,
+        .nav,
+        .navbar,
+        .dropdown-menu,
+        .card,
+        .modal,
+        .form-control,
+        .form-select,
+        .alert,
+        .badge {
+            font-family: 'Noto Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        }
+
         html, body {
             height: 100%;
             background: var(--light-gray);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 500;
         }
 
         body {
@@ -494,8 +522,12 @@
 
         /* ============ RESPONSIVE ============ */
         @media (max-width: 768px) {
+            .super-admin-navbar .navbar-brand {
+                font-size: 18px;
+            }
+
             .super-admin-sidebar {
-                width: 200px;
+                width: 100%;
             }
 
             .page-title {
@@ -508,6 +540,148 @@
 
             .navbar-nav {
                 display: none;
+            }
+
+            .super-admin-container {
+                display: block;
+            }
+
+            .super-admin-sidebar {
+                display: none;
+            }
+
+            body.sidebar-open .super-admin-sidebar {
+                display: flex;
+                width: min(85vw, 320px);
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 1060;
+                box-shadow: 0 20px 40px rgba(0,0,0,.3);
+            }
+
+            .super-admin-content {
+                padding: 16px;
+                min-height: auto;
+            }
+
+            .page-header .d-flex {
+                flex-direction: column;
+                align-items: stretch !important;
+            }
+
+            .page-header .btn,
+            .page-header form,
+            .page-header .d-flex > a,
+            .page-header .d-flex > button {
+                width: 100%;
+            }
+
+            .btn-group,
+            .btn-toolbar,
+            .form-footer,
+            .card-footer,
+            .modal-footer,
+            .page-actions,
+            .hero-actions,
+            .header-actions,
+            .filter-actions,
+            .content-actions,
+            .action-buttons,
+            .stacked-actions,
+            .d-flex.gap-2,
+            .d-flex.gap-3,
+            .d-flex.flex-wrap.gap-2,
+            .d-flex.flex-wrap.gap-3,
+            .d-flex.flex-wrap.justify-content-between.align-items-start.gap-3,
+            .col-12.d-flex.gap-2.pt-2,
+            .col-12.d-flex.flex-wrap.gap-2.pt-2 {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .btn-group > .btn,
+            .btn-toolbar > .btn,
+            .form-footer > .btn,
+            .card-footer > .btn,
+            .modal-footer > .btn,
+            .page-actions > .btn,
+            .hero-actions > .btn,
+            .header-actions > .btn,
+            .filter-actions > .btn,
+            .content-actions > .btn,
+            .action-buttons > .btn,
+            .stacked-actions > .btn,
+            .d-flex.gap-2 > .btn,
+            .d-flex.gap-3 > .btn,
+            .d-flex.flex-wrap.gap-2 > .btn,
+            .d-flex.flex-wrap.gap-3 > .btn,
+            .d-flex.flex-wrap.justify-content-between.align-items-start.gap-3 > .btn,
+            .col-12.d-flex.gap-2.pt-2 > .btn,
+            .col-12.d-flex.flex-wrap.gap-2.pt-2 > .btn {
+                width: 100%;
+                justify-content: center;
+                margin-left: 0 !important;
+            }
+
+            .card-body {
+                padding: 16px;
+            }
+
+            .table-responsive {
+                border-radius: 12px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table {
+                min-width: 680px;
+            }
+
+            .btn-group,
+            .d-flex.gap-2,
+            .d-flex[style*="gap:8px"] {
+                flex-wrap: wrap;
+            }
+
+            .navbar-end {
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .super-admin-navbar .navbar-brand span,
+            .super-admin-navbar .navbar-brand {
+                font-size: 16px;
+            }
+
+            .page-title {
+                font-size: 20px;
+            }
+
+            .page-title i {
+                font-size: 24px;
+            }
+
+            .stat-card {
+                padding: 18px;
+            }
+
+            .stat-value {
+                font-size: 22px;
+            }
+
+            .sidebar-title {
+                padding: 12px 15px;
+            }
+
+            .table thead th,
+            .table tbody td {
+                padding: 12px 10px;
+                font-size: 13px;
             }
         }
 
@@ -531,77 +705,34 @@
         }
     </style>
 
-    @stack('styles')
+    @stack(\'styles\')') }}
 </head>
 <body>
     <!-- ============ TOP NAVBAR ============ -->
-    <nav class="super-admin-navbar">
-        <div class="d-flex align-items-center w-100">
-            <a href="{{ route('super-admin.dashboard') }}" class="navbar-brand">
-                <i class="bi bi-gem"></i>
-                <span>{{ \App\Models\Setting::getApplicationName() }}</span>
-            </a>
-            
-            <div class="navbar-end">
-                @if(session('inspecting_merchant'))
-                    <form action="{{ route('super-admin.exit-inspection') }}" method="POST" style="display: inline;">
-                        @csrf
-                        <button type="submit" class="btn btn-warning btn-sm me-3" title="Exit merchant inspection and return to super admin">
-                            <i class="bi bi-arrow-left"></i> Exit Inspection
-                        </button>
-                    </form>
-                @endif
-                <div class="user-menu">
-                    @php
-                        $avatarPath = auth()->user()->profile_photo_path;
-                        $superAdminAvatar = null;
-                        if ($avatarPath) {
-                            if (\Illuminate\Support\Facades\File::exists(public_path($avatarPath))) {
-                                $superAdminAvatar = asset($avatarPath);
-                            } elseif (\Illuminate\Support\Facades\File::exists(public_path('storage/' . ltrim($avatarPath, '/')))) {
-                                $superAdminAvatar = asset('storage/' . ltrim($avatarPath, '/'));
-                            } else {
-                                $superAdminAvatar = asset($avatarPath);
-                            }
-                        }
-                        $superAdminInitial = strtoupper(substr(auth()->user()->name ?? 'U', 0, 1));
-                    @endphp
-                    @if($superAdminAvatar)
-                        <img src="{{ $superAdminAvatar }}" alt="{{ auth()->user()->name }}" class="user-avatar-image">
-                    @else
-                        <div class="user-avatar">{{ $superAdminInitial }}</div>
-                    @endif
-                    <div>
-                        <small class="d-block" style="color: rgba(255,255,255,0.7);">{{ auth()->user()->name }}</small>
-                        <small style="color: var(--primary-orange); font-weight: 600;">Super Admin</small>
-                    </div>
-                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link">
-                        <i class="bi bi-box-arrow-right"></i>
-                    </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                </div>
-            </div>
-        </div>
-    </nav>
+    {{ __('@include(\'components.top-navbar\')') }}
 
     <!-- ============ MAIN CONTAINER ============ -->
     <div class="super-admin-container">
         <!-- SIDEBAR -->
-        <aside class="super-admin-sidebar">
+        <aside id="modernSidebar" class="super-admin-sidebar">
             <x-sidebar />
         </aside>
 
         <!-- MAIN CONTENT -->
         <main class="super-admin-content">
-            @yield('content')
+            {{ __('@yield(\'content\')') }}
         </main>
     </div>
 
+    @auth
+        @if(auth()->user()?->canViewMenuItem('live_chat_floating'))
+            @include('components.floating-chat')
+        @endif
+    @endauth
+
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {{ __('<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    @stack('scripts')
+    @stack(\'scripts\')') }}
 </body>
 </html>

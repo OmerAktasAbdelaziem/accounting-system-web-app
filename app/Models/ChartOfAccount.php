@@ -58,10 +58,7 @@ class ChartOfAccount extends Model
      */
     public function getBalance($startDate = null, $endDate = null): float
     {
-        $query = JournalEntryItem::where('account_id', $this->id)
-            ->whereHas('journalEntry', function ($q) {
-                $q->where('status', 'posted');
-            });
+        $query = JournalEntryItem::where('account_id', $this->id);
 
         if ($startDate) {
             $query->whereHas('journalEntry', function ($q) use ($startDate) {

@@ -17,15 +17,10 @@ class JournalEntryController extends Controller
     public function index(Request $request): JsonResponse
     {
         $perPage = $request->get('per_page', 20);
-        $status = $request->get('status');
         $startDate = $request->get('start_date');
         $endDate = $request->get('end_date');
 
         $query = JournalEntry::with('createdBy', 'items.account');
-
-        if ($status) {
-            $query->where('status', $status);
-        }
 
         if ($startDate && $endDate) {
             $query->dateRange($startDate, $endDate);
@@ -84,7 +79,6 @@ class JournalEntryController extends Controller
             'branch_id' => $request->input('branch_id'),
             'created_by' => auth()->id(),
             'notes' => $validated['notes'] ?? null,
-            'status' => 'draft',
         ]);
 
         // Add items
@@ -214,10 +208,7 @@ class JournalEntryController extends Controller
         $endDate = $request->get('end_date');
 
         $query = $account->journalEntryItems()
-            ->with('journalEntry')
-            ->whereHas('journalEntry', function ($q) {
-                $q->where('status', 'posted');
-            });
+            ->with('journalEntry');
 
         if ($startDate && $endDate) {
             $query->whereHas('journalEntry', function ($q) use ($startDate, $endDate) {

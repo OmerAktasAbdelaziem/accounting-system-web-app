@@ -21,6 +21,10 @@ class StoreRoleRequest extends FormRequest
             'description' => 'nullable|string|max:1000',
             'permissions' => 'nullable|array',
             'permissions.*' => 'exists:permissions,id',
+            'features' => 'nullable|array',
+            'features.*' => 'string',
+            'branch_ids' => 'nullable|array',
+            'branch_ids.*' => 'exists:branches,id',
         ];
     }
 
@@ -32,6 +36,7 @@ class StoreRoleRequest extends FormRequest
             'name.max' => 'Role name must not exceed 255 characters',
             'description.max' => 'Description must not exceed 1000 characters',
             'permissions.*.exists' => 'One or more selected permissions do not exist',
+            'branch_ids.*.exists' => 'One or more selected branches do not exist',
         ];
     }
 }

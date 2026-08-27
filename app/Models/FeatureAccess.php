@@ -11,7 +11,7 @@ class FeatureAccess extends Model
     use HasFactory;
 
     protected $table = 'feature_access';
-    protected $fillable = ['merchant_id', 'role_id', 'role_name', 'feature_name', 'feature_key', 'is_enabled'];
+    protected $fillable = ['merchant_id', 'role_id', 'feature_key', 'is_enabled'];
 
     protected $casts = [
         'is_enabled' => 'boolean',
@@ -31,6 +31,22 @@ class FeatureAccess extends Model
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Resolve role name for legacy code and views.
+     */
+    public function getRoleNameAttribute(): ?string
+    {
+        return $this->role?->name;
+    }
+
+    /**
+     * Resolve feature name for legacy code and views.
+     */
+    public function getFeatureNameAttribute(): ?string
+    {
+        return $this->feature_key;
     }
 
     /**

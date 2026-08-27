@@ -3,24 +3,43 @@
 @section('title', $product->name)
 
 @section('content')
-<div class="row mb-4">
-    <div class="col-md-8">
-        <h1><i class="bi bi-box-seam"></i> {{ $product->name }}</h1>
-        <p class="text-muted">{{ __('messages.sku') }}: <code>{{ $product->sku }}</code></p>
-    </div>
-    <div class="col-md-4 text-end">
-        <a href="{{ route('products.index') }}" class="btn btn-outline-secondary me-2">
-            <i class="bi bi-arrow-left"></i> {{ __('messages.back') }}
-        </a>
-        <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning">
-            <i class="bi bi-pencil"></i> {{ __('messages.edit') }}
-        </a>
-    </div>
+<div class="products-shell mb-4">
+    <style>
+        .products-shell { position: relative; isolation: isolate; }
+        .products-hero { border-radius: 20px; padding: 18px; background: linear-gradient(135deg, rgba(17,24,39,0.96), rgba(31,41,55,0.92)); color:#fff; display:flex; justify-content:space-between; gap:12px; align-items:center }
+        .products-hero .badge { background: rgba(255,255,255,0.06); color: #fff; padding:6px 10px; border-radius:999px; font-weight:800 }
+        .products-hero-title { margin:0; font-size: clamp(1.6rem, 3.2vw, 2.4rem); font-weight:900; color:#fff }
+        @media (max-width:768px) { .products-hero { flex-direction:column; align-items:stretch } .products-hero .actions { width:100%; display:flex; gap:8px; justify-content:flex-end } }
+    </style>
+
+    <x-section-hero badge="<i class='bi bi-box-seam'></i> {{ __('messages.product') }}"
+                   title="<i class='bi bi-box-seam'></i> {{ $product->name }}"
+                   description="{{ Illuminate\Support\Str::limit($product->description ?? __('messages.no_description'), 160) }}">
+        <x-slot name="actions">
+            <a href="{{ route('products.index') }}" class="btn btn-outline-secondary me-2"><i class="bi bi-arrow-left"></i> {{ __('messages.back') }}</a>
+            @if (\Illuminate\Support\Facades\Blade::check('feature', 'products.edit'))
+                <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> {{ __('messages.edit') }}
+                </a>
+            @endif
+        </x-slot>
+
+        <x-slot name="panel">
+            <div class="products-hero-panel-top">
+                <p class="products-hero-panel-title">{{ __('Summary') }}</p>
+                <div class="products-hero-panel-value"><span>{{ $product->current_stock }}</span><small>{{ __('in stock') }}</small></div>
+            </div>
+            <div class="products-hero-panel-list">
+                <div class="products-mini-metric"><div><span class="label">{{ __('Price') }}</span><span class="value">{{ $currencySymbol }}{{ number_format($product->selling_price, 2) }}</span></div><div class="tone"><i class="bi bi-tag"></i></div></div>
+                <div class="products-mini-metric"><div><span class="label">{{ __('Status') }}</span><span class="value">{{ $product->is_active ? __('messages.active') : __('messages.inactive') }}</span></div><div class="tone"><i class="bi bi-info-circle"></i></div></div>
+            </div>
+        </x-slot>
+    </x-section-hero>
 </div>
 
 <!-- Product Statistics -->
 <div class="row mb-4">
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="stat-card">
             <div class="stat-icon" style="background: linear-gradient(135deg, #ff8c00, #ffb347);">
                 <i class="bi bi-tag"></i>
@@ -31,7 +50,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="stat-card">
             <div class="stat-icon" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">
                 <i class="bi bi-box"></i>
@@ -42,18 +61,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #e74c3c, #ec7063);">
-                <i class="bi bi-exclamation-triangle"></i>
-            </div>
-            <div class="stat-content">
-                <h6>{{ __('messages.min_stock') }}</h6>
-                <h3>{{ $product->min_stock }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="stat-card">
             <div class="stat-icon" style="background: linear-gradient(135deg, #3498db, #5dade2);">
                 <i class="bi bi-percent"></i>
@@ -121,11 +129,11 @@
                 <div class="row">
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.created') }}</label>
-                        <p class="text-muted">{{ $product->created_at->format('M d, Y H:i') }}</p>
+                        <p class="text-muted">{{ $product->created_at->translatedFormat('M d, Y H:i') }}</p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('messages.last_updated') }}</label>
-                        <p class="text-muted">{{ $product->updated_at->format('M d, Y H:i') }}</p>
+                        <p class="text-muted">{{ $product->updated_at->translatedFormat('M d, Y H:i') }}</p>
                     </div>
                 </div>
             </div>
@@ -175,28 +183,28 @@
                 <h5 class="mb-0"><i class="bi bi-exclamation-circle"></i> {{ __('messages.stock_status') }}</h5>
             </div>
             <div class="card-body">
-                @if($product->current_stock <= $product->min_stock)
+                @if($product->current_stock <= 0)
                     <div class="alert alert-danger" role="alert">
                         <i class="bi bi-exclamation-triangle"></i> <strong>{{ __('messages.low_stock_warning') }}</strong>
-                        <br><small>{{ __('messages.current_stock') }}: {{ $product->current_stock }}, {{ __('messages.min_stock') }}: {{ $product->min_stock }}</small>
+                        <br><small>{{ __('messages.current_stock') }}: {{ $product->current_stock }}</small>
                     </div>
                 @else
                     <div class="alert alert-success" role="alert">
                         <i class="bi bi-check-circle"></i> <strong>{{ __('messages.stock_level_good') }}</strong>
-                        <br><small>{{ __('messages.units_above_minimum', ['count' => $product->current_stock - $product->min_stock]) }}</small>
+                        <br><small>{{ $product->current_stock }} {{ __('messages.units') }}</small>
                     </div>
                 @endif
 
                 <div class="progress mb-3">
                     @php
-                        $stockPercentage = ($product->current_stock / max($product->min_stock, $product->current_stock)) * 100;
-                        $barColor = $product->current_stock <= $product->min_stock ? 'danger' : 'success';
+                        $stockPercentage = $product->current_stock > 0 ? 100 : 0;
+                        $barColor = $product->current_stock <= 0 ? 'danger' : 'success';
                     @endphp
                     <div class="progress-bar bg-{{ $barColor }}" style="width: {{ min($stockPercentage, 100) }}%"></div>
                 </div>
 
                 <p class="text-muted small">
-                    <strong>{{ __('messages.reorder_point') }}:</strong> {{ $product->min_stock }} {{ __('messages.units') }}
+                    <strong>{{ __('messages.current_stock') }}:</strong> {{ $product->current_stock }} {{ __('messages.units') }}
                 </p>
             </div>
         </div>
@@ -207,9 +215,11 @@
                 <h5 class="mb-0"><i class="bi bi-lightning"></i> {{ __('messages.quick_actions') }}</h5>
             </div>
             <div class="card-body">
-                <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning w-100 mb-2">
-                    <i class="bi bi-pencil"></i> {{ __('messages.edit_product') }}
-                </a>
+                @feature('products.edit')
+                    <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning w-100 mb-2">
+                        <i class="bi bi-pencil"></i> {{ __('messages.edit_product') }}
+                    </a>
+                @endfeature
                 <button class="btn btn-info w-100 mb-2" data-bs-toggle="modal" data-bs-target="#adjustStockModal">
                     <i class="bi bi-arrow-left-right"></i> {{ __('messages.adjust_stock') }}
                 </button>

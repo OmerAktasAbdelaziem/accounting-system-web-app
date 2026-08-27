@@ -1,31 +1,37 @@
 <!DOCTYPE html>
-<html lang="{{ session('locale', 'en') }}" dir="{{ session('locale') === 'ar' ? 'rtl' : 'ltr' }}">
+@php
+    $locale = session('locale');
+    if (!is_string($locale) || !in_array($locale, ['en', 'ar', 'tr'], true)) {
+        $locale = config('app.locale', 'en');
+    }
+    $appCurrency = \App\Models\Currency::byCode((string) \App\Models\Setting::get('currency', 'AED'));
+    $currencySymbol = $appCurrency?->symbol ?? '$';
+@endphp
+<html lang="{{ $locale }}" dir="{{ $locale === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
-    @php
-        $appCurrency = \App\Models\Currency::byCode((string) \App\Models\Setting::get('currency', 'AED'));
-        $currencySymbol = $appCurrency?->symbol ?? '$';
-    @endphp
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Aktaš System')</title>
+    <title>{{ __('@yield(\'title\', \'Aktaš System\')') }}</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap RTL CSS -->
-    @if(session('locale') === 'ar')
+    @if($locale === 'ar')
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     @endif
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=noto-sans:400,500,600,700" rel="stylesheet" />
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    {{ __('<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>') }}
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {{ __('<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>') }}
     <!-- html2pdf -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    {{ __('<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>') }}
     <!-- SheetJS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
+    {{ __('<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
     
     <style>
         :root {
@@ -44,10 +50,42 @@
             box-sizing: border-box;
         }
 
+        html,
+        body,
+        button,
+        input,
+        select,
+        textarea,
+        table,
+        th,
+        td,
+        .btn,
+        .nav,
+        .navbar,
+        .dropdown-menu,
+        .card,
+        .modal,
+        .form-control,
+        .form-select,
+        .alert,
+        .badge {
+            font-family: 'Noto Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        }
+
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 500;
+        }
+
+        @media (max-width: 900px) {
+            body {
+                background: #191917;
+            }
+
+            body.dark-theme {
+                background: #191917;
+            }
         }
 
         body.dark-theme {
@@ -212,6 +250,13 @@
             transition: all 0.3s;
         }
 
+        button,
+        input,
+        select,
+        textarea {
+            font-weight: 500;
+        }
+
         .form-control:focus, .form-select:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
@@ -273,6 +318,55 @@
                 padding: 10px;
             }
 
+            .d-flex.flex-wrap.justify-content-between.align-items-start.gap-3,
+            .d-flex.gap-2,
+            .d-flex.flex-wrap.gap-2,
+            .d-flex.gap-3,
+            .d-flex.flex-wrap.gap-3,
+            .col-12.d-flex.gap-2.pt-2,
+            .col-12.d-flex.flex-wrap.gap-2.pt-2,
+            .btn-group,
+            .btn-toolbar,
+            .form-footer,
+            .card-footer,
+            .modal-footer,
+            .page-actions,
+            .hero-actions,
+            .header-actions,
+            .filter-actions,
+            .content-actions,
+            .action-buttons,
+            .stacked-actions {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .btn-group > .btn,
+            .btn-toolbar > .btn,
+            .form-footer > .btn,
+            .card-footer > .btn,
+            .modal-footer > .btn,
+            .page-actions > .btn,
+            .hero-actions > .btn,
+            .header-actions > .btn,
+            .filter-actions > .btn,
+            .content-actions > .btn,
+            .action-buttons > .btn,
+            .stacked-actions > .btn,
+            .d-flex.flex-wrap.justify-content-between.align-items-start.gap-3 > .btn,
+            .d-flex.gap-2 > .btn,
+            .d-flex.flex-wrap.gap-2 > .btn,
+            .d-flex.gap-3 > .btn,
+            .d-flex.flex-wrap.gap-3 > .btn,
+            .col-12.d-flex.gap-2.pt-2 > .btn,
+            .col-12.d-flex.flex-wrap.gap-2.pt-2 > .btn {
+                width: 100%;
+                justify-content: center;
+                margin-left: 0 !important;
+            }
+
             .stat-card .number {
                 font-size: 24px;
             }
@@ -289,154 +383,15 @@
         }
     </style>
 
-    @yield('css')
+    @yield(\'css\')') }}
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light navbar-custom">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ route('system.dashboard') }}">
-                <i class="bi bi-graph-up"></i> {{ \App\Models\Setting::getApplicationName() }}
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('system.dashboard') }}">
-                            {{ __('messages.dashboard') }}
-                        </a>
-                    </li>
-                    @if(hasFeature('products'))
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('products*') ? 'active' : '' }}" href="{{ route('products.index') }}">
-                            {{ __('messages.products') }}
-                        </a>
-                    </li>
-                    @endif
-                    @if(hasFeature('categories'))
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('categories*') ? 'active' : '' }}" href="{{ route('categories.index') }}">
-                            {{ __('messages.categories') }}
-                        </a>
-                    </li>
-                    @endif
-                    @if(hasFeature('employees'))
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('employees*') ? 'active' : '' }}" href="{{ route('employees.index') }}">
-                            {{ __('messages.employees') }}
-                        </a>
-                    </li>
-                    @endif
-                    @if(hasAnyFeature(['customers', 'suppliers', 'invoicing', 'branches', 'storages', 'safes']))
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="managementDropdown" role="button" data-bs-toggle="dropdown">
-                            {{ __('messages.management') }}
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="managementDropdown">
-                            @if(hasFeature('customers'))
-                            <li><a class="dropdown-item" href="{{ route('customers.index') }}">{{ __('messages.customers') }}</a></li>
-                            @endif
-                            @if(hasFeature('suppliers'))
-                            <li><a class="dropdown-item" href="{{ route('suppliers.index') }}">{{ __('messages.suppliers') }}</a></li>
-                            @endif
-                            @if(hasFeature('invoicing'))
-                            <li><a class="dropdown-item" href="{{ route('invoices.index') }}">{{ __('messages.invoices') }}</a></li>
-                            @endif
-                            @if(hasFeature('branches'))
-                            <li><a class="dropdown-item" href="{{ route('branches.index') }}">{{ __('messages.branches') }}</a></li>
-                            @endif
-                            @if(hasFeature('storages'))
-                            <li><a class="dropdown-item" href="{{ route('storages.index') }}">{{ __('messages.storages') }}</a></li>
-                            @endif
-                            @if(hasFeature('safes'))
-                            <li><a class="dropdown-item" href="{{ route('safes.index') }}">{{ __('messages.safes') }}</a></li>
-                            @endif
-                        </ul>
-                    </li>
-                    @endif
-                    @if(hasAnyFeature(['sales_report', 'inventory_report', 'financial_report']))
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="reportsDropdown" role="button" data-bs-toggle="dropdown">
-                            {{ __('messages.reports') }}
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="reportsDropdown">
-                            @if(hasFeature('sales_report'))
-                            <li><a class="dropdown-item" href="{{ route('reports.sales') }}">{{ __('messages.sales_report') }}</a></li>
-                            @endif
-                            @if(hasFeature('inventory_report'))
-                            <li><a class="dropdown-item" href="{{ route('reports.inventory') }}">{{ __('messages.inventory_report') }}</a></li>
-                            @endif
-                            @if(hasFeature('financial_report'))
-                            <li><a class="dropdown-item" href="{{ route('reports.financial') }}">{{ __('messages.financial_report') }}</a></li>
-                            @endif
-                        </ul>
-                    </li>
-                    @endif
-                    @if(hasAnyFeature(['payroll', 'commissions', 'audit_logs']))
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="operationsDropdown" role="button" data-bs-toggle="dropdown">
-                            {{ __('messages.operations') }}
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="operationsDropdown">
-                            @if(hasFeature('payroll'))
-                            <li><a class="dropdown-item" href="{{ route('payroll.index') }}">{{ __('messages.payroll') }}</a></li>
-                            @endif
-                            @if(hasFeature('commissions'))
-                            <li><a class="dropdown-item" href="{{ route('commissions.index') }}">{{ __('messages.commissions') }}</a></li>
-                            @endif
-                            @if(hasFeature('audit_logs'))
-                            <li><a class="dropdown-item" href="{{ route('audit-logs.index') }}">{{ __('messages.audit_logs') }}</a></li>
-                            @endif
-                        </ul>
-                    </li>
-                    @endif
-                    @if(hasAnyFeature(['user_management', 'roles_management', 'permissions_management']))
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
-                            {{ __('messages.administration') }}
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                            @if(hasFeature('user_management'))
-                            <li><a class="dropdown-item" href="{{ route('users.index') }}">{{ __('messages.users') }}</a></li>
-                            @endif
-                            @if(hasFeature('roles_management'))
-                            <li><a class="dropdown-item" href="{{ route('roles.index') }}">{{ __('messages.roles') }}</a></li>
-                            @endif
-                            @if(hasFeature('permissions_management'))
-                            <li><a class="dropdown-item" href="{{ route('permissions.index') }}">{{ __('messages.permissions') }}</a></li>
-                            @endif
-                        </ul>
-                    </li>
-                    @endif
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="toggleLanguage(); return false;">
-                            {{ app()->getLocale() === 'ar' ? 'English' : 'العربية' }}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('profile') }}">
-                            <i class="bi bi-person"></i> {{ auth()->user()->name ?? 'User' }}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-danger" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="bi bi-box-arrow-right"></i> {{ __('messages.logout') }}
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    {{ __('@include(\'components.top-navbar\')') }}
 
     <!-- Loading -->
     <div class="loading" id="loading">
         <div class="spinner-border text-light" role="status">
-            <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden">{{ __('Loading...') }}</span>
         </div>
     </div>
 
@@ -461,20 +416,48 @@
             </div>
         @endif
 
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>{{ __('messages.error') }}!</strong> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @if (session('warning'))
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>{{ __('Warning!') }}</strong> {{ session('warning') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @if (session('info'))
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <strong>{{ __('Info!') }}</strong> {{ session('info') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @if (session('status'))
+            <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                <strong>{{ __('Status:') }}</strong> {{ session('status') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
         <div class="row">
             <div class="col-lg-3">
-                <div class="sidebar">
+                <div id="modernSidebar" class="sidebar">
                     <x-sidebar />
                 </div>
             </div>
             <div class="col-lg-9 content-area">
-                @yield('content')
+                {{ __('@yield(\'content\')') }}
             </div>
         </div>
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {{ __('<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // CSRF Token for AJAX
         $.ajaxSetup({
@@ -487,7 +470,7 @@
         function toggleLanguage() {
             const url = new URL(window.location.href);
             const locale = url.searchParams.get('lang') || '{{ app()->getLocale() }}';
-            const newLocale = locale === 'ar' ? 'en' : 'ar';
+            const newLocale = locale === 'en' ? 'ar' : (locale === 'ar' ? 'tr' : 'en');
             url.searchParams.set('lang', newLocale);
             window.location.href = url.toString();
         }
@@ -514,6 +497,6 @@
         });
     </script>
 
-    @yield('js')
+    @yield(\'js\')') }}
 </body>
 </html>

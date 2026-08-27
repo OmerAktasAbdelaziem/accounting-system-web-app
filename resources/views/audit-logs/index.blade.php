@@ -10,39 +10,41 @@
                 <i class="fas fa-history me-2 text-primary"></i>
                 {{ __('audit_logs.audit_logs') }}
             </h2>
-            <div class="text-muted">Track user activity, model changes, and system events in one place.</div>
+            <div class="text-muted">{{ __('Track user activity, model changes, and system events in one place.') }}</div>
         </div>
-        <a href="{{ route('audit-logs.export', request()->query()) }}" class="btn btn-primary-modern btn-sm" title="{{ __('audit_logs.export') }}">
-            <i class="fas fa-download me-2"></i>
-            {{ __('audit_logs.export') }}
-        </a>
+        @if(auth()->user()?->canViewMenuItem('downloads'))
+            <a href="{{ route('audit-logs.export', request()->query()) }}" class="btn btn-primary-modern btn-sm" title="{{ __('audit_logs.export') }}">
+                <i class="fas fa-download me-2"></i>
+                {{ __('audit_logs.export') }}
+            </a>
+        @endif
     </div>
 
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="stat-card">
-                <h6>Total Logs</h6>
+                <h6>{{ __('Total Logs') }}</h6>
                 <div class="value">{{ $logs->total() }}</div>
                 <i class="fas fa-list icon"></i>
             </div>
         </div>
         <div class="col-md-3">
             <div class="stat-card green">
-                <h6>Created</h6>
+                <h6>{{ __('Created') }}</h6>
                 <div class="value">{{ $logs->where('action', 'created')->count() }}</div>
                 <i class="fas fa-plus icon"></i>
             </div>
         </div>
         <div class="col-md-3">
             <div class="stat-card">
-                <h6>Updated</h6>
+                <h6>{{ __('Updated') }}</h6>
                 <div class="value">{{ $logs->where('action', 'updated')->count() }}</div>
                 <i class="fas fa-pen icon"></i>
             </div>
         </div>
         <div class="col-md-3">
             <div class="stat-card green">
-                <h6>Deleted</h6>
+                <h6>{{ __('Deleted') }}</h6>
                 <div class="value">{{ $logs->where('action', 'deleted')->count() }}</div>
                 <i class="fas fa-trash icon"></i>
             </div>
@@ -108,7 +110,7 @@
                 </div>
 
                 <div class="col-md-2">
-                    <label>&nbsp;</label>
+                    <label>{{ __('&nbsp;') }}</label>
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary w-50">
                             <i class="fas fa-search me-2"></i>

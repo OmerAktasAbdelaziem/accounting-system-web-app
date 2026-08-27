@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasBranches;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Employee extends Model
 {
     use HasFactory, SoftDeletes;
+    use \App\Models\Concerns\HasBranches;
 
     protected $fillable = [
         'employee_code',
@@ -17,6 +19,7 @@ class Employee extends Model
         'name_ar',
         'email',
         'phone',
+        'merchant_id',
         'position',
         'position_ar',
         'address',
@@ -47,6 +50,22 @@ class Employee extends Model
     }
 
     /**
+     * Get sales commission transactions
+     */
+    public function commissionTransactions(): HasMany
+    {
+        return $this->hasMany(Commission::class);
+    }
+
+    /**
+     * Get employee advances
+     */
+    public function advances(): HasMany
+    {
+        return $this->hasMany(EmployeeAdvance::class);
+    }
+
+    /**
      * Get employee deductions
      */
     public function deductions(): HasMany
@@ -63,14 +82,32 @@ class Employee extends Model
     }
 
     /**
+     * Get sale participation rows for all employee sales they helped close.
+     */
+    public function saleDetails(): HasMany
+    {
+        return $this->hasMany(EmployeeSaleDetail::class);
+    }
+
+    /**
      * Calculate total sales for a period
      */
     public function calculateSalesForPeriod($month, $year): float
     {
-        return $this->sales()
+        $detailTotal = (float) $this->saleDetails()
+            ->whereHas('sale', function ($query) use ($month, $year) {
+                $query->whereYear('sale_date', $year)
+                    ->whereMonth('sale_date', $month);
+            })
+            ->sum('amount');
+
+        $legacyTotal = (float) $this->sales()
             ->whereYear('sale_date', $year)
             ->whereMonth('sale_date', $month)
+            ->whereDoesntHave('employeeSaleDetails')
             ->sum('total_amount');
+
+        return $detailTotal + $legacyTotal;
     }
 
     /**
@@ -84,10 +121,20 @@ class Employee extends Model
             return ($salesAmount * $this->commission_rate) / 100;
         } else {
             // Fixed amount per sale
-            $salesCount = $this->sales()
+            $detailCount = $this->saleDetails()
+                ->whereHas('sale', function ($query) use ($month, $year) {
+                    $query->whereYear('sale_date', $year)
+                        ->whereMonth('sale_date', $month);
+                })
+                ->count();
+
+            $legacyCount = $this->sales()
                 ->whereYear('sale_date', $year)
                 ->whereMonth('sale_date', $month)
+                ->whereDoesntHave('employeeSaleDetails')
                 ->count();
+
+            $salesCount = $detailCount + $legacyCount;
             return $this->commission_rate * $salesCount;
         }
     }
@@ -104,10 +151,7 @@ class Employee extends Model
 
         if (!$commission) {
             $salesAmount = $this->calculateSalesForPeriod($month, $year);
-            $salesCount = $this->sales()
-                ->whereYear('sale_date', $year)
-                ->whereMonth('sale_date', $month)
-                ->count();
+            $salesCount = $this->saleIdsForPeriod($month, $year)->count();
             $commissionEarned = $this->calculateCommission($month, $year);
 
             $commission = $this->commissions()->create([
@@ -116,7 +160,6 @@ class Employee extends Model
                 'sales_amount' => $salesAmount,
                 'sales_count' => $salesCount,
                 'commission_earned' => $commissionEarned,
-                'status' => 'pending',
             ]);
         }
 
@@ -131,7 +174,6 @@ class Employee extends Model
         return $this->deductions()
             ->where('month', $month)
             ->where('year', $year)
-            ->where('status', '!=', 'cancelled')
             ->sum('amount');
     }
 
@@ -185,5 +227,25 @@ class Employee extends Model
     public function isEmployed(): bool
     {
         return $this->is_active && !$this->termination_date;
+    }
+
+    /**
+     * Get the unique sale IDs associated with the employee for a period.
+     */
+    protected function saleIdsForPeriod($month, $year)
+    {
+        $primarySaleIds = $this->sales()
+            ->whereYear('sale_date', $year)
+            ->whereMonth('sale_date', $month)
+            ->pluck('id');
+
+        $participatingSaleIds = $this->saleDetails()
+            ->whereHas('sale', function ($query) use ($month, $year) {
+                $query->whereYear('sale_date', $year)
+                    ->whereMonth('sale_date', $month);
+            })
+            ->pluck('employee_sale_id');
+
+        return $primarySaleIds->merge($participatingSaleIds)->unique()->values();
     }
 }

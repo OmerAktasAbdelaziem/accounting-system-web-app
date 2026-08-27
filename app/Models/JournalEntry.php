@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class JournalEntry extends Model
 {
     use HasFactory, SoftDeletes;
+    use \App\Models\Concerns\HasBranches;
 
     protected $fillable = [
         'date',
@@ -23,7 +24,6 @@ class JournalEntry extends Model
         'created_by',
         'total_debit',
         'total_credit',
-        'status',
         'notes',
     ];
 
@@ -63,7 +63,7 @@ class JournalEntry extends Model
     }
 
     /**
-     * Post the journal entry (mark as posted)
+     * Validate the journal entry totals
      */
     public function post(): bool
     {
@@ -76,7 +76,6 @@ class JournalEntry extends Model
         }
 
         $this->update([
-            'status' => 'posted',
             'total_debit' => $totalDebit,
             'total_credit' => $totalCredit,
         ]);
@@ -97,7 +96,6 @@ class JournalEntry extends Model
             'reference_id' => $this->reference_id,
             'branch_id' => $this->branch_id,
             'created_by' => auth()->id(),
-            'status' => 'draft',
         ]);
 
         // Create reverse items
@@ -113,18 +111,7 @@ class JournalEntry extends Model
         // Post the reversal
         $reversalEntry->post();
 
-        // Mark original as reversed
-        $this->update(['status' => 'reversed']);
-
         return $reversalEntry;
-    }
-
-    /**
-     * Scope to get posted entries only
-     */
-    public function scopePosted($query)
-    {
-        return $query->where('status', 'posted');
     }
 
     /**

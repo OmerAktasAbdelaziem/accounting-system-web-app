@@ -25,30 +25,32 @@ class SecurityHeadersMiddleware
     {
         $response = $next($request);
 
+        $headers = $response->headers;
+
         // Prevent MIME type sniffing
-        $response->header('X-Content-Type-Options', 'nosniff');
+        $headers->set('X-Content-Type-Options', 'nosniff');
 
         // Prevent clickjacking (frame embedding)
-        $response->header('X-Frame-Options', 'SAMEORIGIN');
+        $headers->set('X-Frame-Options', 'SAMEORIGIN');
 
         // Enable XSS protection in older browsers
-        $response->header('X-XSS-Protection', '1; mode=block');
+        $headers->set('X-XSS-Protection', '1; mode=block');
 
         // Control referrer information
-        $response->header('Referrer-Policy', 'strict-origin-when-cross-origin');
+        $headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
         // Disable content sniffing
-        $response->header('X-Content-Type-Options', 'nosniff');
+        $headers->set('X-Content-Type-Options', 'nosniff');
 
         // Only send Strict-Transport-Security in production with HTTPS
         if (config('app.env') === 'production' && request()->secure()) {
-            $response->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+            $headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
 
         // Cache control headers
-        $response->header('Cache-Control', 'no-cache, no-store, must-revalidate');
-        $response->header('Pragma', 'no-cache');
-        $response->header('Expires', '0');
+        $headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+        $headers->set('Pragma', 'no-cache');
+        $headers->set('Expires', '0');
 
         return $response;
     }

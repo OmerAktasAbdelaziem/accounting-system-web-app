@@ -88,7 +88,7 @@
                             <td>
                                 @if ($user->role)
                                     <span class="badge bg-info">{{ $user->role->name }}</span>
-                                @else
+                                {{ __('@else') }}
                                     <span class="badge bg-secondary">{{ __('users.no_role') }}</span>
                                 @endif
                             </td>
@@ -101,7 +101,7 @@
                                         <i class="fas fa-check-circle me-1"></i>
                                         {{ __('messages.active') }}
                                     </span>
-                                @else
+                                {{ __('@else') }}
                                     <span class="badge bg-danger">
                                         <i class="fas fa-times-circle me-1"></i>
                                         {{ __('messages.inactive') }}
@@ -122,22 +122,22 @@
 
                                     @if ($user->id !== auth()->id())
                                         <form action="{{ route('users.toggleStatus', $user) }}" method="POST" style="display: inline;">
-                                            @csrf
+                                            {{ __('@csrf') }}
                                             <button type="submit" class="btn btn-sm btn-warning" title="{{ $user->is_active ? __('users.deactivate') : __('users.activate') }}">
-                                                <i class="fas {{ $user->is_active ? 'fa-pause-circle' : 'fa-play-circle' }}" aria-hidden="true"></i>
+                                                <i class="fas {{ $user->{{ __('is_active ? \'fa-pause-circle\' : \'fa-play-circle\' }}" aria-hidden="true">') }}</i>
                                                 <span class="visually-hidden">{{ $user->is_active ? __('users.deactivate') : __('users.activate') }}</span>
                                             </button>
                                         </form>
 
                                         <form action="{{ route('users.destroy', $user) }}" method="POST" style="display: inline;" onclick="return confirm('{{ __('users.confirm_delete') }}');">
-                                            @csrf
-                                            @method('DELETE')
+                                            {{ __('@csrf
+                                            @method(\'DELETE\')') }}
                                             <button type="submit" class="btn btn-sm btn-danger" title="{{ __('actions.delete') }}">
                                                 <i class="fas fa-trash" aria-hidden="true"></i>
                                                 <span class="visually-hidden">{{ __('actions.delete') }}</span>
                                             </button>
                                         </form>
-                                    @else
+                                    {{ __('@else') }}
                                         <button class="btn btn-sm btn-secondary" disabled title="{{ __('users.current_user') }}">
                                             <i class="fas fa-lock" aria-hidden="true"></i>
                                             <span class="visually-hidden">{{ __('users.current_user') }}</span>
@@ -146,14 +146,14 @@
                                 </div>
                             </td>
                         </tr>
-                    @empty
+                    {{ __('@empty') }}
                         <tr>
                             <td colspan="7" class="text-center text-muted py-4">
                                 <i class="fas fa-inbox fa-2x mb-2"></i>
                                 <p>{{ __('users.no_users_found') }}</p>
                             </td>
                         </tr>
-                    @endforelse
+                    {{ __('@endforelse') }}
                 </tbody>
             </table>
         </div>

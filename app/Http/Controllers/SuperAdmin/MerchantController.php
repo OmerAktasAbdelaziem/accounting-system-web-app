@@ -109,7 +109,8 @@ class MerchantController extends Controller
         $merchant->load(['defaultCurrency', 'currencies', 'subscription.package', 'users']);
 
         $activeSubscription = $merchant->subscription()
-            ->where('status', 'active')
+            ->where('is_active', true)
+            ->where('expires_at', '>', now())
             ->latest()
             ->first();
 
@@ -169,6 +170,65 @@ class MerchantController extends Controller
     }
 
     /**
+     * Show unassigned users and merchants to allow assigning users to merchants
+     */
+    public function unassigned(Request $request)
+    {
+        $this->authorize('viewAny', Merchant::class);
+
+        $merchants = Merchant::orderBy('business_name')->get();
+        $unassignedUsers = User::whereNull('merchant_id')
+            ->where('user_type', '!=', 'super_admin')
+            ->when($request->search, function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->search}%")
+                  ->orWhere('email', 'like', "%{$request->search}%");
+            })
+            ->paginate(25);
+
+        return view('super-admin.merchants.unassigned', compact('merchants', 'unassignedUsers'));
+    }
+
+    /**
+     * Assign a user to a merchant
+     */
+    public function assignUser(Request $request)
+    {
+        $this->authorize('update', Merchant::class);
+
+        $validated = $request->validate([
+            'merchant_id' => 'required|exists:merchants,id',
+            'user_id' => 'nullable|exists:users,id',
+            'user_ids' => 'nullable|array',
+            'user_ids.*' => 'exists:users,id',
+        ]);
+
+        $merchantId = $validated['merchant_id'];
+
+        // Support single user assignment or bulk assignment via user_ids[]
+        $ids = [];
+        if (!empty($validated['user_id'])) {
+            $ids[] = $validated['user_id'];
+        }
+        if (!empty($validated['user_ids'])) {
+            $ids = array_merge($ids, $validated['user_ids']);
+        }
+
+        if (empty($ids)) {
+            return redirect()->route('super-admin.merchants.unassigned')
+                ->withErrors(['user' => 'No users selected to assign']);
+        }
+
+        // Ensure we only update users that are unassigned and not super_admin
+        $updated = User::whereIn('id', $ids)
+            ->whereNull('merchant_id')
+            ->where('user_type', '!=', 'super_admin')
+            ->update(['merchant_id' => $merchantId]);
+
+        return redirect()->route('super-admin.merchants.unassigned')
+            ->with('success', "Assigned {$updated} user(s) to merchant successfully");
+    }
+
+    /**
      * Add currency to merchant
      */
     public function addCurrency(Request $request, Merchant $merchant)
@@ -216,11 +276,17 @@ class MerchantController extends Controller
         $this->authorize('update', $merchant);
 
         $validated = $request->validate([
-            'rate' => 'required|numeric|min:0|max:100',
-            'is_enabled' => 'boolean',
+            'rate_percentage' => 'required|numeric|min:0|max:100',
+            'applies_to' => 'required|in:invoices,all',
+            'is_active' => 'boolean',
         ]);
 
-        $this->merchantService->setVatRate($merchant, $validated['rate'], $validated['is_enabled'] ?? true);
+        $this->merchantService->setVatRate(
+            $merchant,
+            (float) $validated['rate_percentage'],
+            $validated['applies_to'],
+            $request->boolean('is_active', true)
+        );
 
         return redirect()->back()->with('success', 'VAT rate updated successfully');
     }

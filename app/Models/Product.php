@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasBranches;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,11 +12,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Product extends Model
 {
     use HasFactory, SoftDeletes;
+    use \App\Models\Concerns\HasBranches;
 
     protected $fillable = [
         'name',
         'name_ar',
-        'sku',
         'barcode',
         'category_id',
         'branch_id',
@@ -26,7 +27,6 @@ class Product extends Model
         'selling_price',
         'wholesale_price',
         'profit_margin',
-        'min_stock',
         'current_stock',
         'is_active',
         'track_inventory',
@@ -68,7 +68,7 @@ class Product extends Model
      */
     public function isLowStock(): bool
     {
-        return $this->current_stock <= $this->min_stock;
+        return $this->current_stock <= 0;
     }
 
     /**

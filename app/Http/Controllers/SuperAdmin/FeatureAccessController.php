@@ -4,9 +4,14 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\FeatureAccess;
+use App\Models\FeatureAccessOverride;
+use App\Models\Employee;
 use App\Models\Merchant;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class FeatureAccessController extends Controller
 {
@@ -32,11 +37,16 @@ class FeatureAccessController extends Controller
         'inventory_report' => 'Inventory Reports',
         'storages' => 'Storage Management',
         'safes' => 'Safes Management',
+        'safes.transfer' => 'Safes Transfer (internal) ',
         
         // Operations & Reporting
         'branches' => 'Branches Management',
+        'sales' => 'Sales Page',
         'sales_report' => 'Sales Reports',
+        'downloads' => 'Download & Export Actions',
         'audit_logs' => 'Audit Logs',
+        // UI Toggles
+        'live_chat_floating' => 'Live Chat Floating Launcher',
         
         // Advanced Features
         'basic_reporting' => 'Basic Reporting',
@@ -51,6 +61,10 @@ class FeatureAccessController extends Controller
         'user_management' => 'User Management',
         'roles_management' => 'Roles Management',
         'permissions_management' => 'Permissions Management',
+        'merchants' => 'Merchants Management',
+        'packages' => 'Packages Management',
+        'subscriptions' => 'Subscriptions Management',
+        'vat_rates' => 'VAT Rates Management',
     ];
 
     /**
@@ -69,22 +83,42 @@ class FeatureAccessController extends Controller
         $this->authorize('viewAny', FeatureAccess::class);
 
         $merchants = Merchant::where('is_active', true)->get();
+        $availableFeatures = self::AVAILABLE_FEATURES;
+        $existingEmails = User::whereNotNull('email')->pluck('email')->values();
         $selectedMerchant = null;
         $rows = [];
         $columns = [];
         $featureAccess = [];
+        $employees = collect();
+        $employeeOverrides = collect();
+        $employeeUserMap = collect();
+        $roles = collect();
 
         if ($request->merchant_id) {
             $selectedMerchant = Merchant::findOrFail($request->merchant_id);
             
-            // Get all roles
-            $columns = ['merchant_admin', 'employee', 'viewer'];
+            // Get all roles that exist in this app
+            $roles = Role::orderBy('name')->get();
+            $columns = $roles->pluck('name')->all();
             
             // Get features
             $rows = array_keys(self::AVAILABLE_FEATURES);
             
             // Build feature access matrix
-            $featureAccess = $this->buildFeatureAccessMatrix($selectedMerchant, $columns, $rows);
+            $featureAccess = $this->buildFeatureAccessMatrix($selectedMerchant, $roles, $rows);
+
+            $employees = Employee::where('merchant_id', $selectedMerchant->id)
+                ->orderBy('name')
+                ->get();
+
+            $employeeUserMap = User::where('merchant_id', $selectedMerchant->id)
+                ->where('user_type', 'employee')
+                ->get()
+                ->keyBy('email');
+
+            $employeeOverrides = FeatureAccessOverride::where('merchant_id', $selectedMerchant->id)
+                ->get()
+                ->groupBy('user_id');
         }
 
         return view('super-admin.feature-access.index', compact(
@@ -92,7 +126,13 @@ class FeatureAccessController extends Controller
             'selectedMerchant',
             'rows',
             'columns',
-            'featureAccess'
+            'roles',
+            'featureAccess',
+            'employees',
+            'employeeOverrides',
+            'employeeUserMap',
+            'availableFeatures',
+            'existingEmails'
         ));
     }
 
@@ -103,26 +143,30 @@ class FeatureAccessController extends Controller
     {
         $this->authorize('update', FeatureAccess::class);
 
+        if (!auth()->user() || !auth()->user()->isSuperAdmin()) {
+            abort(403, 'Forbidden: feature updates may only be performed by super admins.');
+        }
+
         $validated = $request->validate([
             'merchant_id' => 'required|exists:merchants,id',
-            'role' => 'required|string',
+            'role_id' => 'required|exists:roles,id',
             'feature' => 'required|string',
             'action' => 'required|in:enable,disable',
         ]);
 
-        $key = "{$validated['merchant_id']}-{$validated['role']}-{$validated['feature']}";
-        
+        $role = Role::findOrFail($validated['role_id']);
+
         $featureAccess = FeatureAccess::where('merchant_id', $validated['merchant_id'])
-            ->where('role_name', $validated['role'])
-            ->where('feature_name', $validated['feature'])
+            ->where('role_id', $role->id)
+            ->where('feature_key', $validated['feature'])
             ->first();
 
         if ($validated['action'] === 'enable') {
             if (!$featureAccess) {
                 FeatureAccess::create([
                     'merchant_id' => $validated['merchant_id'],
-                    'role_name' => $validated['role'],
-                    'feature_name' => $validated['feature'],
+                    'role_id' => $role->id,
+                    'feature_key' => $validated['feature'],
                     'is_enabled' => true,
                 ]);
             } else {
@@ -134,7 +178,124 @@ class FeatureAccessController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', 'Feature access updated');
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Feature access updated',
+                'merchant_id' => (int) $validated['merchant_id'],
+                'role_id' => (int) $role->id,
+                'feature' => $validated['feature'],
+                'enabled' => $validated['action'] === 'enable',
+            ]);
+        }
+
+        return redirect()->route('super-admin.feature-access.index', ['merchant_id' => $validated['merchant_id']])
+            ->with('success', 'Feature access updated');
+    }
+
+    /**
+     * Update special access for a specific employee.
+     */
+    public function updateEmployeeAccess(Request $request)
+    {
+        $this->authorize('update', FeatureAccess::class);
+
+        if (!auth()->user() || !auth()->user()->isSuperAdmin()) {
+            abort(403, 'Forbidden: employee access updates may only be performed by super admins.');
+        }
+
+        $validated = $request->validate([
+            'merchant_id' => 'required|exists:merchants,id',
+            'user_id' => 'required|exists:users,id',
+            'features' => 'nullable|array',
+            'features.*' => 'string',
+            'decision' => 'required|in:grant,deny',
+        ]);
+
+        $user = User::where('merchant_id', $validated['merchant_id'])
+            ->where('user_type', 'employee')
+            ->whereKey($validated['user_id'])
+            ->firstOrFail();
+
+        FeatureAccessOverride::where('merchant_id', $validated['merchant_id'])
+            ->where('user_id', $user->id)
+            ->delete();
+
+        foreach (($validated['features'] ?? []) as $featureKey) {
+            FeatureAccessOverride::create([
+                'merchant_id' => $validated['merchant_id'],
+                'user_id' => $user->id,
+                'feature_key' => $featureKey,
+                'is_enabled' => $validated['decision'] === 'grant',
+            ]);
+        }
+
+        $message = $validated['decision'] === 'grant'
+            ? "Special access granted for {$user->name}"
+            : "Access denied for selected pages for {$user->name}";
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'merchant_id' => (int) $validated['merchant_id'],
+                'user_id' => (int) $user->id,
+                'decision' => $validated['decision'],
+                'features' => array_values($validated['features'] ?? []),
+            ]);
+        }
+
+        return redirect()->route('super-admin.feature-access.index', ['merchant_id' => $validated['merchant_id']])
+            ->with('success', $message);
+    }
+
+    /**
+     * Create a login user account for an employee.
+     */
+    public function createEmployeeLogin(Request $request)
+    {
+        $this->authorize('update', FeatureAccess::class);
+
+        if (!auth()->user() || !auth()->user()->isSuperAdmin()) {
+            abort(403, 'Forbidden: creating employee logins from the feature matrix is restricted to super admins.');
+        }
+
+        $validated = $request->validate([
+            'merchant_id' => 'required|exists:merchants,id',
+            'employee_id' => 'required|exists:employees,id',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $employee = Employee::where('merchant_id', $validated['merchant_id'])
+            ->whereKey($validated['employee_id'])
+            ->firstOrFail();
+
+        $employeeRole = Role::firstOrCreate(
+            ['name' => 'employee'],
+            ['description' => 'Merchant employee user']
+        );
+
+        DB::transaction(function () use ($employee, $validated, $employeeRole) {
+            $employee->update(['email' => $validated['email']]);
+
+            User::create([
+                'name' => $employee->name,
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'merchant_id' => $employee->merchant_id,
+                'user_type' => 'employee',
+                'role_id' => $employeeRole->id,
+                'is_active' => true,
+                'phone' => $employee->phone,
+                'address' => $employee->address,
+            ]);
+        });
+
+        $message = "Login user created for {$employee->name}";
+
+        return redirect()->route('super-admin.feature-access.index', ['merchant_id' => $validated['merchant_id']])
+            ->with('success', $message);
     }
 
     /**
@@ -143,6 +304,10 @@ class FeatureAccessController extends Controller
     public function reset(Request $request)
     {
         $this->authorize('update', FeatureAccess::class);
+
+        if (!auth()->user() || !auth()->user()->isSuperAdmin()) {
+            abort(403, 'Forbidden: resetting feature access is restricted to super admins.');
+        }
 
         $validated = $request->validate([
             'merchant_id' => 'required|exists:merchants,id',
@@ -157,20 +322,42 @@ class FeatureAccessController extends Controller
 
             // Set default access based on package features
             $packageFeatures = $subscription->package->features->pluck('feature_key')->toArray();
+            $roles = Role::whereIn('name', ['merchant_admin', 'employee', 'viewer'])->get()->keyBy('name');
             
-            foreach (['merchant_admin', 'employee', 'viewer'] as $role) {
+            foreach ($roles as $role) {
                 foreach ($packageFeatures as $feature) {
                     FeatureAccess::create([
                         'merchant_id' => $merchant->id,
-                        'role_name' => $role,
-                        'feature_name' => $feature,
+                        'role_id' => $role->id,
+                        'feature_key' => $feature,
                         'is_enabled' => true,
                     ]);
                 }
             }
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Feature access reset to package defaults',
+                    'merchant_id' => (int) $merchant->id,
+                    'package_features' => array_values($packageFeatures),
+                    'enabled_role_ids' => $roles->pluck('id')->values()->all(),
+                ]);
+            }
         }
 
-        return redirect()->back()->with('success', 'Feature access reset to package defaults');
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Feature access reset to package defaults',
+                'merchant_id' => (int) $merchant->id,
+                'package_features' => [],
+                'enabled_role_ids' => [],
+            ]);
+        }
+
+        return redirect()->route('super-admin.feature-access.index', ['merchant_id' => $validated['merchant_id']])
+            ->with('success', 'Feature access reset to package defaults');
     }
 
     /**
@@ -185,12 +372,12 @@ class FeatureAccessController extends Controller
             
             foreach ($roles as $role) {
                 $access = FeatureAccess::where('merchant_id', $merchant->id)
-                    ->where('role_name', $role)
-                    ->where('feature_name', $feature)
+                    ->where('role_id', $role->id)
+                    ->where('feature_key', $feature)
                     ->where('is_enabled', true)
                     ->exists();
-                    
-                $matrix[$feature][$role] = $access;
+
+                $matrix[$feature][$role->id] = $access;
             }
         }
 

@@ -5,14 +5,20 @@
 @section('content')
 <div class="mb-4">
     <div class="d-flex justify-content-between align-items-center">
-        <h1 style="font-weight: 900; color: #1a1a1a;">
-            <i class="bi bi-archive" style="color: #ff8c00;"></i> {{ __('messages.storage_management') }}
+        <h1 style="font-weight: 900;">
+            <i class="bi bi-archive" style="color: #ff8c00;"></i>
+            <span class="storages-title">{{ __('messages.storage_management') }}</span>
         </h1>
-        <a href="{{ route('storages.create') }}" class="btn btn-primary-modern">
-            <i class="bi bi-plus-circle"></i> {{ __('messages.new_storage') }}
-        </a>
+        @feature('storages.create')
+            <a href="{{ route('storages.create') }}" class="btn btn-primary-modern">
+                <i class="bi bi-plus-circle"></i> {{ __('messages.new_storage') }}
+            </a>
+        @endfeature
     </div>
 </div>
+<style>
+    .storages-title { color: #000 !important; }
+</style>
 
 <!-- Statistics -->
 <div class="row mb-4">
@@ -44,6 +50,40 @@
     <div class="card-header">
         <i class="bi bi-list"></i> {{ __('messages.all_storages') }}
     </div>
+    <style>
+        @media (max-width: 768px) {
+            .storages-mobile-list { display: block; }
+            .table { display: none !important; }
+        }
+    </style>
+
+    <!-- Mobile storages cards -->
+    <div class="storages-mobile-list d-md-none">
+        @forelse($storages ?? [] as $storage)
+            <div class="card mb-2">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>{{ $storage->name }}</strong>
+                            <div class="small text-muted">{{ $storage->location }}</div>
+                        </div>
+                        <div class="text-end">
+                            <div>{{ $storage->items->count() }} {{ __('messages.items') }}</div>
+                            <div class="small text-muted">{{ $storage->is_active ? __('messages.active') : __('messages.inactive') }}</div>
+                        </div>
+                    </div>
+                    <div class="mt-2 d-flex gap-2">
+                        @feature('storages.view')
+                        <a href="{{ route('storages.items', $storage->id) }}" class="btn btn-sm btn-info"><i class="bi bi-box"></i></a>
+                        @endfeature
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="card mb-2"><div class="card-body text-center text-muted">{{ __('messages.no_storages_found') }}</div></div>
+        @endforelse
+    </div>
+
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>
@@ -84,15 +124,23 @@
                             </span>
                         </td>
                         <td>
-                            <a href="{{ route('storages.items', $storage->id) }}" class="btn btn-sm btn-info" title="{{ __('messages.view_items') }}">
-                                <i class="bi bi-box"></i>
-                            </a>
-                            <a href="{{ route('storages.edit', $storage->id) }}" class="btn btn-sm btn-warning">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <button onclick="deleteStorage({{ $storage->id }})" class="btn btn-sm btn-danger">
-                                <i class="bi bi-trash"></i>
-                            </button>
+                            @feature('storages.view')
+                                <a href="{{ route('storages.items', $storage->id) }}" class="btn btn-sm btn-info" title="{{ __('messages.view_items') }}">
+                                    <i class="bi bi-box"></i>
+                                </a>
+                            @endfeature
+
+                            @feature('storages.edit')
+                                <a href="{{ route('storages.edit', $storage->id) }}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            @endfeature
+
+                            @feature('storages.delete')
+                                <button onclick="deleteStorage({{ $storage->id }})" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            @endfeature
                         </td>
                     </tr>
                 @empty

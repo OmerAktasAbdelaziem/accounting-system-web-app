@@ -10,6 +10,8 @@ use App\Models\User;
 use App\Models\VatRate;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\SubscriptionExtendedNotification;
 
 class MerchantService
 {
@@ -87,23 +89,31 @@ class MerchantService
     public function createSubscription(Merchant $merchant, Package $package, ?string $paymentMethod = null, ?float $amountPaid = null): Subscription
     {
         // End any existing active subscription
-        $merchant->subscription()->where('status', 'active')->update(['status' => 'expired']);
+        $merchant->subscription()->where('is_active', true)->update(['is_active' => false]);
 
         $startsAt = now();
-        $expiresAt = now()->addDays($package->duration_days);
+        $expiresAt = now()->addDays((int) $package->duration_days);
 
         $subscription = Subscription::create([
             'merchant_id' => $merchant->id,
             'package_id' => $package->id,
-            'starts_at' => $startsAt,
+            'start_date' => $startsAt,
             'expires_at' => $expiresAt,
-            'status' => 'active',
-            'amount_paid' => $amountPaid ?? $package->price,
+            'is_active' => true,
             'payment_method' => $paymentMethod,
+            'amount_paid' => $amountPaid,
         ]);
 
         // Update merchant subscription expiry
         $merchant->update(['subscription_expires_at' => $expiresAt]);
+
+        // Notify merchant users about the new subscription
+        try {
+            $admins = $merchant->users()->where('user_type', 'merchant_admin')->get();
+            Notification::send($admins, new SubscriptionExtendedNotification($subscription));
+        } catch (\Exception $e) {
+            // silently fail to avoid breaking subscription creation if notifications miss
+        }
 
         return $subscription;
     }
@@ -113,14 +123,22 @@ class MerchantService
      */
     public function renewSubscription(Subscription $subscription): Subscription
     {
-        $expiresAt = $subscription->expires_at->addDays($subscription->package->duration_days);
+        $expiresAt = $subscription->expires_at->addDays((int) $subscription->package->duration_days);
 
         $subscription->update([
             'expires_at' => $expiresAt,
-            'status' => 'active',
+            'is_active' => true,
         ]);
 
         $subscription->merchant->update(['subscription_expires_at' => $expiresAt]);
+
+        // Notify merchant users about renewal/extension
+        try {
+            $admins = $subscription->merchant->users()->where('user_type', 'merchant_admin')->get();
+            Notification::send($admins, new SubscriptionExtendedNotification($subscription));
+        } catch (\Exception $e) {
+            // ignore notification failures
+        }
 
         return $subscription;
     }
@@ -136,22 +154,24 @@ class MerchantService
     /**
      * Set VAT rate for merchant
      */
-    public function setVatRate(Merchant $merchant, float $rate, bool $isEnabled = true): VatRate
+    public function setVatRate(Merchant $merchant, float $ratePercentage, string $appliesTo = 'invoices', bool $isActive = true): VatRate
     {
         $existing = VatRate::where('merchant_id', $merchant->id)->first();
 
         if ($existing) {
             $existing->update([
-                'rate' => $rate,
-                'is_enabled' => $isEnabled,
+                'rate_percentage' => $ratePercentage,
+                'is_active' => $isActive,
+                'applies_to' => $appliesTo,
             ]);
             return $existing;
         }
 
         return VatRate::create([
             'merchant_id' => $merchant->id,
-            'rate' => $rate,
-            'is_enabled' => $isEnabled,
+            'rate_percentage' => $ratePercentage,
+            'is_active' => $isActive,
+            'applies_to' => $appliesTo,
         ]);
     }
 
@@ -202,7 +222,7 @@ class MerchantService
     public function isSubscriptionValid(Merchant $merchant): bool
     {
         $activeSubscription = $merchant->subscription()
-            ->where('status', 'active')
+            ->where('is_active', true)
             ->where('expires_at', '>', now())
             ->first();
 

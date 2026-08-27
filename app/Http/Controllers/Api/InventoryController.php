@@ -121,7 +121,7 @@ class InventoryController extends Controller
     {
         $totalProducts = Product::where('is_active', true)->count();
         $lowStockProducts = Product::where('is_active', true)
-            ->whereRaw('current_stock <= min_stock')
+            ->where('current_stock', '<=', 0)
             ->count();
         $totalStockValue = Product::where('is_active', true)
             ->selectRaw('SUM(current_stock * purchase_price) as total_value')

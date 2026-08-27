@@ -3,120 +3,1494 @@
 @section('title', __('messages.dashboard'))
 
 @section('content')
-@php
-    $dashboardCurrency = \App\Models\Currency::byCode((string) \App\Models\Setting::get('currency', 'AED'));
-    $dashboardCurrencySymbol = $dashboardCurrency?->symbol ?? '$';
-@endphp
-<div class="mb-4">
-    <h1 style="font-weight: 900; color: #1a1a1a;">
-        <i class="bi bi-speedometer2" style="color: #ff8c00;"></i> {{ __('messages.dashboard') }}
-    </h1>
-</div>
+<style>
+    :root {
+        --primary: #ff8c00;
+        --primary-dark: #e67e00;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --info: #3b82f6;
+        --surface: #ffffff;
+        --text-dark: #111827;
+        --text-light: #6b7280;
+        --border-light: #e5e7eb;
+        --bg-soft: #f8fafc;
+    }
 
-<!-- Main Statistics Row -->
-<div class="row">
-    <div class="col-md-6 col-lg-3">
-        <div class="stat-card">
-            <h6>{{ __('messages.total_products') }}</h6>
-            <div class="value">{{ $totalProducts ?? 0 }}</div>
-            <div class="icon"><i class="bi bi-box-seam"></i></div>
-        </div>
-    </div>
+    .merchant-dashboard-shell {
+        min-height: 100vh;
+        padding: 28px 16px 40px;
+        color: #111827;
+        /* Desktop / tablet: keep the light background */
+        background:
+            radial-gradient(circle at top right, rgba(255, 140, 0, 0.08), transparent 26%),
+            linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
+    }
 
-    <div class="col-md-6 col-lg-3">
-        <div class="stat-card green">
-            <h6>{{ __('messages.total_sales') }}</h6>
-            <div class="value" style="color: var(--primary-green);">{{ $currencySymbol }}{{ number_format($totalSales ?? 0, 0) }}</div>
-            <div class="icon"><i class="bi bi-graph-up"></i></div>
-        </div>
-    </div>
+    /* Mobile-only: dark hero background for small screens */
+    @media (max-width: 900px) {
+        .merchant-dashboard-shell {
+            color: #e6eef8;
+            background: #191917;
+        }
+    }
 
-    <div class="col-md-6 col-lg-3">
-        <div class="stat-card">
-            <h6>{{ __('messages.total_employees') }}</h6>
-            <div class="value">{{ $totalEmployees ?? 0 }}</div>
-            <div class="icon"><i class="bi bi-people"></i></div>
-        </div>
-    </div>
+    .dashboard-orb,
+    .dashboard-orb-two,
+    .dashboard-noise {
+        position: absolute;
+        pointer-events: none;
+        z-index: 0;
+    }
 
-    <div class="col-md-6 col-lg-3">
-        <div class="stat-card green">
-            <h6>{{ __('messages.low_stock') }}</h6>
-            <div class="value" style="color: #c0392b;">{{ $lowStockCount ?? 0 }}</div>
-            <div class="icon"><i class="bi bi-exclamation-triangle"></i></div>
-        </div>
-    </div>
-</div>
+    .dashboard-orb {
+        width: 320px;
+        height: 320px;
+        right: -130px;
+        top: -120px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 140, 0, 0.22) 0%, rgba(255, 140, 0, 0) 68%);
+        filter: blur(8px);
+    }
 
-<!-- Charts Row -->
-<div class="row mt-4">
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">
-                <i class="bi bi-graph-up"></i> {{ __('messages.sales_trend') }}
-                <span class="badge" style="background: var(--primary-orange);">{{ __('messages.monthly') }}</span>
+    .dashboard-orb-two {
+        width: 220px;
+        height: 220px;
+        left: -100px;
+        bottom: 120px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, rgba(59, 130, 246, 0) 72%);
+        filter: blur(10px);
+    }
+
+    .dashboard-noise {
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+        background-size: 24px 24px;
+        mask-image: linear-gradient(180deg, rgba(0,0,0,0.24), transparent 82%);
+        opacity: .22;
+    }
+
+    .dashboard-hero {
+        background:
+            radial-gradient(circle at top right, rgba(255, 255, 255, 0.10), transparent 24%),
+            radial-gradient(circle at left center, rgba(59, 130, 246, 0.18), transparent 28%),
+            linear-gradient(135deg, #0b1020 0%, #111827 42%, #1f2937 74%, #ff8c00 180%);
+        color: #fff;
+        border-radius: 28px;
+        padding: 28px;
+        box-shadow: 0 18px 50px rgba(17, 24, 39, 0.18);
+        margin-bottom: 22px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .hero-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        border: 1px solid rgba(255,255,255,0.14);
+        background: rgba(255,255,255,0.08);
+        color: rgba(255,255,255,0.92);
+        backdrop-filter: blur(14px);
+    }
+
+    .hero-badge-live {
+        background: rgba(16, 185, 129, 0.14);
+        border-color: rgba(16, 185, 129, 0.22);
+        color: #d1fae5;
+    }
+
+    .hero-badge-soft {
+        background: rgba(255,255,255,0.06);
+    }
+
+    /* Redesigned hero layout */
+    .dashboard-hero .redesigned-hero {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 22px;
+        align-items: center;
+    }
+
+    .hero-left .dashboard-title {
+        font-size: 40px;
+        line-height: 1.02;
+        font-weight: 900;
+        color: #fff;
+    }
+
+    .hero-left .dashboard-subtitle {
+        color: rgba(255,255,255,0.9);
+        font-size: 15px;
+        max-width: 680px;
+        margin-top: 8px;
+    }
+
+    .hero-actions { margin-top: 16px; display:flex; gap:12px; flex-wrap:wrap; }
+
+    .hero-actions .btn {
+        border-radius: 999px;
+        padding-inline: 18px;
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14);
+    }
+
+    .btn-primary-modern {
+        background: linear-gradient(135deg, #ff8c00, #ffb347);
+        border: 0;
+    }
+
+    .btn-primary-modern:hover {
+        background: linear-gradient(135deg, #ff9e1a, #ffc56b);
+    }
+
+    .kpi-grid { display: grid; gap: 12px; }
+
+    .kpi-card {
+        background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+        border: 1px solid rgba(255,255,255,0.12);
+        padding: 12px 14px;
+        border-radius: 14px;
+        text-align: left;
+        min-width: 260px;
+    }
+
+    .kpi-card .kpi-label { font-size: 11px; color: rgba(255,255,255,0.8); text-transform:uppercase; letter-spacing:0.06em }
+    .kpi-card .kpi-value { font-size: 22px; font-weight:900; color: #fff; margin-top:6px }
+
+    /* decorative accent */
+    .hero-decor {
+        position: absolute;
+        right: -80px;
+        bottom: -80px;
+        width: 320px;
+        height: 320px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.14), rgba(255,255,255,0) 40%);
+        transform: rotate(12deg);
+        pointer-events: none;
+        filter: blur(6px);
+    }
+
+    .ambient-strip {
+        height: 3px;
+        width: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #ff8c00, #3b82f6, #10b981, #ff8c00);
+        background-size: 220% 100%;
+        animation: ambientMove 16s linear infinite;
+        margin-top: 12px;
+        opacity: .8;
+    }
+
+    @keyframes ambientMove {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 220% 50%; }
+    }
+
+    .hero-wave {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -1px;
+        display: none;
+        opacity: 0.18;
+        pointer-events: none;
+    }
+
+    .hero-wave svg {
+        display: block;
+        width: 100%;
+        height: 56px;
+    }
+
+    @keyframes heroGradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    @keyframes dashboardFadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 900px) {
+        .dashboard-hero .redesigned-hero { grid-template-columns: 1fr; }
+        .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .dashboard-hero::after {
+        content: '';
+        position: absolute;
+        right: -60px;
+        bottom: -70px;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 70%);
+        pointer-events: none;
+    }
+
+    .dashboard-hero-inner {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .dashboard-title {
+        font-size: 34px;
+        font-weight: 900;
+        margin-bottom: 10px;
+        letter-spacing: -0.04em;
+    }
+
+    .dashboard-subtitle {
+        margin: 0;
+        color: rgba(255,255,255,0.78);
+        max-width: 760px;
+        line-height: 1.7;
+    }
+
+    .hero-kpis {
+        min-width: min(100%, 360px);
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .hero-kpi {
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.12);
+        backdrop-filter: blur(10px);
+    }
+
+    .hero-kpi-label {
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: rgba(255,255,255,0.64);
+        margin-bottom: 4px;
+    }
+
+    .hero-kpi-value {
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin: 0;
+        letter-spacing: -0.02em;
+    }
+
+    .section-subtitle {
+        margin: 4px 0 0;
+        font-size: 13px;
+        color: var(--text-light);
+    }
+
+    .dashboard-section {
+        margin-bottom: 22px;
+    }
+
+    .quick-actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+        gap: 12px;
+    }
+
+    .quick-action {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        background: var(--surface);
+        border: 1px solid var(--border-light);
+        border-radius: 18px;
+        text-decoration: none;
+        color: var(--text-dark);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        transition: all 0.25s ease;
+        width: 100%;
+    }
+
+    .quick-action:hover {
+        transform: translateY(-3px);
+        border-color: rgba(255,140,0,0.35);
+        box-shadow: 0 12px 30px rgba(255,140,0,0.12);
+        color: var(--text-dark);
+    }
+
+    .quick-action-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, rgba(255,140,0,0.12), rgba(255,179,71,0.18));
+        color: var(--primary);
+        font-size: 20px;
+    }
+
+    .quick-action-text strong {
+        display: block;
+        font-size: 13px;
+        margin-bottom: 2px;
+    }
+
+    .quick-action-text span {
+        display: block;
+        font-size: 12px;
+        color: var(--text-light);
+    }
+
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+    }
+
+    .metric-card,
+    .panel-card,
+    .chart-card {
+        background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,250,255,0.96));
+        border: 1px solid rgba(226, 232, 240, 0.95);
+        border-radius: 22px;
+        padding: 20px;
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+    }
+
+    .metric-card:hover {
+        transform: translateY(-3px);
+        transition: all 0.25s ease;
+        box-shadow: 0 22px 40px rgba(15, 23, 42, 0.10);
+    }
+
+    .metric-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .metric-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--text-light);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 6px;
+    }
+
+    .metric-value {
+        font-size: 28px;
+        font-weight: 900;
+        color: var(--text-dark);
+        line-height: 1.1;
+        letter-spacing: -0.04em;
+    }
+
+    .metric-note {
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-light);
+        font-size: 12px;
+    }
+
+    .metric-badge {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .metric-badge.primary { background: rgba(255,140,0,0.12); color: var(--primary); }
+    .metric-badge.success { background: rgba(16,185,129,0.12); color: var(--success); }
+    .metric-badge.info { background: rgba(59,130,246,0.12); color: var(--info); }
+    .metric-badge.warning { background: rgba(245,158,11,0.12); color: var(--warning); }
+    .metric-badge.danger { background: rgba(239,68,68,0.12); color: var(--danger); }
+
+    .chart-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 16px;
+    }
+
+    .chart-box {
+        position: relative;
+        height: 320px;
+    }
+
+    .panel-card .table {
+        margin-bottom: 0;
+    }
+
+    .panel-card .table thead th {
+        border-top: 0;
+        background: #fafafa;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: var(--text-light);
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .panel-card .table tbody td {
+        vertical-align: middle;
+        font-size: 13px;
+        color: var(--text-dark);
+    }
+
+    .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .pill.success { background: rgba(16,185,129,0.12); color: var(--success); }
+    .pill.warning { background: rgba(245,158,11,0.12); color: var(--warning); }
+    .pill.danger { background: rgba(239,68,68,0.12); color: var(--danger); }
+    .pill.info { background: rgba(59,130,246,0.12); color: var(--info); }
+
+    .empty-state {
+        padding: 26px 16px;
+        text-align: center;
+        color: var(--text-light);
+    }
+
+    .empty-state i {
+        display: block;
+        font-size: 40px;
+        opacity: 0.3;
+        margin-bottom: 10px;
+    }
+
+    .progress-line {
+        width: 100%;
+        height: 10px;
+        background: #edf2f7;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .progress-line > span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #ff8c00, #ffb347);
+    }
+
+    @media (max-width: 768px) {
+        .merchant-dashboard-shell {
+            --mobile-bg: #191917;
+            --mobile-surface: #22211d;
+            --mobile-surface-strong: #2a2823;
+            --mobile-border: rgba(255, 255, 255, 0.08);
+            --mobile-text: #f5f3ee;
+            --mobile-muted: rgba(245, 243, 238, 0.72);
+            --mobile-accent: #f59e0b;
+            --mobile-accent-2: #14b8a6;
+            padding: 12px 10px 24px;
+            background: var(--mobile-bg);
+            color: var(--mobile-text);
+        }
+
+        .dashboard-hero {
+            background:
+                radial-gradient(circle at top right, rgba(245, 158, 11, 0.12), transparent 24%),
+                radial-gradient(circle at 18% 22%, rgba(20, 184, 166, 0.14), transparent 30%),
+                linear-gradient(160deg, #26231e 0%, #1b1a17 44%, #191917 100%);
+            background-size: 180% 180%;
+            animation: heroGradientShift 22s ease-in-out infinite;
+            padding: 14px;
+            border-radius: 24px;
+            box-shadow: 0 24px 55px rgba(0, 0, 0, 0.34);
+            border: 1px solid var(--mobile-border);
+            overflow: hidden;
+        }
+
+        .dashboard-hero,
+        .dashboard-section {
+            animation: dashboardFadeUp .9s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .dashboard-section:nth-of-type(1) { animation-delay: .08s; }
+        .dashboard-section:nth-of-type(2) { animation-delay: .16s; }
+        .dashboard-section:nth-of-type(3) { animation-delay: .24s; }
+
+        .dashboard-hero .redesigned-hero {
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .hero-badges {
+            margin-bottom: 12px;
+        }
+
+        .hero-badge {
+            padding: 7px 10px;
+            font-size: 10px;
+        }
+
+        .hero-right,
+        .kpi-grid {
+            width: 100%;
+        }
+
+        .kpi-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .kpi-card {
+            min-width: 0;
+            padding: 11px 12px;
+        }
+
+        .hero-actions .btn {
+            flex: 1 1 100%;
+        }
+
+        .dashboard-subtitle {
+            display: block;
+            font-size: 12px;
+            line-height: 1.55;
+            max-width: 100%;
+            color: var(--mobile-muted);
+        }
+
+        .hero-wave svg {
+            height: 40px;
+        }
+
+        .dashboard-title {
+            font-size: 28px;
+            color: var(--mobile-text);
+        }
+
+        .merchant-dashboard-shell {
+            padding: 12px 10px 24px;
+        }
+
+        .dashboard-hero-inner {
+            flex-direction: column;
+        }
+
+        .hero-kpis {
+            min-width: 100%;
+            grid-template-columns: 1fr;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            color: var(--mobile-text);
+        }
+
+        .quick-actions-grid,
+        .metrics-grid,
+        .chart-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .chart-box {
+            height: 240px;
+        }
+
+        .section-heading {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .section-heading .btn {
+            width: 100%;
+        }
+
+        .panel-card,
+        .chart-card,
+        .metric-card {
+            padding: 15px;
+            border-radius: 20px;
+            background: linear-gradient(180deg, var(--mobile-surface), var(--mobile-surface-strong));
+            border-color: var(--mobile-border);
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.24);
+        }
+
+        .quick-action {
+            background: linear-gradient(180deg, var(--mobile-surface), var(--mobile-surface-strong));
+            border-color: var(--mobile-border);
+            color: var(--mobile-text);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+        }
+
+        .quick-action-text span,
+        .section-subtitle,
+        .metric-label,
+        .metric-note,
+        .panel-card .table thead th,
+        .panel-card .table tbody td,
+        .table tbody td {
+            color: var(--mobile-muted);
+        }
+
+        .section-title,
+        .metric-value {
+            color: var(--mobile-text);
+        }
+
+        .panel-card .table thead th {
+            background: rgba(255,255,255,0.03);
+            border-bottom-color: var(--mobile-border);
+        }
+
+        .progress-line {
+            background: rgba(255,255,255,0.08);
+        }
+
+        .hero-badge {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--mobile-text);
+            border-color: var(--mobile-border);
+        }
+
+        .hero-badge-live {
+            background: rgba(20, 184, 166, 0.14);
+            border-color: rgba(20, 184, 166, 0.28);
+            color: #ccfbf1;
+        }
+
+        .hero-badge-soft {
+            background: rgba(245, 158, 11, 0.10);
+            border-color: rgba(245, 158, 11, 0.18);
+        }
+
+        .metric-badge.primary,
+        .quick-action-icon {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(20, 184, 166, 0.16));
+            color: var(--mobile-text);
+        }
+
+        .metric-badge.success { background: rgba(16,185,129,0.14); color: #d1fae5; }
+        .metric-badge.info { background: rgba(59,130,246,0.14); color: #dbeafe; }
+        .metric-badge.warning { background: rgba(245,158,11,0.14); color: #fef3c7; }
+        .metric-badge.danger { background: rgba(239,68,68,0.14); color: #fee2e2; }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .panel-card .table,
+        .table {
+            min-width: 640px;
+        }
+
+        .metric-card:hover,
+        .quick-action:hover {
+            transform: none;
+        }
+
+        .recent-sales-table thead th:nth-child(2),
+        .recent-sales-table tbody td:nth-child(2) {
+            display: none;
+        }
+
+        .low-stock-table thead th:nth-child(3),
+        .low-stock-table tbody td:nth-child(3) {
+            display: none;
+        }
+
+        .recent-sales-table thead th,
+        .low-stock-table thead th {
+            font-size: 10px;
+            letter-spacing: 0.6px;
+        }
+
+        .panel-card .table tbody td,
+        .table tbody td {
+            padding: 8px 6px;
+            font-size: 12px;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .list-group-item {
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .pill {
+            width: fit-content;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .dashboard-hero {
+            padding: 14px 14px 16px;
+        }
+
+        .hero-wave svg {
+            height: 32px;
+        }
+
+        .hero-wave {
+            display: block;
+        }
+
+        .dashboard-title {
+            font-size: 24px;
+        }
+
+        .hero-badges {
+            gap: 6px;
+        }
+
+        .hero-badge {
+            width: fit-content;
+        }
+
+        .dashboard-hero,
+        .metric-card,
+        .chart-card,
+        .panel-card {
+            border-radius: 16px;
+            background: linear-gradient(180deg, #22211d, #2a2823);
+            border-color: rgba(255,255,255,0.08);
+        }
+
+        .quick-action {
+            padding: 14px;
+            border-radius: 20px;
+            background: linear-gradient(180deg, #22211d, #2a2823);
+            color: #f5f3ee;
+        }
+
+        .quick-action-icon {
+            background: linear-gradient(135deg, rgba(245,158,11,0.20), rgba(20,184,166,0.18));
+            color: #fff7ed;
+        }
+
+        .panel-card .table thead th,
+        .panel-card .table tbody td,
+        .table tbody td,
+        .section-subtitle,
+        .metric-label,
+        .metric-note,
+        .quick-action-text span {
+            color: rgba(243, 244, 246, 0.8) !important;
+        }
+
+        .section-title,
+        .metric-value {
+            color: #ffffff !important;
+        }
+
+        .panel-card .table thead th {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .hero-kpi-value {
+            font-size: 16px;
+        }
+
+        .ambient-strip {
+            margin-top: 10px;
+        }
+
+        .table-responsive {
+            overflow-x: hidden;
+        }
+
+        .panel-card .table,
+        .table {
+            min-width: 0 !important;
+            width: 100% !important;
+            table-layout: fixed !important;
+        }
+
+        .recent-sales-table thead th:nth-child(2),
+        .recent-sales-table tbody td:nth-child(2) {
+            display: none !important;
+        }
+
+        .low-stock-table thead th:nth-child(3),
+        .low-stock-table tbody td:nth-child(3) {
+            display: none !important;
+        }
+
+        .recent-sales-table thead th,
+        .low-stock-table thead th {
+            font-size: 9px;
+            letter-spacing: 0.5px;
+            padding: 10px 8px;
+        }
+    }
+</style>
+
+<style>
+    @media (max-width: 768px) {
+        .dashboard-subtitle {
+            display: none !important;
+        }
+
+        .table-responsive {
+            overflow-x: hidden !important;
+        }
+
+        .recent-sales-table,
+        .low-stock-table {
+            width: 100% !important;
+            min-width: 0 !important;
+            table-layout: fixed !important;
+        }
+
+        .recent-sales-table thead th:nth-child(2),
+        .recent-sales-table tbody td:nth-child(2) {
+            display: none !important;
+        }
+
+        .low-stock-table thead th:nth-child(3),
+        .low-stock-table tbody td:nth-child(3) {
+            display: none !important;
+        }
+
+        .recent-sales-table thead th,
+        .low-stock-table thead th {
+            font-size: 9px;
+            letter-spacing: 0.5px;
+            padding: 10px 8px;
+        }
+
+        .panel-card .table tbody td,
+        .table tbody td {
+            padding: 8px 6px;
+            font-size: 12px;
+            white-space: normal;
+            word-break: break-word;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .dashboard-hero,
+        .dashboard-section,
+        .quick-action,
+        .metric-card,
+        .panel-card,
+        .chart-card {
+            animation: none !important;
+        }
+
+        .dashboard-hero {
+            animation: none !important;
+        }
+    }
+</style>
+
+<div id="merchantDashboardRoot" class="merchant-dashboard-shell" data-analytics-url="{{ route('dashboard.analytics') }}">
+    <div class="dashboard-hero">
+        <div class="dashboard-noise" aria-hidden="true"></div>
+        <div class="dashboard-orb" aria-hidden="true"></div>
+        <div class="dashboard-orb-two" aria-hidden="true"></div>
+        <div class="dashboard-hero-inner redesigned-hero">
+            <div class="hero-left">
+                <div class="hero-badges">
+                    <span class="hero-badge hero-badge-live"><i class="bi bi-broadcast"></i> {{ __('Live analytics') }}</span>
+                </div>
+                <h1 class="dashboard-title"><i class="bi bi-speedometer2 me-2"></i>{{ __('messages.dashboard') }}</h1>
+                <p class="dashboard-subtitle">{{ __('Welcome back,') }} <strong>{{ auth()->user()->name }}</strong>{{ __('. This merchant dashboard surfaces daily KPIs, quick actions, and summarized insights for fast decision making.') }}</p>
+
+                <div class="hero-actions">
+                    <a href="{{ route('sales.index') }}" class="btn btn-primary-modern">{{ __('New Sale') }}</a>
+                    <a href="{{ route('reports.sales') }}" class="btn btn-outline-light">{{ __('Reports') }}</a>
+                </div>
+
+                <div class="ambient-strip" aria-hidden="true"></div>
             </div>
-            <div class="card-body">
-                <canvas id="salesChart" style="max-height: 300px;"></canvas>
-            </div>
-        </div>
-    </div>
 
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">
-                <i class="bi bi-pie-chart"></i> {{ __('messages.inventory_status') }}
-            </div>
-            <div class="card-body">
-                <canvas id="inventoryChart" style="max-height: 300px;"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Quick Actions Row -->
-<div class="row mt-4">
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">
-                <i class="bi bi-lightning"></i> {{ __('messages.quick_actions') }}
-            </div>
-            <div class="card-body">
-                <a href="{{ route('products.create') }}" class="btn btn-primary-modern w-100 mb-2">
-                    <i class="bi bi-plus-circle"></i> {{ __('messages.add_product') }}
-                </a>
-                <a href="{{ route('employees.create') }}" class="btn btn-success-modern w-100 mb-2">
-                    <i class="bi bi-person-plus"></i> {{ __('messages.add_employee') }}
-                </a>
-                <a href="{{ route('reports.sales') }}" class="btn btn-primary-modern w-100">
-                    <i class="bi bi-file-earmark-pdf"></i> {{ __('messages.generate_report') }}
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">
-                <i class="bi bi-info-circle"></i> {{ __('messages.system_overview') }}
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-6 mb-3">
-                        <small class="text-muted">{{ __('messages.database') }}</small>
-                        <p><span class="badge bg-success">{{ __('messages.connected') }}</span></p>
+            <div class="hero-right">
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-label">{{ __('Today Sales') }}</div>
+                            <div class="kpi-value"><span class="kpi-value-num" data-currency="1" data-target="{{ $todaySales ?? 0 }}">0</span></div>
                     </div>
-                    <div class="col-6 mb-3">
-                        <small class="text-muted">{{ __('messages.api') }}</small>
-                        <p><span class="badge bg-success">{{ __('messages.active_status') }}</span></p>
+
+                    <div class="kpi-card">
+                        <div class="kpi-label">{{ __('Total Balance') }}</div>
+                        <div class="kpi-value"><span class="kpi-value-num" data-currency="1" data-target="{{ $safeBalance ?? 0 }}">0</span></div>
                     </div>
-                    <div class="col-6">
-                        <small class="text-muted">{{ __('messages.last_update') }}</small>
-                        <p><small>{{ now()->format('M d, Y H:i') }}</small></p>
+
+                    <div class="kpi-card">
+                        <div class="kpi-label">{{ __('Products') }}</div>
+                        <div class="kpi-value"><span class="kpi-value-num" data-target="{{ $totalProducts ?? 0 }}">0</span></div>
                     </div>
-                    <div class="col-6">
-                        <small class="text-muted">{{ __('messages.version') }}</small>
-                        <p><small>{{ __('messages.phase_6_v1') }}</small></p>
+
+                    <div class="kpi-card">
+                        <div class="kpi-label">{{ __('Low Stock') }}</div>
+                        <div class="kpi-value"><span class="kpi-value-num" data-target="{{ $lowStockCount ?? 0 }}">0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-decor"></div>
+        <div class="hero-wave" aria-hidden="true">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,40 C180,110 360,0 540,55 C720,110 900,10 1080,52 C1140,66 1170,76 1200,84 L1200,120 L0,120 Z" fill="rgba(255,255,255,0.65)"></path>
+            </svg>
+        </div>
+
+        <script>
+            (function(){
+                const currency = "{{ $currencySymbol }}";
+                function easeOutCubic(t){return 1-Math.pow(1-t,3)}
+                function formatNumber(n, isCurrency){
+                    if(isCurrency){
+                        return currency + Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+                    }
+                    return Number(n).toLocaleString();
+                }
+
+                document.querySelectorAll('.kpi-value-num').forEach(el=>{
+                    const raw = parseFloat(el.dataset.target) || 0;
+                    const isCurrency = el.dataset.currency === '1';
+                    const duration = 900;
+                    const start = 0;
+                    const t0 = performance.now();
+                    function step(t){
+                        const p = Math.min((t - t0)/duration,1);
+                        const v = start + (raw - start) * easeOutCubic(p);
+                        el.textContent = isCurrency ? formatNumber(v, true) : formatNumber(Math.round(v), false);
+                        if(p<1) requestAnimationFrame(step);
+                    }
+                    requestAnimationFrame(step);
+                });
+            })();
+        </script>
+    </div>
+
+    <div class="dashboard-section">
+        <div class="section-heading">
+            <div>
+                <h2 class="section-title"><i class="bi bi-lightning-charge-fill text-warning"></i>{{ __('Quick actions') }}</h2>
+                <p class="section-subtitle">{{ __('Open the most important operational screens fast.') }}</p>
+            </div>
+        </div>
+            <div class="quick-actions-grid">
+            @feature('products.create')
+            <a href="{{ route('products.create') }}" class="quick-action">
+                <div class="quick-action-icon"><i class="bi bi-box-seam"></i></div>
+                <div class="quick-action-text"><strong>{{ __('Add Product') }}</strong><span>{{ __('Create inventory item') }}</span></div>
+            </a>
+            @endfeature
+
+            @feature('sales')
+            <a href="{{ route('sales.index') }}" class="quick-action">
+                <div class="quick-action-icon"><i class="bi bi-cart-check"></i></div>
+                <div class="quick-action-text"><strong>{{ __('Sales') }}</strong><span>{{ __('Open sales list') }}</span></div>
+            </a>
+            @endfeature
+
+            @feature('invoicing')
+            <a href="{{ route('invoices.create') }}" class="quick-action">
+                <div class="quick-action-icon"><i class="bi bi-receipt"></i></div>
+                <div class="quick-action-text"><strong>{{ __('New Invoice') }}</strong><span>{{ __('Create invoice') }}</span></div>
+            </a>
+            @endfeature
+
+            @feature('employees')
+            <a href="{{ route('employees.create') }}" class="quick-action">
+                <div class="quick-action-icon"><i class="bi bi-person-plus"></i></div>
+                <div class="quick-action-text"><strong>{{ __('Add Employee') }}</strong><span>{{ __('Register staff') }}</span></div>
+            </a>
+            @endfeature
+
+            @feature('suppliers.create')
+            <a href="{{ route('suppliers.create') }}" class="quick-action">
+                <div class="quick-action-icon"><i class="bi bi-truck"></i></div>
+                <div class="quick-action-text"><strong>{{ __('Add Supplier') }}</strong><span>{{ __('Register supplier') }}</span></div>
+            </a>
+            @endfeature
+
+            @feature('payroll')
+            <a href="{{ route('payroll.create') }}" class="quick-action">
+                <div class="quick-action-icon"><i class="bi bi-wallet2"></i></div>
+                <div class="quick-action-text"><strong>{{ __('Payroll') }}</strong><span>{{ __('Payroll entry') }}</span></div>
+            </a>
+            @endfeature
+
+            @feature('safes')
+            <a href="{{ route('safes.index') }}" class="quick-action">
+                <div class="quick-action-icon"><i class="bi bi-safe"></i></div>
+                <div class="quick-action-text"><strong>{{ __('Safes') }}</strong><span>{{ __('Cash management') }}</span></div>
+            </a>
+            @endfeature
+
+            @feature('commissions')
+            <a href="{{ route('commissions.index') }}" class="quick-action">
+                <div class="quick-action-icon"><i class="bi bi-percent"></i></div>
+                <div class="quick-action-text"><strong>{{ __('Commissions') }}</strong><span>{{ __('Review payouts') }}</span></div>
+            </a>
+            @endfeature
+
+            @feature('storages')
+            <a href="{{ route('storages.index') }}" class="quick-action">
+                <div class="quick-action-icon"><i class="bi bi-boxes"></i></div>
+                <div class="quick-action-text"><strong>{{ __('Storages') }}</strong><span>{{ __('Warehouse overview') }}</span></div>
+            </a>
+            @endfeature
+
+            @feature('branches.create')
+            <a href="{{ route('branches.create') }}" class="quick-action">
+                <div class="quick-action-icon"><i class="bi bi-diagram-3"></i></div>
+                <div class="quick-action-text"><strong>{{ __('New Branch') }}</strong><span>{{ __('Expand locations') }}</span></div>
+            </a>
+            @endfeature
+
+            @feature('sales_report')
+            <a href="{{ route('reports.sales') }}" class="quick-action">
+                <div class="quick-action-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                <div class="quick-action-text"><strong>{{ __('Sales Report') }}</strong><span>{{ __('View analytics') }}</span></div>
+            </a>
+            @endfeature
+
+            @feature('financial_report')
+            <a href="{{ route('reports.financial') }}" class="quick-action">
+                <div class="quick-action-icon"><i class="bi bi-bar-chart-line"></i></div>
+                <div class="quick-action-text"><strong>{{ __('Financial Report') }}</strong><span>{{ __('Review accounts') }}</span></div>
+            </a>
+            @endfeature
+        </div>
+    </div>
+
+    @featureAny(['products', 'sales', 'employees', 'commissions', 'storages', 'safes'])
+    <div class="dashboard-section">
+        <div class="section-heading">
+            <div>
+                <h2 class="section-title"><i class="bi bi-bar-chart-line-fill text-warning"></i>{{ __('Operational metrics') }}</h2>
+                <p class="section-subtitle">{{ __('Live totals for sales, inventory, storage, commissions, and cash flow.') }}</p>
+            </div>
+        </div>
+        <div class="metrics-grid">
+            @feature('products')
+            <div class="metric-card">
+                <div class="metric-top">
+                    <div>
+                        <span class="metric-label">{{ __('Products') }}</span>
+                        <div class="metric-value" id="metric-total-products">{{ $totalProducts ?? 0 }}</div>
+                    </div>
+                    <div class="metric-badge primary"><i class="bi bi-box-seam"></i></div>
+                </div>
+                <div class="metric-note"><i class="bi bi-exclamation-triangle"></i><span id="metric-low-stock-count">{{ $lowStockCount ?? 0 }}</span> {{ __('low stock') }}</div>
+            </div>
+            @endfeature
+
+            @feature('sales')
+            <div class="metric-card">
+                <div class="metric-top">
+                    <div>
+                        <span class="metric-label">{{ __('Sales') }}</span>
+                        <div class="metric-value" id="metric-total-sales">{{ $currencySymbol }}{{ number_format($totalSales ?? 0, 2) }}</div>
+                    </div>
+                    <div class="metric-badge success"><i class="bi bi-cash-coin"></i></div>
+                </div>
+                <div class="metric-note"><i class="bi bi-receipt"></i><span id="metric-sales-count">{{ $salesCount ?? 0 }}</span> {{ __('invoices') }}</div>
+            </div>
+            @endfeature
+
+            @feature('employees')
+            <div class="metric-card">
+                <div class="metric-top">
+                    <div>
+                        <span class="metric-label">{{ __('Employees') }}</span>
+                        <div class="metric-value" id="metric-total-employees">{{ $totalEmployees ?? 0 }}</div>
+                    </div>
+                    <div class="metric-badge info"><i class="bi bi-people"></i></div>
+                </div>
+                <div class="metric-note"><i class="bi bi-person-check"></i>{{ __('Team coverage') }}</div>
+            </div>
+            @endfeature
+
+            @feature('commissions')
+            <div class="metric-card">
+                <div class="metric-top">
+                    <div>
+                        <span class="metric-label">{{ __('Pending Commissions') }}</span>
+                        <div class="metric-value" id="metric-pending-commissions">{{ $pendingCommissions ?? 0 }}</div>
+                    </div>
+                    <div class="metric-badge warning"><i class="bi bi-percent"></i></div>
+                </div>
+                <div class="metric-note"><i class="bi bi-currency-dollar"></i>{{ $currencySymbol }}{{ number_format($commissionAmount ?? 0, 2) }} pending</div>
+            </div>
+            @endfeature
+
+            @feature('storages')
+            <div class="metric-card">
+                <div class="metric-top">
+                    <div>
+                        <span class="metric-label">{{ __('Storage Usage') }}</span>
+                        <div class="metric-value" id="metric-storage-usage">{{ number_format($storageUsage ?? 0, 2) }}%</div>
+                    </div>
+                    <div class="metric-badge primary"><i class="bi bi-boxes"></i></div>
+                </div>
+                <div class="progress-line"><span style="width: {{ min(100, $storageUsage ?? 0) }}%;"></span></div>
+                <div class="metric-note"><i class="bi bi-hdd-stack"></i>{{ number_format($totalStorageUsage ?? 0, 2) }} / {{ number_format($totalStorageCapacity ?? 0, 2) }}</div>
+            </div>
+            @endfeature
+
+            @feature('safes')
+            <div class="metric-card">
+                <div class="metric-top">
+                    <div>
+                        <span class="metric-label">{{ __('Safe Balance') }}</span>
+                        <div class="metric-value" id="metric-safe-balance">{{ $currencySymbol }}{{ number_format($safeBalance ?? 0, 2) }}</div>
+                    </div>
+                    <div class="metric-badge success"><i class="bi bi-safe"></i></div>
+                </div>
+                <div class="metric-note"><i class="bi bi-arrow-left-right"></i>{{ $safeCount ?? 0 }} safes</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-top">
+                    <div>
+                        <span class="metric-label">{{ __('Income') }}</span>
+                        <div class="metric-value" id="metric-safe-income">{{ $currencySymbol }}{{ number_format($safeIncomeTotal ?? 0, 2) }}</div>
+                    </div>
+                    <div class="metric-badge info"><i class="bi bi-arrow-down-circle"></i></div>
+                </div>
+                <div class="metric-note"><i class="bi bi-lightning-charge"></i>{{ __('Cash inflow') }}</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-top">
+                    <div>
+                        <span class="metric-label">{{ __('Outcome') }}</span>
+                        <div class="metric-value" id="metric-safe-outcome">{{ $currencySymbol }}{{ number_format($safeOutcomeTotal ?? 0, 2) }}</div>
+                    </div>
+                    <div class="metric-badge danger"><i class="bi bi-arrow-up-circle"></i></div>
+                </div>
+                <div class="metric-note"><i class="bi bi-lightning-charge"></i>{{ __('Cash outflow') }}</div>
+            </div>
+            @endfeature
+        </div>
+    </div>
+    @endfeatureAny
+
+    <div class="dashboard-section">
+        <div class="section-heading">
+            <div>
+                <h2 class="section-title"><i class="bi bi-graph-up-arrow text-warning"></i>{{ __('Sales and finance reports') }}</h2>
+                <p class="section-subtitle">{{ __('The charts are loaded from a live analytics endpoint.') }}</p>
+            </div>
+        </div>
+        <div class="chart-grid">
+            <div class="chart-card">
+                <div class="section-heading mb-3">
+                    <div>
+                        <h3 class="section-title mb-0">{{ __('Sales trend') }}</h3>
+                        <p class="section-subtitle">{{ __('Live monthly sales from the sales page records.') }}</p>
+                    </div>
+                    <a href="{{ route('sales.index') }}" class="btn btn-sm btn-outline-secondary">{{ __('Open sales page') }}</a>
+                </div>
+                <div class="chart-box"><canvas id="salesTrendChart"></canvas></div>
+            </div>
+
+            <div class="chart-card">
+                <div class="section-heading mb-3">
+                    <h3 class="section-title mb-0">{{ __('Income vs outcome') }}</h3>
+                </div>
+                <div class="chart-box"><canvas id="cashFlowChart"></canvas></div>
+            </div>
+
+            <div class="chart-card">
+                <div class="section-heading mb-3">
+                    <h3 class="section-title mb-0">{{ __('Inventory health') }}</h3>
+                </div>
+                <div class="chart-box"><canvas id="inventoryChart"></canvas></div>
+            </div>
+
+            <div class="chart-card">
+                <div class="section-heading mb-3">
+                    <h3 class="section-title mb-0">{{ __('Storage mix') }}</h3>
+                </div>
+                <div class="chart-box"><canvas id="storageChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-section">
+        <div class="row g-4">
+            <div class="col-xl-7">
+                <div class="panel-card h-100">
+                    <div class="section-heading">
+                        <div>
+                            <h2 class="section-title mb-1"><i class="bi bi-bag-check text-warning"></i>{{ __('Recent sales') }}</h2>
+                            <p class="section-subtitle">{{ __('Latest invoice activity and product movement.') }}</p>
+                        </div>
+                        @feature('sales')
+                        <a href="{{ route('sales.index') }}" class="btn btn-sm btn-outline-secondary">{{ __('View all') }}</a>
+                        @endfeature
+                    </div>
+                    <div class="table-responsive d-none d-md-block">
+                        <table class="table align-middle recent-sales-table">
+                            <thead>
+                                <tr>
+                                    <th>{{ __('Description') }}</th>
+                                    <th>{{ __('Reference') }}</th>
+                                    <th>{{ __('Date') }}</th>
+                                    <th>{{ __('Amount') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($recentTransactions as $transaction)
+                                    <tr>
+                                        <td>{{ $transaction->description ?? 'Invoice' }}</td>
+                                        <td>{{ $transaction->reference_number ?? 'N/A' }}</td>
+                                        <td>{{ optional($transaction->date)->translatedFormat('M d, Y') ?? 'N/A' }}</td>
+                                        <td>{{ $currencySymbol }}{{ number_format($transaction->total_credit ?? 0, 2) }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4">
+                                            <div class="empty-state">
+                                                <i class="bi bi-inbox"></i>
+                                                {{ __('No sales records found') }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Mobile friendly stacked list for Recent Sales -->
+                    <div id="recent-sales-mobile" class="d-block d-md-none">
+                        @forelse($recentTransactions as $transaction)
+                            <div class="panel-card mb-3">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="fw-semibold">{{ $transaction->description ?? 'Invoice' }}</div>
+                                        <small class="text-muted">{{ optional($transaction->date)->translatedFormat('M d, Y') ?? 'N/A' }}</small>
+                                    </div>
+                                    <div class="fw-semibold">{{ $currencySymbol }}{{ number_format($transaction->total_credit ?? 0, 2) }}</div>
+                                </div>
+                                @if(!empty($transaction->reference_number))
+                                    <small class="text-muted">Ref: {{ $transaction->reference_number }}</small>
+                                @endif
+                            </div>
+                        @empty
+                            <div class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                {{ __('No sales records found') }}
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-5">
+                <div class="panel-card h-100">
+                    <div class="section-heading">
+                        <div>
+                            <h2 class="section-title mb-1"><i class="bi bi-cash-stack text-warning"></i>{{ __('Recent cash entries') }}</h2>
+                            <p class="section-subtitle">{{ __('Income and outcome entries from safe modules.') }}</p>
+                        </div>
+                        @feature('safes')
+                        <a href="{{ route('safes.index') }}" class="btn btn-sm btn-outline-secondary">{{ __('Safes') }}</a>
+                        @endfeature
+                    </div>
+                    <div class="list-group list-group-flush">
+                        @forelse($recentIncomeEntries->take(3) as $income)
+                            <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="fw-semibold">Income · {{ $income->reference ?: $income->source }}</div>
+                                    <small class="text-muted">{{ $income->safe->name ?? 'N/A' }} · {{ optional($income->created_at)->translatedFormat('M d, Y h:i A') }}</small>
+                                </div>
+                                <span class="pill success">{{ $currencySymbol }}{{ number_format($income->amount, 2) }}</span>
+                            </div>
+                        @endforeach
+
+                        @forelse($recentOutcomeEntries->take(3) as $outcome)
+                            <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="fw-semibold">Outcome · {{ $outcome->description ?: ($outcome->reference ?: 'Cash out') }}</div>
+                                    <small class="text-muted">{{ $outcome->safe->name ?? 'N/A' }} · {{ optional($outcome->created_at)->translatedFormat('M d, Y h:i A') }}</small>
+                                </div>
+                                <span class="pill danger">{{ $currencySymbol }}{{ number_format($outcome->amount, 2) }}</span>
+                            </div>
+                        @endforeach
+
+                        @if($recentIncomeEntries->isEmpty() && $recentOutcomeEntries->isEmpty())
+                            <div class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                {{ __('No cash entries found') }}
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-7">
+                <div class="panel-card h-100">
+                    <div class="section-heading">
+                        <div>
+                            <h2 class="section-title mb-1"><i class="bi bi-exclamation-triangle text-warning"></i>{{ __('Low stock products') }}</h2>
+                            <p class="section-subtitle">{{ __('Items that need replenishing soon.') }}</p>
+                        </div>
+                        @feature('products')
+                        <a href="{{ route('products.index') }}" class="btn btn-sm btn-outline-secondary">{{ __('Inventory') }}</a>
+                        @endfeature
+                    </div>
+                    <div class="table-responsive d-none d-md-block">
+                        <table class="table align-middle low-stock-table">
+                            <thead>
+                                <tr>
+                                    <th>{{ __('Product') }}</th>
+                                    <th>{{ __('Stock') }}</th>
+                                    <th>{{ __('Alert') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($lowStockProducts as $product)
+                                    <tr>
+                                        <td>{{ $product->name }}</td>
+                                        <td>{{ $product->current_stock ?? 0 }}</td>
+                                        <td>
+                                            @if(($product->current_stock ?? 0) <= 0)
+                                                <span class="pill danger">{{ __('Out of stock') }}</span>
+                                            @elseif(($product->current_stock ?? 0) <= 10)
+                                                <span class="pill warning">{{ __('Low stock') }}</span>
+                                            @else
+                                                <span class="pill success">{{ __('Healthy') }}</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3">
+                                            <div class="empty-state">
+                                                <i class="bi bi-inbox"></i>
+                                                {{ __('No products available') }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Mobile friendly stacked list for Low Stock Products -->
+                    <div id="low-stock-mobile" class="d-block d-md-none">
+                        @forelse($lowStockProducts as $product)
+                            <div class="panel-card mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-semibold">{{ $product->name }}</div>
+                                        <small class="text-muted">Stock: {{ $product->current_stock ?? 0 }}</small>
+                                    </div>
+                                    <div>
+                                        @if(($product->current_stock ?? 0) <= 0)
+                                            <span class="pill danger">{{ __('Out of stock') }}</span>
+                                        @elseif(($product->current_stock ?? 0) <= 10)
+                                            <span class="pill warning">{{ __('Low stock') }}</span>
+                                        @else
+                                            <span class="pill success">{{ __('Healthy') }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                {{ __('No products available') }}
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-5">
+                <div class="panel-card h-100">
+                    <div class="section-heading">
+                        <div>
+                            <h2 class="section-title mb-1"><i class="bi bi-hdd-stack text-warning"></i>{{ __('Storage snapshot') }}</h2>
+                            <p class="section-subtitle">{{ __('Storage utilization and current load.') }}</p>
+                        </div>
+                        @feature('storages')
+                        <a href="{{ route('storages.index') }}" class="btn btn-sm btn-outline-secondary">{{ __('Storages') }}</a>
+                        @endfeature
+                    </div>
+                    <div class="list-group list-group-flush">
+                        @forelse($storageSnapshot as $storage)
+                            <div class="list-group-item px-0 py-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="fw-semibold">{{ $storage->name }}</div>
+                                    <span class="pill info">{{ number_format($storage->current_usage ?? 0, 2) }} used</span>
+                                </div>
+                                <div class="progress-line mb-2"><span style="width: {{ min(100, $storage->current_usage ?? 0) }}%;"></span></div>
+                                <small class="text-muted">Items: {{ $storage->items_count ?? 0 }} · Capacity: {{ number_format($storage->capacity ?? 0, 2) }}</small>
+                            </div>
+                        @empty
+                            <div class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                {{ __('No storages found') }}
+                            </div>
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -126,57 +1500,217 @@
 @endsection
 
 @section('js')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Sales Chart
-    const salesCtx = document.getElementById('salesChart')?.getContext('2d');
-    if (salesCtx) {
-        new Chart(salesCtx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [{
-                    label: '{{ __("messages.sales") ?? "Sales" }}',
-                    data: {{ json_encode($salesData ?? [0,0,0,0,0,0]) }},
-                    borderColor: '#ff8c00',
-                    backgroundColor: 'rgba(255, 140, 0, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    y: { beginAtZero: true }
-                }
-            }
-        });
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+        const root = document.getElementById('merchantDashboardRoot');
+        const analyticsUrl = root?.dataset.analyticsUrl;
+        const currencySymbol = @json($currencySymbol);
+        const serverMonths = @json($months);
+        const serverSalesData = @json($salesData);
+        const serverIncomeData = @json($incomeData);
+        const serverOutcomeData = @json($outcomeData);
+        const serverInventoryData = @json($inventoryData);
+        const serverStorageUsage = @json($storageUsage ?? 0);
 
-    // Inventory Chart
-    const inventoryCtx = document.getElementById('inventoryChart')?.getContext('2d');
-    if (inventoryCtx) {
-        new Chart(inventoryCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['{{ __("messages.in_stock") ?? "In Stock" }}', '{{ __("messages.low_stock") ?? "Low Stock" }}'],
-                datasets: [{
-                    data: {{ json_encode($inventoryData ?? [70, 30]) }},
-                    backgroundColor: ['#27ae60', '#ff8c00'],
-                    borderColor: ['#fff', '#fff'],
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: 'bottom' }
-                }
+        const formatMoney = (value) => `${currencySymbol}${Number(value || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        const formatInt = (value) => Number(value || 0).toLocaleString();
+
+        const applyMobileTweaks = () => {
+            const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+            const subtitle = document.querySelector('.dashboard-subtitle');
+            if (subtitle) {
+                subtitle.style.display = isMobile ? 'none' : '';
             }
-        });
-    }
+
+            document.querySelectorAll('.table-responsive').forEach((wrapper) => {
+                wrapper.style.overflowX = isMobile ? 'hidden' : '';
+            });
+
+            document.querySelectorAll('.recent-sales-table').forEach((table) => {
+                table.style.width = isMobile ? '100%' : '';
+                table.style.minWidth = isMobile ? '0' : '';
+                table.style.tableLayout = isMobile ? 'fixed' : '';
+                const secondHeader = table.querySelector('thead th:nth-child(2)');
+                const secondCells = table.querySelectorAll('tbody td:nth-child(2)');
+                if (secondHeader) secondHeader.style.display = isMobile ? 'none' : '';
+                secondCells.forEach((cell) => { cell.style.display = isMobile ? 'none' : ''; });
+            });
+
+            document.querySelectorAll('.low-stock-table').forEach((table) => {
+                table.style.width = isMobile ? '100%' : '';
+                table.style.minWidth = isMobile ? '0' : '';
+                table.style.tableLayout = isMobile ? 'fixed' : '';
+                const thirdHeader = table.querySelector('thead th:nth-child(3)');
+                const thirdCells = table.querySelectorAll('tbody td:nth-child(3)');
+                if (thirdHeader) thirdHeader.style.display = isMobile ? 'none' : '';
+                thirdCells.forEach((cell) => { cell.style.display = isMobile ? 'none' : ''; });
+            });
+        };
+
+        applyMobileTweaks();
+        window.addEventListener('resize', applyMobileTweaks);
+
+        const salesTrendCtx = document.getElementById('salesTrendChart')?.getContext('2d');
+        const cashFlowCtx = document.getElementById('cashFlowChart')?.getContext('2d');
+        const inventoryCtx = document.getElementById('inventoryChart')?.getContext('2d');
+        const storageCtx = document.getElementById('storageChart')?.getContext('2d');
+
+        let salesTrendChart = null;
+        let cashFlowChart = null;
+        let inventoryChart = null;
+        let storageChart = null;
+
+        if (salesTrendCtx) {
+            salesTrendChart = new Chart(salesTrendCtx, {
+                type: 'line',
+                data: {
+                    labels: serverMonths,
+                    datasets: [{
+                        label: 'Sales',
+                        data: serverSalesData,
+                        borderColor: '#ff8c00',
+                        backgroundColor: 'rgba(255, 140, 0, 0.12)',
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        if (cashFlowCtx) {
+            cashFlowChart = new Chart(cashFlowCtx, {
+                type: 'bar',
+                data: {
+                    labels: serverMonths,
+                    datasets: [
+                        { label: 'Income', data: serverIncomeData, backgroundColor: 'rgba(16, 185, 129, 0.8)', borderRadius: 10 },
+                        { label: 'Outcome', data: serverOutcomeData, backgroundColor: 'rgba(239, 68, 68, 0.8)', borderRadius: 10 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        if (inventoryCtx) {
+            inventoryChart = new Chart(inventoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['In Stock', 'Low/Out Stock'],
+                    datasets: [{
+                        data: serverInventoryData,
+                        backgroundColor: ['#10b981', '#ff8c00'],
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+
+        if (storageCtx) {
+            storageChart = new Chart(storageCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Usage', 'Free Space'],
+                    datasets: [{
+                        label: 'Storage %',
+                        data: [serverStorageUsage || 0, Math.max(0, 100 - (serverStorageUsage || 0))],
+                        backgroundColor: ['#3b82f6', '#e5e7eb'],
+                        borderRadius: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, max: 100 } }
+                }
+            });
+        }
+
+        if (!analyticsUrl) {
+            return;
+        }
+
+        fetch(analyticsUrl, { headers: { Accept: 'application/json' } })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Analytics request failed with HTTP ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(payload => {
+                if (!payload.success) return;
+
+                const summary = payload.summary || {};
+                const setText = (id, value) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = value;
+                };
+
+                setText('hero-total-sales', formatMoney(summary.total_sales || 0));
+                setText('hero-safe-balance', formatMoney(summary.safe_balance || 0));
+                setText('hero-total-products', formatInt(summary.total_products || 0));
+                setText('hero-low-stock', formatInt(summary.low_stock_count || 0));
+                setText('metric-total-products', formatInt(summary.total_products || 0));
+                setText('metric-low-stock-count', formatInt(summary.low_stock_count || 0));
+                setText('metric-total-sales', formatMoney(summary.total_sales || 0));
+                setText('metric-sales-count', formatInt(summary.sales_count || 0));
+                setText('metric-total-employees', formatInt(summary.total_employees || 0));
+                setText('metric-pending-commissions', formatInt(summary.pending_commissions || 0));
+                setText('metric-storage-usage', `${Number(summary.storage_usage || 0).toFixed(2)}%`);
+                setText('metric-safe-balance', formatMoney(summary.safe_balance || 0));
+                setText('metric-safe-income', formatMoney(summary.safe_income_total || 0));
+                setText('metric-safe-outcome', formatMoney(summary.safe_outcome_total || 0));
+
+                const charts = payload.charts || {};
+                const months = charts.months || [];
+
+                if (salesTrendChart && months.length) {
+                    salesTrendChart.data.labels = months;
+                    salesTrendChart.data.datasets[0].data = charts.sales || [];
+                    salesTrendChart.update();
+                }
+
+                if (cashFlowChart && months.length) {
+                    cashFlowChart.data.labels = months;
+                    cashFlowChart.data.datasets[0].data = charts.income || [];
+                    cashFlowChart.data.datasets[1].data = charts.outcome || [];
+                    cashFlowChart.update();
+                }
+
+                if (inventoryChart && Array.isArray(charts.inventory) && charts.inventory.length) {
+                    inventoryChart.data.datasets[0].data = charts.inventory;
+                    inventoryChart.update();
+                }
+
+                if (storageChart) {
+                    const storageUsage = Number(summary.storage_usage || 0);
+                    storageChart.data.datasets[0].data = [storageUsage, Math.max(0, 100 - storageUsage)];
+                    storageChart.update();
+                }
+            })
+            .catch((error) => {
+                console.error('Dashboard analytics failed to load:', error);
+            });
+    });
 </script>
 @endsection

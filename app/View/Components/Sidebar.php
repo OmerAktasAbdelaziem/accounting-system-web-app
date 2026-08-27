@@ -21,20 +21,19 @@ class Sidebar extends Component
         if ($this->isSuperAdmin) {
             $this->menu = [
                 'main' => [
-                    ['route' => 'super-admin.dashboard', 'icon' => 'bi-speedometer2', 'label' => 'Dashboard'],
+                    ['route' => 'super-admin.dashboard', 'icon' => 'bi-speedometer2', 'label' => 'messages.live_dashboard'],
                 ],
                 'reports' => [],
                 'systems' => [],
                 'admin' => [
-                    ['route' => 'super-admin.users.index', 'icon' => 'bi-people', 'label' => 'System Users'],
-                    ['route' => 'super-admin.merchants.index', 'icon' => 'bi-building', 'label' => 'Merchants'],
-                    ['route' => 'super-admin.packages.index', 'icon' => 'bi-box-seam', 'label' => 'Packages'],
-                    ['route' => 'super-admin.subscriptions.index', 'icon' => 'bi-bookmark-check', 'label' => 'Subscriptions'],
-                    ['route' => 'super-admin.feature-access.index', 'icon' => 'bi-toggles2', 'label' => 'Feature Access'],
-                    ['route' => 'super-admin.vat-rates.index', 'icon' => 'bi-percent', 'label' => 'VAT Rates'],
-                    ['route' => 'profile', 'icon' => 'bi-person', 'label' => 'Profile'],
-                    ['route' => 'settings.index', 'icon' => 'bi-gear', 'label' => 'Settings'],
-                    ['route' => 'audit-logs.index', 'icon' => 'bi-journal-text', 'label' => 'Audit Logs'],
+                    ['route' => 'super-admin.users.index', 'icon' => 'bi-people', 'label' => 'messages.system_users', 'feature' => 'user_management'],
+                    ['route' => 'roles.index', 'icon' => 'bi-shield-lock', 'label' => 'messages.roles_management', 'feature' => 'roles_management'],
+                    ['route' => 'super-admin.feature-access.index', 'icon' => 'bi-sliders', 'label' => 'messages.feature_access', 'feature' => 'permissions_management'],
+                    ['route' => 'super-admin.merchants.index', 'icon' => 'bi-building', 'label' => 'messages.merchants', 'feature' => 'merchants'],
+                    ['route' => 'super-admin.packages.index', 'icon' => 'bi-box-seam', 'label' => 'messages.packages', 'feature' => 'packages'],
+                    ['route' => 'super-admin.subscriptions.index', 'icon' => 'bi-bookmark-check', 'label' => 'messages.subscriptions', 'feature' => 'subscriptions'],
+                    ['route' => 'super-admin.vat-rates.index', 'icon' => 'bi-percent', 'label' => 'messages.vat_rates', 'feature' => 'vat_rates'],
+                    ['route' => 'audit-logs.index', 'icon' => 'bi-journal-text', 'label' => 'messages.audit_logs', 'feature' => 'audit_logs'],
                 ],
             ];
 
@@ -43,61 +42,62 @@ class Sidebar extends Component
 
         // Build a clear, predictable menu structure covering requested sections
         $main = [
-            ['route' => 'system.dashboard', 'icon' => 'bi-speedometer2', 'label' => 'Dashboard'],
-            ['route' => 'products.index', 'icon' => 'bi-box-seam', 'label' => 'Products', 'feature' => 'products'],
-            ['route' => 'categories.index', 'icon' => 'bi-tags', 'label' => 'Categories', 'feature' => 'categories'],
-            ['route' => 'employees.index', 'icon' => 'bi-people', 'label' => 'Employees', 'feature' => 'employees'],
+            ['route' => 'system.dashboard', 'icon' => 'bi-speedometer2', 'label' => 'messages.dashboard', 'feature' => 'dashboard', 'permission' => 'view_reports'],
+            ['route' => 'products.index', 'icon' => 'bi-box-seam', 'label' => 'messages.products', 'feature' => 'products', 'permission' => 'view_product'],
+            ['route' => 'categories.index', 'icon' => 'bi-tags', 'label' => 'messages.categories', 'feature' => 'categories', 'permission' => 'view_category'],
+            ['route' => 'employees.index', 'icon' => 'bi-people', 'label' => 'messages.employees', 'feature' => 'employees', 'permission' => 'view_user'],
+            ['route' => 'sales.index', 'icon' => 'bi-cash-coin', 'label' => 'messages.sales', 'feature' => 'sales', 'permission' => 'view_sales'],
         ];
 
         $suppliers = [
-            ['route' => 'suppliers.index', 'icon' => 'bi-truck', 'label' => 'Suppliers', 'feature' => 'suppliers'],
-            ['route' => 'invoices.index', 'icon' => 'bi-receipt', 'label' => 'Invoices', 'feature' => 'invoicing'],
-            ['route' => 'payroll.index', 'icon' => 'bi-wallet2', 'label' => 'Payroll', 'feature' => 'payroll'],
-            ['route' => 'branches.index', 'icon' => 'bi-diagram-3', 'label' => 'Branches', 'feature' => 'branches'],
+            ['route' => 'suppliers.index', 'icon' => 'bi-truck', 'label' => 'messages.suppliers', 'feature' => 'suppliers', 'permission' => 'view_supplier'],
+            ['route' => 'invoices.index', 'icon' => 'bi-receipt', 'label' => 'messages.invoices', 'feature' => 'invoicing', 'permission' => 'view_invoice'],
+            ['route' => 'payroll.index', 'icon' => 'bi-wallet2', 'label' => 'messages.payrolls', 'feature' => 'payroll', 'permission' => 'view_payroll'],
+            ['route' => 'branches.index', 'icon' => 'bi-diagram-3', 'label' => 'messages.branches', 'feature' => 'branches', 'permission' => 'view_branch'],
         ];
 
         $reports = [
-            ['route' => 'reports.sales', 'icon' => 'bi-graph-up', 'label' => 'Sales Report', 'feature' => 'sales_report'],
-            ['route' => 'reports.inventory', 'icon' => 'bi-boxes', 'label' => 'Inventory Report', 'feature' => 'inventory_report'],
-            ['route' => 'reports.financial', 'icon' => 'bi-currency-dollar', 'label' => 'Financial Report', 'feature' => 'financial_report'],
+            ['route' => 'reports.sales', 'icon' => 'bi-graph-up', 'label' => 'messages.sales_report', 'feature' => 'sales_report', 'permission' => 'view_reports'],
+            ['route' => 'reports.inventory', 'icon' => 'bi-boxes', 'label' => 'messages.inventory_report', 'feature' => 'inventory_report', 'permission' => 'view_inventory'],
+            ['route' => 'reports.financial', 'icon' => 'bi-currency-dollar', 'label' => 'messages.financial_report', 'feature' => 'financial_report', 'permission' => 'view_reports'],
         ];
 
         $systems = [
-            ['route' => 'commissions.index', 'icon' => 'bi-percent', 'label' => 'Commissions', 'feature' => 'commissions'],
-            ['route' => 'storages.index', 'icon' => 'bi-box-seam', 'label' => 'Storages', 'feature' => 'storages'],
-            ['route' => 'safes.index', 'icon' => 'bi-safe', 'label' => 'Safes', 'feature' => 'safes'],
+            ['route' => 'commissions.index', 'icon' => 'bi-percent', 'label' => 'messages.commissions', 'feature' => 'commissions'],
+            ['route' => 'storages.index', 'icon' => 'bi-box-seam', 'label' => 'messages.storages', 'feature' => 'storages'],
+            ['route' => 'safes.index', 'icon' => 'bi-safe', 'label' => 'messages.safes', 'feature' => 'safes'],
         ];
 
         $admin = [];
         if ($this->isAdmin) {
             $admin = [
-                ['route' => 'profile', 'icon' => 'bi-person', 'label' => 'Profile'],
-                ['route' => 'settings.index', 'icon' => 'bi-gear', 'label' => 'Settings'],
-                ['route' => 'roles.index', 'icon' => 'bi-shield-alt', 'label' => 'Roles Management'],
-                ['route' => 'audit-logs.index', 'icon' => 'bi-journal-text', 'label' => 'Audit Logs'],
+                ['route' => 'audit-logs.index', 'icon' => 'bi-journal-text', 'label' => 'Audit Logs', 'feature' => 'audit_logs'],
             ];
         }
 
         // Filter items by feature availability (helper-based), but allow local overrides
-        $filter = function ($items) {
+        $filter = function ($items) use ($user) {
             return array_values(array_filter($items, function ($it) {
                 if (app()->isLocal() && request()->has('debug_menu_all')) {
                     return true;
                 }
-                if (! isset($it['feature'])) return true;
-                if (function_exists('hasFeature')) {
-                    return hasFeature($it['feature']);
+                $feature = $it['feature'] ?? null;
+                $permission = $it['permission'] ?? null;
+
+                if (!$feature && !$permission) {
+                    return true;
                 }
-                return true;
+
+                return auth()->user()?->canViewMenuItem($feature, $permission) ?? false;
             }));
         };
 
         $this->menu = [
             'main' => $filter($main),
             'customers' => $filter($suppliers),
-            'reports' => $filter($reports),
             'systems' => $filter($systems),
-            'admin' => $admin,
+            'reports' => $filter($reports),
+            'admin' => $filter($admin),
         ];
 
         // Ensure labels are strings to prevent Blade escaping errors

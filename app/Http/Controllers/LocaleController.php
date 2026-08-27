@@ -8,9 +8,12 @@ class LocaleController extends Controller
 {
     public function switch($locale)
     {
-        if (in_array($locale, ['en', 'ar'], true)) {
+        if (in_array($locale, ['en', 'ar', 'tr'], true)) {
             session(['locale' => $locale]);
             app()->setLocale($locale);
+            app('translator')->setFallback($locale);
+        } else {
+            $locale = 'en';
         }
 
         $targetUrl = url()->previous();

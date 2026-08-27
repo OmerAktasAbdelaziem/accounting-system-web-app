@@ -1,22 +1,24 @@
-<div class="component-sidebar" style="overflow-y:auto; overflow-x:hidden; max-height:calc(100vh - 140px); display:flex; flex-direction:column; gap:8px;">
+<div class="component-sidebar">
     <style>
-        .component-sidebar .sidebar-menu a { display:flex; gap:12px; align-items:center; width:100%; padding:8px; color:var(--primary-black); text-decoration:none; border-radius:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-        .component-sidebar .sidebar-menu a span { display:inline-block; max-width:180px; overflow:hidden; text-overflow:ellipsis; }
-        .component-sidebar .sidebar-section { margin-top:8px; }
-        .component-sidebar .sidebar-title { font-weight:800; font-size:12px; color:#666; padding:6px 0; text-transform:uppercase; }
-        .component-sidebar .sidebar-logout { margin-top:auto; padding-top:10px; }
-        .component-sidebar .sidebar-logout-link { display:flex; align-items:center; gap:8px; padding:10px; color:#c33; text-decoration:none; background:transparent; border-radius:6px; }
-        .component-sidebar .sidebar-menu li { list-style:none; }
-        .component-sidebar .sidebar-menu a.roles-management { position: relative; overflow: hidden; padding-left: 38px; }
-        .component-sidebar .sidebar-menu a .roles-bg-icon {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 28px;
-            line-height: 1;
-            color: rgba(0, 0, 0, 0.15);
-            pointer-events: none;
+        /* Hide mobile-only header by default; show only on small screens */
+        .component-sidebar .sidebar-mobile-head { display: none; }
+        /* Keep component CSS mobile-only to avoid overriding desktop sidebar styles */
+        @media (max-width: 992px) {
+            .component-sidebar .sidebar-mobile-head { display:flex; }
+            .component-sidebar { color:#f5f3ee; overflow-y:auto; overflow-x:hidden; height:100%; max-height:none; display:flex; flex-direction:column; gap:8px; padding:10px; border-radius:20px; background: linear-gradient(180deg, #23211d 0%, #191917 100%); }
+            .component-sidebar .sidebar-mobile-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding: 4px 4px 10px; margin-bottom: 2px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+            .component-sidebar .sidebar-mobile-title { font-size: 14px; font-weight: 900; letter-spacing: 0.02em; color: #fff; }
+            .component-sidebar .sidebar-mobile-close { border: 1px solid rgba(255,140,0,0.22); background: rgba(255,140,0,0.10); color: #ff8c00; width: 38px; height: 38px; border-radius: 12px; display:inline-flex; align-items:center; justify-content:center; }
+
+            .component-sidebar .sidebar-menu a { display:flex; gap:12px; align-items:center; width:100%; padding:12px; color:#f5f3ee; text-decoration:none; border-radius:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); }
+            .component-sidebar .sidebar-menu a span { display:inline-block; max-width:calc(86vw - 110px); overflow:hidden; text-overflow:ellipsis; }
+            .component-sidebar .sidebar-menu a:hover { background:rgba(255,255,255,0.06); }
+            .component-sidebar .sidebar-menu a.active { background:linear-gradient(135deg, rgba(255,140,0,0.24), rgba(20,184,166,0.18)); border-color:rgba(255,140,0,0.24); }
+            .component-sidebar .sidebar-section { margin-top:8px; padding:10px; border:1px solid rgba(255,255,255,0.06); border-radius:18px; background:rgba(255,255,255,0.02); }
+            .component-sidebar .sidebar-title { font-weight:800; font-size:12px; color:rgba(245,243,238,0.72); padding:6px 4px 10px; text-transform:uppercase; letter-spacing:0.08em; }
+            .component-sidebar .sidebar-logout { margin-top:auto; padding-top:10px; }
+            .component-sidebar .sidebar-logout-link { display:flex; align-items:center; gap:8px; padding:12px; color:#ffd9b0; text-decoration:none; background:rgba(255,140,0,0.08); border-radius:14px; border:1px solid rgba(255,140,0,0.16); }
+            .component-sidebar .sidebar-menu li { list-style:none; }
         }
     </style>
 
@@ -75,7 +77,45 @@
             return $rawLabel;
         };
     @endphp
-    @if(!empty($menu['main']))
+
+    @php
+        $currentUser = auth()->user();
+        $branchScope = $currentUser ? $currentUser->branchAccessSummary() : null;
+    @endphp
+
+    <div class="sidebar-mobile-head">
+        <div class="sidebar-mobile-title">{{ __('messages.menu') }}</div>
+        <button type="button" class="sidebar-mobile-close" aria-label="Close sidebar" onclick="return window.__toggleMobileSidebar(event)">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+
+    @if($branchScope)
+        <div class="sidebar-section">
+            <div class="sidebar-title">{{ __('messages.branch_scope') }}</div>
+            <div class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill text-white" style="background: linear-gradient(135deg, rgba(255,140,0,0.92), rgba(255,179,71,0.92)); box-shadow: 0 10px 22px rgba(255,140,0,0.18);">
+                <i class="bi bi-diagram-3-fill"></i>
+                <span class="fw-semibold">{{ $resolveLabel($branchScope['label'] ?? '') }}</span>
+            </div>
+        </div>
+    @endif
+
+    @if($isSuperAdmin)
+        <div class="sidebar-section">
+            <div class="sidebar-title">{{ __('messages.dashboard_tools') }}</div>
+            <ul class="sidebar-menu main-menu">
+                <li>
+                    <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>{{ __('messages.live_dashboard') }}</span>
+                    </a>
+                </li>
+                {{-- Removed Feature Access and New Merchant per admin request --}}
+            </ul>
+        </div>
+    @endif
+
+    @if(!empty($menu['main']) && !$isSuperAdmin)
         <ul class="sidebar-menu main-menu">
             @foreach($menu['main'] as $item)
                 @php
@@ -92,7 +132,7 @@
                             <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
                         @endif
                         <i class="bi {{ $icon }}"></i>
-                        <span>{{ $label }}</span>
+                        <span>{{ is_array($label) ? json_encode($label) : $label }}</span>
                     </a>
                 </li>
             @endforeach
@@ -101,7 +141,7 @@
 
     @if(!empty($menu['customers']))
         <div class="sidebar-section">
-            <div class="sidebar-title">Operations</div>
+            <div class="sidebar-title">{{ __('messages.operations') }}</div>
             <ul class="sidebar-menu customers-menu">
                 @foreach($menu['customers'] as $item)
                     @php
@@ -110,42 +150,11 @@
                         $routeName = is_string($item['route'] ?? null) ? $item['route'] : '#';
                         $icon = is_string($item['icon'] ?? null) ? $item['icon'] : 'bi-circle';
                         $active = $routeName && request()->routeIs(str_replace('.index','*',$routeName));
-                        $extraClass = trim($label === 'Roles Management' ? 'roles-management' : '');
                     @endphp
                     <li>
-                        <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ trim(($active ? 'active' : '') . ' ' . $extraClass) }}">
-                            @if($label === 'Roles Management')
-                                <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
-                            @endif
+                        <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ $active ? 'active' : '' }}">
                             <i class="bi {{ $icon }}"></i>
-                            <span>{{ $label }}</span>
-                        </a>
-                    </li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    @if(!empty($menu['reports']))
-        <div class="sidebar-section">
-            <div class="sidebar-title">Reports Section</div>
-            <ul class="sidebar-menu reports-menu">
-                @foreach($menu['reports'] as $item)
-                    @php
-                        $label = $resolveLabel($item['label'] ?? '');
-                        if (is_array($label)) { $label = json_encode($label); }
-                        $routeName = is_string($item['route'] ?? null) ? $item['route'] : '#';
-                        $icon = is_string($item['icon'] ?? null) ? $item['icon'] : 'bi-circle';
-                        $active = $routeName && request()->routeIs(str_replace('.index','*',$routeName));
-                        $extraClass = trim($label === 'Roles Management' ? 'roles-management' : '');
-                    @endphp
-                    <li>
-                        <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ trim(($active ? 'active' : '') . ' ' . $extraClass) }}">
-                            @if($label === 'Roles Management')
-                                <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
-                            @endif
-                            <i class="bi {{ $icon }}"></i>
-                            <span>{{ $label }}</span>
+                            <span>{{ is_array($label) ? json_encode($label) : $label }}</span>
                         </a>
                     </li>
                 @endforeach
@@ -155,7 +164,7 @@
 
     @if(!empty($menu['systems']))
         <div class="sidebar-section">
-            <div class="sidebar-title">Systems Section</div>
+            <div class="sidebar-title">{{ __('messages.systems_section') }}</div>
             <ul class="sidebar-menu systems-menu">
                 @foreach($menu['systems'] as $item)
                     @php
@@ -164,15 +173,34 @@
                         $routeName = is_string($item['route'] ?? null) ? $item['route'] : '#';
                         $icon = is_string($item['icon'] ?? null) ? $item['icon'] : 'bi-circle';
                         $active = $routeName && request()->routeIs(str_replace('.index','*',$routeName));
-                        $extraClass = trim($label === 'Roles Management' ? 'roles-management' : '');
                     @endphp
                     <li>
-                        <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ trim(($active ? 'active' : '') . ' ' . $extraClass) }}">
-                            @if($label === 'Roles Management')
-                                <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
-                            @endif
+                        <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ $active ? 'active' : '' }}">
                             <i class="bi {{ $icon }}"></i>
-                            <span>{{ $label }}</span>
+                            <span>{{ is_array($label) ? json_encode($label) : $label }}</span>
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    @if(!empty($menu['reports']))
+        <div class="sidebar-section">
+            <div class="sidebar-title">{{ __('messages.reports_section') }}</div>
+            <ul class="sidebar-menu reports-menu">
+                @foreach($menu['reports'] as $item)
+                    @php
+                        $label = $resolveLabel($item['label'] ?? '');
+                        if (is_array($label)) { $label = json_encode($label); }
+                        $routeName = is_string($item['route'] ?? null) ? $item['route'] : '#';
+                        $icon = is_string($item['icon'] ?? null) ? $item['icon'] : 'bi-circle';
+                        $active = $routeName && request()->routeIs(str_replace('.index','*',$routeName));
+                    @endphp
+                    <li>
+                        <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ $active ? 'active' : '' }}">
+                            <i class="bi {{ $icon }}"></i>
+                            <span>{{ is_array($label) ? json_encode($label) : $label }}</span>
                         </a>
                     </li>
                 @endforeach
@@ -182,7 +210,7 @@
 
     @if(!empty($menu['admin']))
         <div class="sidebar-section">
-            <div class="sidebar-title">Admin User Section</div>
+            <div class="sidebar-title">{{ __('messages.admin_user_section') }}</div>
             <ul class="sidebar-menu admin-menu">
                 @foreach($menu['admin'] as $item)
                     @php
@@ -191,15 +219,11 @@
                         $routeName = is_string($item['route'] ?? null) ? $item['route'] : '#';
                         $icon = is_string($item['icon'] ?? null) ? $item['icon'] : 'bi-circle';
                         $active = $routeName && request()->routeIs(str_replace('.index','*',$routeName));
-                        $extraClass = trim($label === 'Roles Management' ? 'roles-management' : '');
                     @endphp
                     <li>
-                        <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ trim(($active ? 'active' : '') . ' ' . $extraClass) }}">
-                            @if($label === 'Roles Management')
-                                <i class="bi bi-shield-lock-fill roles-bg-icon" aria-hidden="true"></i>
-                            @endif
+                        <a href="{{ $routeName ? route($routeName) : '#' }}" class="{{ $active ? 'active' : '' }}">
                             <i class="bi {{ $icon }}"></i>
-                            <span>{{ $label }}</span>
+                            <span>{{ is_array($label) ? json_encode($label) : $label }}</span>
                         </a>
                     </li>
                 @endforeach
@@ -208,9 +232,9 @@
     @endif
 
     <div class="sidebar-logout">
-        <a class="sidebar-logout-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();"><i class="bi bi-box-arrow-left"></i> <span>{{ __('messages.logout') }}</span></a>
-        <form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
+        <form action="{{ route('logout') }}" method="POST" style="display:inline;">
             @csrf
+            <button type="submit" class="sidebar-logout-link btn btn-link p-0 m-0" style="text-decoration:none; color:inherit;"><i class="bi bi-box-arrow-left"></i> <span>{{ __('messages.logout') }}</span></button>
         </form>
     </div>
 </div>

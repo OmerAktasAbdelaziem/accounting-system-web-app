@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Products;
 
 use App\Http\Controllers\Controller;
+use App\Models\Branch;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -15,31 +16,42 @@ class ProductController extends Controller
     {
         $products = Product::with('category')->paginate(20);
         $categories = Category::all();
-        return view('products.index', compact('products', 'categories'));
+        $stats = [
+            'total_products' => Product::count(),
+            'active_products' => Product::where('is_active', true)->count(),
+            'low_stock_products' => Product::where('current_stock', '<=', 0)->count(),
+            'categories_count' => Category::count(),
+            'avg_price' => (float) Product::avg('selling_price'),
+        ];
+
+        return view('products.index', compact('products', 'categories', 'stats'));
     }
 
     public function create()
     {
         $product = null;
         $categories = Category::all();
-        return view('products.form', compact('product', 'categories'));
+        $branches = Branch::orderBy('name')->get();
+        $selectedBranchIds = request()->input('branch_ids', []);
+        return view('products.form', compact('product', 'categories', 'branches', 'selectedBranchIds'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'sku' => 'required|string|unique:products',
             'category_id' => 'required|exists:categories,id',
             'selling_price' => 'required|numeric|min:0',
             'current_stock' => 'required|integer|min:0',
-            'min_stock' => 'required|integer|min:0',
             'purchase_price' => 'required|numeric|min:0',
             'description' => 'nullable|string',
             'is_active' => 'boolean',
+            'branch_ids' => 'nullable|array',
+            'branch_ids.*' => 'exists:branches,id',
         ]);
 
-        Product::create($validated);
+        $product = Product::create($validated);
+        $product->syncBranches($validated['branch_ids'] ?? []);
         return redirect()->route('products.index')->with('success', 'Product created successfully!');
     }
 
@@ -51,24 +63,27 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::all();
-        return view('products.form', compact('product', 'categories'));
+        $branches = Branch::orderBy('name')->get();
+        $selectedBranchIds = $product->branches()->pluck('branches.id')->all();
+        return view('products.form', compact('product', 'categories', 'branches', 'selectedBranchIds'));
     }
 
     public function update(Request $request, Product $product)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'sku' => 'required|string|unique:products,sku,' . $product->id,
             'category_id' => 'required|exists:categories,id',
             'selling_price' => 'required|numeric|min:0',
             'current_stock' => 'required|integer|min:0',
-            'min_stock' => 'required|integer|min:0',
             'purchase_price' => 'required|numeric|min:0',
             'description' => 'nullable|string',
             'is_active' => 'boolean',
+            'branch_ids' => 'nullable|array',
+            'branch_ids.*' => 'exists:branches,id',
         ]);
 
         $product->update($validated);
+        $product->syncBranches($validated['branch_ids'] ?? []);
         return redirect()->route('products.index')->with('success', 'Product updated successfully!');
     }
 
@@ -94,8 +109,10 @@ class ProductController extends Controller
         return view('products._table', compact('products'));
     }
 
-    public function export()
+    public function export(Request $request)
     {
+        $this->authorizeDownloads($request);
+
         return Excel::download(new ProductsExport, 'products.xlsx');
     }
 

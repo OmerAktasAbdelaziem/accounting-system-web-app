@@ -28,6 +28,7 @@
                         <th>{{ __('roles.role_name') }}</th>
                         <th>{{ __('roles.description') }}</th>
                         <th>{{ __('roles.permissions') }}</th>
+                        <th>{{ __('Branches') }}</th>
                         <th>{{ __('roles.users_count') }}</th>
                         <th style="width: 150px;">{{ __('actions.action') }}</th>
                     </tr>
@@ -50,7 +51,13 @@
                                 </small>
                             </td>
                             <td>
-                                <span class="badge bg-info">{{ $role->users->count() }}</span>
+                                @php $branchCount = $role->branchAccesses->count(); @endphp
+                                <small class="text-muted">
+                                    {{ $branchCount > 0 ? $branchCount . ' branches allowed' : 'All branches' }}
+                                </small>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ $role->users_count ?? $role->users->count() }}</span>
                             </td>
                             <td>
                                 <div class="action-buttons btn-group" role="group" aria-label="{{ __('actions.action') }}">
@@ -61,9 +68,9 @@
 
                                     @if (!in_array($role->name, ['Admin', 'System']))
                                         <form action="{{ route('roles.destroy', $role) }}" method="POST" style="display: inline;" onclick="return confirm('{{ __('roles.confirm_delete') }}');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger" title="{{ __('actions.delete') }}" {{ $role->users()->exists() ? 'disabled' : '' }}>
+                                            {{ __('@csrf
+                                            @method(\'DELETE\')') }}
+                                            <button type="submit" class="btn btn-sm btn-danger" title="{{ __('actions.delete') }}" {{ $role->{{ __('users()->exists() ? \'disabled\' : \'\' }}>') }}
                                                 <i class="fas fa-trash" aria-hidden="true"></i>
                                                 <span class="visually-hidden">{{ __('actions.delete') }}</span>
                                             </button>
@@ -72,14 +79,14 @@
                                 </div>
                             </td>
                         </tr>
-                    @empty
+                    {{ __('@empty') }}
                         <tr>
-                            <td colspan="5" class="text-center text-muted py-4">
+                            <td colspan="6" class="text-center text-muted py-4">
                                 <i class="fas fa-inbox fa-2x mb-2"></i>
                                 <p>{{ __('roles.no_roles_found') }}</p>
                             </td>
                         </tr>
-                    @endforelse
+                    {{ __('@endforelse') }}
                 </tbody>
             </table>
         </div>

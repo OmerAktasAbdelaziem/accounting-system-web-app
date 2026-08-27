@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Employees;
 
 use App\Http\Controllers\Controller;
+use App\Models\Branch;
 use App\Models\Employee;
 use App\Models\EmployeeSale;
 use App\Models\EmployeeCommission;
+use App\Models\Commission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -29,7 +31,9 @@ class EmployeeController extends Controller
     public function create()
     {
         $employee = null;
-        return view('employees.form', compact('employee'));
+        $branches = Branch::orderBy('name')->get();
+        $selectedBranchIds = request()->input('branch_ids', []);
+        return view('employees.form', compact('employee', 'branches', 'selectedBranchIds'));
     }
 
     public function store(Request $request)
@@ -39,32 +43,49 @@ class EmployeeController extends Controller
             'position' => 'required|string',
             'base_salary' => 'required|numeric|min:0',
             'is_active' => 'boolean',
+            'branch_ids' => 'nullable|array',
+            'branch_ids.*' => 'exists:branches,id',
         ]);
 
         $validated['name_ar'] = $validated['name'];
         $validated['position_ar'] = $validated['position'];
-        $validated['address_ar'] = $validated['address'] ?? null;
+        $validated['address_ar'] = null;
         $validated['employee_code'] = $this->generateEmployeeCode();
+        $validated['branch_id'] = !empty($validated['branch_ids']) ? (int) $validated['branch_ids'][0] : null;
 
-        Employee::create($validated);
+        $employee = Employee::create($validated);
+        $employee->syncBranches($validated['branch_ids'] ?? []);
         return redirect()->route('employees.index')->with('success', 'Employee created successfully!');
     }
 
     public function show(Employee $employee)
     {
-        $totalSales = EmployeeSale::where('employee_id', $employee->id)->sum('total_amount');
-        $totalCommissions = EmployeeCommission::where('employee_id', $employee->id)->sum('commission_earned');
-        $recentSales = EmployeeSale::where('employee_id', $employee->id)->latest()->take(10)->get();
-        $recentCommissions = EmployeeCommission::where('employee_id', $employee->id)->latest()->take(10)->get();
-        $pendingCommissions = EmployeeCommission::where('employee_id', $employee->id)->where('status', 'pending')->count();
-        $paidCommissions = EmployeeCommission::where('employee_id', $employee->id)->where('paid_at', '!=', null)->count();
+        $employee->load('branches');
 
-        return view('employees.show', compact('employee', 'totalSales', 'totalCommissions', 'recentSales', 'recentCommissions', 'pendingCommissions', 'paidCommissions'));
+        // Fetch total sales from Commission table (sum of all sale_amount)
+        $totalSales = Commission::where('employee_id', $employee->id)->sum('sale_amount');
+        
+        // Fetch total commissions from Commission table
+        $totalCommissions = Commission::where('employee_id', $employee->id)->sum('commission_amount');
+        
+        // Fetch recent sales - from Commission records (each has sale_amount linked)
+        $recentSales = Commission::where('employee_id', $employee->id)
+            ->select('id', 'sale_amount', 'commission_date')
+            ->latest('commission_date')
+            ->take(10)
+            ->get();
+        
+        // Fetch recent commissions from Commission table (ordered by commission_date)
+        $recentCommissions = Commission::where('employee_id', $employee->id)->latest('commission_date')->take(10)->get();
+
+        return view('employees.show', compact('employee', 'totalSales', 'totalCommissions', 'recentSales', 'recentCommissions'));
     }
 
     public function edit(Employee $employee)
     {
-        return view('employees.form', compact('employee'));
+        $branches = Branch::orderBy('name')->get();
+        $selectedBranchIds = $employee->branches()->pluck('branches.id')->all();
+        return view('employees.form', compact('employee', 'branches', 'selectedBranchIds'));
     }
 
     public function update(Request $request, Employee $employee)
@@ -74,13 +95,17 @@ class EmployeeController extends Controller
             'position' => 'required|string',
             'base_salary' => 'required|numeric|min:0',
             'is_active' => 'boolean',
+            'branch_ids' => 'nullable|array',
+            'branch_ids.*' => 'exists:branches,id',
         ]);
 
         $validated['name_ar'] = $validated['name'];
         $validated['position_ar'] = $validated['position'];
-        $validated['address_ar'] = $validated['address'] ?? null;
+        $validated['address_ar'] = null;
+        $validated['branch_id'] = !empty($validated['branch_ids']) ? (int) $validated['branch_ids'][0] : null;
 
         $employee->update($validated);
+        $employee->syncBranches($validated['branch_ids'] ?? []);
         return redirect()->route('employees.index')->with('success', 'Employee updated successfully!');
     }
 
@@ -90,8 +115,10 @@ class EmployeeController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function export()
+    public function export(Request $request)
     {
+        $this->authorizeDownloads($request);
+
         $employees = Employee::all();
         // Generate Excel file
         return response()->json(['success' => true]);

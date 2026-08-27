@@ -30,6 +30,9 @@ use App\Policies\WarehousePolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Blade;
+use Carbon\Carbon;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -98,6 +101,46 @@ class AppServiceProvider extends ServiceProvider
         // Only force HTTPS in production environment
         if (app()->environment('production')) {
             \URL::forceScheme('https');
+        }
+
+        // Render pagination links using Bootstrap 5 markup
+        Paginator::useBootstrapFive();
+
+        // Blade helpers for feature checks
+        Blade::if('feature', function ($featureKey) {
+            return \App\Traits\ChecksFeatureAccess::hasFeatureAccess($featureKey);
+        });
+
+        Blade::if('featureAny', function ($keys) {
+            return \App\Traits\ChecksFeatureAccess::hasAnyFeatureAccess((array) $keys);
+        });
+
+        if (! function_exists('formatLocalizedDate')) {
+            function formatLocalizedDate($date, string $format = null, string $fallback = ''): string
+            {
+                if (empty($date)) {
+                    return $fallback;
+                }
+
+                if (! $date instanceof \Carbon\CarbonInterface) {
+                    try {
+                        $date = Carbon::parse($date);
+                    } catch (\Exception $exception) {
+                        return $fallback;
+                    }
+                }
+
+                $locale = app()->getLocale();
+                $date = $date->locale($locale);
+
+                $format = $format ?: Setting::get('date_format', 'Y-m-d');
+
+                if (str_contains($format, 'F') || str_contains($format, 'M') || str_contains($format, 'l') || str_contains($format, 'D') || str_contains($format, 'S')) {
+                    return $date->translatedFormat($format);
+                }
+
+                return $date->format($format);
+            }
         }
     }
 }
