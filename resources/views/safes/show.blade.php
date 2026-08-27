@@ -272,6 +272,13 @@
                             data-bs-target="#exportPdfModal"
                             data-export-type="income"
                             data-export-title="Income PDF Export">{{ __('Export PDF') }}</button>
+                        <button class="btn btn-info btn-sm"
+                            id="incomeExportExcelBtn"
+                            type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#exportExcelModal"
+                            data-export-type="income"
+                            data-export-title="Income Excel Export">{{ __('Export Excel') }}</button>
                         @endif
                     </div>
                     <div class="table-responsive" id="incomeTableWrapper" style="max-height: 320px; overflow-y: auto;">
@@ -350,6 +357,13 @@
                             data-bs-target="#exportPdfModal"
                             data-export-type="outcome"
                             data-export-title="Outcome PDF Export">{{ __('Export PDF') }}</button>
+                        <button class="btn btn-info btn-sm"
+                            id="outcomeExportExcelBtn"
+                            type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#exportExcelModal"
+                            data-export-type="outcome"
+                            data-export-title="Outcome Excel Export">{{ __('Export Excel') }}</button>
                         @endif
                     </div>
                     <div class="table-responsive" id="outcomeTableWrapper" style="max-height: 320px; overflow-y: auto;">
@@ -839,6 +853,41 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="exportExcelModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #1f2937, #111827); color: white;">
+                <h5 class="modal-title" id="exportExcelModalTitle"><i class="bi bi-file-earmark-spreadsheet"></i> {{ __('Excel Dışa Aktar') }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="exportExcelForm" method="GET" action="{{ route('safes.export-excel', $safe->id) }}">
+                <div class="modal-body">
+                    <input type="hidden" name="type" id="exportExcelType" value="income">
+                    <div class="alert alert-info">
+                        <strong>{{ __('Başlangıç ve Bitiş tarihi seçin') }}</strong> {{ __('(ör: 1 Mayıs - 31 Mayıs). Sistem tüm veriyi bu tarih aralığında indirecektir.') }}
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">{{ __('Başlangıç Tarihi') }} <span class="text-danger">*</span></label>
+                            <input type="date" name="from_date" id="exportExcelFromDate" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{{ __('Bitiş Tarihi') }} <span class="text-danger">*</span></label>
+                            <input type="date" name="to_date" id="exportExcelToDate" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('İptal') }}</button>
+                    <button type="submit" id="exportExcelSubmitBtn" class="btn btn-info">
+                        <i class="bi bi-download"></i> {{ __('Excel İndir') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endif
 
 <script>
@@ -1061,16 +1110,41 @@
         if (modalTo) modalTo.value = '';
     }
 
+    function syncExcelModal(button) {
+        const exportType = button.getAttribute('data-export-type') || 'income';
+        const title = button.getAttribute('data-export-title') || 'Excel Export';
+
+        const modalTitle = document.getElementById('exportExcelModalTitle');
+        const modalType = document.getElementById('exportExcelType');
+        const modalFrom = document.getElementById('exportExcelFromDate');
+        const modalTo = document.getElementById('exportExcelToDate');
+
+        if (modalTitle) modalTitle.innerHTML = '<i class="bi bi-file-earmark-spreadsheet"></i> ' + title;
+        if (modalType) modalType.value = exportType;
+        if (modalFrom) modalFrom.value = '';
+        if (modalTo) modalTo.value = '';
+    }
+
     // Income filters & export
     const incomeExportBtn = document.getElementById('incomeExportBtn');
     if (incomeExportBtn) incomeExportBtn.addEventListener('click', function () {
         syncExportModal(incomeExportBtn);
     });
 
+    const incomeExportExcelBtn = document.getElementById('incomeExportExcelBtn');
+    if (incomeExportExcelBtn) incomeExportExcelBtn.addEventListener('click', function () {
+        syncExcelModal(incomeExportExcelBtn);
+    });
+
     // Outcome filters & export
     const outcomeExportBtn = document.getElementById('outcomeExportBtn');
     if (outcomeExportBtn) outcomeExportBtn.addEventListener('click', function () {
         syncExportModal(outcomeExportBtn);
+    });
+
+    const outcomeExportExcelBtn = document.getElementById('outcomeExportExcelBtn');
+    if (outcomeExportExcelBtn) outcomeExportExcelBtn.addEventListener('click', function () {
+        syncExcelModal(outcomeExportExcelBtn);
     });
 
     const exportPdfForm = document.getElementById('exportPdfForm');
@@ -1137,6 +1211,74 @@
             } finally {
                 exportPdfSubmitBtn.disabled = false;
                 exportPdfSubmitBtn.innerHTML = '<i class="bi bi-download"></i> {{ __('PDF İndir') }}';
+            }
+        });
+    }
+
+    const exportExcelForm = document.getElementById('exportExcelForm');
+    const exportExcelSubmitBtn = document.getElementById('exportExcelSubmitBtn');
+
+    if (exportExcelForm && exportExcelSubmitBtn) {
+        exportExcelForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const fromDate = document.getElementById('exportExcelFromDate');
+            const toDate = document.getElementById('exportExcelToDate');
+
+            if (!fromDate.value || !toDate.value) {
+                alert('{{ __('Başlangıç ve Bitiş tarihi seçin') }}');
+                return;
+            }
+
+            const type = document.getElementById('exportExcelType').value;
+            const url = new URL('{{ route('safes.export-excel', $safe->id) }}', window.location.origin);
+            url.searchParams.append('type', type);
+            url.searchParams.append('from_date', fromDate.value);
+            url.searchParams.append('to_date', toDate.value);
+            url.searchParams.append('lang', '{{ app()->getLocale() }}');
+
+            try {
+                exportExcelSubmitBtn.disabled = true;
+                exportExcelSubmitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> {{ __('Downloading...') }}';
+
+                const response = await fetch(url.toString(), {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const blob = await response.blob();
+
+                if (blob.size === 0) {
+                    throw new Error('{{ __('Downloaded file is empty') }}');
+                }
+
+                const blobUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = url.searchParams.get('type') + '-' + fromDate.value + '-' + toDate.value + '.xlsx';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                setTimeout(() => {
+                    URL.revokeObjectURL(blobUrl);
+                }, 5000);
+
+                const modal = bootstrap.Modal.getInstance(document.getElementById('exportExcelModal'));
+                if (modal) modal.hide();
+
+            } catch (error) {
+                console.error('Export error:', error);
+                alert('{{ __('Download failed') }}: ' + error.message);
+            } finally {
+                exportExcelSubmitBtn.disabled = false;
+                exportExcelSubmitBtn.innerHTML = '<i class="bi bi-download"></i> {{ __('Excel İndir') }}';
             }
         });
     }

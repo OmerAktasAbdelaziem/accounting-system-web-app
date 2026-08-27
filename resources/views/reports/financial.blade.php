@@ -27,6 +27,17 @@
                 <i class="bi bi-file-pdf"></i> {{ __('PDF') }}
             </button>
         </form>
+        <form action="{{ route('reports.generate-pdf') }}" method="POST" class="d-inline ms-2">
+            @csrf
+            <input type="hidden" name="report" value="financial">
+            <input type="hidden" name="format" value="excel">
+            <input type="hidden" name="branch_id" value="{{ $branchId ?? request('branch_id') }}">
+            <input type="hidden" name="from_date" value="{{ $fromDate ?? request('from_date') }}">
+            <input type="hidden" name="to_date" value="{{ $toDate ?? request('to_date') }}">
+            <button type="submit" class="btn btn-info">
+                <i class="bi bi-file-earmark-spreadsheet"></i> {{ __('Excel') }}
+            </button>
+        </form>
         @endfeature
     </div>
 </div>

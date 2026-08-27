@@ -13,6 +13,7 @@ use App\Models\SafeOutcome;
 use App\Models\ChartOfAccount;
 use App\Models\JournalEntry;
 use App\Support\SimplePdf;
+use App\Support\SimpleExcel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -421,6 +422,55 @@ class PayrollController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="payslip-' . $payroll->id . '.pdf"',
+        ]);
+    }
+
+    public function downloadPayslipExcel(Request $request, Payroll $payroll)
+    {
+        $this->authorizeDownloads($request);
+
+        $payroll->loadMissing('employee.branches');
+        $commission = $payroll->employee
+            ? $this->calculateCommissionForEmployeePeriod($payroll->employee, (int) $payroll->month, (int) $payroll->year)
+            : (float) $payroll->commission;
+
+        $deductions = $payroll->employee
+            ? $this->calculateDeductionsForEmployeePeriod($payroll->employee, (int) $payroll->month, (int) $payroll->year)
+            : (float) $payroll->deductions;
+
+        $totals = $this->calculateGrossAndNet(
+            (float) $payroll->basic_salary,
+            (float) $commission,
+            (float) ($payroll->allowances ?? 0),
+            (float) $deductions
+        );
+
+        $headers = ['Description', 'Amount'];
+        $rows = [
+            ['Employee', $payroll->employee?->name ?? '-'],
+            ['Month/Year', $payroll->month . '/' . $payroll->year],
+            ['Basic Salary', number_format((float) $payroll->basic_salary, 2)],
+            ['Commission', number_format((float) $commission, 2)],
+            ['Allowances', number_format((float) $payroll->allowances, 2)],
+            ['Total Before Deductions', number_format((float) $totals['gross'], 2)],
+            ['Deductions', number_format((float) $deductions, 2)],
+            ['Net Salary', number_format((float) $totals['net'], 2)],
+        ];
+
+        $metadata = [
+            'Employee' => $payroll->employee?->name ?? '-',
+            'Period' => $payroll->month . '/' . $payroll->year,
+        ];
+
+        $excel = SimpleExcel::createFromTable('Payslip ' . ($payroll->employee?->name ?? 'Employee'), $headers, $rows, $metadata);
+
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
+        return response($excel, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="payslip-' . $payroll->id . '.xlsx"',
         ]);
     }
 }

@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\ChartOfAccount;
 use App\Models\JournalEntry;
 use App\Support\SimplePdf;
+use App\Support\SimpleExcel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -170,6 +171,47 @@ class InvoiceController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="' . $invoice->invoice_number . '.pdf"',
+        ]);
+    }
+
+    public function downloadExcel(Request $request, Invoice $invoice)
+    {
+        $this->authorizeDownloads($request);
+
+        $invoice->load('items.product');
+
+        $headers = ['Product', 'Quantity', 'Unit Price', 'Line Total'];
+        $rows = [];
+
+        foreach ($invoice->items as $item) {
+            $rows[] = [
+                $item->product?->name ?? 'Item ' . $item->id,
+                $item->quantity,
+                number_format((float) $item->unit_price, 2),
+                number_format((float) $item->line_total, 2),
+            ];
+        }
+
+        // Add totals as additional rows
+        $rows[] = ['', '', 'Sub Total', number_format((float) $invoice->sub_total, 2)];
+        $rows[] = ['', '', 'Tax', number_format((float) $invoice->tax, 2)];
+        $rows[] = ['', '', 'Total', number_format((float) $invoice->total, 2)];
+
+        $metadata = [
+            'Invoice Number' => $invoice->invoice_number,
+            'Customer' => $invoice->customer?->name ?? '-',
+            'Date' => $invoice->date ? $invoice->date->format('Y-m-d') : now()->toDateString(),
+        ];
+
+        $excel = SimpleExcel::createFromTable('Invoice ' . $invoice->invoice_number, $headers, $rows, $metadata);
+
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
+        return response($excel, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="' . $invoice->invoice_number . '.xlsx"',
         ]);
     }
 }

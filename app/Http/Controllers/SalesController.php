@@ -7,6 +7,7 @@ use App\Models\Employee;
 use App\Models\EmployeeSale;
 use App\Models\EmployeeSaleDetail;
 use App\Support\SimplePdf;
+use App\Support\SimpleExcel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -270,6 +271,99 @@ class SalesController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="sales-export-' . now()->format('Y-m-d-His') . '.pdf"',
+        ]);
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $this->authorizeDownloads($request);
+
+        $validated = $request->validate(
+            [
+                'from_date' => 'required|date|date_format:Y-m-d',
+                'to_date' => 'required|date|date_format:Y-m-d|after_or_equal:from_date',
+                'branch_id' => 'nullable|integer|exists:branches,id',
+            ],
+            [
+                'from_date.required' => 'Başlangıç tarihi zorunludur.',
+                'from_date.date' => 'Geçerli bir başlangıç tarihi girin.',
+                'to_date.required' => 'Bitiş tarihi zorunludur.',
+                'to_date.date' => 'Geçerli bir bitiş tarihi girin.',
+                'to_date.after_or_equal' => 'Bitiş tarihi, başlangıç tarihinden sonra olmalıdır.',
+            ]
+        );
+
+        $query = EmployeeSale::withoutGlobalScopes()
+            ->with(['branch', 'employee', 'employeeSaleDetails.employee'])
+            ->latest('sale_date')
+            ->latest('id');
+
+        // Apply filters - branch_id can be empty to get all branches
+        if (!empty($validated['branch_id'])) {
+            $query->where('branch_id', (int) $validated['branch_id']);
+        }
+        
+        // Date range filtering - BOTH dates are required
+        $query->whereDate('sale_date', '>=', $validated['from_date'])
+              ->whereDate('sale_date', '<=', $validated['to_date']);
+
+        $sales = $query->get();
+        
+        \Log::info('Sales Excel Export Executed', [
+            'user_id' => auth()->id(),
+            'user_email' => auth()->user()?->email,
+            'branch_id' => $validated['branch_id'] ?? 'ALL',
+            'from_date' => $validated['from_date'],
+            'to_date' => $validated['to_date'],
+            'total_records_found' => $sales->count(),
+            'exported_at' => now()->toIso8601String(),
+        ]);
+
+        if ($sales->isEmpty()) {
+            \Log::warning('Sales Excel Export - No records found', [
+                'user_id' => auth()->id(),
+                'branch_id' => $validated['branch_id'] ?? 'ALL',
+                'from_date' => $validated['from_date'],
+                'to_date' => $validated['to_date'],
+            ]);
+            return redirect()->route('sales.index')->with('error', 'Seçilen tarih aralığında satış bulunamadı: ' . $validated['from_date'] . ' - ' . $validated['to_date']);
+        }
+
+        $currencySymbol = config('app.currency_symbol', '$');
+        $branchText = $validated['branch_id'] ? 'Şube: ' . (\App\Models\Branch::find($validated['branch_id'])?->name ?? 'Bilinmeyen') : 'Tüm Şubeler';
+        
+        $headers = ['Tarih', 'Şube', 'Toplam Tutar', 'Harcanan', 'Net Gelir', 'Ana Çalışan', 'Notlar'];
+        $rows = [];
+
+        foreach ($sales as $sale) {
+            $rows[] = [
+                optional($sale->sale_date)->format('Y-m-d') ?? '-',
+                $sale->branch?->name ?? '-',
+                number_format((float) $sale->total_amount, 2),
+                number_format((float) ($sale->spent_amount ?? 0), 2),
+                number_format((float) $sale->net_income, 2),
+                $sale->employee?->name ?? '-',
+                trim((string) ($sale->notes ?? '')),
+            ];
+        }
+
+        $metadata = [
+            'Oluşturuldu' => now()->format('Y-m-d H:i'),
+            'Tarih Aralığı' => $validated['from_date'] . ' - ' . $validated['to_date'],
+            'Kayıt Sayısı' => $sales->count(),
+            $branchText => '',
+            'Dışa Aktaran' => auth()->user()?->name ?? 'Bilinmeyen Kullanıcı',
+        ];
+
+        $excel = SimpleExcel::createFromTable('Satış Raporu Dışa Aktarımı', $headers, $rows, $metadata);
+
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
+        return response($excel, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="sales-export-' . now()->format('Y-m-d-His') . '.xlsx"',
         ]);
     }
 }

@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Support\SimplePdf;
+use App\Support\SimpleExcel;
 
 class SafeController extends Controller
 {
@@ -531,6 +532,163 @@ class SafeController extends Controller
             try {
                 app(TelegramService::class)->notifyException($e, [
                     'area' => 'safe-pdf-export',
+                    'safe_id' => $safe->id,
+                    'type' => $request->query('type', 'income'),
+                    'from_date' => $request->query('from_date'),
+                    'to_date' => $request->query('to_date'),
+                    'url' => $request->fullUrl(),
+                ]);
+            } catch (\Throwable $telegramError) {
+                Log::error('Failed to send Telegram safe export notification', [
+                    'error' => $telegramError->getMessage(),
+                ]);
+            }
+
+            throw $e;
+        }
+    }
+
+    public function exportExcel(Request $request, Safe $safe)
+    {
+        $this->authorizeDownloads($request);
+
+        try {
+            $type = $request->query('type', 'income');
+            $from = $request->query('from_date');
+            $to = $request->query('to_date');
+
+            // Require both dates to be provided
+            if (empty($from) || empty($to)) {
+                return redirect()->route('safes.show', $safe->id)
+                    ->with('error', 'Lütfen başlangıç ve bitiş tarihi seçin.');
+            }
+
+            // Validate date format
+            $fromDateTime = \DateTime::createFromFormat('Y-m-d', $from);
+            $toDateTime = \DateTime::createFromFormat('Y-m-d', $to);
+            
+            if (!$fromDateTime || !$toDateTime) {
+                return redirect()->route('safes.show', $safe->id)
+                    ->with('error', 'Geçersiz tarih formatı. Lütfen YYYY-MM-DD formatında tarih seçin.');
+            }
+
+            // Validate that to_date is after from_date
+            if ($toDateTime < $fromDateTime) {
+                return redirect()->route('safes.show', $safe->id)
+                    ->with('error', 'Bitiş tarihi, başlangıç tarihinden sonra olmalıdır.');
+            }
+
+            Log::info('Safe Excel export requested', [
+                'safe_id' => $safe->id,
+                'safe_name' => $safe->name,
+                'type' => $type,
+                'from_date' => $from,
+                'to_date' => $to,
+                'user_id' => auth()->id(),
+                'user_email' => auth()->user()?->email,
+            ]);
+
+            if ($type === 'outcome') {
+                $items = SafeOutcome::withoutGlobalScopes()
+                    ->with('currency', 'supplier')
+                    ->where('safe_id', $safe->id)
+                    ->whereDate('created_at', '>=', $from)
+                    ->whereDate('created_at', '<=', $to)
+                    ->latest()
+                    ->get();
+
+                $title = 'Kasa Çıkışları - ' . $safe->name;
+                $headers = ['Tarih', 'Miktar', 'Para Birimi', 'Açıklama', 'Referans', 'Tedarikçi'];
+                
+                $rows = $items->map(function ($it) {
+                    return [
+                        optional($it->created_at)->format('Y-m-d') ?? '-',
+                        number_format((float) $it->amount, 2),
+                        $it->currency?->code ?? '',
+                        $it->description ?? '-',
+                        $it->reference ?? '-',
+                        $it->supplier?->name ?? '',
+                    ];
+                })->toArray();
+
+                Log::info('Safe Excel export generated - Outcomes', [
+                    'safe_id' => $safe->id,
+                    'records_count' => $items->count(),
+                ]);
+            } else {
+                $items = SafeIncome::withoutGlobalScopes()
+                    ->with('currency')
+                    ->where('safe_id', $safe->id)
+                    ->whereDate('created_at', '>=', $from)
+                    ->whereDate('created_at', '<=', $to)
+                    ->latest()
+                    ->get();
+
+                $title = 'Kasa Gelirleri - ' . $safe->name;
+                $headers = ['Tarih', 'Miktar', 'Para Birimi', 'Kaynak', 'Referans'];
+                
+                $rows = $items->map(function ($it) {
+                    return [
+                        optional($it->created_at)->format('Y-m-d') ?? '-',
+                        number_format((float) $it->amount, 2),
+                        $it->currency?->code ?? '',
+                        $it->source ?? '-',
+                        $it->reference ?? '',
+                    ];
+                })->toArray();
+
+                Log::info('Safe Excel export generated - Income', [
+                    'safe_id' => $safe->id,
+                    'records_count' => $items->count(),
+                ]);
+            }
+
+            $metadata = [
+                'Oluşturuldu' => now()->format('Y-m-d H:i'),
+                'Tarih Aralığı' => $from . ' - ' . $to,
+                'Kayıt Sayısı' => $items->count(),
+                'Dışa Aktaran' => auth()->user()?->name ?? 'Bilinmeyen Kullanıcı',
+            ];
+
+            $excel = SimpleExcel::createFromTable($title, $headers, $rows, $metadata);
+
+            $fromPart = $from ?: 'all';
+            $toPart = $to ?: 'all';
+            $filename = sprintf('safe-%s-%s-%s-%s.xlsx', $safe->id, $type, $fromPart, $toPart);
+
+            Log::info('Safe Excel export generated', [
+                'safe_id' => $safe->id,
+                'type' => $type,
+                'rows' => $items->count(),
+                'filename' => $filename,
+            ]);
+
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
+
+            return response($excel, 200, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                'Content-Length' => (string) strlen($excel),
+                'Content-Transfer-Encoding' => 'binary',
+                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+                'Pragma' => 'public',
+                'Connection' => 'close',
+                'Expires' => '0',
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Safe Excel export failed', [
+                'safe_id' => $safe->id,
+                'type' => $request->query('type', 'income'),
+                'from_date' => $request->query('from_date'),
+                'to_date' => $request->query('to_date'),
+                'error' => $e->getMessage(),
+            ]);
+
+            try {
+                app(TelegramService::class)->notifyException($e, [
+                    'area' => 'safe-excel-export',
                     'safe_id' => $safe->id,
                     'type' => $request->query('type', 'income'),
                     'from_date' => $request->query('from_date'),

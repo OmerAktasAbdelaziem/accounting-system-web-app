@@ -41,6 +41,9 @@
                     <a href="{{ route('payroll.payslip', $payroll) }}" class="btn btn-outline-danger" title="Download Payslip">
                         <i class="bi bi-file-pdf"></i> {{ __('messages.download_pdf') }}
                     </a>
+                    <a href="{{ route('payroll.payslip-excel', $payroll) }}" class="btn btn-outline-info" title="Download Payslip Excel">
+                        <i class="bi bi-file-earmark-spreadsheet"></i> {{ __('messages.download_excel') ?? __('Download Excel') }}
+                    </a>
                 @endif
                 <a href="{{ route('payroll.edit', $payroll) }}" class="btn btn-warning">
                     <i class="bi bi-pencil"></i>

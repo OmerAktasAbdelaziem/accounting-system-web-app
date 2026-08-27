@@ -6,6 +6,14 @@
         <h3>{{ $invoice->invoice_number }}</h3>
         <div>
                 <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-primary">{{ __('messages.edit') }}</a>
+                @if(auth()->user()?->canViewMenuItem('downloads'))
+                <a href="{{ route('invoices.pdf', $invoice) }}" class="btn btn-danger" target="_blank">
+                    <i class="bi bi-file-pdf"></i> {{ __('Download PDF') }}
+                </a>
+                <a href="{{ route('invoices.excel', $invoice) }}" class="btn btn-info" target="_blank">
+                    <i class="bi bi-file-earmark-spreadsheet"></i> {{ __('Download Excel') }}
+                </a>
+                @endif
     </div>
 
     <div class="card mb-4">

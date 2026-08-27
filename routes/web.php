@@ -114,6 +114,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [SalesController::class, 'index'])->name('index');
         Route::post('/', [SalesController::class, 'store'])->name('store');
         Route::post('export-pdf', [SalesController::class, 'exportPdf'])->name('export-pdf');
+        Route::post('export-excel', [SalesController::class, 'exportExcel'])->name('export-excel');
         Route::get('{sale}/edit', [SalesController::class, 'edit'])->name('edit');
         Route::put('{sale}', [SalesController::class, 'update'])->name('update');
     });
@@ -155,6 +156,7 @@ Route::middleware('auth')->group(function () {
         Route::put('{invoice}', [InvoiceController::class, 'update'])->name('update');
         Route::delete('{invoice}', [InvoiceController::class, 'destroy'])->name('destroy');
         Route::get('{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])->name('pdf');
+        Route::get('{invoice}/excel', [InvoiceController::class, 'downloadExcel'])->name('excel');
     });
     // Payroll
     Route::prefix('payroll')->name('payroll.')->group(function () {
@@ -167,6 +169,7 @@ Route::middleware('auth')->group(function () {
         Route::post('{payroll}/pay', [PayrollController::class, 'pay'])->name('pay');
         Route::delete('{payroll}', [PayrollController::class, 'destroy'])->name('destroy');
         Route::get('{payroll}/payslip', [PayrollController::class, 'downloadPayslip'])->name('payslip');
+        Route::get('{payroll}/payslip-excel', [PayrollController::class, 'downloadPayslipExcel'])->name('payslip-excel');
     });
 
     // Branches
@@ -248,6 +251,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('{safe}/outcome/{outcome}', [SafeController::class, 'deleteOutcome'])->name('outcome.delete');
         Route::post('{safe}/add-currency', [SafeController::class, 'addCurrency'])->name('add-currency');
         Route::get('{safe}/export', [SafeController::class, 'exportPdf'])->name('export');
+        Route::get('{safe}/export-excel', [SafeController::class, 'exportExcel'])->name('export-excel');
     });
 
     // Profile & Settings

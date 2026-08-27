@@ -11,6 +11,7 @@ use App\Models\Employee;
 use App\Models\SafeOutcome;
 use Illuminate\Http\Request;
 use App\Support\SimplePdf;
+use App\Support\SimpleExcel;
 
 class ReportController extends Controller
 {
@@ -149,7 +150,7 @@ class ReportController extends Controller
             $title = __('messages.sales_report');
         }
 
-        if ($format === 'csv' || $format === 'excel') {
+        if ($format === 'csv') {
             $csv = implode("\n", array_map(function (string $line): string {
                 return '"' . str_replace('"', '""', $line) . '"';
             }, $lines));
@@ -157,6 +158,15 @@ class ReportController extends Controller
             return response($csv, 200, [
                 'Content-Type' => 'text/csv; charset=UTF-8',
                 'Content-Disposition' => 'attachment; filename="' . $this->exportFilename($report, 'csv') . '"',
+            ]);
+        }
+
+        if ($format === 'excel' || $format === 'xlsx') {
+            $excel = SimpleExcel::createFromLines($title, $lines, $title);
+
+            return response($excel, 200, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Disposition' => 'attachment; filename="' . $this->exportFilename($report, 'xlsx') . '"',
             ]);
         }
 

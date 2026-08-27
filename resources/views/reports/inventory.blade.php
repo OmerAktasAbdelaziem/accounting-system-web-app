@@ -19,6 +19,24 @@
         <form action="{{ route('reports.generate-pdf') }}" method="POST" class="d-inline">
             @csrf
             <input type="hidden" name="report" value="inventory">
+            <input type="hidden" name="format" value="pdf">
+            <input type="hidden" name="branch_id" value="{{ $branchId ?? request('branch_id') }}">
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-file-pdf"></i> {{ __('Export PDF') }}
+            </button>
+        </form>
+        <form action="{{ route('reports.generate-pdf') }}" method="POST" class="d-inline ms-2">
+            @csrf
+            <input type="hidden" name="report" value="inventory">
+            <input type="hidden" name="format" value="excel">
+            <input type="hidden" name="branch_id" value="{{ $branchId ?? request('branch_id') }}">
+            <button type="submit" class="btn btn-info">
+                <i class="bi bi-file-earmark-spreadsheet"></i> {{ __('Export Excel') }}
+            </button>
+        </form>
+        <form action="{{ route('reports.generate-pdf') }}" method="POST" class="d-inline ms-2">
+            @csrf
+            <input type="hidden" name="report" value="inventory">
             <input type="hidden" name="format" value="csv">
             <input type="hidden" name="branch_id" value="{{ $branchId ?? request('branch_id') }}">
             <button type="submit" class="btn btn-success">
