@@ -41,7 +41,7 @@ class SimpleExcel
         $titleStyle->getFont()->setBold(true)->setSize(14)->setColor(new Color('FFFFFF'));
         $titleStyle->getFill()->setFillType(Fill::FILL_SOLID)->setStartColor(new Color('366092'));
         $titleStyle->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)->setVertical(Alignment::VERTICAL_CENTER);
-        $sheet->getRowDimensions($currentRow)->setRowHeight(25);
+        $sheet->getRowDimension($currentRow)->setRowHeight(25);
         
         $currentRow += 2;
 
@@ -74,7 +74,7 @@ class SimpleExcel
             $headerStyle->getBorder()->setStyle(Border::BORDER_THIN);
         }
         
-        $sheet->getRowDimensions($headerRow)->setRowHeight(20);
+        $sheet->getRowDimension($headerRow)->setRowHeight(20);
 
         // Add data rows
         $dataStartRow = $headerRow + 1;
@@ -145,8 +145,8 @@ class SimpleExcel
         $sheet->setCellValue('A' . $currentRow, $title);
         $titleStyle = $sheet->getStyle('A' . $currentRow);
         $titleStyle->getFont()->setBold(true)->setSize(14)->setColor(new Color('FFFFFF'));
-        $titleStyle->getFill()->setFillType(PatternFill::FILL_SOLID)->setStartColor(new Color('366092'));
-        $sheet->getRowDimensions($currentRow)->setRowHeight(25);
+        $titleStyle->getFill()->setFillType(Fill::FILL_SOLID)->setStartColor(new Color('366092'));
+        $sheet->getRowDimension($currentRow)->setRowHeight(25);
         
         $currentRow += 2;
 
@@ -156,7 +156,7 @@ class SimpleExcel
                 // Skip separator lines or leave blank
                 if ($line === '---') {
                     // Add a visual separator with border
-                    $sheet->getRowDimensions($currentRow)->setRowHeight(2);
+                    $sheet->getRowDimension($currentRow)->setRowHeight(2);
                 }
                 $currentRow++;
             } else {
@@ -206,9 +206,9 @@ class SimpleExcel
                 
                 $titleStyle = $sheet->getStyle('A' . $currentRow);
                 $titleStyle->getFont()->setBold(true)->setSize(14)->setColor(new Color('FFFFFF'));
-                $titleStyle->getFill()->setFillType(PatternFill::FILL_SOLID)->setStartColor(new Color('366092'));
+                $titleStyle->getFill()->setFillType(Fill::FILL_SOLID)->setStartColor(new Color('366092'));
                 $titleStyle->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $sheet->getRowDimensions($currentRow)->setRowHeight(25);
+                $sheet->getRowDimension($currentRow)->setRowHeight(25);
                 
                 $currentRow += 2;
             }
@@ -234,11 +234,11 @@ class SimpleExcel
                     
                     $headerStyle = $sheet->getStyle($colLetter . $headerRow);
                     $headerStyle->getFont()->setBold(true)->setColor(new Color('FFFFFF'));
-                    $headerStyle->getFill()->setFillType(PatternFill::FILL_SOLID)->setStartColor(new Color('4472C4'));
+                    $headerStyle->getFill()->setFillType(Fill::FILL_SOLID)->setStartColor(new Color('4472C4'));
                     $headerStyle->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)->setWrapText(true);
                     $headerStyle->getBorder()->setStyle(Border::BORDER_THIN);
                 }
-                $sheet->getRowDimensions($headerRow)->setRowHeight(20);
+                $sheet->getRowDimension($headerRow)->setRowHeight(20);
                 $currentRow++;
             }
 
@@ -256,7 +256,7 @@ class SimpleExcel
                         $cellStyle->getBorder()->setStyle(Border::BORDER_THIN)->setColor(new Color('D3D3D3'));
                         
                         if ($rowIndex % 2 === 0) {
-                            $cellStyle->getFill()->setFillType(PatternFill::FILL_SOLID)->setStartColor(new Color('F2F2F2'));
+                            $cellStyle->getFill()->setFillType(Fill::FILL_SOLID)->setStartColor(new Color('F2F2F2'));
                         }
                     }
                 }
