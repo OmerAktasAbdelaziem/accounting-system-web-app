@@ -111,11 +111,16 @@ class SimpleExcel
         // Freeze header rows
         $sheet->freezePane('A' . ($headerRow + 1));
 
-        // Write to string
+        // Write to temporary file
+        $tempFile = tempnam(sys_get_temp_dir(), 'excel_');
         $writer = new Xlsx($spreadsheet);
-        ob_start();
-        $writer->save('php://output');
-        $content = ob_get_clean();
+        $writer->save($tempFile);
+        
+        // Read file content
+        $content = file_get_contents($tempFile);
+        
+        // Clean up temp file
+        @unlink($tempFile);
 
         return $content;
     }
@@ -167,11 +172,16 @@ class SimpleExcel
         // Auto-adjust column A width
         $sheet->getColumnDimension('A')->setWidth(120);
 
-        // Write to string
+        // Write to temporary file
+        $tempFile = tempnam(sys_get_temp_dir(), 'excel_');
         $writer = new Xlsx($spreadsheet);
-        ob_start();
-        $writer->save('php://output');
-        $content = ob_get_clean();
+        $writer->save($tempFile);
+        
+        // Read file content
+        $content = file_get_contents($tempFile);
+        
+        // Clean up temp file
+        @unlink($tempFile);
 
         return $content;
     }
@@ -269,11 +279,16 @@ class SimpleExcel
             }
         }
 
-        // Write to string
+        // Write to temporary file
+        $tempFile = tempnam(sys_get_temp_dir(), 'excel_');
         $writer = new Xlsx($spreadsheet);
-        ob_start();
-        $writer->save('php://output');
-        $content = ob_get_clean();
+        $writer->save($tempFile);
+        
+        // Read file content
+        $content = file_get_contents($tempFile);
+        
+        // Clean up temp file
+        @unlink($tempFile);
 
         return $content;
     }
