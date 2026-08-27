@@ -164,6 +164,10 @@ class ReportController extends Controller
         if ($format === 'excel' || $format === 'xlsx') {
             $excel = SimpleExcel::createFromLines($title, $lines, $title);
 
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
+
             return response($excel, 200, [
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'Content-Disposition' => 'attachment; filename="' . $this->exportFilename($report, 'xlsx') . '"',
